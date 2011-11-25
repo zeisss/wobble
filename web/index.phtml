@@ -1,0 +1,132 @@
+<?php
+	error_reporting(E_ALL);
+	session_destroy();
+	
+	session_start();
+	$_SESSION['userid'] = rand(1,2);
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Wobble</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script src="jquery.wobble.js"></script>
+		<style>
+			#topics_wrapper { 
+				border:1px blue solid; 
+				width:50%;
+				position: absolute;
+				left:0px;
+				top:30px;
+				bottom:0px;
+				background-color: #C9E2FC;
+				border-radius: 15px;
+			}
+			
+			#topics {
+				
+				background-color:white;
+				border-radius: 5px;
+				border:1px black solid;
+				overflow:auto;
+				list-style-type:none;
+				
+				position: absolute;
+				top:25px;
+				bottom:0px;
+				left:5px;
+				right:5px;
+			}
+			#topics li {
+				border:1px black solid;
+				
+				
+				position: relative;
+				left:-40px;
+				height: 30px;
+			}
+			#topics li.active {
+				background-color:#C9E2FC;
+			}
+			
+			/* ----------------------------------------- */
+			#topic_wrapper { 
+				border:1px black solid; 
+				width:49%; 
+				border-radius: 15px;
+				background-color: #C9E2FC;
+				
+				position: absolute;
+				right:0px;
+				top:30px;
+				bottom:0px;
+			}
+			#topic_readers {
+				position:absolute;
+				right:10px;
+				left:10px;
+				height:40px;
+				top:15px;
+			}
+			#topic_readers * {
+				padding-right:4px;
+			}
+			#topic_actions {
+				position:absolute;
+				top:55px;
+				left:10px;
+				
+			}
+			#topic_posts {
+				background-color:white;
+				border-radius: 5px;
+				overflow:auto;
+				
+				position:absolute;
+				left:10px;
+				right:10px;
+				top:80px;
+				bottom:10px;
+			}
+			#topic_posts .post {
+				border-radius:5px;
+				border:1px black solid;
+				margin-bottom:1px;
+				min-height:80px;
+			}
+			#topic_posts .post .users {
+				min-height:15px;
+				padding-left:3px;
+				padding-top:3px;
+			}
+			#topic_posts .post .users img {
+				padding-right:2px;
+			}
+			#topic_posts .post .buttons {
+				
+			}
+			#topic_posts .post_wrapper {
+				margin-left:10px;
+			}
+		</style>
+	</head>
+	<body>
+		UserId in session: <?=$_SESSION['userid']; ?>
+		<div id="topics_wrapper">
+			<div id="topics_actions"></div>
+			<ul id="topics">
+				<li>Empty or Loading ...</li>
+			</ul>
+		</div>
+		<div id="topic_wrapper">
+			<div id="topic_readers"></div>
+			<div id="topic_actions">
+				<button>Invite user</button>
+			</div>
+			
+			<div id="topic_posts">
+				
+			</div>
+		</div>
+	</body>
+</html>
