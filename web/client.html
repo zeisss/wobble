@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Wobble</title>
+		<!--
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.3.0/mustache.min.js"></script>
+		-->
+		<script src="js/ext/jquery.min.js"></script>
+		<script src="js/ext/mustache.min.js"></script>
+		
+		<script src="js/jquery.wobble.js"></script>
+		<script src="js/jquery.wobble.contacts.js"></script>
+		<script src="js/jquery.wobble.topics.js"></script>
+		<script src="js/jquery.wobble.topic.js"></script>
+		
+		<link href="wobble.css" media="all" rel="stylesheet" type="text/css" />
+		<link href="client.css" media="all" rel="stylesheet" type="text/css" />
+		<script>
+			$(function() {
+				$("#signout").click(function() {
+					API.signout(function(err, data) {
+						if (!err) window.location.href='./index';
+					});
+					return false;				
+				});
+			});
+			
+			// Show a reload dialog, when an RPC error occurs
+			BUS.on('rpc.error', function(err) {
+				var doReload = window.confirm('Whoooops! Something went wrong! We will reload now, ok?');
+				if (doReload) window.location.reload();
+			});
+			
+			BUS.on('window.resize', function(data) {
+				var topics = $("#topics_wrapper");
+				var topic = $("#topic_wrapper");
+				var contacts = $("#contacts");
+				
+				var rightPart = data.new.width - contacts.width();
+				
+				topics.width(rightPart / 2);
+				topic.width(rightPart / 2);
+			});
+			
+		</script>
+	</head>
+	<body>
+		<div id="headline">
+			<div class="navigation">
+				Moinz.de Wobble | <a href="/index" id=signout>Sign Out</a>
+			</div>
+		</div>
+		<div id="contacts">
+			<div class="whoami">
+			</div>
+			<div class="actions">
+				<button id="contacts_add">Add</button>
+				<button id="user_change_name">Change my name</button>
+			</div>
+			<ul>
+			</ul>
+		</div>
+		<div id="topics_wrapper"></div>
+		<div id="topic_wrapper">
+			<div id="topic_readers">
+			
+			</div>
+			<div id="topic_actions">
+				<button id="topic_invite_user">Invite user</button>
+			</div>
+			
+			<div id="topic_posts">
+				
+			</div>
+		</div>
+	</body>
+</html>
