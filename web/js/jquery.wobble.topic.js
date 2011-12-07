@@ -62,13 +62,12 @@
 		jTopicActions: undefined,
 		
 		init: function() {
-			this.jTopicPosts = $("#topic_posts");
-			this.jTopicReaders = $("#topic_readers");
-			this.jTopicActions = $("#topic_actions button");
+			topicView.jTopicPosts = $("#topic_posts");
+			topicView.jTopicReaders = $("#topic_readers");
+			topicView.jTopicActions = $("#topic_actions");
 			
-			$("#topic_invite_user").click(function() {
-				topicView.onInviteUserAction();
-			});
+			
+			topicView._renderTopicActions(false);
 		},
 		
 		// Callbacks
@@ -86,9 +85,9 @@
 		
 		setEnabled: function(enabled) {
 			if ( enabled ) {
-				this.jTopicActions.removeAttr('disabled');
+				$("button", this.jTopicActions).removeAttr('disabled');
 			} else {
-				this.jTopicActions.attr('disabled', 'disabled');
+				$("button", this.jTopicActions).attr('disabled', 'disabled');
 			}
 		},
 		
@@ -100,6 +99,8 @@
 		
 		renderTopic: function(topicDetails) {
 			this.clear();
+			this._renderTopicActions($(".editing").length > 0);
+			
 			if ( topicDetails ) {
 				this.setEnabled(true);
 				
@@ -199,17 +200,23 @@
 			
 			topicView.onStartPostEdit(post); // Fire notifier event
 			
-			var jpost = $("#post-" + post.id + ">.post");
-			$(".content", jpost).attr('contenteditable', 'true').addClass('editing').focus();
-			$(".buttons", jpost).empty().append($("<button>Submit</button>").click(function() {
-				var content = $("#post-" + post.id + " .content").html();
+			var submitPostEditing = function() {
 				topicView.closeEditor();
 				
+				var content = $("#post-" + post.id + " .content").html();
 				topicView.onStopPostEdit(post, content);
-			}));
+			};
+			
+			var jpost = $("#post-" + post.id + ">.post");
+			$(".content", jpost).attr('contenteditable', 'true').addClass('editing').blur(submitPostEditing).focus();
+			$(".buttons", jpost).empty().append($("<button>Submit</button>").click(submitPostEditing));
+			
+			this._renderTopicActions(true);
 		},
 		
 		closeEditor: function() {
+			topicView._renderTopicActions(false);
+			
 			var jediting = $(".editing");
 			jediting.attr('contenteditable', 'false').removeClass('editing');
 			
@@ -241,7 +248,46 @@
 				$("button", jbuttons).attr('disabled', 'disabled');
 			}
 			return jbuttons;
+		},
+		
+		_renderTopicActions: function(editing) {
+			this.jTopicActions.empty();
+			
+			if ( editing ) {
+				// See http://www.quirksmode.org/dom/execCommand/
+				// for an example of commands
+				$('<button><b>B</b></button>').appendTo(this.jTopicActions).click(function() {
+					document.execCommand('bold', false, null); // $(".editing")[0].execCommand(
+				});
+				$('<button><i>I</i></button>').appendTo(this.jTopicActions).click(function() {
+					document.execCommand('italic', false, null); // $(".editing")[0].execCommand(
+				});
+				$('<button><u>U</u></button>').appendTo(this.jTopicActions).click(function() {
+					document.execCommand('underline', false, null); // $(".editing")[0].execCommand(
+				});
+				$('<button>UL</button>').appendTo(this.jTopicActions).click(function() {
+					document.execCommand('insertunorderedlist', false, null); // $(".editing")[0].execCommand(
+				});
+				$('<button>img</button>').appendTo(this.jTopicActions).click(function() {
+					var url = window.prompt("URL?");
+					if ( url != null ) {
+						document.execCommand('insertimage', false, url); // $(".editing")[0].execCommand(
+					}
+				});
+				$('<button>url</button>').appendTo(this.jTopicActions).click(function() {
+					var url = window.prompt("URL?");
+					if ( url != null ) {
+						document.execCommand('createLink', false, url); // $(".editing")[0].execCommand(
+					}
+				});
+			} else {
+				$('<button id="topic_invite_user">Invite user</button>').appendTo(this.jTopicActions).click(function() {
+					topicView.onInviteUserAction();
+				});
+			}
 		}
+		
+		
 		
 	};
 	
@@ -343,6 +389,7 @@
 				// Somebody else changed our topic
 				if ( model.getTopic() != null && (
 				    data.type == 'topic_changed' && data.topic_id == model.getTopic().id || 
+					data.type == 'post_deleted' && data.topic_id == model.getTopic().id || 
 				     data.type == 'post_changed' && data.topic_id == model.getTopic().id)) {
 					API.load_topic_details(data.topic_id, function(err, topicDetails) {
 						if (topicDetails !== undefined && topicDetails.id == model.getTopic().id) {
