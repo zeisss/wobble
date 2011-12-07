@@ -58,10 +58,12 @@ TopicsPresenter.prototype.refreshTopicsList = function() {
 		}
 	});
 };
-TopicsPresenter.prototype.setSelectedTopic = function(topic) {
+TopicsPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
 	this.selectedTopicId = topic.id;
 	this.view.setActiveTopic(topic);
-	BUS.fire('topic.selected', topic.id);
+	if (!noEvent) {
+		BUS.fire('topic.selected', topic.id);
+	}
 };
 TopicsPresenter.prototype.createNewTopic = function() {
 	// TODO: Check if the user is currently editing something and submit that before going on
@@ -73,7 +75,6 @@ TopicsPresenter.prototype.createNewTopic = function() {
 	API.topics_create(topicId, function(err, topic_id) {
 		if (topic_id !== undefined) {					
 			BUS.fire('topic.topic.created', topicId);
-			that.refreshTopicsList();
 		}
 	});
 	
@@ -91,7 +92,7 @@ TopicsPresenter.prototype.createNewTopic = function() {
 			}
 		]
 	};
-	this.view.addTopic(topicDetails);
-	this.setSelectedTopic(topicDetails);
+	this.view.addTopic(topicDetails, true);
+	this.setSelectedTopic(topicDetails, false);
 };
 

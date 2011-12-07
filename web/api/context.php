@@ -111,6 +111,7 @@
 			}
 		}
 	}
+	
 	class TopicRepository {
 		function getReaders($topic_id, $limit = FALSE) {
 			$pdo = ctx_getpdo();

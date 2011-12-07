@@ -161,6 +161,7 @@ Green (Active Item): #789E35
 	
 	margin-bottom:1px;
 	min-height:80px;
+	padding:5px;
 }
 #topic_posts .post_wrapper .active {
 	border:3px #789E35 solid;
@@ -180,7 +181,7 @@ Green (Active Item): #789E35
 #topic_posts .post .buttons {
 	
 }
-#topic_posts .post_wrapper {
+#topic_posts .post_replies {
 	margin-left:10px;
 }
 /* --------------------------------------- */

@@ -11,9 +11,9 @@ function jQueryTopicsView () {
 	this.jTopicsAction = $("#topics_actions");
 	
 	var that = this;
-	this.jTopicsAction.append("<button>New</button>").click(function() {
+	this.jTopicsAction.append($("<button>New</button>").click(function() {
 		that.onCreateNewTopic();
-	});
+	}));
 };
 jQueryTopicsView.prototype = new TopicsDisplay;
 jQueryTopicsView.prototype.constructor = jQueryTopicsView;
@@ -23,7 +23,7 @@ jQueryTopicsView.prototype.setActiveTopic = function(topic) {
 	$("#topics li.active").removeClass("active");
 	$("#topic-" + topic.id).addClass("active");
 };
-jQueryTopicsView.prototype.addTopic = function(topic) {
+jQueryTopicsView.prototype.addTopic = function(topic, prepend) {
 	var template = '<li id="{{id}}" class="topic_header">' + 
 				   ' <div class="abstract"></div>' + 
 				   ' <div class="users">{{#users}}<img title="{{name}}" src="http://gravatar.com/avatar/{{img}}?s=32" width="32" height="32">{{/users}}</div>' + 
@@ -32,10 +32,16 @@ jQueryTopicsView.prototype.addTopic = function(topic) {
 	var li = $(Mustache.to_html(template, {
 		'id': 'topic-' + topic.id,
 		'users': topic.users,
-	})).appendTo(this.jTopics).click(function() { 
+	})).click(function() { 
 		that.onTopicClicked(topic);
 	});
 	$(".abstract", li).html(topic.abstract);
+	
+	if ( prepend ) {
+		li.prependTo(this.jTopics);
+	} else {
+		li.appendTo(this.jTopics)
+	}
 };
 jQueryTopicsView.prototype.clear = function() {
 	this.jTopics.empty();
