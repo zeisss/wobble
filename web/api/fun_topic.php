@@ -5,7 +5,7 @@
 		$stmt = $pdo->prepare('SELECT COUNT(*) cnt FROM topic_readers r WHERE r.user_id = ? AND r.topic_id = ?');
 		$stmt->execute(array(user_get_id(), $topic_id));
 		$result = $stmt->fetchAll();
-		return $result[0][0] > 0;
+		return $result[0]['cnt'] > 0;
 	}
 	
 	function topic_get_details($params) {
@@ -23,13 +23,11 @@
 		$self_user_id = user_get_id();
 		$topic_id = $params['id'];
 		
+		ValidationService::validate_not_empty($topic_id);
+		
 		$pdo = ctx_getpdo();
 		
-		$stmt = $pdo->prepare('SELECT u.id id, u.name name, u.email email, md5(trim(u.email)) img ' . 
-		                      'FROM users u, topic_readers r ' . 
-							  'WHERE u.id = r.user_id AND r.topic_id = ?');
-		$stmt->execute(array($topic_id));
-		$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$users = TopicRepository::getReaders($topic_id);
 				
 		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
 		$stmt->execute(array($topic_id));
@@ -57,9 +55,20 @@
 		$topic_id = $params['topic_id'];
 		$user_id = $params['contact_id'];
 		
+		ValidationService::validate_not_empty($topic_id);
+		ValidationService::validate_not_empty($user_id);
+		
 		$pdo = ctx_getpdo();
 		if ( _topic_has_access($pdo, $topic_id) ) {
 			$pdo->prepare('REPLACE topic_readers (topic_id, user_id) VALUES (?,?)')->execute(array($topic_id, $user_id));
+			
+			foreach(TopicRepository::getReaders($topic_id) as $user) {
+				NotificationRepository::push($user['id'], array(
+					'type' => 'topic_changed',
+					'topic_id' => $topic_id
+				));
+			}
+			
 			return TRUE;
 		}
 		else {
@@ -73,6 +82,9 @@
 		$post_id = $params['post_id'];
 		$parent_post_id = $params['parent_post_id'];
 		
+		ValidationService::validate_not_empty($topic_id);
+		ValidationService::validate_not_empty($post_id);
+		ValidationService::validate_not_empty($parent_post_id);
 		
 		$pdo = ctx_getpdo();
 		
@@ -88,6 +100,15 @@
 			$stmt->bindValue(3, $self_user_id);
 			$stmt->execute();
 			
+			foreach(TopicRepository::getReaders($topic_id) as $user) {
+				NotificationRepository::push($user['id'], array(
+					'type' => 'post_changed',
+					'topic_id' => $topic_id,
+					'post_id' => $post_id
+				));
+			}
+			
+			
 			return TRUE;
 		}
 		else {
@@ -102,18 +123,31 @@
 		$content = $params['content'];
 		$revision = $params['revision_no'];
 		
+		ValidationService::validate_not_empty($topic_id);
+		ValidationService::validate_not_empty($post_id);
+		ValidationService::validate_not_empty($revision);
+		
 		$pdo = ctx_getpdo();
 		
 		if ( _topic_has_access($pdo, $topic_id) ) {
 			$stmt = $pdo->prepare('SELECT revision_no FROM posts WHERE topic_id = ? AND post_id = ?');
 			$stmt->execute(array($topic_id, $post_id));
-			$post = $stmt->fetchAll();
+			$posts = $stmt->fetchAll();
 			
-			if ($post[0][0] != $revision) {
-				throw new Exception('RevisionNo is not correct. Somebody else changed the post already. (Value: ' . $post[0][0] . ')');
+			if ($posts[0]['revision_no'] != $revision) {
+				throw new Exception('RevisionNo is not correct. Somebody else changed the post already. (Value: ' . $posts[0][0] . ')');
 			}
 			$pdo->prepare('UPDATE posts SET content = ?, revision_no = revision_no + 1 WHERE post_id = ? AND topic_id = ?')->execute(array($content, $post_id, $topic_id));
 			$pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id) VALUES (?,?,?)')->execute(array($topic_id, $post_id, $self_user_id));
+			
+			foreach(TopicRepository::getReaders($topic_id) as $user) {
+				NotificationRepository::push($user['id'], array(
+					'type' => 'post_changed',
+					'topic_id' => $topic_id,
+					'post_id' => $post_id
+				));
+			}
+			
 			return array (
 				'revision_no' => ($revision + 1)
 			);
@@ -128,6 +162,9 @@
 		$topic_id = $params['topic_id'];
 		$post_id = $params['post_id'];
 		
+		ValidationService::validate_not_empty($topic_id);
+		ValidationService::validate_not_empty($post_id);
+		
 		$pdo = ctx_getpdo();
 		
 		if ( _topic_has_access($pdo, $topic_id) ) {
@@ -136,6 +173,13 @@
 			
 			$pdo->prepare('DELETE FROM posts WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
 			
+			foreach(TopicRepository::getReaders($topic_id) as $user) {
+				NotificationRepository::push($user['id'], array(
+					'type' => 'post_deleted',
+					'topic_id' => $topic_id,
+					'post_id' => $post_id
+				));
+			}
 			return TRUE;
 		} else {
 			throw new Exception('Illegal Access!');

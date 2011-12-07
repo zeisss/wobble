@@ -34,15 +34,24 @@
 			$.each(this.listeners[eventName], function(i, callback) {
 				callback(data, eventName);
 			});
+		},
+		'clear': function() {
+			this.listeners = {};
 		}
 	};
-	
+	$(window).unload(function() {
+		BUS.clear();
+	});
 	
 	
 	// RPC Wrapper (JSON-RPC 2.0 - http://json-rpc.org/wiki/specification)
 	var RPC = {
 		id: 1,
 		doRPC: function(name, args, callback) {
+			if ( arguments.length == 2 ) {
+				callback = args;
+				args = null;
+			}
 			var requestId = this.id;
 			this.id++;
 			
@@ -60,7 +69,10 @@
 				processData: false,
 				success: function(data, textStatus, jqXHR) {					
 					if ( data.error ) {
-						BUS.fire('rpc.error', data.error);
+						BUS.fire('rpc.error', {
+							request: body,
+							error: data.error
+						});
 					}
 					if (!callback) 
 						return;
@@ -112,6 +124,10 @@
 		},
 		
 		// Async stuff
+		get_notifications: function(timestamp, callback) {
+			RPC.doRPC('get_notifications', {next_timestamp: timestamp}, callback);
+		},
+		
 		/* REGISTER / LOGIN ----------------- */
 		register: function(email, password, callback) {
 			RPC.doRPC('user_register', {'email': email, 'password': password}, callback);
@@ -120,7 +136,7 @@
 			RPC.doRPC('user_login', {'email': email, 'password': password}, callback);
 		},
 		signout: function(callback) {
-			RPC.doRPC('user_signout', null, callback);
+			RPC.doRPC('user_signout', callback);
 		},
 		
 		user_change_name: function(newName, callback) {
@@ -137,7 +153,7 @@
 		},
 		
 		list_topics: function (callback) {
-			RPC.doRPC('topics_list', false, callback);
+			RPC.doRPC('topics_list', callback);
 		},
 		
 		/* CONTACTS Functions --------------- */
@@ -146,7 +162,7 @@
 			RPC.doRPC('user_add_contact', {'contact_email': email}, callback);
 		},
 		get_contacts: function (callback) {
-			RPC.doRPC('user_get_contacts', false, callback);
+			RPC.doRPC('user_get_contacts', callback);
 		},
 		
 		/* TOPIC Functions ------------------ */
@@ -164,23 +180,24 @@
 			RPC.doRPC('post_delete', {topic_id: topicId, post_id: postId}, callback);
 		}
 	};
-	API.init(); // Loads current user ID infos (so its cached locally)
 	
 	
-	(function() {
+	
+	$(document).ready(function() {
 		function get_size() {
-			return {w: window.outerWidth, h: window.outerHeight};
+			return {w: $(window).width(), h: $(window).height()};
 		};
 		var old_size = get_size();
+		BUS.fire('window.resize', {before: old_size, 'to': old_size});
 		$(window).resize(function() {
 			var new_size = get_size();
 			BUS.fire('window.resize', {
 				'before': old_size,
-				'new':  new_size
+				'to':  new_size
 			});
 			old_size = new_size;
 		});
-	})();
+	});
 	
 })(jQuery);
 

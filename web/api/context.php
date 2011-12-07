@@ -48,6 +48,21 @@
 			$stmt = $pdo->prepare('UPDATE users SET name = trim(?) WHERE id = ?');
 			$stmt->execute(array($name, $user_id));
 		}
+		
+		function get($user_id) {
+			$pdo = ctx_getpdo();
+			
+			$stmt = $pdo->prepare('SELECT id, name, password_hashed, email, md5(email) img FROM users WHERE id = ?');
+			$stmt->execute(array($user_id));
+			
+			$result = $stmt->fetchAll();
+			if ( count($result) == 1 ) {
+				$result[0]['id'] = intval($result[0]['id']);
+				return $result[0];
+			} else {
+				return NULL;
+			}
+		}
 		function getUserByEmail($email) {
 			$pdo = ctx_getpdo();
 			
@@ -56,9 +71,53 @@
 			
 			$result = $stmt->fetchAll();
 			if ( count($result) == 1 ) {
-				return $result[0]['id'];
+				$result[0]['id'] = intval($result[0]['id']);
+				return $result[0];
 			} else {
 				return NULL;
 			}
+		}
+	}
+	class TopicRepository {
+		function getReaders($topic_id, $limit = FALSE) {
+			$pdo = ctx_getpdo();
+			
+			$sql = 'SELECT u.id id, u.name name, u.email email, md5(trim(u.email)) img ' . 
+				  'FROM users u, topic_readers r ' . 
+				  'WHERE u.id = r.user_id AND r.topic_id = ?';
+			if ( $limit ) {
+				$sql .= ' LIMIT ' . $limit;
+			}
+			$stmt = $pdo->prepare($sql);
+			$stmt->execute(array($topic_id));
+			return $stmt->fetchAll();
+		}
+	}
+	class NotificationRepository {
+		function push($user_id, $message) {
+			$json = json_encode($message);
+			
+			$pdo = ctx_getpdo();
+			$stmt = $pdo->prepare('INSERT INTO notifications (user_id, data, time) VALUES (?,?,UNIX_TIMESTAMP())');
+			$stmt->execute(array($user_id, $json));
+		}
+		function getNotifications($user_id, $timestamp) {	
+			$pdo = ctx_getpdo();
+			
+			if ( $timestamp != NULL ) {
+				$stmt = $pdo->prepare('DELETE FROM notifications WHERE user_id = ? AND time < ?');
+				$stmt->bindValue(1, $user_id, PDO::PARAM_INT);
+				$stmt->bindValue(2, $timestamp, PDO::PARAM_INT);
+				$stmt->execute();
+			}
+			
+			$stmt = $pdo->prepare('SELECT data FROM notifications WHERE user_id = ?');
+			$stmt->execute(array($user_id));
+			$result = array();
+			$data = $stmt->fetchAll();
+			foreach ($data AS $i => $row) {
+				$result[] = json_decode($row['data']);
+			}
+			return $result;
 		}
 	}

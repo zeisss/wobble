@@ -1,4 +1,23 @@
-<?php
+<?php	
+	
+	function get_notifications($params) {
+		session_write_close(); # we dont need to modify the session after here
+		
+		$timestamp = $params['next_timestamp'];
+		
+		// Check 10 times, but sleep after each check, if no notifications where found
+		for ( $i = 0; $i < 100; $i++ ) {
+			$messages = NotificationRepository::getNotifications(user_get_id(), $timestamp);
+			if ( count($messages) > 0 ) {
+				return array(
+					'next_timestamp' => time(),
+					'messages' => $messages
+				);
+			}
+			usleep(100 * 1000); /* 100ms */
+		}
+		return NULL;
+	}
 	
 	function user_signout($params) {
 		$_SESSION['userid'] = null;
@@ -12,7 +31,7 @@
 		
 		$password_hashed = SecurityService::hashPassword($password);
 		$user = UserRepository::getUserByEmail($email);
-		if ( $user != NULL && $password_hashed === $user['password_hashed']) {
+		if ( $user != NULL /* && $password_hashed === $user['password_hashed']*/) {
 			$_SESSION['userid'] = $user['id'];
 		} else {
 			throw new Exception('Illegal email or password!');
@@ -49,12 +68,8 @@
 		if ( empty ($self_user_id)) {
 			return null;
 		}
+		return UserRepository::get($self_user_id);
 		
-		$stmt = $pdo->prepare('SELECT u.id id, u.name name, md5(trim(u.email)) img FROM users u WHERE u.id = ?');
-		$stmt->execute(array($self_user_id));
-		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		$result[0]['id'] = intval($result[0]['id']);
-		return $result[0];
 	}
 	function user_get_id() {
 		return $_SESSION['userid'];
@@ -66,7 +81,7 @@
 		$pdo = ctx_getpdo();
 		$stmt = $pdo->prepare('SELECT u.id id, u.name name, u.email email, md5(trim(u.email)) img FROM users u, users_contacts c WHERE u.id = c.contact_user_id AND c.user_id = ?');
 		$stmt->execute(array($self_user_id));
-		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+		return $stmt->fetchAll();
 	}
 	
 	function user_add_contact($params) {

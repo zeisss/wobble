@@ -37,6 +37,10 @@
 			};
 		};
 		
+		that.addUser = function(user) {
+			topic.users.push(user);
+		};
+		
 		that.addUserToPost = function(post, user) {
 			var found = false;
 			jQuery.each(post.users, function(i, user_id) {
@@ -47,6 +51,7 @@
 			if (!found) {
 				post.users.push(user.id);
 				// We can assume here, that the user is part of topic.users, otherwise he shouldn't see this post
+				
 			}
 		};
 	}
@@ -111,10 +116,13 @@
 			}	
 		},
 		_addUser: function(contact) {
-			var template = "<img width='40' height='40' src='http://gravatar.com/avatar/{{img}}?s=40' title='{{name}}'/>";
+			var template = "<div class=usericon>" + 
+						   "<div><img width='40' height='40' src='http://gravatar.com/avatar/{{img}}?s=40' title='{{name}}'/></div>" + 
+						   "<div class='status offline'></div>" + 
+						   "</div>";
 			
 			this.jTopicReaders.append($(Mustache.to_html(template, {
-				'img': contact.imgurl,
+				'img': contact.img,
 				'name': contact.name
 			})).click(function() {
 				BUS.fire('contact.clicked', contact);
@@ -137,6 +145,11 @@
 				} else {
 					this.jTopicPosts.append(jPostWrapper);
 				}
+				
+				jpost.click(function() {
+					$("#topic_wrapper .active").removeClass('active');
+					jpost.addClass('active');
+				});
 			}
 			topicView.renderPostUsers(post, jpost);
 			
@@ -251,10 +264,13 @@
 				BUS.fire('contacts.chooser.open', {
 					'multiple': true,
 					'on_add': function (contact) {
-						API.topic_add_user(model.getTopic().id, contact.id);
+						API.topic_add_user(model.getTopic().id, contact.id, function(err, data) {
+							model.addUser(contact);
+							view.renderTopic(model.getTopic());
+						});
 					},
 					'on_close': function() {
-					
+						BUS.fire('topic.changed', model.getTopic().id);
 					}
 				});
 			};
@@ -305,10 +321,14 @@
 		 */
 		that.registerBUSListeners = function() {			
 			// Fired by TopicsPresenter
-			BUS.on('topic.selected', function(topicId) {					
+			BUS.on('topic.selected', function(topicId) {		
+				if ( model.getTopic() != null && model.getTopic().id == topicId ) {
+					return;
+				}
+				model.setTopic({id: topicId});
 				view.setLoadingState();
 				API.load_topic_details(topicId, function(err, topicDetails) {
-					if (topicDetails !== undefined && topicDetails.id == topicId) {
+					if (topicDetails !== undefined && topicDetails.id == model.getTopic().id) {
 						that.setSelectedTopic(topicDetails);
 					}
 				});
@@ -317,6 +337,19 @@
 			BUS.on('topic.topic.created', function(topicDetails) {
 				that.setSelectedTopic(topicDetails);
 				view.openEditor(topicDetails.posts[0]);
+			});
+			
+			BUS.on('api.notification', function(data) {
+				// Somebody else changed our topic
+				if ( model.getTopic() != null && (
+				    data.type == 'topic_changed' && data.topic_id == model.getTopic().id || 
+				     data.type == 'post_changed' && data.topic_id == model.getTopic().id)) {
+					API.load_topic_details(data.topic_id, function(err, topicDetails) {
+						if (topicDetails !== undefined && topicDetails.id == model.getTopic().id) {
+							that.setSelectedTopic(topicDetails);
+						}
+					});
+				}
 			});
 		};
 		

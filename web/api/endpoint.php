@@ -23,6 +23,7 @@
 		));
 	}
 	function the_result($result_object) {
+		header('Content-Type: application/json');
 		die(json_encode($result_object));
 	}
 	
@@ -44,6 +45,7 @@
 		array('file' => 'fun_user.php', 'method' => 'user_change_name'),
 		array('file' => 'fun_user.php', 'method' => 'user_login'),
 		array('file' => 'fun_user.php', 'method' => 'user_signout'),
+		array('file' => 'fun_user.php', 'method' => 'get_notifications'),
 		
 		// Contact list
 		array('file' => 'fun_user.php', 'method' => 'user_get_contacts'),
@@ -54,7 +56,7 @@
 	);
 	
 	# DEV MODE: Sleep randomly 500ms - 1.500ms
-	usleep(1000 * rand(100, 3000));
+	usleep(1000 * 500); // rand(100, 3000));
 	
 	
 	session_start();

@@ -10,6 +10,8 @@
 		<script src="js/ext/mustache.min.js"></script>
 		
 		<script src="js/jquery.wobble.js"></script>
+		<script src="js/jquery.wobble.notification"></script>
+		
 		<script src="js/jquery.wobble.contacts.js"></script>
 		<script src="js/jquery.wobble.topics.js"></script>
 		<script src="js/jquery.wobble.topic.js"></script>
@@ -32,17 +34,34 @@
 				if (doReload) window.location.reload();
 			});
 			
+			// Recalculate the position of the widgets, when window is resized
 			BUS.on('window.resize', function(data) {
+				function minWidth(e) {
+					var sW = e.css('min-width');
+					return Number(sW.substr(0, sW.length - 2));
+				}
+				var headline = $("#headline");
 				var topics = $("#topics_wrapper");
 				var topic = $("#topic_wrapper");
 				var contacts = $("#contacts");
 				
-				var rightPart = data.new.width - contacts.width();
+				var rightPart = data.to.w - contacts.width();
 				
-				topics.width(rightPart / 2);
-				topic.width(rightPart / 2);
+				var topicsLeft = contacts.width() + 10;
+				var topicsWidth = Math.max(rightPart * 0.4, minWidth(topics));
+				topics.css('left', topicsLeft);
+				topics.width(topicsWidth);
+				
+				var topicLeft = topicsLeft + topicsWidth + 10;
+				var topicWidth = Math.max(data.to.w - topicLeft - 20, minWidth(topics));
+				topic.css('left', topicLeft);
+				topic.width(topicWidth);
+				
+				contacts.height(data.to.h - headline.height() - 20);
+				topics.height(data.to.h - headline.height() - 20);
+				topic.height(data.to.h - headline.height() - 20);
 			});
-			
+			API.init(); // Loads current user ID infos (so its cached locally)
 		</script>
 	</head>
 	<body>
@@ -51,27 +70,29 @@
 				Moinz.de Wobble | <a href="/index" id=signout>Sign Out</a>
 			</div>
 		</div>
-		<div id="contacts">
-			<div class="whoami">
+		<div style="position:relative">
+			<div id="contacts" class="widget">
+				<div class="whoami">
+				</div>
+				<div class="actions">
+					<button id="contacts_add">Add</button>
+					<button id="user_change_name">Change my name</button>
+				</div>
+				<ul>
+				</ul>
 			</div>
-			<div class="actions">
-				<button id="contacts_add">Add</button>
-				<button id="user_change_name">Change my name</button>
-			</div>
-			<ul>
-			</ul>
-		</div>
-		<div id="topics_wrapper"></div>
-		<div id="topic_wrapper">
-			<div id="topic_readers">
-			
-			</div>
-			<div id="topic_actions">
-				<button id="topic_invite_user">Invite user</button>
-			</div>
-			
-			<div id="topic_posts">
+			<div id="topics_wrapper" class="widget"></div>
+			<div id="topic_wrapper" class="widget">
+				<div id="topic_readers">
 				
+				</div>
+				<div id="topic_actions">
+					<button id="topic_invite_user">Invite user</button>
+				</div>
+				
+				<div id="topic_posts">
+					
+				</div>
 			</div>
 		</div>
 	</body>

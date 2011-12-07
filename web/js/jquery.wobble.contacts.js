@@ -113,7 +113,6 @@
 			view.renderWhoAmI(user);
 		});
 		
-		
 		// Button Handlers  ---------------------------------------------------
 		view.onAddContact = function(contactEmail) {
 			model.addNewContact(contactEmail, function(err, data) {

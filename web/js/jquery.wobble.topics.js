@@ -62,6 +62,10 @@
 				that.onSelectedTopic(topic); 
 			};
 			
+			BUS.on('topic.changed', function(_data) {
+				that.refreshTopicsList();
+			});
+			
 			BUS.on('topic.post.changed', function(_data) {
 				that.refreshTopicsList();
 			});
@@ -77,7 +81,7 @@
 			API.list_topics(function(err, list) {
 				view.clear();
 				if ( err !== undefined ) {
-					view.showError('Error while loading topics. Please reload to try again.');
+					alert('Error while loading topics. Please reload to try again.');
 				} else {
 					$.each(list, function(i, data) {
 						view.addTopic(data);

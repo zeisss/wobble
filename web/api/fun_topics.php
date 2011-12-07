@@ -18,10 +18,8 @@
 		$stmt->execute(array(user_get_id()));
 		$result = $stmt->fetchAll();
 		
-		$stmt = $pdo->prepare('SELECT u.id id, u.name name, u.email email, md5(u.email) img FROM users u, topic_readers r WHERE u.id = r.user_id AND r.topic_id = ? LIMIT 3');
 		foreach($result AS $i => $topic) {
-			$stmt->execute(array($topic['id']));
-			$result[$i]['users'] = $stmt->fetchAll();
+			$result[$i]['users'] = $users = TopicRepository::getReaders($topic['id'], 3);
 		}
 		
 		return $result;
