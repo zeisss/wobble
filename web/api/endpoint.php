@@ -30,34 +30,39 @@
 	require_once 'context.php';
 	
 	$exportedMethods = array (
+		// Topics
 		array('file' => 'fun_topics.php', 'method' => 'topics_list'),
 		array('file' => 'fun_topics.php', 'method' => 'topics_create'),
 		
+		// Topic
 		array('file' => 'fun_topic.php', 'method' => 'topic_get_details'),
 		array('file' => 'fun_topic.php', 'method' => 'topic_add_user'),
 		array('file' => 'fun_topic.php', 'method' => 'post_create'),
 		array('file' => 'fun_topic.php', 'method' => 'post_edit'),
 		array('file' => 'fun_topic.php', 'method' => 'post_delete'),
 		
+		// User / Session
 		array('file' => 'fun_user.php', 'method' => 'user_get'),
 		array('file' => 'fun_user.php', 'method' => 'user_get_id'),
 		array('file' => 'fun_user.php', 'method' => 'user_register'),
 		array('file' => 'fun_user.php', 'method' => 'user_change_name'),
 		array('file' => 'fun_user.php', 'method' => 'user_login'),
 		array('file' => 'fun_user.php', 'method' => 'user_signout'),
-		array('file' => 'fun_user.php', 'method' => 'get_notifications'),
+		
+		// Notifications
+		array('file' => 'fun_notifications.php', 'method' => 'get_notifications'),
 		
 		// Contact list
 		array('file' => 'fun_user.php', 'method' => 'user_get_contacts'),
 		array('file' => 'fun_user.php', 'method' => 'user_add_contact'),
 		array('file' => 'fun_user.php', 'method' => 'user_remove_contact'),
 		
+		// Test functions
 		array('file' => 'fun_test.php', 'method' => 'testecho')
 	);
 	
 	# DEV MODE: Sleep randomly 500ms - 1.500ms
 	usleep(1000 * 500); // rand(100, 3000));
-	
 	
 	session_start();
 	$requestBody = file_get_contents('php://input');
@@ -70,13 +75,16 @@
 	}
 	foreach($exportedMethods AS $export) {
 		if ( $export['method'] === $request['method']) {
+			ctx_before_request($request['method'], $request['params']);
 			require_once($export['file']);
 			try {
 				$response = call_user_func($request['method'], $request['params']);
-			}catch(Exception $e) {
+			} catch(Exception $e) {
+				ctx_after_request($request['method'], $request['params'], null, $e);
 				die_error($request['id'], -32603, $e->getMessage());
 			}
 			
+			ctx_after_request($request['method'], $request['params'], $response, null);
 			if (isset($request['id'])) 
 				die_result($request['id'], $response);
 			else

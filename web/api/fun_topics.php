@@ -1,6 +1,4 @@
-<?php
-	require_once 'fun_user.php';
-	
+<?php	
 	# Return a list of topics the user can see
 	#
 	# @return array()
@@ -14,8 +12,9 @@
 		$pdo = ctx_getpdo();
 		$stmt = $pdo->prepare('SELECT t.id id, substr(p.content, 1, 100) abstract ' . 
 		                      'FROM topics t, topic_readers r, posts p ' . 
-							  'WHERE r.user_id = ? AND r.topic_id = t.id AND t.id = p.topic_id AND p.post_id = cast(1 as char)');
-		$stmt->execute(array(user_get_id()));
+							  'WHERE r.user_id = ? AND r.topic_id = t.id AND t.id = p.topic_id AND p.post_id = cast(1 as char)' . 
+							  'ORDER BY p.last_touch DESC');
+		$stmt->execute(array(ctx_getuserid()));
 		$result = $stmt->fetchAll();
 		
 		foreach($result AS $i => $topic) {
@@ -34,7 +33,7 @@
 		$stmt->execute();
 		
 		$stmt = $pdo->prepare('INSERT INTO topic_readers (topic_id, user_id) VALUES (?,?)');
-		$stmt->execute(array($params['id'], user_get_id()));
+		$stmt->execute(array($params['id'], ctx_getuserid()));
 		
 		// Create empty root post
 		$stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content)  VALUES (?,?,?)');
@@ -47,7 +46,7 @@
 		$stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id) VALUES (?,?,?)');
 		$stmt->bindValue(1, $params['id']);
 		$stmt->bindValue(2, 1);
-		$stmt->bindValue(3, user_get_id());
+		$stmt->bindValue(3, ctx_getuserid());
 		$stmt->execute();
 		
 		return $params['id'];

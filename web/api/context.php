@@ -18,6 +18,19 @@
 		return $PDO_CONTEXT_VAR;
 	}	
 	
+	function ctx_getuserid() {
+		return $_SESSION['userid'];
+	}
+	
+	function ctx_before_request($method, $params) {
+		if ( !empty($_SESSION['userid'])) {
+			UserRepository::touch($_SESSION['userid']);
+		}
+	}
+	function ctx_after_request($method, $params, $result, $exception) {
+	
+	}
+	
 	class ValidationService {
 		function validate_email($input) {
 			ValidationService::check(!empty($input) && strpos($input, '@') > 0, 'Valid email adress required: ' . $input);
@@ -35,11 +48,31 @@
 			return md5('myStaticSalt' . $password);
 		}
 	}
+	
+	class ContactsRepository {
+		function getContacts($user_id) {
+			$pdo = ctx_getpdo();
+			$stmt = $pdo->prepare('SELECT u.id id, u.name name, u.email email, md5(u.email) img, COALESCE(last_touch > (UNIX_TIMESTAMP() - 300), false) online  FROM users u, users_contacts c WHERE u.id = c.contact_user_id AND c.user_id = ?');
+			$stmt->execute(array($user_id));
+			return $stmt->fetchAll();
+		}
+	}
 	class UserRepository {
+		function touch($user_id, $timestamp = FALSE) {
+			if ( $timestamp === FALSE) {
+				$timestamp = time();
+			}
+			$pdo = ctx_getpdo();
+			$stmt = $pdo->prepare('UPDATE users SET last_touch = ? WHERE id = ?');
+			$stmt->bindValue(1, $timestamp, PDO::PARAM_INT);
+			$stmt->bindValue(2, $user_id, PDO::PARAM_INT);
+			$stmt->execute();
+			
+		}
 		function create($name, $password_hashed, $email) {
 			$pdo = ctx_getpdo();
 			$stmt = $pdo->prepare('INSERT INTO users (name, password_hashed, email) VALUES (?,?,?)');
-			$stmt->execute(array($name, $password_hashed, strtolower($email)));
+			$stmt->execute(array($name, $password_hashed, strtolower(trim($email))));
 			
 			return $pdo->lastInsertId();
 		}
@@ -52,7 +85,7 @@
 		function get($user_id) {
 			$pdo = ctx_getpdo();
 			
-			$stmt = $pdo->prepare('SELECT id, name, password_hashed, email, md5(email) img FROM users WHERE id = ?');
+			$stmt = $pdo->prepare('SELECT id, name, password_hashed, email, md5(email) img, COALESCE(last_touch > (UNIX_TIMESTAMP() - 300), false) online FROM users WHERE id = ?');
 			$stmt->execute(array($user_id));
 			
 			$result = $stmt->fetchAll();
@@ -66,8 +99,8 @@
 		function getUserByEmail($email) {
 			$pdo = ctx_getpdo();
 			
-			$stmt = $pdo->prepare('SELECT id, name, password_hashed, email, md5(email) img FROM users WHERE email = ?');
-			$stmt->execute(array(strtolower($email)));
+			$stmt = $pdo->prepare('SELECT id, name, password_hashed, email, md5(email) img, COALESCE(last_touch > (UNIX_TIMESTAMP() - 300), false) online FROM users WHERE email = ?');
+			$stmt->execute(array(strtolower(trim($email))));
 			
 			$result = $stmt->fetchAll();
 			if ( count($result) == 1 ) {
@@ -82,7 +115,7 @@
 		function getReaders($topic_id, $limit = FALSE) {
 			$pdo = ctx_getpdo();
 			
-			$sql = 'SELECT u.id id, u.name name, u.email email, md5(trim(u.email)) img ' . 
+			$sql = 'SELECT u.id id, u.name name, u.email email, md5(u.email) img, COALESCE(last_touch > (UNIX_TIMESTAMP() - 300), false) online ' . 
 				  'FROM users u, topic_readers r ' . 
 				  'WHERE u.id = r.user_id AND r.topic_id = ?';
 			if ( $limit ) {

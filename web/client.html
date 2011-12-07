@@ -12,13 +12,27 @@
 		<script src="js/jquery.wobble.js"></script>
 		<script src="js/jquery.wobble.notification"></script>
 		
-		<script src="js/jquery.wobble.contacts.js"></script>
-		<script src="js/jquery.wobble.topics.js"></script>
+		<script src="js/wobble.contacts.js"></script>
+		<script src="js/wobble.contactschooser.js"></script>
+		<script src="js/jquery.wobble.contacts.js"></script><!-- UI -->
+		
+		<script src="js/wobble.topics.js"></script>
+		<script src="js/jquery.wobble.topics.js"></script><!-- UI -->
+		
 		<script src="js/jquery.wobble.topic.js"></script>
 		
 		<link href="wobble.css" media="all" rel="stylesheet" type="text/css" />
 		<link href="client.css" media="all" rel="stylesheet" type="text/css" />
 		<script>
+			$(document).ready(function() {
+				"use strict";
+				var contactsModel = new ContactsModel();
+				var contactsChooserPresenter = new ContactsChooserPresenter(new SimpleContactsChooserDisplay(), contactsModel);
+				var contactsPresenter = new ContactsPresenter(new JQueryContactsView(), contactsModel);
+				
+				var topicsPresenter = new TopicsPresenter(new jQueryTopicsView());
+			});
+			
 			$(function() {
 				$("#signout").click(function() {
 					API.signout(function(err, data) {
@@ -30,6 +44,7 @@
 			
 			// Show a reload dialog, when an RPC error occurs
 			BUS.on('rpc.error', function(err) {
+				console.log(err);
 				var doReload = window.confirm('Whoooops! Something went wrong! We will reload now, ok?');
 				if (doReload) window.location.reload();
 			});

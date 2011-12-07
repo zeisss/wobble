@@ -1,9 +1,7 @@
 <?php
-	require_once 'fun_user.php';
-	
 	function _topic_has_access($pdo, $topic_id) {
 		$stmt = $pdo->prepare('SELECT COUNT(*) cnt FROM topic_readers r WHERE r.user_id = ? AND r.topic_id = ?');
-		$stmt->execute(array(user_get_id(), $topic_id));
+		$stmt->execute(array(ctx_getuserid(), $topic_id));
 		$result = $stmt->fetchAll();
 		return $result[0]['cnt'] > 0;
 	}
@@ -20,7 +18,7 @@
 			)
 		);
 		*/
-		$self_user_id = user_get_id();
+		$self_user_id = ctx_getuserid();
 		$topic_id = $params['id'];
 		
 		ValidationService::validate_not_empty($topic_id);
@@ -77,7 +75,7 @@
 	}
 	
 	function post_create($params) {
-		$self_user_id = user_get_id();
+		$self_user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
 		$post_id = $params['post_id'];
 		$parent_post_id = $params['parent_post_id'];
@@ -90,7 +88,7 @@
 		
 		if ( _topic_has_access($pdo, $topic_id) ) {
 			// Create empty root post
-			$stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content, parent_post_id, created_at)  VALUES (?,?, "",?, unix_timestamp())');
+			$stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content, parent_post_id, created_at, last_touch)  VALUES (?,?, "",?, unix_timestamp(), unix_timestamp())');
 			$stmt->execute(array($topic_id, $post_id, $parent_post_id));
 			
 			// Assoc first post with current user
@@ -117,7 +115,7 @@
 	}
 	
 	function post_edit($params) {
-		$self_user_id = user_get_id();
+		$self_user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
 		$post_id = $params['post_id'];
 		$content = $params['content'];
@@ -137,7 +135,7 @@
 			if ($posts[0]['revision_no'] != $revision) {
 				throw new Exception('RevisionNo is not correct. Somebody else changed the post already. (Value: ' . $posts[0]['revision_no'] . ')');
 			}
-			$pdo->prepare('UPDATE posts SET content = ?, revision_no = revision_no + 1 WHERE post_id = ? AND topic_id = ?')->execute(array($content, $post_id, $topic_id));
+			$pdo->prepare('UPDATE posts SET content = ?, revision_no = revision_no + 1, last_touch = unix_timestamp() WHERE post_id = ? AND topic_id = ?')->execute(array($content, $post_id, $topic_id));
 			$pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id) VALUES (?,?,?)')->execute(array($topic_id, $post_id, $self_user_id));
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
@@ -158,7 +156,7 @@
 	}
 	
 	function post_delete($params) {
-		$self_user_id = user_get_id();
+		$self_user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
 		$post_id = $params['post_id'];
 		

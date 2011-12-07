@@ -47,6 +47,10 @@
 	// RPC Wrapper (JSON-RPC 2.0 - http://json-rpc.org/wiki/specification)
 	var RPC = {
 		id: 1,
+		
+		doNotification: function(name, args) {
+			RPC._call(null, name, args, null);
+		},
 		doRPC: function(name, args, callback) {
 			if ( arguments.length == 2 ) {
 				callback = args;
@@ -55,12 +59,18 @@
 			var requestId = this.id;
 			this.id++;
 			
+			RPC._call(requestId, name, args, callback);
+		},
+		_call: function(requestId, name, args, callback) {			
 			var body = {
 				jsonrpc: "2.0",
 				method: name,
-				params: args,
-				id: requestId
+				params: args
 			};
+			if (requestId) {
+				body.id = requestId;
+			}
+			
 			var ajaxSettings = {
 				type:'POST',
 				cache: false,
@@ -85,7 +95,7 @@
 			};
 			if ( callback ) {
 				ajaxSettings.error = function(jqXHR, textStatus, errorThrown) {
-					BUS.fire('rpc.error', errorThrown);
+					BUS.fire('rpc.connectionerror', {text: textStatus, error: errorThrown});
 					callback(errorThrown);
 				};
 				

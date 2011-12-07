@@ -6,7 +6,7 @@ Green (Active Item): #789E35
 .widget {
 	display: block;
 	position: absolute;
-	top: 0px;
+	top: 10px;
 	-webkit-transition-duration: 300ms;
 	
 	background-color: #C9E2FC;
@@ -47,9 +47,12 @@ Green (Active Item): #789E35
 #contacts .contact {
 	cursor:pointer;
 }
+#contacts .contact .name {
+	margin-left: 5px;
+}
 #contacts .whoami {
-	margin-left:5px;
-	margin-top:5px;
+	margin-left:10px;
+	margin-top:10px;
 	
 }
 #contacts .whoami .name {
@@ -188,7 +191,28 @@ Green (Active Item): #789E35
 .usericon div {
 	display:inline;
 }
-.usericon  .status {
+.usericon16 .status {
+	width:11px;
+	height:11px;
+	position:absolute;
+	top:7px;
+	left:9px;
+}
+.usericon20 .status {
+	width:11px;
+	height:11px;
+	position:absolute;
+	top:8px;
+	left:13px;
+}
+.usericon32 .status {
+	width:11px;
+	height:11px;
+	position:absolute;
+	top:8px;
+	left:26px;
+}
+.usericon40  .status {
 	width:11px;
 	height:11px;
 	position:absolute;

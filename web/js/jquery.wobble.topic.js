@@ -56,6 +56,14 @@
 		};
 	}
 	
+	// Callbacks
+	function TopicDisplay() {}
+	TopicDisplay.prototype.onInviteUserAction = function() {};
+	TopicDisplay.prototype.onStartPostEdit = function(post) {};
+	TopicDisplay.prototype.onEndPostEdit = function(post, content) {};
+	TopicDisplay.prototype.onReplyPost = function(post) {};
+	TopicDisplay.prototype.onDeletePost = function(post) {};
+	
 	var topicView = {	// The UI handler for the single topic
 		jTopicPosts: undefined,
 		jTopicReaders: undefined,
@@ -70,12 +78,7 @@
 			topicView._renderTopicActions(false);
 		},
 		
-		// Callbacks
-		onInviteUserAction: function() {},
-		onStartPostEdit: function(post) {},
-		onEndPostEdit: function(post, content) {},
-		onReplyPost: function(post) {},
-		onDeletePost: function(post) {},
+		
 		
 		// Methods		
 		clear: function() {
@@ -117,14 +120,15 @@
 			}	
 		},
 		_addUser: function(contact) {
-			var template = "<div class=usericon>" + 
+			var template = "<div class='usericon usericon40'>" + 
 						   "<div><img width='40' height='40' src='http://gravatar.com/avatar/{{img}}?s=40' title='{{name}}'/></div>" + 
-						   "<div class='status offline'></div>" + 
+						   "<div class='status {{status}}'></div>" + 
 						   "</div>";
 			
 			this.jTopicReaders.append($(Mustache.to_html(template, {
 				'img': contact.img,
-				'name': contact.name
+				'name': contact.name,
+				'status': contact.online == 1 ? 'online':'offline'
 			})).click(function() {
 				BUS.fire('contact.clicked', contact);
 			}));
@@ -170,7 +174,6 @@
 			
 		},
 		renderPostUsers: function(post, postElement) {
-			
 			if (postElement == null) {
 				postElement = $("#post-" + post.id + ">.post");
 			}
@@ -181,12 +184,13 @@
 			} else {
 				jusers.empty();
 			}
-			 
+			
 			$.each(post.users, function(j, postUserId) {
-				var template = "<img width='16' height='16' src='http://gravatar.com/avatar/{{img}}?s=16' title='{{name}}'/>";
+				var template = "<img width='{{size}}' height='{{size}}' src='http://gravatar.com/avatar/{{img}}?s={{size}}' title='{{name}}'/>";
 				jusers.append(Mustache.to_html(template, {
 					'img': userCache[postUserId].img,
-					'name': userCache[postUserId].name
+					'name': userCache[postUserId].name,
+					'size': post.users.length == 1 ? 20 : 16
 				}));
 			});
 			
@@ -208,7 +212,7 @@
 			};
 			
 			var jpost = $("#post-" + post.id + ">.post");
-			$(".content", jpost).attr('contenteditable', 'true').addClass('editing').blur(submitPostEditing).focus();
+			$(".content", jpost).attr('contenteditable', 'true').addClass('editing')./* makes formatting buttons unusable: blur(submitPostEditing).*/focus();
 			$(".buttons", jpost).empty().append($("<button>Submit</button>").click(submitPostEditing));
 			
 			this._renderTopicActions(true);
@@ -286,135 +290,130 @@
 				});
 			}
 		}
-		
-		
-		
 	};
+	topicView.prototype = TopicDisplay;
 	
 	
 	var TopicPresenter = function (view, model) {
 		var that = this;
+		this.view = view;
+		this.model = model;
 		
-		that.init = function () {
-			view.setEnabled(false);
-			
-			that.registerViewListeners();
-			that.registerBUSListeners();
+		
+		view.setEnabled(false);
+		
+		//// ---- View Event Callbacks ------------------------------------------------------
+		view.onInviteUserAction = function() {
+			BUS.fire('contacts.chooser.open', {
+				'multiple': true,
+				'on_add': function (contact) {
+					API.topic_add_user(model.getTopic().id, contact.id, function(err, data) {
+						model.addUser(contact);
+						view.renderTopic(model.getTopic());
+					});
+				},
+				'on_close': function() {
+					BUS.fire('topic.changed', model.getTopic().id);
+				}
+			});
 		};
 		
-		/**
-		 * View Event Handlers
-		 */
-		that.registerViewListeners = function() {			
-			view.onInviteUserAction = function() {
-				BUS.fire('contacts.chooser.open', {
-					'multiple': true,
-					'on_add': function (contact) {
-						API.topic_add_user(model.getTopic().id, contact.id, function(err, data) {
-							model.addUser(contact);
-							view.renderTopic(model.getTopic());
-						});
-					},
-					'on_close': function() {
-						BUS.fire('topic.changed', model.getTopic().id);
-					}
-				});
-			};
-			
-			view.onStartPostEdit = function(post) {
-				model.addUserToPost(post, API.user());
-				view.renderPost(post);
-			};
-			view.onStopPostEdit = function(post, content) {
-				post.locked = true; // Lock post until saved
-				post.content = content;
-				view.renderPost(post);
-				API.post_edit(model.getTopic().id, post.id, content, post.revision_no, function(err, result) {
-					if ( err === undefined ) {
-						post.revision_no = result.revision_no;
-					
-						BUS.fire('topic.post.changed', model.getTopic().id);
-					}
-					post.locked = false;
-					view.renderPost(post);
-				});
-				
-				
-			};
-			
-			view.onReplyPost = function(post) {
-				var newPost = model.createReply(post);
-				newPost.locked = true;
-				API.post_create(model.getTopic().id, newPost.id, newPost.parent, function(err, data) {
-					newPost.locked = false;
-					view.openEditor(newPost);
-				});
-				model.addPost(newPost);
-				view.renderTopic(model.getTopic());
-				
-			};
-			view.onDeletePost = function(post) {
-				post.locked = true;
-				API.post_delete(model.getTopic().id, post.id, function(err, result) {
-					post.locked = false;
-				});
-				view.removePost(post);
-				model.removePost(post);
-			};
+		view.onStartPostEdit = function(post) {
+			model.addUserToPost(post, API.user());
+			view.renderPost(post);
 		};
+		view.onStopPostEdit = function(post, content) {
+			post.locked = true; // Lock post until saved
+			post.content = content;
+			view.renderPost(post);
+			API.post_edit(model.getTopic().id, post.id, content, post.revision_no, function(err, result) {
+				if ( err === undefined ) {
+					post.revision_no = result.revision_no;
+				
+					BUS.fire('topic.post.changed', model.getTopic().id);
+				}
+				post.locked = false;
+				view.renderPost(post);
+			});
+			
+			
+		};
+		
+		view.onReplyPost = function(post) {
+			var newPost = model.createReply(post);
+			newPost.locked = true;
+			API.post_create(model.getTopic().id, newPost.id, newPost.parent, function(err, data) {
+				newPost.locked = false;
+				view.openEditor(newPost);
+			});
+			model.addPost(newPost);
+			view.renderTopic(model.getTopic());
+			
+		};
+		view.onDeletePost = function(post) {
+			post.locked = true;
+			API.post_delete(model.getTopic().id, post.id, function(err, result) {
+				post.locked = false;
+			});
+			view.removePost(post);
+			model.removePost(post);
+		};
+		
 		/**
 		 * BUS Handlers
 		 */
-		that.registerBUSListeners = function() {			
-			// Fired by TopicsPresenter
-			BUS.on('topic.selected', function(topicId) {		
-				if ( model.getTopic() != null && model.getTopic().id == topicId ) {
-					return;
+		 
+		// Fired by TopicsPresenter
+		BUS.on('topic.selected', function(topicId) {		
+			if ( model.getTopic() != null && model.getTopic().id == topicId ) {
+				return;
+			}
+			model.setTopic({id: topicId});
+			view.setLoadingState();
+			API.load_topic_details(topicId, function(err, topicDetails) {
+				if (topicDetails !== undefined && topicDetails.id == model.getTopic().id) {
+					that.setSelectedTopic(topicDetails);
 				}
-				model.setTopic({id: topicId});
-				view.setLoadingState();
-				API.load_topic_details(topicId, function(err, topicDetails) {
+			});
+		});
+		// Fired when a new topic got created by TopicsPresenter
+		BUS.on('topic.topic.created', function(topicId) {
+			model.setTopic({id: topicId});
+			view.setLoadingState();
+			
+			API.load_topic_details(topicId, function(err, topicDetails) {
+				if (topicDetails !== undefined && topicDetails.id == model.getTopic().id) {
+					that.setSelectedTopic(topicDetails);
+					view.openEditor(topicDetails.posts[0]);
+				}
+			});
+			
+		});
+		
+		BUS.on('api.notification', function(data) {
+			// Somebody else changed our topic
+			if ( model.getTopic() != null && (
+				data.type == 'topic_changed' && data.topic_id == model.getTopic().id || 
+				data.type == 'post_deleted' && data.topic_id == model.getTopic().id || 
+				 data.type == 'post_changed' && data.topic_id == model.getTopic().id)) {
+				API.load_topic_details(data.topic_id, function(err, topicDetails) {
 					if (topicDetails !== undefined && topicDetails.id == model.getTopic().id) {
 						that.setSelectedTopic(topicDetails);
 					}
 				});
-			});
-			// Fired when a new topic got created by TopicsPresenter
-			BUS.on('topic.topic.created', function(topicDetails) {
-				that.setSelectedTopic(topicDetails);
-				view.openEditor(topicDetails.posts[0]);
-			});
-			
-			BUS.on('api.notification', function(data) {
-				// Somebody else changed our topic
-				if ( model.getTopic() != null && (
-				    data.type == 'topic_changed' && data.topic_id == model.getTopic().id || 
-					data.type == 'post_deleted' && data.topic_id == model.getTopic().id || 
-				     data.type == 'post_changed' && data.topic_id == model.getTopic().id)) {
-					API.load_topic_details(data.topic_id, function(err, topicDetails) {
-						if (topicDetails !== undefined && topicDetails.id == model.getTopic().id) {
-							that.setSelectedTopic(topicDetails);
-						}
-					});
-				}
-			});
-		};
-		
-		/**
-		 * Change the underlying topic
-		 */
-		that.setSelectedTopic = function(topicDetails) {
-			if ( topicDetails === model.getTopic() ) {
-				return;
 			}
-			model.setTopic(topicDetails);
-			view.renderTopic(topicDetails);
-		};
-		
-		that.init();
-		return that;
+		});
 	};
-	
+	/**
+	 * Change the underlying topic
+	 */
+	TopicPresenter.prototype.setSelectedTopic = function(topicDetails) {
+		if ( topicDetails === this.model.getTopic() ) {
+			return;
+		}
+		this.model.setTopic(topicDetails);
+		this.view.renderTopic(topicDetails);
+	};
 	
 	$(document).ready(function() {
 		BUS.on('api.user', function(_user) {
