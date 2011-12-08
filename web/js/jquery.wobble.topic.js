@@ -164,8 +164,14 @@
 					"		<div class='content'></div>" + 
 					"		<div class='buttons'></div>" + 
 					"	</div>" + 
-					"</div>").attr('id', elementPostId).data('post', post);
-					
+					"</div>").attr('id', elementPostId);
+				
+				$(">.post", jPostWrapper).click(function() {
+					// Add the nice green border to any clicked post
+					$("#topic_wrapper .active").removeClass('active');
+					$(this).addClass('active');
+				});
+				
 				if (post.parent) {
 					// NOTE: Here is some special logic to NOT intend the first reply we got, so the listings look nicer
 					var parentPostId = '#post-' + post.parent;
@@ -185,22 +191,22 @@
 					jPostWrapper.appendTo(this.jTopicPosts);
 				}
 				
-				$(".post", jPostWrapper).click(function() {
-					// Add the nice green border to any clicked post
-					$("#topic_wrapper .active").removeClass('active');
-					$(">.post", jPostWrapper).addClass('active');
-				});
 			}
-			var ePostUsers = $(">.post>.users", jPostWrapper);
-			topicView.renderPostUsers(post, ePostUsers);
+			jPostWrapper.data('post', post); // Refresh the bound post
 			
-			var ePostContent = $(">.post>.content", jPostWrapper);
-			ePostContent.html(post.content);
+			// Render children
+			var ePostUsers = $(">.post>.users", jPostWrapper);
+			topicView._renderPostUsers(post, ePostUsers);
+			
+			if (post.id != this.editingPostId ) { // Leave the content untouched, if the user is editing it
+				var ePostContent = $(">.post>.content", jPostWrapper);
+				ePostContent.html(post.content);
+			}
 			
 			var ePostButtons = $(">.post>.buttons", jPostWrapper).empty();
 			this._addDefaultButtons(ePostButtons, post);
 		},
-		renderPostUsers: function(post, postElement) {
+		_renderPostUsers: function(post, postElement) {
 			if (postElement == null) {
 				postElement = $("#post-" + post.id + ">.post>.users");
 			}
@@ -217,7 +223,7 @@
 			
 		},
 		removePost: function(post) {
-			var jpost = $('#post-' + post.id).detach();
+			var jpost = $('#post-' + post.id + ">.post").detach();
 		},
 		
 		openEditor: function(post) {
@@ -253,21 +259,21 @@
 			}
 		},
 		
-		showError: function(sMessage) {
-			this.clear();
-			this.jTopics.append('<li>' + sMessage + '</li>');
-		},
-		
 		_addDefaultButtons: function(jbuttons, post) {
 			if ( topicView.editingPostId == post.id ) {
 				$("<button>Submit</button>").appendTo(jbuttons).click(function() {
 					topicView.closeEditor();
 				});
 			} else {
-				jbuttons.append($("<button>Edit</button>").click(function() {
+				jbuttons.append($("<button>Edit</button>").click(function(event) {
+					
 					topicView.openEditor(post);
+					
 				}));
 				jbuttons.append($("<button>Reply</button>").click(function() {
+					event.stopPropagation();
+					event.preventDefault();
+					event.stopImmediatePropagation();
 					topicView.onReplyPost(post);
 				}));
 				if ( post.id != '1' ) {
@@ -376,7 +382,7 @@
 			post.content = content;
 			view.renderPost(post);
 			API.post_edit(model.getTopic().id, post.id, content, post.revision_no, function(err, result) {
-				if ( err === undefined ) {
+				if (!err) {
 					post.revision_no = result.revision_no;
 				
 					BUS.fire('topic.post.changed', model.getTopic().id);
@@ -393,16 +399,18 @@
 			newPost.locked = true;
 			API.post_create(model.getTopic().id, newPost.id, newPost.parent, function(err, data) {
 				newPost.locked = false;
-				view.openEditor(newPost);
+				view.renderPost(newPost);
 			});
 			model.addPost(newPost);
 			view.renderTopic(model.getTopic());
+			view.openEditor(newPost);
 			
 		};
 		view.onDeletePost = function(post) {
 			post.locked = true;
 			API.post_delete(model.getTopic().id, post.id, function(err, result) {
 				post.locked = false;
+				that.refreshTopic();
 			});
 			view.removePost(post);
 			model.removePost(post);
