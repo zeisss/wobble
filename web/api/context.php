@@ -1,5 +1,19 @@
 <?php
 	require_once 'config.php';
+
+
+	function ctx_before_request($method, $params) {
+		session_start();
+		if ( !empty($_SESSION['userid'])) {
+			UserRepository::touch($_SESSION['userid']);
+		}
+	}
+	function ctx_after_request($method, $params, $result, $exception) {
+	
+	}
+
+
+
 	
 	global $PDO_CONTEXT_VAR;
 	$PDO_CONTEXT_VAR = null;
@@ -20,14 +34,6 @@
 		return isset($_SESSION['userid']) ? $_SESSION['userid'] : NULL;
 	}
 	
-	function ctx_before_request($method, $params) {
-		if ( !empty($_SESSION['userid'])) {
-			UserRepository::touch($_SESSION['userid']);
-		}
-	}
-	function ctx_after_request($method, $params, $result, $exception) {
-	
-	}
 	
 	class ValidationService {
 		function validate_email($input) {

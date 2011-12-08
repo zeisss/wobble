@@ -2,6 +2,57 @@
 	##############################################################
 	## Endpoint for JSON-RPC 2.0 Calls. 
 	##############################################################
+	$exportedMethods = array (
+		// Topics
+		array('file' => 'api_topics.php', 'method' => 'topics_list'),
+		array('file' => 'api_topics.php', 'method' => 'topics_create'),
+		
+		// Topic
+		array('file' => 'api_topic.php', 'method' => 'topic_get_details'),
+		array('file' => 'api_topic.php', 'method' => 'topic_add_user'),
+		array('file' => 'api_topic.php', 'method' => 'topic_remove_user'),
+		array('file' => 'api_topic.php', 'method' => 'post_create'),
+		array('file' => 'api_topic.php', 'method' => 'post_edit'),
+		array('file' => 'api_topic.php', 'method' => 'post_delete'),
+		
+		// User / Session
+		array('file' => 'api_user.php', 'method' => 'user_get'),
+		array('file' => 'api_user.php', 'method' => 'user_get_id'),
+		array('file' => 'api_user.php', 'method' => 'user_register'),
+		array('file' => 'api_user.php', 'method' => 'user_change_name'),
+		array('file' => 'api_user.php', 'method' => 'user_login'),
+		array('file' => 'api_user.php', 'method' => 'user_signout'),
+		
+		// Notifications
+		array('file' => 'api_notifications.php', 'method' => 'get_notifications'),
+		
+		// Contact list
+		array('file' => 'api_user.php', 'method' => 'user_get_contacts'),
+		array('file' => 'api_user.php', 'method' => 'user_add_contact'),
+		array('file' => 'api_user.php', 'method' => 'user_remove_contact'),
+		
+		// Test functions
+		array('file' => 'api_test.php', 'method' => 'testecho')
+	);
+	
+	if (SIMULATE_LAG) {
+		// Decrease the performance
+		usleep(1000 * rand(100, 3000));
+	}
+	
+	$requestBody = file_get_contents('php://input');
+	$request = json_decode($requestBody, TRUE);
+	if ($request === NULL) {
+		return die_json(jsonrpc_error(-32700, "Parse error"));
+	}
+
+	if ( $requestBody[0] == '[') { # If the first char was a [, this is a batch request
+		die_json(handle_jsonrpc_batch($request), TRUE);
+	} else {
+		die_json(handle_jsonrpc_request($request), TRUE);
+	}
+	
+
 
 	function jsonrpc_result($result, $id = FALSE) {
 		$result = array(
@@ -54,8 +105,9 @@
 			if ( $export['method'] === $request['method']) {
 				
 				try {
+					require_once 'context.php'; # introduces session setup, db connection, utility classes, ...
 					ctx_before_request($request['method'], $request['params']);
-				
+					
 					require_once($export['file']);
 					$response = call_user_func($request['method'], $request['params']);
 					
@@ -75,60 +127,6 @@
 		}
 		return jspnrpc_error(-32602, 'Unknown method: '. $request['method'], $request['id']);
 	}
-	
-	require_once 'context.php';
-	
-	$exportedMethods = array (
-		// Topics
-		array('file' => 'api_topics.php', 'method' => 'topics_list'),
-		array('file' => 'api_topics.php', 'method' => 'topics_create'),
-		
-		// Topic
-		array('file' => 'api_topic.php', 'method' => 'topic_get_details'),
-		array('file' => 'api_topic.php', 'method' => 'topic_add_user'),
-		array('file' => 'api_topic.php', 'method' => 'topic_remove_user'),
-		array('file' => 'api_topic.php', 'method' => 'post_create'),
-		array('file' => 'api_topic.php', 'method' => 'post_edit'),
-		array('file' => 'api_topic.php', 'method' => 'post_delete'),
-		
-		// User / Session
-		array('file' => 'api_user.php', 'method' => 'user_get'),
-		array('file' => 'api_user.php', 'method' => 'user_get_id'),
-		array('file' => 'api_user.php', 'method' => 'user_register'),
-		array('file' => 'api_user.php', 'method' => 'user_change_name'),
-		array('file' => 'api_user.php', 'method' => 'user_login'),
-		array('file' => 'api_user.php', 'method' => 'user_signout'),
-		
-		// Notifications
-		array('file' => 'api_notifications.php', 'method' => 'get_notifications'),
-		
-		// Contact list
-		array('file' => 'api_user.php', 'method' => 'user_get_contacts'),
-		array('file' => 'api_user.php', 'method' => 'user_add_contact'),
-		array('file' => 'api_user.php', 'method' => 'user_remove_contact'),
-		
-		// Test functions
-		array('file' => 'api_test.php', 'method' => 'testecho')
-	);
-	
-	if (SIMULATE_LAG) {
-		// Decrease the performance
-		usleep(1000 * rand(100, 3000));
-	}
-	
-	session_start();
-	$requestBody = file_get_contents('php://input');
-	$request = json_decode($requestBody, TRUE);
-	if ($request === NULL) {
-		return die_json(jsonrpc_error(-32700, "Parse error"));
-	}
-
-	if ( $requestBody[0] == '[') { # If the first char was a [, this is a batch request
-		die_json(handle_jsonrpc_batch($request), TRUE);
-	} else {
-		die_json(handle_jsonrpc_request($request), TRUE);
-	}
-	
 
 	function die_json($result_object) {
 		header('Content-Type: application/json');
