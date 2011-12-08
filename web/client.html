@@ -84,13 +84,16 @@
 			BUS.on('topic.selected', function(topicId) {
 				window.location.hash = topicId; // Note the current hash in the URL, so its visible for the user and we can work with it on page reloads
 			});
+			BUS.on('api.user', function(user) {
+				$('html>head>title').text(user.name + ' - Wobble');
+			});
 			API.init(); // Loads current user ID infos (so its cached locally)
 		</script>
 	</head>
 	<body>
 		<div id="headline">
 			<div class="navigation">
-				Moinz.de Wobble | <a href="." id=signout>Sign Out</a>
+				Moinz.de Wobble | <a href="http://github.com/zeisss/wobble" target="_new">Source</a> | <a href="." id=signout>Sign Out</a>
 			</div>
 		</div>
 		<div style="position:relative">
