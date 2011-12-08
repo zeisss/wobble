@@ -10,10 +10,10 @@
 		);*/
 		
 		$pdo = ctx_getpdo();
-		$stmt = $pdo->prepare('SELECT t.id id, substr(p.content, 1, 100) abstract ' . 
+		$stmt = $pdo->prepare('SELECT t.id id, substr(p.content, 1, 100) abstract, (select max(last_touch) from posts WHERE topic_id = t.id) max_last_touch ' . 
 		                      'FROM topics t, topic_readers r, posts p ' . 
 							  'WHERE r.user_id = ? AND r.topic_id = t.id AND t.id = p.topic_id AND p.post_id = cast(1 as char)' . 
-							  'ORDER BY p.last_touch DESC');
+							  'ORDER BY max_last_touch DESC');
 		$stmt->execute(array(ctx_getuserid()));
 		$result = $stmt->fetchAll();
 		
