@@ -173,6 +173,9 @@ Green (Active Item): #789E35
 	top:80px;
 	bottom:0px;
 }
+#topic_posts .loading {
+	margin:10px;
+}
 #topic_posts .post {
 	border-radius:5px;
 	border:3px white solid;
@@ -200,7 +203,13 @@ Green (Active Item): #789E35
 	
 }
 #topic_posts .post_replies {
-	margin-left:10px;
+	margin-left:15px;
+	border-left:1px gray solid;
+	border-bottom:1px gray solid;
+	border-radius:5px;
+}
+#topic_posts .post .post {
+	padding-left:3px;
 }
 /* --------------------------------------- */
 .usericon {

@@ -76,6 +76,8 @@
 		jTopicReaders: undefined,
 		jTopicActions: undefined,
 		
+		editingPostId: null,
+		
 		init: function() {
 			topicView.jTopicPosts = $("#topic_posts");
 			topicView.jTopicReaders = $("#topic_readers");
@@ -104,11 +106,12 @@
 		setLoadingState: function() {
 			this.clear();
 			this.setEnabled(false);
-			this.jTopicPosts.append("Loading ...");
+			this.jTopicPosts.append("<div class=loading>Loading ...</div>");
 		},
 		
 		renderTopic: function(topicDetails) {
-			this.clear();
+			$("#topic_posts .loading").detach();
+			
 			this._renderTopicActions($(".editing").length > 0);
 			
 			if ( topicDetails ) {
@@ -116,7 +119,7 @@
 				
 				$.each(topicDetails.users, function(i, user) {
 					userCache[Number(user.id)] = user; // Cache user object (user later to show the user post images)
-					topicView._addUser(user);
+					topicView._renderReader(user);
 				});
 				
 				$.each(topicDetails.posts, function(i, post) {
@@ -126,19 +129,24 @@
 				this.setEnabled(false);
 			}	
 		},
-		_addUser: function(user) {
+		_renderReader: function(user) {
+			var containerId = "topic-reader-" + user.id;
+			var container = $('#' + containerId);
+			if ( container.length == 0 ) {
+				container = $("<span></span>").attr('id', containerId).appendTo(this.jTopicReaders);
+			}
 			var template = "<div class='usericon usericon40'>" + 
 						   "<div><img width='40' height='40' src='http://gravatar.com/avatar/{{img}}?s=40' title='{{name}}'/></div>" + 
 						   "<div class='status {{status}}'></div>" + 
 						   "</div>";
 			
-			this.jTopicReaders.append($(Mustache.to_html(template, {
+			container.html(Mustache.to_html(template, {
 				'img': user.img,
 				'name': user.name,
 				'status': user.online == 1 ? 'online':'offline'
-			})).click(function() {
+			})).off('click').click(function() {
 				topicView.onUserClicked(user);
-			}));
+			});
 		},
 		
 		
@@ -146,55 +154,61 @@
 		renderPost: function(post) {
 			var elementPostId = 'post-' + post.id;
 			
-			var jpost = $("#" + elementPostId);
-			if (jpost.length == 0 ) {
+			var jPostWrapper = $("#" + elementPostId);
+			if (jPostWrapper.length == 0 ) {
 				// Post does not exist yet in the UI
-				jpost = $("<div class=\"post\"></div>");
-				
-				var jPostWrapper = $("<div class='post_wrapper'></div>").attr('id', elementPostId).append(jpost).append('<div class=post_replies></div>').data('post', post);
+				jPostWrapper = $(
+					"<div class='post_wrapper'>" + 
+					"	<div class='post'>" + 
+					"		<div class='users'></div>" + 
+					"		<div class='content'></div>" + 
+					"		<div class='buttons'></div>" + 
+					"	</div>" + 
+					"</div>").attr('id', elementPostId).data('post', post);
+					
 				if (post.parent) {
-					$("#post-" + post.parent + " > .post_replies").append(jPostWrapper);
+					// NOTE: Here is some special logic to NOT intend the first reply we got, so the listings look nicer
+					var parentPostId = '#post-' + post.parent;
+					var ePostFirstReply = $(parentPostId + ">.post_first_reply");
+					if ( ePostFirstReply.length == 0 ) {
+						// No first post, so lets create
+						ePostFirstReply = $("<div class='post_first_reply'></div>").appendTo($(parentPostId));
+						jPostWrapper.appendTo(ePostFirstReply);
+					} else {
+						var ePostReplies = $("#post-" + post.parent + ">.post_replies");
+						if (ePostReplies.length == 0) {
+							ePostReplies = $("<div class='post_replies'></div>").insertBefore($(parentPostId + ">.post_first_reply"));
+						}
+						ePostReplies.append(jPostWrapper);
+					}
 				} else {
-					this.jTopicPosts.append(jPostWrapper);
+					jPostWrapper.appendTo(this.jTopicPosts);
 				}
 				
-				jpost.click(function() {
+				$(".post", jPostWrapper).click(function() {
+					// Add the nice green border to any clicked post
 					$("#topic_wrapper .active").removeClass('active');
-					jpost.addClass('active');
+					$(">.post", jPostWrapper).addClass('active');
 				});
 			}
-			topicView.renderPostUsers(post, jpost);
+			var ePostUsers = $(">.post>.users", jPostWrapper);
+			topicView.renderPostUsers(post, ePostUsers);
 			
-			var jcontent = $(">.post>.content", jpost);
-			if ( jcontent.length === 0) {
-				jcontent = $("<div class='content'></div>").appendTo(jpost);
-			}
-			jcontent.html(post.content);
+			var ePostContent = $(">.post>.content", jPostWrapper);
+			ePostContent.html(post.content);
 			
-			var jbuttons = $(">.post>.buttons", jpost);
-			if (jbuttons.length === 0) {
-				jbuttons = $("<div class='buttons'></div>").appendTo(jpost);
-			}
-			jbuttons.empty();
-			this._addDefaultButtons(jbuttons, post);
-			
-			
+			var ePostButtons = $(">.post>.buttons", jPostWrapper).empty();
+			this._addDefaultButtons(ePostButtons, post);
 		},
 		renderPostUsers: function(post, postElement) {
 			if (postElement == null) {
-				postElement = $("#post-" + post.id + ">.post");
+				postElement = $("#post-" + post.id + ">.post>.users");
 			}
-			
-			var jusers = $(".users", postElement);
-			if ( jusers.length == 0) {
-				jusers = $("<div class=users></div>").appendTo(postElement);
-			} else {
-				jusers.empty();
-			}
+			postElement.empty();
 			
 			$.each(post.users, function(j, postUserId) {
 				var template = "<img width='{{size}}' height='{{size}}' src='http://gravatar.com/avatar/{{img}}?s={{size}}' title='{{name}}'/>";
-				jusers.append(Mustache.to_html(template, {
+				postElement.append(Mustache.to_html(template, {
 					'img': userCache[postUserId].img,
 					'name': userCache[postUserId].name,
 					'size': post.users.length == 1 ? 20 : 16
@@ -209,29 +223,23 @@
 		openEditor: function(post) {
 			this.closeEditor(); // Close any open editor there is
 			
+			topicView.editingPostId = post.id;
 			topicView.onStartPostEdit(post); // Fire notifier event
 			
-			var submitPostEditing = function() {
-				topicView.closeEditor();
-				
-				
-			};
-			
 			var jpost = $("#post-" + post.id + ">.post");
-			$(".content", jpost).attr('contenteditable', 'true').addClass('editing')./* makes formatting buttons unusable: blur(submitPostEditing).*/focus();
-			$(".buttons", jpost).empty().append($("<button>Submit</button>").click(submitPostEditing));
+			jpost.click(); // Mark active
+			$(">.content", jpost).attr('contenteditable', 'true').addClass('editing')./* makes formatting buttons unusable: blur(submitPostEditing).*/focus();
+			this._addDefaultButtons($(">.buttons", jpost).empty(), post);
 			
 			this._renderTopicActions(true);
 		},
 		
 		closeEditor: function() {
 			var jediting = $(".editing");
+			topicView.editingPostId = null;
 			
 			if (jediting.length > 0) {
-				
-				
 				topicView._renderTopicActions(false);
-				
 				jediting.attr('contenteditable', 'false').removeClass('editing');
 				
 				var post = jediting.parentsUntil('.post_wrapper').parent().data('post');
@@ -251,17 +259,24 @@
 		},
 		
 		_addDefaultButtons: function(jbuttons, post) {
-			jbuttons.append($("<button>Edit</button>").click(function() {
-				topicView.openEditor(post);
-			}));
-			jbuttons.append($("<button>Reply</button>").click(function() {
-				topicView.onReplyPost(post);
-			}));
-			if ( post.id != '1' ) {
-				jbuttons.append($("<button>Delete</button>").click(function() {
-					topicView.onDeletePost(post);
+			if ( topicView.editingPostId == post.id ) {
+				$("<button>Submit</button>").appendTo(jbuttons).click(function() {
+					topicView.closeEditor();
+				});
+			} else {
+				jbuttons.append($("<button>Edit</button>").click(function() {
+					topicView.openEditor(post);
 				}));
+				jbuttons.append($("<button>Reply</button>").click(function() {
+					topicView.onReplyPost(post);
+				}));
+				if ( post.id != '1' ) {
+					$("<button>Delete</button>").appendTo(jbuttons).click(function() {
+						topicView.onDeletePost(post);
+					});
+				}
 			}
+			
 			if ( post.locked ) {
 				$("button", jbuttons).attr('disabled', 'disabled');
 			}
@@ -450,6 +465,7 @@
 		if ( topicDetails === this.model.getTopic() ) {
 			return;
 		}
+		
 		this.model.setTopic(topicDetails);
 		this.view.renderTopic(topicDetails);
 	};
