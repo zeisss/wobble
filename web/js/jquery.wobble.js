@@ -46,7 +46,7 @@
 	
 	// RPC Wrapper (JSON-RPC 2.0 - http://json-rpc.org/wiki/specification)
 	var RPC = {
-		id: 1,
+		idSequence: 1,
 		
 		doNotification: function(name, args) {
 			RPC._call(null, name, args, null);
@@ -56,8 +56,8 @@
 				callback = args;
 				args = null;
 			}
-			var requestId = this.id;
-			this.id++;
+			var requestId = this.idSequence;
+			this.idSequence++;
 			
 			RPC._call(requestId, name, args, callback);
 		},
