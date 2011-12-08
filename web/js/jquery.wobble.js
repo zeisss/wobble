@@ -48,9 +48,15 @@
 	var RPC = {
 		idSequence: 1,
 		
+		/**
+		 * Notifications are calls, where no response is expected/wished.
+		 */
 		doNotification: function(name, args) {
 			RPC._call(null, name, args, null);
 		},
+		/**
+		 * Normal RPC call.
+		 */
 		doRPC: function(name, args, callback) {
 			if ( arguments.length == 2 ) {
 				callback = args;
@@ -106,17 +112,16 @@
 	
 	// API Wrapper functions
 	window.API = {
-		_userId: undefined,
 		_user: undefined,
 		
 		// Directly returning functions
-		/** Builds an ID by combining the user_id with a sequence ID */
+		/** Builds an ID by combining the user_id with the current time. */
 		generate_id: function() {
 			var id = API.user_id() + "-" + (new Date().getTime());
 			return id;
 		},
 		user_id: function() {
-			return this._userId;
+			return this._user ? this._user.id : null;
 		},
 		user:function() {
 			return this._user;
@@ -126,7 +131,6 @@
 		init: function() {
 			RPC.doRPC('user_get', false, function(err, user) {
 				if ( !err && user) {
-					API._userId = user.id;
 					API._user = user;
 					BUS.fire('api.user', user);
 				}
