@@ -17,7 +17,7 @@
 	}	
 	
 	function ctx_getuserid() {
-		return $_SESSION['userid'];
+		return isset($_SESSION['userid']) ? $_SESSION['userid'] : NULL;
 	}
 	
 	function ctx_before_request($method, $params) {
