@@ -71,8 +71,10 @@
 			var body = {
 				jsonrpc: "2.0",
 				method: name,
-				params: args
 			};
+			if (args) {
+				body.params = args;
+			}
 			if (requestId) {
 				body.id = requestId;
 			}
