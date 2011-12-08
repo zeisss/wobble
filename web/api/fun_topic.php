@@ -22,6 +22,9 @@
 		$topic_id = $params['id'];
 		
 		ValidationService::validate_not_empty($topic_id);
+		if (!_topic_has_access(ctx_getpdo(), $topic_id)) {
+			throw new Exception('Illegal Access!');
+		}
 		
 		$pdo = ctx_getpdo();
 		
@@ -59,6 +62,30 @@
 		$pdo = ctx_getpdo();
 		if ( _topic_has_access($pdo, $topic_id) ) {
 			$pdo->prepare('REPLACE topic_readers (topic_id, user_id) VALUES (?,?)')->execute(array($topic_id, $user_id));
+			
+			foreach(TopicRepository::getReaders($topic_id) as $user) {
+				NotificationRepository::push($user['id'], array(
+					'type' => 'topic_changed',
+					'topic_id' => $topic_id
+				));
+			}
+			
+			return TRUE;
+		}
+		else {
+			throw new Exception('Illegal Access!');
+		}
+	}
+	function topic_remove_user($params) {
+		$topic_id = $params['topic_id'];
+		$user_id = $params['contact_id'];
+		
+		ValidationService::validate_not_empty($topic_id);
+		ValidationService::validate_not_empty($user_id);
+		
+		$pdo = ctx_getpdo();
+		if ( _topic_has_access($pdo, $topic_id) ) {
+			$pdo->prepare('DELETE FROM topic_readers WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				NotificationRepository::push($user['id'], array(

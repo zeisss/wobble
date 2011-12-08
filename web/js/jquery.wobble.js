@@ -174,10 +174,16 @@
 		get_contacts: function (callback) {
 			RPC.doRPC('user_get_contacts', callback);
 		},
+		contact_remove: function(contact_id, callback) {
+			RPC.doRPC('user_remove_contact', {contact_id: contact_id}, callback);
+		},
 		
 		/* TOPIC Functions ------------------ */
 		topic_add_user: function(topicId, contactId, callback) {
 			RPC.doRPC('topic_add_user', {topic_id: topicId, contact_id: contactId}, callback);
+		},
+		topic_remove_user: function(topicId, contactId, callback) {
+			RPC.doRPC('topic_remove_user', {topic_id: topicId, contact_id: contactId}, callback);
 		},
 		
 		post_create: function(topicId, postId, parentPostId, callback) {

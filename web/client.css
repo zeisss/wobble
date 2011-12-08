@@ -13,6 +13,24 @@ Green (Active Item): #789E35
 	border:1px black solid; 
 	border-radius: 5px;
 }
+.dialog {
+	position:absolute;
+	background-color:white;
+	color:black;
+	border:1px #5590d2 solid;
+}
+/* ------------------------------------------- */
+.contactdetail {
+	padding:10px;
+}
+.contactdetail .usericon {
+}
+.contactdetail .name {
+
+}
+.contactdetail .email {
+
+}
 
 /* ------------------------------------------- */
 #contacts {

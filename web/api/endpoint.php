@@ -37,6 +37,7 @@
 		// Topic
 		array('file' => 'fun_topic.php', 'method' => 'topic_get_details'),
 		array('file' => 'fun_topic.php', 'method' => 'topic_add_user'),
+		array('file' => 'fun_topic.php', 'method' => 'topic_remove_user'),
 		array('file' => 'fun_topic.php', 'method' => 'post_create'),
 		array('file' => 'fun_topic.php', 'method' => 'post_edit'),
 		array('file' => 'fun_topic.php', 'method' => 'post_delete'),

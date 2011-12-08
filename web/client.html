@@ -14,6 +14,7 @@
 		
 		<script src="js/wobble.contacts.js"></script>
 		<script src="js/wobble.contactschooser.js"></script>
+		<script src="js/wobble.contactsdetail.js"></script>
 		<script src="js/jquery.wobble.contacts.js"></script><!-- UI -->
 		
 		<script src="js/wobble.topics.js"></script>
@@ -31,6 +32,9 @@
 				var contactsPresenter = new ContactsPresenter(new JQueryContactsView(), contactsModel);
 				
 				var topicsPresenter = new TopicsPresenter(new jQueryTopicsView());
+				
+				var contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(100, 100), 'contact.clicked');
+				var topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(600, 100), 'topic.user.clicked');
 			});
 			
 			$(function() {
@@ -44,7 +48,6 @@
 			
 			// Show a reload dialog, when an RPC error occurs
 			BUS.on('rpc.error', function(err) {
-				console.log(err);
 				var doReload = window.confirm('Whoooops! Something went wrong! We will reload now, ok?');
 				if (doReload) window.location.reload();
 			});

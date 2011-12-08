@@ -93,6 +93,6 @@ TopicsPresenter.prototype.createNewTopic = function() {
 		]
 	};
 	this.view.addTopic(topicDetails, true);
-	this.setSelectedTopic(topicDetails, false);
+	this.setSelectedTopic(topicDetails, true);
 };
 

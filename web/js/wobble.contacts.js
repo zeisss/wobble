@@ -82,7 +82,16 @@ function ContactsPresenter(display, model) {
 		});
 	};
 	display.onContactClick = function(contact) {
-		BUS.fire('contact.clicked', contact);
+		BUS.fire('contact.clicked', {
+			'contact': contact,			
+			'actions': [
+				{title: 'Remove Contact', callback: function() {
+					API.contact_remove(contact.id, function(err, data) {
+						that.refreshContacts();
+					});
+				}}
+			]
+		});
 	};
 	display.onNameChange = function(newName) {
 		API.user_change_name(newName, function(err, result) {
