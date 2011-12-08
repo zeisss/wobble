@@ -1,6 +1,4 @@
 <?php
-	error_reporting(E_ALL);
-	
 	function die_result($id, $result = NULL) {
 		the_result(array(
 			'jsonrpc' => '2.0',
@@ -62,8 +60,10 @@
 		array('file' => 'api_test.php', 'method' => 'testecho')
 	);
 	
-	# DEV MODE: Sleep randomly 500ms - 1.500ms
-	usleep(1000 * 500); // rand(100, 3000));
+	if (SIMULATE_LAG) {
+		// Decrease the performance
+		usleep(1000 * rand(100, 3000));
+	}
 	
 	session_start();
 	$requestBody = file_get_contents('php://input');
