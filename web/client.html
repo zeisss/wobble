@@ -40,7 +40,7 @@
 			$(function() {
 				$("#signout").click(function() {
 					API.signout(function(err, data) {
-						if (!err) window.location.href='./index';
+						if (!err) window.location.reload();
 					});
 					return false;				
 				});
@@ -54,6 +54,7 @@
 			
 			// Recalculate the position of the widgets, when window is resized
 			BUS.on('window.resize', function(data) {
+				// TODO: Move this into some kind of Layout object?
 				function minWidth(e) {
 					var sW = e.css('min-width');
 					return Number(sW.substr(0, sW.length - 2));
@@ -79,13 +80,17 @@
 				topics.height(data.to.h - headline.height() - 20);
 				topic.height(data.to.h - headline.height() - 20);
 			});
+			
+			BUS.on('topic.selected', function(topicId) {
+				window.location.hash = topicId; // Note the current hash in the URL, so its visible for the user and we can work with it on page reloads
+			});
 			API.init(); // Loads current user ID infos (so its cached locally)
 		</script>
 	</head>
 	<body>
 		<div id="headline">
 			<div class="navigation">
-				Moinz.de Wobble | <a href="/index" id=signout>Sign Out</a>
+				Moinz.de Wobble | <a href="." id=signout>Sign Out</a>
 			</div>
 		</div>
 		<div style="position:relative">

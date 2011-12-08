@@ -50,23 +50,28 @@
 							if ( err ) {
 								alert(err.message);
 							} else {
-								window.location.href = './index';
+								window.location.reload();
 							}
-					});
+						}
+					);
 				});
 				$("#login").click(function() {
 					var buttons = $("button");
 					
 					buttons.attr('disabled', 'disabled');
 					
-					API.login($("#email").val(), $("#password").val(), function(err, data) {
-						buttons.removeAttr('disabled');
-						if ( err ) {
-							alert(err.message);
-						} else {
-							window.location.href = './index';
+					API.login(
+						$("#email").val(), 
+						$("#password").val(), 
+						function(err, data) {
+							buttons.removeAttr('disabled');
+							if ( err ) {
+								alert(err.message);
+							} else {
+								window.location.reload();
+							}
 						}
-					});
+					);
 				});
 			});
 		</script>
