@@ -1,15 +1,13 @@
 <?php
+	require_once 'config.php';
+	
 	global $PDO_CONTEXT_VAR;
 	$PDO_CONTEXT_VAR = null;
 	function ctx_getpdo() {
 		global $PDO_CONTEXT_VAR;
 		
 		if ( $PDO_CONTEXT_VAR == null ) {
-			$db_name = "wooble";
-			$db_host = "localhost";
-			$db_user = "root";
-			$db_pwd = "lamproot";
-			$pdo = new PDO("mysql:dbname={$db_name};host={$db_host}", $db_user, $db_pwd);
+			$pdo = new PDO(PDO_URL, PDO_USER, PDO_PASSWORD);
 			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); # Raise exceptions, so they get logged by Airbrake
 			$pdo->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
 			$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);

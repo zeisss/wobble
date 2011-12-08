@@ -31,35 +31,35 @@
 	
 	$exportedMethods = array (
 		// Topics
-		array('file' => 'fun_topics.php', 'method' => 'topics_list'),
-		array('file' => 'fun_topics.php', 'method' => 'topics_create'),
+		array('file' => 'api_topics.php', 'method' => 'topics_list'),
+		array('file' => 'api_topics.php', 'method' => 'topics_create'),
 		
 		// Topic
-		array('file' => 'fun_topic.php', 'method' => 'topic_get_details'),
-		array('file' => 'fun_topic.php', 'method' => 'topic_add_user'),
-		array('file' => 'fun_topic.php', 'method' => 'topic_remove_user'),
-		array('file' => 'fun_topic.php', 'method' => 'post_create'),
-		array('file' => 'fun_topic.php', 'method' => 'post_edit'),
-		array('file' => 'fun_topic.php', 'method' => 'post_delete'),
+		array('file' => 'api_topic.php', 'method' => 'topic_get_details'),
+		array('file' => 'api_topic.php', 'method' => 'topic_add_user'),
+		array('file' => 'api_topic.php', 'method' => 'topic_remove_user'),
+		array('file' => 'api_topic.php', 'method' => 'post_create'),
+		array('file' => 'api_topic.php', 'method' => 'post_edit'),
+		array('file' => 'api_topic.php', 'method' => 'post_delete'),
 		
 		// User / Session
-		array('file' => 'fun_user.php', 'method' => 'user_get'),
-		array('file' => 'fun_user.php', 'method' => 'user_get_id'),
-		array('file' => 'fun_user.php', 'method' => 'user_register'),
-		array('file' => 'fun_user.php', 'method' => 'user_change_name'),
-		array('file' => 'fun_user.php', 'method' => 'user_login'),
-		array('file' => 'fun_user.php', 'method' => 'user_signout'),
+		array('file' => 'api_user.php', 'method' => 'user_get'),
+		array('file' => 'api_user.php', 'method' => 'user_get_id'),
+		array('file' => 'api_user.php', 'method' => 'user_register'),
+		array('file' => 'api_user.php', 'method' => 'user_change_name'),
+		array('file' => 'api_user.php', 'method' => 'user_login'),
+		array('file' => 'api_user.php', 'method' => 'user_signout'),
 		
 		// Notifications
-		array('file' => 'fun_notifications.php', 'method' => 'get_notifications'),
+		array('file' => 'api_notifications.php', 'method' => 'get_notifications'),
 		
 		// Contact list
-		array('file' => 'fun_user.php', 'method' => 'user_get_contacts'),
-		array('file' => 'fun_user.php', 'method' => 'user_add_contact'),
-		array('file' => 'fun_user.php', 'method' => 'user_remove_contact'),
+		array('file' => 'api_user.php', 'method' => 'user_get_contacts'),
+		array('file' => 'api_user.php', 'method' => 'user_add_contact'),
+		array('file' => 'api_user.php', 'method' => 'user_remove_contact'),
 		
 		// Test functions
-		array('file' => 'fun_test.php', 'method' => 'testecho')
+		array('file' => 'api_test.php', 'method' => 'testecho')
 	);
 	
 	# DEV MODE: Sleep randomly 500ms - 1.500ms
