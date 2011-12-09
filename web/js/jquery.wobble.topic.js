@@ -3,6 +3,8 @@
 // UI Functions
 var userCache = {}; // id => {id, name, email, img}
 
+var ROOT_ID = '1'; // the id of the root post
+
 function TopicModel() {
 	var that = this;
 	var topic = null;
@@ -241,26 +243,44 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 	}
 	postElement.empty();
 	
-	$.each(post.users, function(j, postUserId) {
-		var template = "<img width='{{size}}' height='{{size}}' src='http://gravatar.com/avatar/{{img}}?s={{size}}' title='{{name}}'/>";
-		postElement.append(Mustache.to_html(template, {
-			'img': userCache[postUserId].img,
-			'name': userCache[postUserId].name,
-			'size': post.users.length == 1 ? 20 : 16
-		}));
-	});	
+	var minHeight = 16;
+	if ( post.id != ROOT_ID) { // No user icons for the root
+		var size = post.users.length == 1 ? 25 : 21;
+		$.each(post.users, function(j, postUserId) {
+			var template = "<img width='{{size}}' height='{{size}}' src='http://gravatar.com/avatar/{{img}}?s={{size}}' title='{{name}}'/>";
+			postElement.append(Mustache.to_html(template, {
+				'img': userCache[postUserId].img,
+				'name': userCache[postUserId].name,
+				'size': size
+			}));
+		});
+		minHeight = size;
+	} 
 
-	var authorLine = "";
-	if ( post.users.length == 1 ) {
-		authorLine = userCache[post.users[0]].name;
+	// Part 2: Render the author names
+	function name(index) {
+		if ( userCache[post.users[index]].id == API.user_id()) {
+			return "Me";
+		} else {
+			return userCache[post.users[index]].name;
+		}
+	};
+	var apiUserId = API.user_id();
+	var authorLine = null;
+	if ( post.users.length == 1 && post.users[0] != apiUserId /* no authorline for ourself */) {
+		authorLine = name(0);
 	} else if ( post.users.length == 2) {
-		authorLine = userCache[post.users[0]].name + " and " + userCache[post.users[1]].name;
+		authorLine = name(0) + " and " + name(1);
 	} else if ( post.users.length == 3) {
-		authorLine = userCache[post.users[0]].name + ", " + userCache[post.users[1]].name + " and " + userCache[post.users[2]].name;
+		authorLine = name(0) + ", " + name(1) + " and " + name(2);
 	} else if ( post.users.length >= 4) {
-		authorLine = userCache[post.users[0]].name + ", " + userCache[post.users[1]].name + " and " + (post.users.length-2) + " more";
+		authorLine = name(0) + ", " + name(1) + " and " + (post.users.length-2) + " more";
+	} else {
+		// NO authorlines (also no icons) => No min height
+		minHeight = null;
 	}
 	postElement.append($("<span class='names'></span>").text(authorLine));
+	if (minHeight) postElement.css('min-height', minHeight);
 
 };
 jQueryTopicView.prototype.removePost = function(post) {	
@@ -317,7 +337,7 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 			event.stopImmediatePropagation();
 			that.onReplyPost(post);
 		}));
-		if ( post.id != '1' ) {
+		if ( post.id != ROOT_ID ) { // You cannot delete the root
 			$("<button>Delete</button>").appendTo(jbuttons).click(function() {
 				that.onDeletePost(post);
 			});

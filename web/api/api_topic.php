@@ -37,6 +37,7 @@
 		$stmt = $pdo->prepare('SELECT e.user_id id FROM post_editors e WHERE topic_id = ? AND post_id = ?');
 		foreach($posts AS $i => $post) {
 			$posts[$i]['timestamp'] = intval($posts[$i]['timestamp']);
+			$posts[$i]['revision_no'] = intval($posts[$i]['revision_no']);
 			$posts[$i]['users'] = array();
 			
 			$stmt->execute(array($topic_id, $post['id']));

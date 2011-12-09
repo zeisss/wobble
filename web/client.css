@@ -203,13 +203,11 @@ Green (Active Item): #789E35
 	font-size:small;
 }
 #topic_posts .post .users {
-	min-height:25px;
-	padding-left:3px;
 	padding-top:3px;
 	display:block;
 }
 #topic_posts .post .users img {
-	padding-right:2px;
+	padding-left:3px;
 	float:left;
 }
 #topic_posts .post>.users>.names {
@@ -218,7 +216,7 @@ Green (Active Item): #789E35
 	float:left;
 	font-size:small;
 	display:block;
-
+	clear:both;
 }
 #topic_posts .post .buttons {
 	
