@@ -200,16 +200,25 @@ Green (Active Item): #789E35
 
 	color:gray;
 	float:right;
-	font-family: arial, sans-serif;
 	font-size:small;
 }
 #topic_posts .post .users {
-	min-height:15px;
+	min-height:25px;
 	padding-left:3px;
 	padding-top:3px;
+	display:block;
 }
 #topic_posts .post .users img {
 	padding-right:2px;
+	float:left;
+}
+#topic_posts .post>.users>.names {
+	color:gray;
+	font-weight:bold;
+	float:left;
+	font-size:small;
+	display:block;
+
 }
 #topic_posts .post .buttons {
 	

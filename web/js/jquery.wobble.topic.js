@@ -85,6 +85,7 @@ jQueryTopicView.prototype.constructor = jQueryTopicView;
 
 // Methods --------------------------------------------------------
 jQueryTopicView.prototype.clear = function() {
+	this.editingPostId = null;
 	this.jTopicPosts.empty();
 	this.jTopicReaders.empty();
 };
@@ -171,13 +172,15 @@ jQueryTopicView.prototype.renderPost = function(post) {
 		
 		if (post.parent) {
 			// NOTE: Here is some special logic to NOT intend the first reply we got, so the listings look nicer
+			// This is achieved by putting the first reply in a separate div below the intended replies
 			var parentPostId = '#post-' + post.parent;
 			var ePostFirstReply = $(parentPostId + ">.post_first_reply");
 			if ( ePostFirstReply.length == 0 ) {
-				// No first post, so lets create
+				// No first post-element found, so lets create
 				ePostFirstReply = $("<div class='post_first_reply'></div>").appendTo($(parentPostId));
 				jPostWrapper.appendTo(ePostFirstReply);
 			} else {
+				// We found a first-post-element. This means is is also already used. => Create the .post_replies and use that
 				var ePostReplies = $("#post-" + post.parent + ">.post_replies");
 				if (ePostReplies.length == 0) {
 					ePostReplies = $("<div class='post_replies'></div>").insertBefore($(parentPostId + ">.post_first_reply"));
@@ -207,6 +210,7 @@ jQueryTopicView.prototype.renderPost = function(post) {
 	this._addDefaultButtons(ePostButtons, post);
 };
 jQueryTopicView.prototype._renderTime = function(timestamp) {
+	// NOTE: This format the date in the german way (localized): dd.mm.yyyy hh24:mi
 	var createdAt = new Date(timestamp * 1000), now = new Date();
 	var hours = createdAt.getHours();
 	if (hours < 10) {
@@ -245,8 +249,21 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 			'size': post.users.length == 1 ? 20 : 16
 		}));
 	});	
+
+	var authorLine = "";
+	if ( post.users.length == 1 ) {
+		authorLine = userCache[post.users[0]].name;
+	} else if ( post.users.length == 2) {
+		authorLine = userCache[post.users[0]].name + " and " + userCache[post.users[1]].name;
+	} else if ( post.users.length == 3) {
+		authorLine = userCache[post.users[0]].name + ", " + userCache[post.users[1]].name + " and " + userCache[post.users[2]].name;
+	} else if ( post.users.length >= 4) {
+		authorLine = userCache[post.users[0]].name + ", " + userCache[post.users[1]].name + " and " + (post.users.length-2) + " more";
+	}
+	postElement.append($("<span class='names'></span>").text(authorLine));
+
 };
-jQueryTopicView.prototype.removePost = function(post) {
+jQueryTopicView.prototype.removePost = function(post) {	
 	var jpost = $('#post-' + post.id + ">.post").detach();
 };
 
