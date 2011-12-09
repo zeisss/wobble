@@ -35,6 +35,8 @@
 				
 				var contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(100, 100), 'contact.clicked');
 				var topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(600, 100), 'topic.user.clicked');
+
+				var topicPresenter = new TopicPresenter(new jQueryTopicView(), new TopicModel());
 			});
 			
 			$(function() {

@@ -500,7 +500,3 @@ TopicPresenter.prototype.setSelectedTopic = function(topicDetails) {
 	this.model.setTopic(topicDetails);
 	this.view.renderTopic(topicDetails);
 };
-
-$(document).ready(function() {
-	var topicPresenter = new TopicPresenter(new jQueryTopicView(), new TopicModel());
-});
