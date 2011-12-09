@@ -119,15 +119,40 @@ Green (Active Item): #789E35
 	cursor:pointer;
 }
 #topics li.topic_header .abstract {
-	
+	position:absolute;
+	left:116px;
+	right:50px;
+}
+#topics li.topic_header .messages {
+	display:inline;
+
+	position:absolute;
+	right:4px;
+	top:4px;
+}
+#topics li.topic_header .messages>.unread {
+	background-color: #789E35;
+	color: white;
+	border-radius:10px;
+	display:inline;
+	padding-left:2px;
+	padding-right:2px;
+}
+#topics li.topic_header .time  {
+	position:absolute;
+	right:4px;
+	bottom:4px;
+	color:gray;
+	font-size: small;
 }
 #topics li.topic_header .users {
 	position:absolute;
 	top:4px;
-	right:4px;
+	left:4px;
 }
 #topics li.topic_header .users img {
 	margin-left:2px;
+	border:1px white solid;
 }
 
 #topics li.active {

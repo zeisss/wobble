@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+                    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+  		<script src="js/ext/jquery.min.js"></script>
+  		<link rel="stylesheet" href="css/ext/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="js/ext/qunit.js"></script>
+
+		<script src="js/jquery.wobble.js"></script>
+
+  		<script>
+		  $(document).ready(function(){
+			module("BUS");  
+			
+			test("BUS available", function() {
+			  ok( window.BUS !== undefined, "BUS is available" );
+			  ok( window.BUS.on !== undefined, "BUS.on is available" );
+			  ok( window.BUS.fire !== undefined, "BUS.on is available" );
+			});
+
+			test("BUS fire simple", function() {
+				expect(1);
+				stop();
+				BUS.on('test', function(data) {
+					equal('Hello World!', data, 'Hello World message received!');
+					start();
+				});
+				BUS.fire('test', 'Hello World!');
+			});
+
+			module("RPC");
+			test("RPC object available", function() {
+			  ok( window.RPC !== undefined, "RPC is available" );
+			});
+
+			module ("API");
+			test("API available", function() {
+			  ok( window.API !== undefined, "API is available" );
+			});
+			test("simple login+whoami+logout", function() {
+			  expect(7);
+			  stop();
+			  API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
+			  	equal(err, null, "No error retrieved");
+			  	equal(result, true, "TRUE received");
+			  	
+			  	API.user_get(function(err, result) {
+			  		equal(err, null, "No error retrieved");
+			  		ok(result != null, "TRUE received");
+			  		equals("stephan.zeissler@moinz.de", result.email, "Email is stephan.zeissler@moinz.de");
+
+			  		API.signout(function(err, result) {
+			  			equal(err, null, "No error retrieved");
+			  			equal(result, true, "TRUE received");
+					  	start();		
+			  		});
+			  		
+			  	});
+			  	
+			  });
+			});
+
+		  });
+  		</script>
+  
+	</head>
+<body>
+  <h1 id="qunit-header">QUnit example</h1>
+ <h2 id="qunit-banner"></h2>
+ <div id="qunit-testrunner-toolbar"></div>
+ <h2 id="qunit-userAgent"></h2>
+ <ol id="qunit-tests"></ol>
+ <div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>
