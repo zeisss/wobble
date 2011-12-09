@@ -286,6 +286,8 @@ Green (Active Item): #789E35
 .icon {
 	cursor:pointer;
 	border:0px;
+	padding-left:10px;
+	padding-right:10px;
 
 }
 .urlicon {

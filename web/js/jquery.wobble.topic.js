@@ -32,7 +32,7 @@ function TopicModel() {
 			id: API.generate_id(),
 			parent: post.id,
 			locked: false,
-			content: '',
+			content: '\n<br>\n<br>', 
 			revision_no: 1,
 			users: [API.user_id()],
 			deleted: 0
@@ -373,7 +373,7 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 		$('<button class="icon underlineicon"></button>').appendTo(this.jTopicActions).click(function() {
 			document.execCommand('underline', false, null); // $(".editing")[0].execCommand(
 		});
-		$('<button class="icon strikeicon"></button>').appendTo(this.jTopicActions).click(function() {
+		$('<button class="icon strikeicon" style="margin-right:10px; padding-right:12px; border-right:1px black solid"></button>').appendTo(this.jTopicActions).click(function() {
 			document.execCommand('strikethrough', false, null); // $(".editing")[0].execCommand(
 		});
 		$('<button class="icon listicon"></button>').appendTo(this.jTopicActions).click(function() {
