@@ -196,20 +196,24 @@ jQueryTopicView.prototype.renderPost = function(post) {
 	}
 	jPostWrapper.data('post', post); // Refresh the bound post
 	
-	// Render children
-	var ePostUsers = $(">.post>.users", jPostWrapper);
-	this._renderPostUsers(post, ePostUsers);
-	
-	if (post.id != this.editingPostId ) { // Leave the content untouched, if the user is editing it
-		var ePostContent = $(">.post>.content", jPostWrapper);
-		ePostContent.html(post.content);
-	}
+	if ( post.deleted == 0) {
+		// Render children
+		var ePostUsers = $(">.post>.users", jPostWrapper);
+		this._renderPostUsers(post, ePostUsers);
+		
+		if (post.id != this.editingPostId ) { // Leave the content untouched, if the user is editing it
+			var ePostContent = $(">.post>.content", jPostWrapper);
+			ePostContent.html(post.content);
+		}
 
-	var ePostTime = $(">.post>.time", jPostWrapper).empty();
-	ePostTime.text(this._renderTime(post.timestamp));
-	
-	var ePostButtons = $(">.post>.buttons", jPostWrapper).empty();
-	this._addDefaultButtons(ePostButtons, post);
+		var ePostTime = $(">.post>.time", jPostWrapper).empty();
+		ePostTime.text(this._renderTime(post.timestamp));
+		
+		var ePostButtons = $(">.post>.buttons", jPostWrapper).empty();
+		this._addDefaultButtons(ePostButtons, post);
+	} else {
+		$(">.post",jPostWrapper).detach();
+	}
 };
 jQueryTopicView.prototype._renderTime = function(timestamp) {
 	// NOTE: This format the date in the german way (localized): dd.mm.yyyy hh24:mi

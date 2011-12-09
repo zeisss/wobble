@@ -30,16 +30,19 @@
 		
 		$users = TopicRepository::getReaders($topic_id);
 				
-		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent, p.last_touch timestamp FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
+		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent, p.last_touch timestamp, p.deleted deleted FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
 		$stmt->execute(array($topic_id));
 		$posts = $stmt->fetchAll();
 		
 		$stmt = $pdo->prepare('SELECT e.user_id id FROM post_editors e WHERE topic_id = ? AND post_id = ?');
 		foreach($posts AS $i => $post) {
+			# Integer formatting for JSON-RPC result
 			$posts[$i]['timestamp'] = intval($posts[$i]['timestamp']);
 			$posts[$i]['revision_no'] = intval($posts[$i]['revision_no']);
+			$posts[$i]['deleted'] = intval($posts[$i]['deleted']);
+
+			# Subobject
 			$posts[$i]['users'] = array();
-			
 			$stmt->execute(array($topic_id, $post['id']));
 			foreach($stmt->fetchAll() AS $post_user) {
 				$posts[$i]['users'][] = intval($post_user['id']);
@@ -192,6 +195,7 @@
 		
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_not_empty($post_id);
+		ValidationService::check($post_id != '1', 'Root posts cannot be deleted!');
 		
 		$pdo = ctx_getpdo();
 		
@@ -199,7 +203,7 @@
 			$stmt = $pdo->prepare('DELETE FROM post_editors WHERE topic_id = ? AND post_id = ?');
 			$stmt->execute(array($topic_id, $post_id));
 			
-			$pdo->prepare('DELETE FROM posts WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
+			$pdo->prepare('UPDATE posts SET deleted = 1, content = NULL WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				NotificationRepository::push($user['id'], array(
