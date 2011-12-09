@@ -19,7 +19,7 @@ Green (Active Item): #789E35
 	color:black;
 	border:1px #5590d2 solid;
 }
-/* ------------------------------------------- */
+/* ------------------------------------------------------------------------- */
 .contactdetail {
 	padding:10px;
 }
@@ -32,7 +32,7 @@ Green (Active Item): #789E35
 
 }
 
-/* ------------------------------------------- */
+/* ------------------------------------------------------------------------- */
 #contacts {
 	min-width:180px;
 	min-height:400px;
@@ -77,7 +77,7 @@ Green (Active Item): #789E35
 	font-weight:bold;
 	vertical-align:top;
 }
-/* -------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
 #topics_wrapper { 
 	min-height:400px;
 	min-width:300px;
@@ -137,7 +137,7 @@ Green (Active Item): #789E35
 	border:1px black solid;
 }
 
-/* ----------------------------------------- */
+/* ------------------------------------------------------------------------- */
 #topic_wrapper { 
 	min-height:400px;
 	min-width:300px;
@@ -220,10 +220,11 @@ Green (Active Item): #789E35
 	border-bottom:1px gray solid;
 	border-radius:5px;
 }
+/* Posts inside of posts have a left padding */
 #topic_posts .post .post {
 	padding-left:3px;
 }
-/* --------------------------------------- */
+/* ------------------------------------------------------------------------- */
 .usericon {
 	display:inline;
 	position:relative;
