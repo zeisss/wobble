@@ -164,6 +164,11 @@
 			$stmt = $pdo->prepare('SELECT revision_no FROM posts WHERE topic_id = ? AND post_id = ?');
 			$stmt->execute(array($topic_id, $post_id));
 			$posts = $stmt->fetchAll();
+
+			if ( sizeof($posts) === 0 ) {
+				# Post has already been deleted. Toooo laggy? No idea...
+				return NULL;
+			}
 			
 			if ($posts[0]['revision_no'] != $revision) {
 				throw new Exception('RevisionNo is not correct. Somebody else changed the post already. (Value: ' . $posts[0]['revision_no'] . ')');
@@ -205,6 +210,8 @@
 			
 			$pdo->prepare('UPDATE posts SET deleted = 1, content = NULL WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
 			
+			TopicRepository::deletePostsIfNoChilds($topic_id, $post_id); # Traverses upwards and deletes all posts, if no child exist
+
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				NotificationRepository::push($user['id'], array(
 					'type' => 'post_deleted',

@@ -16,6 +16,7 @@ function user_signout($params) {
 function user_login($params) {
 	$email = $params['email'];
 	$password = $params['password'];
+	$self_user_id = ctx_getuserid();
 	
 	ValidationService::validate_email($email);
 	ValidationService::validate_not_empty($password);

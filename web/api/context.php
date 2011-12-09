@@ -119,6 +119,38 @@
 	}
 	
 	class TopicRepository {
+		# Traverses upwards and deletes all posts, if no child exist
+		function deletePostsIfNoChilds($topic_id, $post_id) {
+			if($post_id === '1') {
+				return;
+			}
+
+			$pdo = ctx_getpdo();
+			
+			$sql = 'SELECT parent_post_id FROM posts WHERE topic_id = ? AND post_id = ? LIMIT 1';
+			$stmt = $pdo->prepare($sql);
+			$stmt->execute(array($topic_id, $post_id));
+			$post = $stmt->fetchAll();
+			var_dump($post);
+
+			$sql = 'SELECT COUNT(*) child_count FROM posts WHERE topic_id = ? AND parent_post_id = ?'	;
+			$stmt = $pdo->prepare($sql);
+			$stmt->execute(array($topic_id, $post_id));
+			$result = $stmt->fetchAll();
+			var_dump($result);
+
+			if ( intval($result[0]['child_count']) === 0 ) {
+				# Delete the post
+				$sql = 'DELETE FROM posts WHERE topic_id = ? AND post_id = ?';
+				$stmt = $pdo->prepare($sql);
+				$stmt->execute(array($topic_id, $post_id));
+
+				# Check if we can delete its parent
+				TopicRepository::deletePostsIfNoChilds($topic_id, $post[0]['parent_post_id']);
+
+			}
+		}
+
 		function getReaders($topic_id, $limit = FALSE) {
 			$pdo = ctx_getpdo();
 			

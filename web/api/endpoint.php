@@ -1,4 +1,5 @@
 <?php
+	require_once 'config.php';
 	##############################################################
 	## Endpoint for JSON-RPC 2.0 Calls. 
 	##############################################################
@@ -42,6 +43,7 @@
 	
 	$requestBody = file_get_contents('php://input');
 	$request = json_decode($requestBody, TRUE);
+
 	if ($request === NULL) {
 		return die_json(jsonrpc_error(-32700, "Parse error"));
 	}
@@ -81,7 +83,7 @@
 	function handle_jsonrpc_batch($requests) {
 		$result = array();
 
-		foreach ($request as $subrequest) {
+		foreach ($requests as $subrequest) {
 			$subresult = handle_jsonrpc_request($subrequest);
 			if ( $subresult !== NULL ) {
 				$result[] = $subresult;
@@ -98,6 +100,9 @@
 		}
 		if ( !isset ( $request['method']))  {
 			return jsonrpc_error(-32602, 'No method given.', $request['id']);
+		}
+		if (!isset($request['params'])) {
+			$request['params'] = array();
 		}
 		
 		# Iterate over all given methods

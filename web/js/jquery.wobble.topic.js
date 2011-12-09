@@ -34,7 +34,8 @@ function TopicModel() {
 			locked: false,
 			content: '',
 			revision_no: 1,
-			users: [API.user_id()]
+			users: [API.user_id()],
+			deleted: 0
 		};
 	};
 	
@@ -196,7 +197,7 @@ jQueryTopicView.prototype.renderPost = function(post) {
 	}
 	jPostWrapper.data('post', post); // Refresh the bound post
 	
-	if ( post.deleted == 0) {
+	if ( post.deleted != 1) {
 		// Render children
 		var ePostUsers = $(">.post>.users", jPostWrapper);
 		this._renderPostUsers(post, ePostUsers);
@@ -216,6 +217,9 @@ jQueryTopicView.prototype.renderPost = function(post) {
 	}
 };
 jQueryTopicView.prototype._renderTime = function(timestamp) {
+	if (!timestamp) {
+		return "";
+	}
 	// NOTE: This format the date in the german way (localized): dd.mm.yyyy hh24:mi
 	var createdAt = new Date(timestamp * 1000), now = new Date();
 	var hours = createdAt.getHours();
