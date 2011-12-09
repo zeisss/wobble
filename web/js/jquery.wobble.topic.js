@@ -267,7 +267,7 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 	};
 	var apiUserId = API.user_id();
 	var authorLine = null;
-	if ( post.users.length == 1 && post.users[0] != apiUserId /* no authorline for ourself */) {
+	if ( post.users.length == 1 && (post.id != ROOT_ID || post.users[0] != apiUserId) /* no authorline for ourself */) {
 		authorLine = name(0);
 	} else if ( post.users.length == 2) {
 		authorLine = name(0) + " and " + name(1);

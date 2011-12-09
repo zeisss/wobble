@@ -205,18 +205,21 @@ Green (Active Item): #789E35
 #topic_posts .post .users {
 	padding-top:3px;
 	display:block;
+	position:relative;
 }
 #topic_posts .post .users img {
 	padding-left:3px;
-	float:left;
+
 }
 #topic_posts .post>.users>.names {
 	color:gray;
 	font-weight:bold;
-	float:left;
 	font-size:small;
-	display:block;
 	clear:both;
+	padding-left:3px;
+
+	position:absolute;
+	top:3px;
 }
 #topic_posts .post .buttons {
 	
