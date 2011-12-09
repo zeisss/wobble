@@ -45,7 +45,7 @@
 	
 	
 	// RPC Wrapper (JSON-RPC 2.0 - http://json-rpc.org/wiki/specification)
-	var RPC = {
+	window.RPC = {
 		idSequence: 1,
 		
 		/**
@@ -131,7 +131,7 @@
 		
 		/** Loads initial data */
 		init: function() {
-			RPC.doRPC('user_get', false, function(err, user) {
+			this.user_get(function(err, user) {
 				if ( !err && user) {
 					API._user = user;
 					BUS.fire('api.user', user);
@@ -157,6 +157,9 @@
 		
 		user_change_name: function(newName, callback) {
 			RPC.doRPC('user_change_name', {name: newName}, callback);
+		},
+		user_get: function(callback) {
+			RPC.doRPC('user_get', callback);
 		},
 		
 		/* TOPICS Functions ----------------- */
