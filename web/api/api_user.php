@@ -12,6 +12,7 @@ function user_signout($params) {
 		));
 	}
 	$_SESSION['userid'] = null;
+	return TRUE;
 }
 function user_login($params) {
 	$email = $params['email'];
@@ -32,7 +33,7 @@ function user_login($params) {
 				'user_id' => $self_user_id
 			));
 		}
-		
+		return TRUE;
 	} else {
 		throw new Exception('Illegal email or password!');
 	}
@@ -52,6 +53,7 @@ function user_register($params) {
 	}
 	
 	$_SESSION['userid'] = UserRepository::create($email, $password_hashed, $email);
+	return TRUE;
 }
 
 function user_change_name($params) {
@@ -60,6 +62,7 @@ function user_change_name($params) {
 	ValidationService::validate_not_empty($name);
 	
 	UserRepository::updateName($self_user_id, $name);
+	return TRUE;
 }	
 
 function user_get() {
