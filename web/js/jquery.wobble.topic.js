@@ -156,7 +156,8 @@ jQueryTopicView.prototype.renderPost = function(post) {
 		jPostWrapper = $(
 			"<div class='post_wrapper'>" + 
 			"	<div class='post'>" + 
-			"		<div class='users'></div>" + 
+			"		<div class='users'></div>" +
+			"       <div class='time'></div>" + 
 			"		<div class='content'></div>" + 
 			"		<div class='buttons'></div>" + 
 			"	</div>" + 
@@ -198,9 +199,37 @@ jQueryTopicView.prototype.renderPost = function(post) {
 		var ePostContent = $(">.post>.content", jPostWrapper);
 		ePostContent.html(post.content);
 	}
+
+	var ePostTime = $(">.post>.time", jPostWrapper).empty();
+	ePostTime.text(this._renderTime(post.timestamp));
 	
 	var ePostButtons = $(">.post>.buttons", jPostWrapper).empty();
 	this._addDefaultButtons(ePostButtons, post);
+};
+jQueryTopicView.prototype._renderTime = function(timestamp) {
+	var createdAt = new Date(timestamp * 1000), now = new Date();
+	var hours = createdAt.getHours();
+	if (hours < 10) {
+		hours = "0" + hours;
+	}
+	var minutes = createdAt.getMinutes();
+	if ( minutes < 10) {
+		minutes = "0" + minutes;
+	}
+	var time = hours + ":" + minutes;
+
+	var month = createdAt.getMonth() + 1;
+	if ( month < 0 ){
+		month = "0" + month;
+	}
+	
+	if ( createdAt.getYear() == now.getYear() &&
+		 createdAt.getMonth() == now.getMonth() &&
+		 createdAt.getDate() == now.getDate()) { // This post is from today, only show the time
+		return time;
+	} else {
+		return createdAt.getDate() + "." + month + "."+ (1900 + createdAt.getYear()) + " " + time;
+	}
 };
 jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 	if (postElement == null) {

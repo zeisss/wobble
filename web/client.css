@@ -183,13 +183,25 @@ Green (Active Item): #789E35
 	margin-bottom:1px;
 	min-height:80px;
 	padding:5px;
+	position:relative;
 }
 #topic_posts .post_wrapper .active {
 	border:3px #789E35 solid;
 }
 #topic_posts .post_wrapper {
 	border-top: 1px black dashed;
-	
+}
+#topic_posts .post>.time {
+	position:absolute;
+	right:0px;
+	top:0px;
+
+	padding:5px;
+
+	color:gray;
+	float:right;
+	font-family: arial, sans-serif;
+	font-size:small;
 }
 #topic_posts .post .users {
 	min-height:15px;

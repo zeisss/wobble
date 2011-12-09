@@ -30,12 +30,13 @@
 		
 		$users = TopicRepository::getReaders($topic_id);
 				
-		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
+		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent, p.last_touch timestamp FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
 		$stmt->execute(array($topic_id));
-		$posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$posts = $stmt->fetchAll();
 		
 		$stmt = $pdo->prepare('SELECT e.user_id id FROM post_editors e WHERE topic_id = ? AND post_id = ?');
 		foreach($posts AS $i => $post) {
+			$posts[$i]['timestamp'] = intval($posts[$i]['timestamp']);
 			$posts[$i]['users'] = array();
 			
 			$stmt->execute(array($topic_id, $post['id']));
