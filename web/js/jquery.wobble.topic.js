@@ -297,13 +297,25 @@ jQueryTopicView.prototype.removePost = function(post) {
 
 jQueryTopicView.prototype.openEditor = function(post) {
 	this.closeEditor(); // Close any open editor there is
+
+	var that = this;
 	
 	this.editingPostId = post.id;
 	this.onStartPostEdit(post); // Fire notifier event
 	
 	var jpost = $("#post-" + post.id + ">.post");
 	jpost.click(); // Mark active
-	$(">.content", jpost).attr('contenteditable', 'true').addClass('editing')./* makes formatting buttons unusable: blur(submitPostEditing).*/focus();
+	
+	var eContent = $(">.content", jpost).attr('contenteditable', 'true');
+	eContent.addClass('editing')./* makes formatting buttons unusable: blur(submitPostEditing).*/focus();
+	eContent.keydown(function(event) {
+		if ( event.shiftKey && event.which == 13) {
+			// Focus the button, otherwise there is a rendering bug in chrome when removing the 
+			// contenteditable from the div while it has focus (the editing border does not get removed, until you click somewhere)
+			$(">.buttons>button", jpost).focus(); 
+			that.closeEditor();
+		}
+	});
 	this._addDefaultButtons($(">.buttons", jpost).empty(), post);
 	
 	this._renderTopicActions(true);
@@ -332,14 +344,14 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 	var that = this;
 
 	if ( this.editingPostId == post.id ) {
-		$("<button>Submit</button>").appendTo(jbuttons).click(function() {
+		$("<button><b>Done</b> <span style='font-size:small; color:gray'>[Shift+Enter]</span></button>").appendTo(jbuttons).click(function() {
 			that.closeEditor();
 		});
 	} else {
 		jbuttons.append($("<button>Edit</button>").click(function(event) {
 			that.openEditor(post);			
 		}));
-		jbuttons.append($("<button>Reply</button>").click(function() {
+		jbuttons.append($("<button>Reply</button>").click(function(event) {
 			event.stopPropagation();
 			event.preventDefault();
 			event.stopImmediatePropagation();
