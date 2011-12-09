@@ -364,25 +364,28 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 	if ( editing ) {
 		// See http://www.quirksmode.org/dom/execCommand/
 		// for an example of commands
-		$('<button><b>B</b></button>').appendTo(this.jTopicActions).click(function() {
+		$('<button class="icon boldicon"></button>').appendTo(this.jTopicActions).click(function() {
 			document.execCommand('bold', false, null); // $(".editing")[0].execCommand(
 		});
-		$('<button><i>I</i></button>').appendTo(this.jTopicActions).click(function() {
+		$('<button class="icon italicicon"></button>').appendTo(this.jTopicActions).click(function() {
 			document.execCommand('italic', false, null); // $(".editing")[0].execCommand(
 		});
-		$('<button><u>U</u></button>').appendTo(this.jTopicActions).click(function() {
+		$('<button class="icon underlineicon"></button>').appendTo(this.jTopicActions).click(function() {
 			document.execCommand('underline', false, null); // $(".editing")[0].execCommand(
 		});
-		$('<button>UL</button>').appendTo(this.jTopicActions).click(function() {
+		$('<button class="icon strikeicon"></button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('strikethrough', false, null); // $(".editing")[0].execCommand(
+		});
+		$('<button class="icon listicon"></button>').appendTo(this.jTopicActions).click(function() {
 			document.execCommand('insertunorderedlist', false, null); // $(".editing")[0].execCommand(
 		});
-		$('<button>img</button>').appendTo(this.jTopicActions).click(function() {
+		$('<button class="icon imgicon">img</button>').appendTo(this.jTopicActions).click(function() {
 			var url = window.prompt("URL?");
 			if ( url != null ) {
 				document.execCommand('insertimage', false, url); // $(".editing")[0].execCommand(
 			}
 		});
-		$('<button>url</button>').appendTo(this.jTopicActions).click(function() {
+		$('<button class="icon urlicon"></button>').appendTo(this.jTopicActions).click(function() {
 			var url = window.prompt("URL?");
 			if ( url != null ) {
 				document.execCommand('createLink', false, url); // $(".editing")[0].execCommand(
