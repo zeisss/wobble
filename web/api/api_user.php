@@ -24,7 +24,7 @@ function user_login($params) {
 	
 	$password_hashed = SecurityService::hashPassword($password);
 	$user = UserRepository::getUserByEmail($email);
-	if ( $user != NULL /* && $password_hashed === $user['password_hashed']*/) {
+	if ( $user != NULL && $password_hashed === $user['password_hashed']) {
 		$_SESSION['userid'] = $user['id'];
 		
 		foreach(user_get_contacts() AS $contact) {

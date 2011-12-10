@@ -72,6 +72,11 @@
 						}
 					);
 				});
+				$("#password").keypress(function(event) {
+					if ( event.which == 13 ) {
+						$("#login").focus().click();
+					}
+				});
 			});
 		</script>
 	</head>
