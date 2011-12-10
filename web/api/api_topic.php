@@ -145,6 +145,10 @@
 				));
 			}
 			
+
+			TopicRepository::setPostReadStatus(
+				$self_user_id, $topic_id, $post_id, 1
+			);
 			
 			return TRUE;
 		}
@@ -160,6 +164,7 @@
 		$content = $params['content'];
 		$revision = $params['revision_no'];
 		
+		ValidationService::validate_not_empty($self_user_id);
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_not_empty($post_id);
 		ValidationService::validate_not_empty($revision);
@@ -181,6 +186,11 @@
 			}
 			$pdo->prepare('UPDATE posts SET content = ?, revision_no = revision_no + 1, last_touch = unix_timestamp() WHERE post_id = ? AND topic_id = ?')->execute(array($content, $post_id, $topic_id));
 			$pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id) VALUES (?,?,?)')->execute(array($topic_id, $post_id, $self_user_id));
+
+
+			TopicRepository::setPostReadStatus(
+				$self_user_id, $topic_id, $post_id, 1 # Mark post as read for requesting user
+			);
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				if ( $user['id'] == $self_user_id)  # Skip for requesting user
@@ -223,6 +233,8 @@
 			$stmt->execute(array($topic_id, $post_id));
 			
 			$pdo->prepare('UPDATE posts SET deleted = 1, content = NULL WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
+
+			$pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
 			
 			TopicRepository::deletePostsIfNoChilds($topic_id, $post_id); # Traverses upwards and deletes all posts, if no child exist
 

@@ -35,7 +35,8 @@ function TopicModel() {
 			content: '\n<br>\n<br>', 
 			revision_no: 1,
 			users: [API.user_id()],
-			deleted: 0
+			deleted: 0,
+			unread: 0
 		};
 	};
 	
@@ -169,13 +170,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
 			"	</div>" + 
 			"</div>").attr('id', elementPostId);
 		
-		$(">.post", jPostWrapper).click(function() {
-			// Add the nice green border to any clicked post
-			$("#topic_wrapper .active").removeClass('active');
-			$(this).addClass('active');
-
-			that.onPostClicked(post);
-		});
+		
 		
 		if (post.parent) {
 			// NOTE: Here is some special logic to NOT intend the first reply we got, so the listings look nicer
@@ -200,6 +195,14 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
 		
 	}
 	jPostWrapper.data('post', post); // Refresh the bound post
+
+	$(">.post", jPostWrapper).off('click').click(function() {
+			// Add the nice green border to any clicked post
+			$("#topic_wrapper .active").removeClass('active');
+			$(this).addClass('active');
+
+			that.onPostClicked(post);
+		});
 	
 	if ( post.deleted != 1) {
 		// Render children
