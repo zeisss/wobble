@@ -30,8 +30,9 @@
 		
 		$users = TopicRepository::getReaders($topic_id);
 				
-		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent, p.last_touch timestamp, p.deleted deleted FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
-		$stmt->execute(array($topic_id));
+		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent, p.last_touch timestamp, p.deleted deleted, coalesce((select 0 from post_users_read where topic_id = p.topic_id AND post_id = p.post_id AND user_id = ?), 1) unread 
+								FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
+		$stmt->execute(array($self_user_id, $topic_id));
 		$posts = $stmt->fetchAll();
 		
 		$stmt = $pdo->prepare('SELECT e.user_id id FROM post_editors e WHERE topic_id = ? AND post_id = ?');
@@ -40,6 +41,7 @@
 			$posts[$i]['timestamp'] = intval($posts[$i]['timestamp']);
 			$posts[$i]['revision_no'] = intval($posts[$i]['revision_no']);
 			$posts[$i]['deleted'] = intval($posts[$i]['deleted']);
+			$posts[$i]['unread'] = intval($posts[$i]['unread']);
 
 			# Subobject
 			$posts[$i]['users'] = array();
@@ -74,7 +76,9 @@
 					'topic_id' => $topic_id
 				));
 			}
-			
+
+			# NOTE: No need to mark all posts as unread, as we store only the 'read' status, no unread messages.
+
 			return TRUE;
 		}
 		else {
@@ -99,6 +103,8 @@
 			}
 			# Delete afterwards. The other way around, the deleted user wouldn't get the notification
 			$pdo->prepare('DELETE FROM topic_readers WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
+
+			$pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
 			
 			return TRUE;
 		}
@@ -177,11 +183,18 @@
 			$pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id) VALUES (?,?,?)')->execute(array($topic_id, $post_id, $self_user_id));
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
+				if ( $user['id'] == $self_user_id)  # Skip for requesting user
+					continue;
+
 				NotificationRepository::push($user['id'], array(
 					'type' => 'post_changed',
 					'topic_id' => $topic_id,
 					'post_id' => $post_id
 				));
+
+				TopicRepository::setPostReadStatus(
+					$user['id'], $topic_id, $post_id, 0
+				);
 			}
 			
 			return array (
@@ -198,6 +211,7 @@
 		$topic_id = $params['topic_id'];
 		$post_id = $params['post_id'];
 		
+		ValidationService::validate_not_empty($self_user_id);
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_not_empty($post_id);
 		ValidationService::check($post_id != '1', 'Root posts cannot be deleted!');
@@ -225,4 +239,17 @@
 		}
 	}
 	
-	
+	function post_read($params) {
+		$user_id = ctx_getuserid();
+		$topic_id = $params['topic_id'];
+		$post_id = $params['post_id'];
+		$read = $params['read'];
+
+		ValidationService::validate_not_empty($user_id);
+		ValidationService::validate_not_empty($topic_id);
+		ValidationService::validate_not_empty($post_id);
+		ValidationService::validate_not_empty($read);
+
+		TopicRepository::setPostReadStatus($user_id, $topic_id, $post_id, $read);
+		return TRUE;
+	}

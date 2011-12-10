@@ -3,7 +3,7 @@
 	/*
 	This file provides the EventBus window.BUS and the Wobble API window.API.
 	
-	There is also a local RPC object for json-rpc 2.0 calls. It is used by the API object.
+	There is also a RPC object for json-rpc 2.0 calls. It is used by the API object.
 	*/
 	
 	function log(s) {
@@ -85,6 +85,9 @@
 				data: JSON.stringify(body),
 				dataType: "json",
 				processData: false,
+				headers: {
+					'Content-Type': 'application/json; charset=utf-8'
+				},
 				success: function(data, textStatus, jqXHR) {					
 					if ( data.error ) {
 						BUS.fire('rpc.error', {
@@ -195,6 +198,9 @@
 			RPC.doRPC('topic_remove_user', {topic_id: topicId, contact_id: contactId}, callback);
 		},
 		
+		post_read: function(topicId, postId, readStatus, callback) {
+			RPC.doRPC('post_read', {topic_id: topicId, post_id: postId, read: readStatus}, callback);	
+		},
 		post_create: function(topicId, postId, parentPostId, callback) {
 			RPC.doRPC('post_create', {topic_id: topicId, post_id: postId, parent_post_id: parentPostId}, callback);
 		},

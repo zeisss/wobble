@@ -10,18 +10,26 @@
 		);*/
 		
 		$pdo = ctx_getpdo();
-		$stmt = $pdo->prepare('SELECT t.id id, substr(p.content, 1, 100) abstract, (select max(last_touch) from posts WHERE topic_id = t.id) max_last_touch, (select count(*) from posts where topic_id = t.id) post_count_total, 1 post_count_unread ' . 
-		                      'FROM topics t, topic_readers r, posts p ' . 
-							  'WHERE r.user_id = ? AND r.topic_id = t.id AND t.id = p.topic_id AND p.post_id = cast(1 as char)' . 
-							  'ORDER BY max_last_touch DESC');
+		$stmt = $pdo->prepare('SELECT 
+			  t.id id, 
+			  substr(p.content, 1, 100) abstract, 
+			  (select max(last_touch) from posts WHERE topic_id = t.id) max_last_touch, 
+			  (select count(*) from posts where topic_id = t.id) post_count_total, 
+			  (select count(*) from post_users_read where topic_id = p.topic_id AND user_id = r.user_id) post_count_read 
+		 FROM topics t, topic_readers r, posts p 
+		WHERE r.user_id = ? AND r.topic_id = t.id AND t.id = p.topic_id AND p.post_id = cast(1 as char)
+		ORDER BY max_last_touch DESC');
 		$stmt->execute(array(ctx_getuserid()));
 		$result = $stmt->fetchAll();
 		
 		foreach($result AS $i => $topic) {
 			$result[$i]['users'] = $users = TopicRepository::getReaders($topic['id'], 3);
 			$result[$i]['post_count_total'] = intval($result[$i]['post_count_total']);
-			$result[$i]['post_count_unread'] = intval($result[$i]['post_count_unread']);
 			$result[$i]['max_last_touch'] = intval($result[$i]['max_last_touch']);
+
+			# We count read entries in the database, but we need to return the number of unread entries
+			$result[$i]['post_count_unread'] = $result[$i]['post_count_total'] - intval($result[$i]['post_count_read']);
+			unset($result[$i]['post_count_read']);			
 		}
 		
 		return $result;

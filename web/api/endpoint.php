@@ -15,6 +15,7 @@
 		array('file' => 'api_topic.php', 'method' => 'post_create'),
 		array('file' => 'api_topic.php', 'method' => 'post_edit'),
 		array('file' => 'api_topic.php', 'method' => 'post_delete'),
+		array('file' => 'api_topic.php', 'method' => 'post_read'),
 		
 		// User / Session
 		array('file' => 'api_user.php', 'method' => 'user_get'),
@@ -49,9 +50,9 @@
 	}
 
 	if ( $requestBody[0] == '[') { # If the first char was a [, this is a batch request
-		die_json(handle_jsonrpc_batch($request), TRUE);
+		die_json(handle_jsonrpc_batch($request));
 	} else {
-		die_json(handle_jsonrpc_request($request), TRUE);
+		die_json(handle_jsonrpc_request($request));
 	}
 	
 
@@ -67,13 +68,12 @@
 		return $result;
 	}
 	function jsonrpc_error($code, $message, $id = FALSE) {
-		$error = array (
-			'code' => $code,
-			'message' => $message
-		);
 		$result =  array(
 			'jsonrpc' => '2.0',
-			'error' => $error
+			'error' => array (
+				'code' => $code,
+				'message' => $message
+			)
 		);
 		if ($id) { 
 			$result['id'] = $id; 
@@ -130,7 +130,7 @@
 				}
 			}
 		}
-		return jspnrpc_error(-32602, 'Unknown method: '. $request['method'], $request['id']);
+		return jsonrpc_error(-32602, 'Unknown method: '. $request['method'], $request['id']);
 	}
 
 	function die_json($result_object) {

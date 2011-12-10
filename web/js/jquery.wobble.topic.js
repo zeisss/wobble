@@ -72,6 +72,7 @@ TopicDisplay.prototype.onEndPostEdit = function(post, content) {};
 TopicDisplay.prototype.onUserClicked = function(user) {};
 TopicDisplay.prototype.onDeletePost = function(post) {};
 TopicDisplay.prototype.onReplyPost = function(post) {};
+TopicDisplay.prototype.onPostClicked = function(post) {};
 
 function jQueryTopicView() {	// The UI handler for the single topic
 	this.editingPostId = null;
@@ -122,7 +123,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 		});
 		
 		$.each(topicDetails.posts, function(i, post) {
-			that.renderPost(post);
+			that.renderPost(topicDetails, post);
 		});
 	} else {
 		this.setEnabled(false);
@@ -151,8 +152,9 @@ jQueryTopicView.prototype._renderReader= function(user) {
 
 
 
-jQueryTopicView.prototype.renderPost = function(post) {
+jQueryTopicView.prototype.renderPost = function(topic, post) {
 	var elementPostId = 'post-' + post.id;
+	var that = this;
 	
 	var jPostWrapper = $("#" + elementPostId);
 	if (jPostWrapper.length == 0 ) {
@@ -171,6 +173,8 @@ jQueryTopicView.prototype.renderPost = function(post) {
 			// Add the nice green border to any clicked post
 			$("#topic_wrapper .active").removeClass('active');
 			$(this).addClass('active');
+
+			that.onPostClicked(post);
 		});
 		
 		if (post.parent) {
@@ -199,12 +203,18 @@ jQueryTopicView.prototype.renderPost = function(post) {
 	
 	if ( post.deleted != 1) {
 		// Render children
+		
 		var ePostUsers = $(">.post>.users", jPostWrapper);
 		this._renderPostUsers(post, ePostUsers);
 		
+		var ePostContent = $(">.post>.content", jPostWrapper);
 		if (post.id != this.editingPostId ) { // Leave the content untouched, if the user is editing it
-			var ePostContent = $(">.post>.content", jPostWrapper);
 			ePostContent.html(post.content);
+		}
+		if ( post.unread == 1) {
+			$("<div></div>").addClass('unread').appendTo($(">.post", jPostWrapper));
+		} else {
+			$('>.post>.unread', jPostWrapper).detach();
 		}
 
 		var ePostTime = $(">.post>.time", jPostWrapper).empty();
@@ -455,15 +465,27 @@ function TopicPresenter(view, model) {
 			'actions': actions
 		});
 	};
+
+	view.onPostClicked = function(post) {
+		// remove unread class on click + mark read on server side
+		if ( post.unread == 1 ) {
+			post.unread = 0;
+			view.renderPost(model.getTopic(), post);
+
+			API.post_read(model.getTopic().id, post.id, 1, function() {
+				BUS.fire('topic.post.changed', model.getTopic().id);
+			}); 
+		}
+	};
 	
 	view.onStartPostEdit = function(post) {
 		model.addUserToPost(post, API.user());
-		view.renderPost(post);
+		view.renderPost(model.getTopic(), post);
 	};
 	view.onStopPostEdit = function(post, content) {
 		post.locked = true; // Lock post until saved
 		post.content = content;
-		view.renderPost(post);
+		view.renderPost(model.getTopic(), post);
 		API.post_edit(model.getTopic().id, post.id, content, post.revision_no, function(err, result) {
 			if (!err) {
 				post.revision_no = result.revision_no;
@@ -471,7 +493,7 @@ function TopicPresenter(view, model) {
 				BUS.fire('topic.post.changed', model.getTopic().id);
 			}
 			post.locked = false;
-			view.renderPost(post);
+			view.renderPost(model.getTopic(), post);
 		});
 		
 		
@@ -482,7 +504,7 @@ function TopicPresenter(view, model) {
 		newPost.locked = true;
 		API.post_create(model.getTopic().id, newPost.id, newPost.parent, function(err, data) {
 			newPost.locked = false;
-			view.renderPost(newPost);
+			view.renderPost(model.getTopic(), newPost);
 		});
 		model.addPost(newPost);
 		view.renderTopic(model.getTopic());

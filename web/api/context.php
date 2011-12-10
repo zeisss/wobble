@@ -11,9 +11,6 @@
 	function ctx_after_request($method, $params, $result, $exception) {
 	
 	}
-
-
-
 	
 	global $PDO_CONTEXT_VAR;
 	$PDO_CONTEXT_VAR = null;
@@ -119,6 +116,17 @@
 	}
 	
 	class TopicRepository {
+		function setPostReadStatus($user_id, $topic_id, $post_id, $read_status) {
+			$pdo = ctx_getpdo();
+			#var_dump($read_status);
+			if ( $read_status == 1) { # if read, create entry
+				$sql = 'REPLACE post_users_read (topic_id, post_id, user_id) VALUES (?,?,?)';
+			} else {
+				$sql = 'DELETE FROM post_users_read WHERE topic_id = ? AND post_id = ? AND user_id = ?';
+			}
+			$pdo->prepare($sql)->execute(array($topic_id, $post_id, $user_id));
+		}
+
 		# Traverses upwards and deletes all posts, if no child exist
 		function deletePostsIfNoChilds($topic_id, $post_id) {
 			if($post_id === '1') {

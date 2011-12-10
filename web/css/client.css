@@ -2,6 +2,7 @@
 Darker Blue: #5590d2
 Lighter Blue:  #C9E2FC
 Green (Active Item): #789E35
+Lighter Green: #9b0
 */
 .widget {
 	display: block;
@@ -210,11 +211,19 @@ Green (Active Item): #789E35
 	padding:5px;
 	position:relative;
 }
-#topic_posts .post_wrapper .active {
-	border:3px #789E35 solid;
-}
 #topic_posts .post_wrapper {
 	border-top: 1px black dashed;
+}
+#topic_posts .post_wrapper .post.active {
+	border:3px #789E35 solid;
+}
+#topic_posts .post_wrapper .post .unread {
+	position:absolute;
+	background-color: #9b0;
+	width:3px;
+	left:2px;
+	top:2px;
+	bottom:2px;
 }
 #topic_posts .post>.time {
 	position:absolute;
