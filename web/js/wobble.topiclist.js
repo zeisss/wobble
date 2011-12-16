@@ -30,17 +30,17 @@ function TopicsPresenter (view) {
 	
 	// BUS Events
 	BUS.on('topic.changed', function(_data) {
-		that.refreshTopicsList();
-	});
+		this.refreshTopicsList();
+	}, this);
 	
 	BUS.on('topic.post.changed', function(_data) {
-		that.refreshTopicsList();
-	});
+		this.refreshTopicsList();
+	}, this);
 	BUS.on('api.notification', function(message) {
 		if ( message.type == 'topic_changed' ) {
-			that.refreshTopicsList();
+			this.refreshTopicsList();
 		}
-	});
+	}, this);
 	
 };
 /** Called by the view when a new topic should be created */

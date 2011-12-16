@@ -11,8 +11,8 @@
 
 	jsonrpc_export_functions(array (
 		// Topics
-		array('file' => 'api_topics.php', 'method' => 'topics_list'),
-		array('file' => 'api_topics.php', 'method' => 'topics_create'),
+		array('file' => 'api_topiclist.php', 'method' => 'topics_list'),
+		array('file' => 'api_topiclist.php', 'method' => 'topics_create'),
 		
 		// Topic
 		array('file' => 'api_topic.php', 'method' => 'topic_get_details'),

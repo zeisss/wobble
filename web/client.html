@@ -19,8 +19,8 @@
 		
 		<script src="js/jquery.wobble.topic.js"></script>
 
-		<script src="js/wobble.topics.js"></script>
-		<script src="js/jquery.wobble.topics.js"></script><!-- UI -->
+		<script src="js/wobble.topiclist.js"></script>
+		<script src="js/jquery.wobble.topiclist.js"></script><!-- UI -->
 		
 		
 		
@@ -88,11 +88,8 @@
 			BUS.on('topic.selected', function(topicId) {
 				window.location.hash = topicId; // Note the current topicId in the URL, so its visible for the user and we can work with it on page reloads
 			});
-			/*
-			BUS.on('api.user', function(user) {
-				$('html>head>title').text(user.name + ' - Wobble');
-			});
-			*/
+			
+			
 			API.init(); // Loads current user ID infos (so its cached locally)
 		</script>
 	</head>

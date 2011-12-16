@@ -1,13 +1,15 @@
-<?php	
-	# Return a list of topics the user can see
-	#
-	# @return array()
+<?php
+    /**	
+	 * Return a list of topics the user can see
+	 *
+	 * @return array (
+	 *		array ('id' => '1', 'abstract' => 'Hello World!'),
+	 *		array ('id' => '2', 'abstract' => 'You made my day!'),
+	 *		array ('id' => '3', 'abstract' => 'TGIF - Thank god its friday!')
+	 *	);
+	 */
 	function topics_list() {
-		/*return array (
-			array ('id' => '1', 'abstract' => 'Hello World!'),
-			array ('id' => '2', 'abstract' => 'You made my day!'),
-			array ('id' => '3', 'abstract' => 'TGIF - Thank god its friday!')
-		);*/
+		
 		
 		$pdo = ctx_getpdo();
 		$stmt = $pdo->prepare('SELECT 
@@ -37,6 +39,12 @@
 		return $result;
 	}
 	
+	/**
+	 * Creates a new topic for the current user.
+	 * @param $params['id'] - the ID of the new topic
+	 *
+	 * @return string() - the ID of the new topic
+	 */
 	function topics_create($params) {
 		$pdo = ctx_getpdo();
 		
