@@ -1,7 +1,9 @@
 /*
 Darker Blue: #5590d2
 Lighter Blue:  #C9E2FC
+
 Green (Active Item): #789E35
+	+ Border: #CED697;
 Lighter Green: #9b0
 */
 .widget {
@@ -132,13 +134,17 @@ Lighter Green: #9b0
 	top:4px;
 }
 #topics li.topic_header .messages>.unread {
-	background-color: #789E35;
+	background-color: #9b0;
 	color: white;
 	border-radius:10px;
 	display:inline;
 	padding-left:2px;
 	padding-right:2px;
 }
+#topics li.topic_header.active {
+	color:white;
+}
+
 #topics li.topic_header .time  {
 	position:absolute;
 	right:4px;
@@ -157,7 +163,7 @@ Lighter Green: #9b0
 }
 
 #topics li.active {
-	background-color:#789E35;
+	background-color: #789E35;
 }
 #topics li.active .users img {
 	border:1px black solid;
