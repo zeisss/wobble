@@ -19,9 +19,10 @@
 	*/
 	window.BUS = {
 		'listeners': {},
-		'on': function (eventName, callback) {
+		'on': function (eventName, callback, context) {
+			var context = context || window;
 			var list = this.listeners[eventName] || [];
-			list.push(callback);
+			list.push([context, callback]);
 			this.listeners[eventName] = list;
 		},
 		'fire': function(eventName, data) {
@@ -31,8 +32,8 @@
 			if ( !(eventName in this.listeners)) {
 				return; // Abort, if no listener exists
 			}
-			$.each(this.listeners[eventName], function(i, callback) {
-				callback(data, eventName);
+			$.each(this.listeners[eventName], function(i, callbackEntry) {
+				callbackEntry[1].apply(callbackEntry[0], [data, eventName]);
 			});
 		},
 		'clear': function() {
