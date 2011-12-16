@@ -4,7 +4,6 @@ function user_signout($params) {
 	
 	UserRepository::touch($self_user_id, NULL); # mark offline in database
 	
-	
 	foreach(user_get_contacts() AS $user) {
 		NotificationRepository::push($user['id'], array (
 			'type' => 'user_signout',

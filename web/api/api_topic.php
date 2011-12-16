@@ -7,21 +7,12 @@
 	}
 	
 	function topic_get_details($params) {
-		/*global $USERS;
-		return array(
-			'id' => $param['id'],
-			'users' => $USERS,
-			'posts' => array(
-				array('id' => '1', 'content' =>  '<b>Hello World</b><br />Hi there! This is topic with id=' . $params['id'], 'users' => array('1')),
-				array('id' => '2', 'content' =>'Moar!', 'users' => array('2')), /* first reply, no indentation *
-				array('id' => '3', 'parent' => '1', 'content' => 'Intended Comment!', 'users' => array('1', '2'))
-			)
-		);
-		*/
 		$self_user_id = ctx_getuserid();
 		$topic_id = $params['id'];
 		
+		ValidationService::validate_not_empty($self_user_id);
 		ValidationService::validate_not_empty($topic_id);
+		
 		if (!_topic_has_access(ctx_getpdo(), $topic_id)) {
 			throw new Exception('Illegal Access!');
 		}

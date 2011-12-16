@@ -1,41 +1,14 @@
 <?php
+	global $JSONRPC_CONFIG;
+	$JSONRPC_CONFIG = array();
+
 	require_once 'config.php';
+	require_once 'context.php'; # introduces session setup, db connection, utility classes, ...
+
 	##############################################################
 	## Endpoint for JSON-RPC 2.0 Calls. 
 	##############################################################
-	$exportedMethods = array (
-		// Topics
-		array('file' => 'api_topics.php', 'method' => 'topics_list'),
-		array('file' => 'api_topics.php', 'method' => 'topics_create'),
-		
-		// Topic
-		array('file' => 'api_topic.php', 'method' => 'topic_get_details'),
-		array('file' => 'api_topic.php', 'method' => 'topic_add_user'),
-		array('file' => 'api_topic.php', 'method' => 'topic_remove_user'),
-		array('file' => 'api_topic.php', 'method' => 'post_create'),
-		array('file' => 'api_topic.php', 'method' => 'post_edit'),
-		array('file' => 'api_topic.php', 'method' => 'post_delete'),
-		array('file' => 'api_topic.php', 'method' => 'post_read'),
-		
-		// User / Session
-		array('file' => 'api_user.php', 'method' => 'user_get'),
-		array('file' => 'api_user.php', 'method' => 'user_get_id'),
-		array('file' => 'api_user.php', 'method' => 'user_register'),
-		array('file' => 'api_user.php', 'method' => 'user_change_name'),
-		array('file' => 'api_user.php', 'method' => 'user_login'),
-		array('file' => 'api_user.php', 'method' => 'user_signout'),
-		
-		// Notifications
-		array('file' => 'api_notifications.php', 'method' => 'get_notifications'),
-		
-		// Contact list
-		array('file' => 'api_user.php', 'method' => 'user_get_contacts'),
-		array('file' => 'api_user.php', 'method' => 'user_add_contact'),
-		array('file' => 'api_user.php', 'method' => 'user_remove_contact'),
-		
-		// Test functions
-		array('file' => 'api_test.php', 'method' => 'testecho')
-	);
+	
 	
 	if (SIMULATE_LAG) {
 		// Decrease the performance
@@ -56,7 +29,21 @@
 	}
 	
 
-
+	function jsonrpc_export_functions($exportedMethods) {
+		global $JSONRPC_CONFIG;
+		
+		foreach($exportedMethods AS $m) {
+			$JSONRPC_CONFIG['methods'][] = $m; # Append 
+		}
+	}
+	function jsonrpc_export_after($func_name) {
+		global $JSONRPC_CONFIG;
+		$JSONRPC_CONFIG['callback_after'] = $func_name;
+	}
+	function jsonrpc_export_before($func_name) {
+		global $JSONRPC_CONFIG;
+		$JSONRPC_CONFIG['callback_before'] = $func_name;
+	}
 	function jsonrpc_result($result, $id = FALSE) {
 		$result = array(
 			'jsonrpc' => '2.0',
@@ -93,7 +80,7 @@
 		return $result;
 	}
 	function handle_jsonrpc_request($request) {
-		global $exportedMethods;
+		global $JSONRPC_CONFIG;
 
 		if ($request === NULL || !is_array($request)) {
 			return jsonrpc_error(-32600, "Invalid request");
@@ -106,19 +93,24 @@
 		}
 		
 		# Iterate over all given methods
-		foreach($exportedMethods AS $export) {
+		foreach($JSONRPC_CONFIG['methods'] AS $export) {
 			if ( $export['method'] === $request['method']) {
 				
 				try {
-					require_once 'context.php'; # introduces session setup, db connection, utility classes, ...
-					ctx_before_request($request['method'], $request['params']);
+					if ( isset($JSONRPC_CONFIG['callback_before'])) {
+						call_user_func($JSONRPC_CONFIG['callback_before'], $request['method'], $request['params']);
+					}
 					
 					require_once($export['file']);
 					$response = call_user_func($request['method'], $request['params']);
 					
-					ctx_after_request($request['method'], $request['params'], $response, null);
+					if ( isset($JSONRPC_CONFIG['callback_after'])) {
+						call_user_func($JSONRPC_CONFIG['callback_after'], $request['method'], $request['params'], $response, null);
+					}
 				} catch(Exception $e) {
-					ctx_after_request($request['method'], $request['params'], null, $e);
+					if ( isset($JSONRPC_CONFIG['callback_after'])) {
+						call_user_func($JSONRPC_CONFIG['callback_after'], $request['method'], $request['params'], null, $e);
+					}
 					return jsonrpc_error(-32603, $e->getMessage(), $request['id']);
 				}
 				
