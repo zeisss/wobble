@@ -48,11 +48,15 @@ jQueryContactsDetailDisplay.prototype.addAction = function(title, callback) {
 
 
 
-function ContactsDetailPresenter(display, eventName) {
+function ContactsDetailPresenter(display, model, eventName) {
 	this.display = display;
+	this.model = model;
 	
 	BUS.on(eventName, function(data) {
-		display.show(data.user || data.contact);
+		var theUser = data.user || data.contact;
+		display.show(theUser);
+
+		// Add action buttons from provided params
 		if ( data.actions ) {
 			for (var x in data.actions) {
 				display.addAction(
@@ -61,5 +65,13 @@ function ContactsDetailPresenter(display, eventName) {
 				);
 			}
 		}
+		// Also add an 'Add contact' button, if user is not in model
+		if ( model.get(theUser.id) === undefined ) {
+			display.addAction('Add as contact', function() {
+				BUS.fire('contacts.adduser', theUser.email);
+				display.hide();
+			});
+		}
+
 	});
 }

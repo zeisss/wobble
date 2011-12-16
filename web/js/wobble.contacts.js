@@ -42,6 +42,16 @@ ContactsModel.prototype.addNewContact = function(contactEmail, callback) {
 ContactsModel.prototype.getUser = function() {
 	return this.user;
 }
+ContactsModel.prototype.removeUserFromRooster = function(userId, callback) {
+	var that = this;
+	API.contact_remove(userId, function(err, data) {
+		// Update the model
+		delete that.cache[userId];
+
+		// Call the callback
+		callback(err, data);
+	});
+}
 
 
 /**
@@ -55,6 +65,7 @@ ContactsDisplay.prototype.onNameChange = function(new_name) {};
 // Methods
 ContactsDisplay.prototype.renderContacts = function (list) {};
 ContactsDisplay.prototype.renderWhoAmI = function(user) {};
+ContactsDisplay.prototype.showMessage = function(message) { window.alert(message); };
 
 
 function ContactsPresenter(display, model) {
@@ -72,23 +83,14 @@ function ContactsPresenter(display, model) {
 	
 	// Button Handlers  ---------------------------------------------------
 	display.onAddContact = function(contactEmail) {
-		model.addNewContact(contactEmail, function(err, data) {
-			if ( data ) {
-				window.alert('Contact added!');
-				that.refreshContacts();
-			} else {
-				window.alert('Contact not found!');
-			}
-		});
+		that.addUserByEmail(contactEmail);
 	};
 	display.onContactClick = function(contact) {
 		BUS.fire('contact.clicked', {
 			'contact': contact,			
 			'actions': [
 				{title: 'Remove Contact', callback: function() {
-					API.contact_remove(contact.id, function(err, data) {
-						that.refreshContacts();
-					});
+					that.removeUserFromRooster(contact.id);
 				}}
 			]
 		});
@@ -103,20 +105,40 @@ function ContactsPresenter(display, model) {
 	
 	// BUS Handler  ---------------------------------------------------
 	BUS.on('contacts.refresh', function() {
-		that.refreshContacts();
-	});
+		this.refreshContacts();
+	}, this);
 	BUS.on('api.user', function(user) {
-		display.renderWhoAmI(user);
-	});
+		this.display.renderWhoAmI(user);
+	}, this);
 	BUS.on('api.notification', function(message) {
 		if ( message.type == 'user_signout' || message.type == 'user_online') { // We receive this message only, because we are on his contacts list
-			that.refreshContacts();
+			this.refreshContacts();
 		}
-	});
+	}, this);
+	BUS.on('contacts.adduser', function(userEmail) {
+		this.addUserByEmail(userEmail);
+	}, this);
 	
 	return that;
 }
 // Methods ---------------------------------------------------
+ContactsPresenter.prototype.removeUserFromRooster = function(userId) {
+	var that = this;
+	this.model.removeUserFromRooster(userId, function(err) {
+		that.refreshContacts();
+	});
+}
+ContactsPresenter.prototype.addUserByEmail = function(email) {
+	var that = this;
+	this.model.addNewContact(email, function(err, data) {
+		if ( data ) {
+			that.refreshContacts();
+			that.display.showMessage('Contact added!');
+		} else {
+			that.display.showMessage('Contact not found!');
+		}
+	});
+};
 ContactsPresenter.prototype.refreshContacts = function () {
 	var display = this.display;
 	this.model.getContacts(function(err, data) {
