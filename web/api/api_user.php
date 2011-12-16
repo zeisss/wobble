@@ -81,6 +81,8 @@ function user_get_id() {
 function user_get_contacts() {
 	$self_user_id = ctx_getuserid();
 	
+	ValidationService::validate_not_empty($self_user_id);
+
 	return ContactsRepository::getContacts($self_user_id);
 }
 
@@ -88,19 +90,13 @@ function user_add_contact($params) {
 	$self_user_id = ctx_getuserid();
 	$contact_email = $params['contact_email'];
 	
-	if ( empty($contact_email)) {
-		throw new Exception('No contact email given!');
-	}
+	ValidationService::validate_not_empty($self_user_id);
+	ValidationService::validate_not_empty($contact_email);
 	
-	$pdo = ctx_getpdo();
-	
-	$stmt = $pdo->prepare('SELECT DISTINCT u.id id FROM users u WHERE email = ?');
-	$stmt->execute(array($contact_email));
-	$result = $stmt->fetchALL();
-	
-	if ( count($result) == 1 ) {
-		$stmt = $pdo->prepare('INSERT INTO users_contacts (user_id, contact_user_id) VALUES (?, ?)');
-		$stmt->execute(array($self_user_id, $result[0]['id']));
+	$user = UserRepository::getUserByEmail($contact_email);
+
+	if ( $user !== NULL ) {
+		ContactsRepository::addUser($self_user_id, $result[0]['id']);
 		return TRUE;
 	}
 	return FALSE;
@@ -110,11 +106,10 @@ function user_remove_contact($params) {
 	$self_user_id = ctx_getuserid();
 	$contact_id = $params['contact_id'];
 	
+	ValidationService::validate_not_empty($self_user_id);
 	ValidationService::validate_not_empty($contact_id);
 	
-	$pdo = ctx_getpdo();
-	
-	$stmt = $pdo->prepare('DELETE FROM users_contacts WHERE user_id = ? AND contact_user_id = ?');
-	$stmt->execute(array($self_user_id, $contact_id));
+	ContactsRepository::removeUser($self_user_id, $contact_id);
+
 	return TRUE;
 }
