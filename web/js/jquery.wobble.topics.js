@@ -44,7 +44,11 @@ jQueryTopicsView.prototype.addTopic = function(topic, prepend) {
 	})).click(function() { 
 		that.onTopicClicked(topic);
 	});
-	$(".abstract", li).html(topic.abstract);
+	var abstract = $(".abstract", li).html(topic.abstract);
+
+	if ( topic.post_count_unread > 0) {
+		abstract.css('font-weight', 'bold');
+	}
 	
 	if ( prepend ) {
 		li.prependTo(this.jTopics);
