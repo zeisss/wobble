@@ -199,7 +199,7 @@
 			RPC.doRPC('topic_remove_user', {topic_id: topicId, contact_id: contactId}, callback);
 		},
 		
-		post_read: function(topicId, postId, readStatus, callback) {
+		post_change_read: function(topicId, postId, readStatus, callback) {
 			RPC.doRPC('post_read', {topic_id: topicId, post_id: postId, read: readStatus}, callback);	
 		},
 		post_create: function(topicId, postId, parentPostId, callback) {

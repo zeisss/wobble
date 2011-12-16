@@ -473,9 +473,11 @@ function TopicPresenter(view, model) {
 		// remove unread class on click + mark read on server side
 		if ( post.unread == 1 ) {
 			post.unread = 0;
+			post.locked = true;
 			view.renderPost(model.getTopic(), post);
 
-			API.post_read(model.getTopic().id, post.id, 1, function() {
+			API.post_change_read(model.getTopic().id, post.id, 1, function() {
+				post.locked = false;
 				BUS.fire('topic.post.changed', model.getTopic().id);
 			}); 
 		}
