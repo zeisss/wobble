@@ -31,7 +31,7 @@
 			$result[$i]['post_count_unread'] = $result[$i]['post_count_total'] - intval($result[$i]['post_count_read']);
 			unset($result[$i]['post_count_read']);		
 			
-			$result[$i]['abstract']	= substr(strip_tags($result[$i]['abstract']), 1, 100);
+			$result[$i]['abstract']	= substr(strip_tags($result[$i]['abstract']), 0, 100);
 		}
 		
 		return $result;
