@@ -94,9 +94,15 @@ Lighter Green: #9b0
 
 #contactschooser_list .contact {
 	cursor:pointer;
+	padding:3px;
 }
 #contactschooser_list .contact .name {
 	margin-left: 5px;
+	vertical-align:top;
+}
+#contactschooser_list li.active {
+	background-color: #789E35;
+	color: white;
 }
 /* ------------------------------------------------------------------------- */
 .contactdetail {
