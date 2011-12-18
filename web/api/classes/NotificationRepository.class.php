@@ -10,18 +10,18 @@ class NotificationRepository {
 		$stmt = $pdo->prepare('INSERT INTO notifications (user_id, data, time) VALUES (?,?,UNIX_TIMESTAMP())');
 		$stmt->execute(array($user_id, $json));
 	}
+	function deleteNotifications($user_id, $timestamp) {
+		$pdo = ctx_getpdo();
+		$stmt = $pdo->prepare('DELETE FROM notifications WHERE user_id = ? AND time <= ?');
+		$stmt->bindValue(1, $user_id, PDO::PARAM_INT);
+		$stmt->bindValue(2, $timestamp, PDO::PARAM_INT);
+		$stmt->execute();
+	}
 	function getNotifications($user_id, $timestamp) {	
 		$pdo = ctx_getpdo();
-		
-		if ( $timestamp != NULL ) {
-			$stmt = $pdo->prepare('DELETE FROM notifications WHERE user_id = ? AND time < ?');
-			$stmt->bindValue(1, $user_id, PDO::PARAM_INT);
-			$stmt->bindValue(2, $timestamp, PDO::PARAM_INT);
-			$stmt->execute();
-		}
-		
-		$stmt = $pdo->prepare('SELECT data FROM notifications WHERE user_id = ?');
-		$stmt->execute(array($user_id));
+				
+		$stmt = $pdo->prepare('SELECT data FROM notifications WHERE user_id = ? AND time <= ?');
+		$stmt->execute(array($user_id, $timestamp));
 		$result = array();
 		$data = $stmt->fetchAll();
 		foreach ($data AS $i => $row) {

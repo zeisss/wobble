@@ -2,14 +2,21 @@
 	function get_notifications($params) {
 		session_write_close(); # we dont need to modify the session after here
 		
+		$self_user_id = ctx_getuserid();
 		$timestamp = $params['next_timestamp'];
+
+		if ( $timestamp != NULL )
+		{
+			NotificationRepository::deleteNotifications($self_user_id, $timestamp);
+		}
 		
 		// Check 10 times, but sleep after each check, if no notifications where found
 		for ( $i = 0; $i < 100; $i++ ) {
+			$timestamp = time();
 			$messages = NotificationRepository::getNotifications(ctx_getuserid(), $timestamp);
 			if ( count($messages) > 0 ) {
 				return array(
-					'next_timestamp' => time(),
+					'next_timestamp' => $timestamp,
 					'messages' => $messages
 				);
 			}
