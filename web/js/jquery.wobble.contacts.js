@@ -61,6 +61,7 @@ JQueryContactsView.prototype.renderWhoAmI = function(user) {
 function ListContactsChooserDisplay(relativeTo) {
 	this.e = $('<div></div>').attr('id', 'contactschooser').appendTo('body'); // The element to use
 	this.e.css('display', 'none');
+	this.e.addClass('dialog');
 
 	this.relativeTo = relativeTo;
 
