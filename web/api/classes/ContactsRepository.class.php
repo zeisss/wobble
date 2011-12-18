@@ -8,13 +8,13 @@ class ContactsRepository {
 		$pdo = ctx_getpdo();
 
 		$stmt = $pdo->prepare('INSERT INTO users_contacts (user_id, contact_user_id) VALUES (?, ?)');
-		$stmt->execute(array($self_user_id, $contact_user_id));
+		$stmt->execute(array($user_id, $contact_user_id));
 	}
 	function removeUser($user_id, $contact_user_id) {
 		$pdo = ctx_getpdo();
 	
 		$stmt = $pdo->prepare('DELETE FROM users_contacts WHERE user_id = ? AND contact_user_id = ?');
-		$stmt->execute(array($self_user_id, $contact_user_id));
+		$stmt->execute(array($user_id, $contact_user_id));
 	}
 
 	function getContacts($user_id) {

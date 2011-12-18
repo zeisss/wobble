@@ -95,7 +95,7 @@ function user_add_contact($params) {
 	$user = UserRepository::getUserByEmail($contact_email);
 
 	if ( $user !== NULL ) {
-		ContactsRepository::addUser($self_user_id, $result[0]['id']);
+		ContactsRepository::addUser($self_user_id, $user['id']);
 		return TRUE;
 	}
 	return FALSE;
