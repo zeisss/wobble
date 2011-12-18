@@ -23,6 +23,82 @@ Lighter Green: #9b0
 	border:1px #5590d2 solid;
 }
 /* ------------------------------------------------------------------------- */
+#contactschooser {
+	position:absolute;
+	top:200px;
+	left:200px;
+	width:300px;
+	height:400px;
+
+	background-color:white;
+	border:1px black solid;
+}
+#contactschooser_title {
+	position:absolute;
+	top:0px;
+	left:0px;
+	right:0px;
+	height:25px;
+
+	background-color:#5590d2;
+	color:white;
+	padding-left:4px;
+	padding-top:3px;
+
+	cursor:pointer;
+
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#61A7F2), to(#5590D2));
+}
+#contactschooser .buttons {
+	position:absolute;
+	top:0px;
+	right:0px;
+}
+/*
+#contactschooser .buttons .button_close {
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAbElEQVR42mMwSNgvYJCyfwEQ/ycSvwerB+pjMEjeP58EjQgM1McANek/OZiBXI1YNYPAmoNPUcRAfBAgqBmmEGYAOp+gs5E14NKI18+ENFLfZor8TFFo0yuRvKcsbRun7eYHcvpJSuNAjSB9ANoBLKgC6ySIAAAAAElFTkSuQmCC);
+}
+*/
+#contactschooser_filter {
+	position:absolute;
+	top:28px;
+	left:0px;
+	right:0px;
+	height:25px;
+}
+#contactschooser_filter_text {
+	position:absolute;
+	top:0px;
+	left:0px;
+	right:0px;
+	bottom:0px;	
+
+	border-radius:3px;
+	border:1px gray solid;
+}
+#contactschooser_list {
+	position:absolute;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	top:53px;
+
+	margin:0px;
+	margin-top:5px;
+	padding-left:7px;
+
+	background-color:white;
+	list-style-type:none;
+	overflow:auto;
+}
+
+#contactschooser_list .contact {
+	cursor:pointer;
+}
+#contactschooser_list .contact .name {
+	margin-left: 5px;
+}
+/* ------------------------------------------------------------------------- */
 .contactdetail {
 	padding:10px;
 }
@@ -183,7 +259,7 @@ Lighter Green: #9b0
 	height:40px;
 	top:10px;
 }
-#topic_readers * {
+#topic_readers>* {
 	padding-right:4px;
 }
 #topic_actions {

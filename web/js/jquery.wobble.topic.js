@@ -40,10 +40,6 @@ function TopicModel() {
 		};
 	};
 	
-	that.addUser = function(user) {
-		topic.users.push(user);
-	};
-	
 	that.addUserToPost = function(post, user) {
 		var found = false;
 		jQuery.each(post.users, function(i, user_id) {
@@ -57,12 +53,34 @@ function TopicModel() {
 		}
 	};
 }
+TopicModel.prototype.addUser = function(user) {
+	if (jQuery.inArray(user, this.getTopic().users) < 0 ) {
+		this.getTopic().users.push(user);	
+	}
+};
 TopicModel.prototype.removeUser = function(user, callback) {
 	var topic = this.getTopic();
 	
-	topic.users = jQuery.grep(topic.users, function(index, tuser) {
-		return user.id != tuser.id; // Filter the given user
+	API.topic_remove_user(topic.id, user.id, function(err, result) {
+		if ( !err ) {
+			topic.users = jQuery.grep(topic.users, function(tuser, index) {
+				return user.id != tuser.id; // Filter the given user
+			});
+		}	
+		callback(err, result);
 	});
+	
+	
+};
+TopicModel.prototype.getUserIds = function() {
+	var topic = this.getTopic();
+	var result = [];
+	
+	jQuery.each(topic.users, function(index, user) {
+		result.push(user.id);
+	});
+
+	return result;
 };
 
 // Callbacks
@@ -118,6 +136,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 		this.setEnabled(true);
 		
 		var that = this;
+		this.jTopicReaders.empty();
 		$.each(topicDetails.users, function(i, user) {
 			userCache[Number(user.id)] = user; // Cache user object (user later to show the user post images)
 			that._renderReader(user);
@@ -438,6 +457,7 @@ function TopicPresenter(view, model) {
 	view.onInviteUserAction = function() {
 		BUS.fire('contacts.chooser.open', {
 			'multiple': true,
+			'remove_contacts': model.getUserIds(),
 			'on_add': function (contact) {
 				API.topic_add_user(model.getTopic().id, contact.id, function(err, data) {
 					model.addUser(contact);
@@ -454,10 +474,8 @@ function TopicPresenter(view, model) {
 		
 		if ( user.id != API.user_id()) {
 			actions.push({title: 'Remove from Topic', callback: function() {
-				API.topic_remove_user(that.model.getTopic().id, user.id, function(err, result) {
-					if (!err) {
-						that.model.removeUser(user);
-					}
+				that.model.removeUser(user, function(err, result) {
+					view.renderTopic(model.getTopic());
 				});
 			}});
 			
@@ -472,12 +490,19 @@ function TopicPresenter(view, model) {
 	view.onPostClicked = function(post) {
 		// remove unread class on click + mark read on server side
 		if ( post.unread == 1 ) {
+			var topic = model.getTopic();
+
 			post.unread = 0;
 			post.locked = true;
 			view.renderPost(model.getTopic(), post);
 
 			API.post_change_read(model.getTopic().id, post.id, 1, function() {
 				post.locked = false;
+
+				// Still our topic? => Refresh View
+				if ( model.getTopic().id == topic.id) {
+					view.renderPost(topic, post);
+				}
 				BUS.fire('topic.post.changed', model.getTopic().id);
 			}); 
 		}

@@ -30,7 +30,10 @@
 			$(document).ready(function() {
 				"use strict";
 				var contactsModel = new ContactsModel();
-				var contactsChooserPresenter = new ContactsChooserPresenter(new SimpleContactsChooserDisplay(), contactsModel);
+				var contactsChooserPresenter = new ContactsChooserPresenter(
+						new ListContactsChooserDisplay('#topic_invite_user'), 
+						contactsModel
+				);
 				var contactsPresenter = new ContactsPresenter(new JQueryContactsView(), contactsModel);
 				
 				var topicsPresenter = new TopicsPresenter(new jQueryTopicsView());

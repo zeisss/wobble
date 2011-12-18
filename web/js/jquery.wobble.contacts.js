@@ -51,7 +51,112 @@ JQueryContactsView.prototype.renderWhoAmI = function(user) {
 
 
 /**
- * A simple ContactsChooserDisplay Implementation using only the standard javascript window functions. 
+ * A contactschooser dialog similar to the original Google Wave version.
+ * The dialog shows all contacts who are not yet added to the topic in a list.
+ * The user can filter the list with a textfield at the top. 
+ * The left/right keys navigate inside the filter.
+ * The up/down keys navigate in the contacts list.
+ * By clicking a contact or pressing [Enter] when selected, the callback onAddContact() gets fired.
+ */
+function ListContactsChooserDisplay(relativeTo) {
+	this.e = $('<div></div>').attr('id', 'contactschooser').appendTo('body'); // The element to use
+	this.e.css('display', 'none');
+
+	this.relativeTo = relativeTo;
+
+	this.contacts = [];
+};
+ListContactsChooserDisplay.prototype = new ContactsChooserDisplay;
+ListContactsChooserDisplay.prototype.constructor = ListContactsChooserDisplay;
+ListContactsChooserDisplay.prototype.show = function(title, contacts) {
+	this.title = title;
+	this.contacts = contacts;
+	this.render();
+};
+ListContactsChooserDisplay.prototype.render = function() {
+	// Generate the content
+	var template =  '<div id="contactschooser_title">{{title}}</div>' + 
+					'<div class="buttons"><button class=button_close>x</button></div>' + 
+					'<div id="contactschooser_filter"><input type=text id="contactschooser_filter_text"></div>' + 
+					'<ul id="contactschooser_list">'
+					'</ul>';	
+	this.e.empty().append(Mustache.to_html(template, {
+		'title': this.title
+	}));
+	var list = $('#contactschooser_list', this.e);
+	if ( this.contacts.length == 0 ) {
+		list.append('<li>No contacts</li>');
+	} else {
+
+		jQuery.each(this.contacts, $.proxy(function(i, contact) {
+			var template = "<li class=contact title='{{email}}'>" + 
+							"<div class='usericon usericon{{size}}'>" +
+							"<div><img src='http://gravatar.com/avatar/{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
+							"<div class='status {{online}}'></div>" + 
+							"</div>" + 
+							"<span class=name>{{name}}</span>" +
+							"</li>";
+			var $li = $(Mustache.to_html(template, {
+					size: 20,
+					email: contact.email,
+					name: contact.name,
+					img: contact.img,
+					online: contact.online == 1 ? 'online' : 'offline'
+			})).appendTo(list).click($.proxy(function() {
+				// Contact was clicked
+				this.onAddContact(contact);
+				$li.detach(); // Remove row after adding it
+			}, this));
+		}, this));
+	}
+	
+	// Install button-listeners
+	$('.button_close', this.e).click($.proxy(function() {
+		this.close();
+	}, this));
+
+	var $filterText = $("#contactschooser_filter_text").keypress($.proxy(function(e) {
+		if ( event.which == 38) {
+			// Naviagte left
+			this.navigatePreviousContact();
+		}
+		else if ( event.which == 40) {
+			// Navigate right
+			this.navigateNextContact();
+		} else {
+			// Refresh filtered list
+			this.refreshFilteredContactList($filterText.val());
+		}
+	}, this));
+
+	// Position it relative to this.relativeTo
+	if ( this.relativeTo ) {
+		var relativeElem = $(this.relativeTo);
+		var pos = relativeElem.offset();
+		this.e.css('top', pos.top).css('left', pos.left - (this.e.width() * 0.75));
+	}
+
+	// Finally, show it
+	this.e.css('display', '');
+
+	// And focus the textfield
+	$filterText.focus();
+};
+ListContactsChooserDisplay.prototype.close = function() {
+	this.e.empty().css('display', 'none');
+	this.onClose();
+};
+
+ListContactsChooserDisplay.prototype.navigateNextContact = function() {
+};
+ListContactsChooserDisplay.prototype.navigatePreviousContact = function() {
+};
+ListContactsChooserDisplay.prototype.refreshFilteredContactList = function(filterText) {
+};
+
+/**
+ * A simple ContactsChooserDisplay Implementation using only the standard 
+ * javascript window.prompt() function. 
  */
 function SimpleContactsChooserDisplay() {}
 SimpleContactsChooserDisplay.prototype = new ContactsChooserDisplay;
