@@ -1,7 +1,8 @@
 <?php	
 function user_signout($params) {
 	$self_user_id = ctx_getuserid();
-	
+
+	# Clear any open lock the user has
 	UserRepository::touch($self_user_id, NULL); # mark offline in database
 	
 	foreach(user_get_contacts() AS $user) {

@@ -13,6 +13,28 @@ class TopicRepository {
 		}
 		$pdo->prepare($sql)->execute(array($topic_id, $post_id, $user_id));
 	}
+	function setPostLockStatus($user_id, $topic_id, $post_id, $lock_status) {
+		$pdo = ctx_getpdo();
+		
+		if ( $lock_status == 1) { # if read, create entry
+			$sql = 'REPLACE post_locks (topic_id, post_id, user_id, created_at) VALUES (?,?,?, unix_timestamp())';
+			$pdo->prepare($sql)->execute(array($topic_id, $post_id, $user_id));
+		} else {
+			$sql = 'DELETE FROM post_locks WHERE topic_id = ? AND post_id = ?';
+			$pdo->prepare($sql)->execute(array($topic_id, $post_id));
+		}
+		
+	}
+	function getPostLockStatus($topic_id, $post_id) {
+		$pdo = ctx_getpdo();
+		$sql = 'SELECT COUNT(*) cnt FROM post_locks WHERE topic_id = ? AND post_id = ?';
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute(array($topic_id, $post_id));
+		$result = $stmt->fetchAll();
+
+		return intval($result[0]['cnt']);
+	}
+
 
 	# Traverses upwards and deletes all posts, if no child exist
 	function deletePostsIfNoChilds($topic_id, $post_id) {

@@ -209,7 +209,7 @@
 		},
 		
 		post_change_read: function(topicId, postId, readStatus, callback) {
-			RPC.doRPC('post_read', {topic_id: topicId, post_id: postId, read: readStatus}, callback);	
+			RPC.doRPC('post_change_read', {topic_id: topicId, post_id: postId, read: readStatus}, callback);	
 		},
 		post_create: function(topicId, postId, parentPostId, callback) {
 			RPC.doRPC('post_create', {topic_id: topicId, post_id: postId, parent_post_id: parentPostId}, callback);
@@ -219,6 +219,9 @@
 		},
 		post_delete: function(topicId, postId, callback) {
 			RPC.doRPC('post_delete', {topic_id: topicId, post_id: postId}, callback);
+		},
+		post_change_lock: function(topicId, postId, lock_status, callback) {
+			RPC.doRPC('post_change_lock', {topic_id: topicId, post_id: postId, lock: lock_status}, callback);	
 		}
 	};
 	

@@ -156,8 +156,12 @@ function TopicPresenter(view, model) {
 	};
 	
 	view.onStartPostEdit = function(post) {
-		model.addUserToPost(post, API.user());
-		view.renderPost(model.getTopic(), post);
+		API.post_change_lock(model.getTopic().id, post.id, 1, function(err, success) {
+			if ( success ) {
+				model.addUserToPost(post, API.user());
+				view.renderPost(model.getTopic(), post);
+			}
+		});
 	};
 	view.onStopPostEdit = function(post, content) {
 		post.locked = true; // Lock post until saved

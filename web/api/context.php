@@ -24,7 +24,8 @@
 		array('file' => 'api_topic.php', 'method' => 'post_create'),
 		array('file' => 'api_topic.php', 'method' => 'post_edit'),
 		array('file' => 'api_topic.php', 'method' => 'post_delete'),
-		array('file' => 'api_topic.php', 'method' => 'post_read'),
+		array('file' => 'api_topic.php', 'method' => 'post_change_read'),
+		array('file' => 'api_topic.php', 'method' => 'post_change_lock'),
 		
 		// User / Session
 		array('file' => 'api_user.php', 'method' => 'user_get'),
