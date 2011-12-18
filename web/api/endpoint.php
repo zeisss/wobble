@@ -1,10 +1,10 @@
 <?php
 	global $JSONRPC_CONFIG;
-	$JSONRPC_CONFIG = array();
+	$JSONRPC_CONFIG = array('methods' => array());
 
 	require_once 'config.php';
 	require_once 'context.php'; # introduces session setup, db connection, utility classes, ...
-
+	require_once 'jsonrpc_system.php';
 	##############################################################
 	## Endpoint for JSON-RPC 2.0 Calls. 
 	##############################################################
@@ -33,7 +33,20 @@
 		global $JSONRPC_CONFIG;
 		
 		foreach($exportedMethods AS $m) {
-			$JSONRPC_CONFIG['methods'][] = $m; # Append 
+			$entry = array();
+			$entry['method'] = $m['method'];
+
+			if ( isset($m['file'])) {
+				$entry['file'] = $m['file'];
+			}
+			
+			if ( isset($m['name'])) {
+				$entry['name'] = $m['name'];
+			} else {
+				$entry['name'] = $m['method'];
+			}
+
+			$JSONRPC_CONFIG['methods'][] = $entry; # Append 
 		}
 	}
 	function jsonrpc_export_after($func_name) {
@@ -94,22 +107,27 @@
 		
 		# Iterate over all given methods
 		foreach($JSONRPC_CONFIG['methods'] AS $export) {
-			if ( $export['method'] === $request['method']) {
+			if ( $export['name'] === $request['method']) {
 				
 				try {
 					if ( isset($JSONRPC_CONFIG['callback_before'])) {
-						call_user_func($JSONRPC_CONFIG['callback_before'], $request['method'], $request['params']);
+						call_user_func( $JSONRPC_CONFIG['callback_before'], 
+										$request['method'], $request['params']);
 					}
-					
-					require_once($export['file']);
-					$response = call_user_func($request['method'], $request['params']);
+					if ( isset($export['file'])) {
+						require_once($export['file']);
+					}
+
+					$response = call_user_func($export['method'], $request['params']);
 					
 					if ( isset($JSONRPC_CONFIG['callback_after'])) {
-						call_user_func($JSONRPC_CONFIG['callback_after'], $request['method'], $request['params'], $response, null);
+						call_user_func($JSONRPC_CONFIG['callback_after'], 
+						               $request['method'], $request['params'], $response, null);
 					}
 				} catch(Exception $e) {
 					if ( isset($JSONRPC_CONFIG['callback_after'])) {
-						call_user_func($JSONRPC_CONFIG['callback_after'], $request['method'], $request['params'], null, $e);
+						call_user_func($JSONRPC_CONFIG['callback_after'], 
+						               $request['method'], $request['params'], null, $e);
 					}
 					return jsonrpc_error(-32603, $e->getMessage(), $request['id']);
 				}
@@ -129,3 +147,6 @@
 		header('Content-Type: application/json');
 		die(json_encode($result_object));
 	}
+
+
+	

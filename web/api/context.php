@@ -10,6 +10,9 @@
 	require_once dirname(__FILE__).'/classes/ValidationService.class.php';
 
 	jsonrpc_export_functions(array (
+		// Core
+		array('file' => 'api_core.php', 'method' => 'api_version'),
+		
 		// Topics
 		array('file' => 'api_topiclist.php', 'method' => 'topics_list'),
 		array('file' => 'api_topiclist.php', 'method' => 'topics_create'),

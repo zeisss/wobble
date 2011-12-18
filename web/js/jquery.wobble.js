@@ -144,6 +144,15 @@
 		},
 		
 		// Async stuff
+		/* Core / Basic Stuff */
+		wobble_api_version: function(callback) {
+			RPC.doRPC('wobble_api_version', callback);
+		},
+		systemListMethods: function(callback) {
+			RPC.doRPC('system.listMethods', callback);	
+		},
+
+		/* Notifications */
 		get_notifications: function(timestamp, callback) {
 			RPC.doRPC('get_notifications', {next_timestamp: timestamp}, callback);
 		},

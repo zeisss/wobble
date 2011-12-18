@@ -94,7 +94,6 @@ TopicModel.prototype.getUserIds = function() {
 
 
 function TopicPresenter(view, model) {
-	
 	this.view = view;
 	this.model = model;
 	
