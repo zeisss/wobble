@@ -25,16 +25,15 @@ function ContactsChooserPresenter(display, model) {
 
 	this.display.setPresenter(this);
 	
-	BUS.on('contacts.chooser.open', jQuery.proxy(function(config) {
-		var defaults = {
+	BUS.on('contacts.chooser.open', function(config) {
+		var options = _.defaults(config, {
 			'multiple': false,
 			'on_add': function(contact) {},
 			'on_close': function() {},
 			'remove_contacts': []
-		};
-		var options = jQuery.extend(defaults, config);
+		});
 		this.open(options);
-	}, this));
+	}, this);
 };
 /**
  * Starts a loop where the user can add users. For each added user the options.on_add callback is executed.
@@ -50,10 +49,11 @@ ContactsChooserPresenter.prototype.open = function(options) {
 	var display = this.display;
 	this.model.getContacts(function(err, contacts) {
 		if ( !err ) {
-			var showContacts = jQuery.grep(contacts, function(contact) {
-				var shouldBeRemoved = jQuery.inArray(contact.id, options.remove_contacts) >= 0;
+			var showableContacts = _.filter(contacts, function(contact) {
+				var shouldBeRemoved = _.contains(options.remove_contacts, contact.id);
 				return !shouldBeRemoved;
 			});
+
 			display.onAddContact = function(contact) {
 				options.on_add(contact);
 				if ( !options.multiple) display.close();
@@ -61,7 +61,7 @@ ContactsChooserPresenter.prototype.open = function(options) {
 			display.onClose = function() {
 				options.on_close();
 			};
-			display.show('Add participant', showContacts );
+			display.show('Add participant', showableContacts);
 		}
 	});
 };

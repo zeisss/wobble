@@ -28,7 +28,7 @@ function TopicModel() {
 	
 	// Methods ------------------------------------------
 	that.removePost = function(post) {
-		topic.posts = jQuery.grep(topic.posts, function(post2, i) {
+		topic.posts = _.filter(topic.posts, function(post2) {
 			return post.id === post2.id;
 		});
 	};
@@ -63,7 +63,7 @@ function TopicModel() {
 	};
 }
 TopicModel.prototype.addUser = function(user) {
-	if (jQuery.inArray(user, this.getTopic().users) < 0 ) {
+	if (_.contains(this.getTopic().users, user)) {
 		this.getTopic().users.push(user);	
 	}
 };
@@ -72,7 +72,7 @@ TopicModel.prototype.removeUser = function(user, callback) {
 	
 	API.topic_remove_user(topic.id, user.id, function(err, result) {
 		if ( !err ) {
-			topic.users = jQuery.grep(topic.users, function(tuser, index) {
+			topic.users = _.filter(topic.users, function(tuser) {
 				return user.id != tuser.id; // Filter the given user
 			});
 		}	
