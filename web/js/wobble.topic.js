@@ -51,11 +51,11 @@ function TopicModel() {
 	
 	that.addUserToPost = function(post, user) {
 		var found = false;
-		jQuery.each(post.users, function(i, user_id) {
-			if ( user_id === user.id) {
+		for (var i = 0; i < post.users.length; i++) {
+			if ( post.users[i] === user.id) {
 				found = true;
 			}
-		});
+		}
 		if (!found) {
 			post.users.push(user.id);
 			// We can assume here, that the user is part of topic.users, otherwise he shouldn't see this post
@@ -83,9 +83,9 @@ TopicModel.prototype.getUserIds = function() {
 	var topic = this.getTopic();
 	var result = [];
 	
-	jQuery.each(topic.users, function(index, user) {
-		result.push(user.id);
-	});
+	for (var i = 0; i < topic.users.length; i++) {
+		result.push(topic.users[i].id);
+	}
 
 	return result;
 };

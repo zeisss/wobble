@@ -11,10 +11,10 @@
 	
 	function fetch_notifications(next_timestamp) {
 		API.get_notifications(next_timestamp, function(err, notifications) {
-			if (notifications) {
-				jQuery.each(notifications.messages, function(i, message) {
-					BUS.fire('api.notification', message);
-				});
+			if (notifications && notifications.messages) {
+				for (var i = 0; i < notifications.messages.length; i++) {
+					BUS.fire('api.notification', notifications.messages[i]);
+				}
 			}
 			window.setTimeout(function() {
 				fetch_notifications(notifications ? notifications.next_timestamp : null);

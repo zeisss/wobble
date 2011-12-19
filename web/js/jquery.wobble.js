@@ -32,10 +32,13 @@
 			if ( !(eventName in this.listeners)) {
 				return; // Abort, if no listener exists
 			}
-			$.each(this.listeners[eventName], function(i, callbackEntry) {
+			for (var i = 0; i < this.listeners[eventName].length; i++) {
+				var callbackEntry = this.listeners[eventName][i];
 				callbackEntry[1].apply(callbackEntry[0], [data, eventName]);
-			});
+			}
+
 		},
+
 		'clear': function() {
 			this.listeners = {};
 		}

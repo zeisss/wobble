@@ -12,20 +12,21 @@ function ContactsModel() {
 };
 ContactsModel.prototype.findByEmail = function (email) {
 	var result = undefined;
-	jQuery.each(this.cache, function(i, user) {
+	for (var i = 0; i < this.cache.length; i++) {
+		var user = this.cache[i];
 		if ( user.email === email ) {
 			result = user;
 		}
-	});
+	}
 	return result;
 };
 ContactsModel.prototype.getContacts = function (callback) {
 	var that = this;
 	API.get_contacts(function(err, data) {
-		if ( data) {
-			jQuery.each(data, function(i, user) {
-				that.put(user);
-			});
+		if (data) {
+			for (var i = 0; i < data.length; i++) {
+				that.put(data[i]);
+			}
 		}
 		callback(err, data);
 	});

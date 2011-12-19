@@ -28,7 +28,7 @@ jQueryTopicView.prototype.setEnabled = function(enabled) {
 	} else {
 		$("button", this.jTopicActions).attr('disabled', 'disabled');
 	}
-},
+};
 
 jQueryTopicView.prototype.setLoadingState = function() {
 	this.clear();
@@ -43,21 +43,22 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 	
 	if ( topicDetails ) {
 		this.setEnabled(true);
-		
-		var that = this;
+
 		this.jTopicReaders.empty();
-		$.each(topicDetails.users, function(i, user) {
+		for (var i = 0; i < topicDetails.users.length; ++i) {
+			var user = topicDetails.users[i];
 			userCache[Number(user.id)] = user; // Cache user object (user later to show the user post images)
-			that._renderReader(user);
-		});
+			this._renderReader(user);
+		}
 		
-		$.each(topicDetails.posts, function(i, post) {
-			that.renderPost(topicDetails, post);
-		});
+		for (var i = 0; i < topicDetails.posts.length; i++) {
+			this.renderPost(topicDetails, topicDetails.posts[i]);
+		}
 	} else {
 		this.setEnabled(false);
 	}	
 };
+
 jQueryTopicView.prototype._renderReader= function(user) {
 	var that = this;
 	var containerId = "topic-reader-" + user.id;
@@ -155,6 +156,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
 		$(">.post",jPostWrapper).detach();
 	}
 };
+
 jQueryTopicView.prototype._renderTime = function(timestamp) {
 	if (!timestamp) {
 		return "";
@@ -184,6 +186,7 @@ jQueryTopicView.prototype._renderTime = function(timestamp) {
 		return createdAt.getDate() + "." + month + "."+ (1900 + createdAt.getYear()) + " " + time;
 	}
 };
+
 jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 	if (postElement == null) {
 		postElement = $("#post-" + post.id + ">.post>.users");
@@ -193,14 +196,15 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 	var minHeight = 16;
 	if ( post.id != ROOT_ID) { // No user icons for the root
 		var size = post.users.length == 1 ? 25 : 21;
-		$.each(post.users, function(j, postUserId) {
+		for (var i = 0; i < post.users.length; i++) {
+			var postUserId = post.users[i];
 			var template = "<img width='{{size}}' height='{{size}}' src='http://gravatar.com/avatar/{{img}}?s={{size}}' title='{{name}}'/>";
 			postElement.append(Mustache.to_html(template, {
 				'img': userCache[postUserId].img,
 				'name': userCache[postUserId].name,
 				'size': size
 			}));
-		});
+		}
 		minHeight = size;
 	} 
 
@@ -230,6 +234,7 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 	if (minHeight) postElement.css('min-height', minHeight);
 
 };
+
 jQueryTopicView.prototype.removePost = function(post) {	
 	var jpost = $('#post-' + post.id + ">.post").detach();
 };
@@ -349,5 +354,3 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 		});
 	}
 };
-
-

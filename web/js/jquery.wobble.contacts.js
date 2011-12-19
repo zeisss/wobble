@@ -24,7 +24,8 @@ JQueryContactsView.prototype.renderContacts = function (list) {
 	var that = this;
 	var ul = $("#contacts ul").empty();
 	
-	$.each(list, function(i, contact) {
+	for (var i = 0; i < list.length; i++) {
+		var contact = list[i];
 		var template = "<li class=contact title='{{email}}'>" + 
 						"<div class='usericon usericon{{size}}'>" +
 						"<div><img src='http://gravatar.com/avatar/{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
@@ -32,16 +33,16 @@ JQueryContactsView.prototype.renderContacts = function (list) {
 						"</div>" + 
 						"<span class=name>{{name}}</span>" +
 						"</li>";
-		ul.append($(Mustache.to_html(template, {
+		$(Mustache.to_html(template, {
 				size: 20,
 				email: contact.email,
 				name: contact.name,
 				img: contact.img,
 				online: contact.online == 1 ? 'online' : 'offline'
-			})).click(function() {
+		})).appendTo(ul).click($.proxy(function() {
 			that.onContactClick(contact);
-		}));
-	});
+		}, this));
+	}
 };
 JQueryContactsView.prototype.renderWhoAmI = function(user) {
 	var whoami = $("#contacts .whoami").empty();
@@ -91,7 +92,8 @@ ListContactsChooserDisplay.prototype.render = function() {
 	if ( this.contacts.length == 0 ) {
 		$contactList.append('<li>No contacts</li>');
 	} else {
-		jQuery.each(this.contacts, $.proxy(function(i, contact) {
+		for (var i = 0; i < this.contacts.length; i++) {
+			var contact = this.contacts[i];
 			var template = "<li class=contact title='{{email}}'>" + 
 							"<div class='usericon usericon{{size}}'>" +
 							"<div><img src='http://gravatar.com/avatar/{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
@@ -123,7 +125,7 @@ ListContactsChooserDisplay.prototype.render = function() {
 				// Autoselect the first element
 				this.setSelectedContact(contact);
 			}
-		}, this));
+		};
 	}
 
 	// Install button-listeners
@@ -213,9 +215,10 @@ ListContactsChooserDisplay.prototype.refreshFilteredContactList = function(filte
 	$(".contact", this.e).css('display', ''); // Show all contacts
 
 	filterText = filterText.toLowerCase();
-	jQuery.each(this.contacts, $.proxy(function(i, contact) {
+
+	for (var i = 0; i < this.contacts.length; i++) {
+		var contact = this.contacts[i];
 		// Show all elements
-		
 		if (!(contact.name.toLowerCase().indexOf(filterText) >= 0 || contact.email.indexOf(filterText) >= 0 )) {
 			// text not found in name or email
 			var $contact = $("#contactchooser-contact-"+ contact.id);
@@ -229,10 +232,8 @@ ListContactsChooserDisplay.prototype.refreshFilteredContactList = function(filte
 			if ( firstContact == null ) {
 				firstContact = contact;
 			}
-		}
-
-		
-	}, this));
+		}	
+	};
 
 	
 	if ( this.selectedContact == null && firstContact != null) {
@@ -263,7 +264,7 @@ SimpleContactsChooserDisplay.prototype.show = function(title, contacts) {
 		}
 		// No contact entered or found, closing
 		that.close();
-	}, 0);
+	});
 };
 SimpleContactsChooserDisplay.prototype.close = function() {
 	this.onClose();

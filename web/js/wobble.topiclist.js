@@ -49,12 +49,13 @@ TopicsPresenter.prototype.refreshTopicsList = function() {
 	API.list_topics(function(err, list) {
 		if ( !err ) {
 			that.view.clear();
-			$.each(list, function(i, data) {
+			for (var i = 0; i < list.length; i++) {
+				var data = list[i];
 				that.view.addTopic(data);
 				if ( that.selectedTopicId && that.selectedTopicId == data.id) {
 					that.view.setActiveTopic(data);
 				}
-			});
+			}
 		}
 	});
 };
