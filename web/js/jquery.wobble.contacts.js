@@ -3,26 +3,25 @@
 function JQueryContactsView() {
 	var that = this;
 	// UI Event Handlers		
-	$("#contacts_add").click(function() {
+	$("#contacts_add").click($.proxy(function() {
 		var contactEmail = window.prompt("Enter the new contact's email address");
 		if (contactEmail !== null) {
-			that.onAddContact(contactEmail);
+			this.onAddContact(contactEmail);
 		}
-	});
-	$("#user_change_name").click(function() {
+	}, this));
+	$("#user_change_name").click($.proxy(function() {
 		var newName = window.prompt("What should your new name be?");
 		if ( newName !== null ) {
-			that.onNameChange(newName);
+			this.onNameChange(newName);
 		}
-	});
+	}, this));
 }
 JQueryContactsView.prototype = new ContactsDisplay();
 JQueryContactsView.prototype.constructor = JQueryContactsView;
 
 // Methods 
 JQueryContactsView.prototype.renderContacts = function (list) {
-	var that = this;
-	var ul = $("#contacts ul").empty();
+	var $ul = $("#contacts ul").empty();
 	
 	for (var i = 0; i < list.length; i++) {
 		var contact = list[i];
@@ -39,8 +38,8 @@ JQueryContactsView.prototype.renderContacts = function (list) {
 				name: contact.name,
 				img: contact.img,
 				online: contact.online == 1 ? 'online' : 'offline'
-		})).appendTo(ul).click($.proxy(function() {
-			that.onContactClick(contact);
+		})).appendTo($ul).click($.proxy(function() {
+			this.onContactClick(contact);
 		}, this));
 	}
 };
