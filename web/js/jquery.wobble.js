@@ -1,9 +1,8 @@
+/**
+ * Fires a 'window.resize' BUS event, when the window gets resized.
+ */
 (function($) {
 	"use strict";
-
-	/**
-	 * Fires a 'window.resize' BUS event, when the window gets resized.
-	 */
 
 	var $window = $(window);
 	function get_size() {

@@ -6,26 +6,29 @@
   		<link rel="stylesheet" href="css/ext/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="js/ext/qunit.js"></script>
 
-		<script src="js/jquery.wobble.js"></script>
+		<script src="js/wobble.js"></script>
 
   		<script>
 		  $(document).ready(function(){
 			module("BUS");  
-			
 			test("BUS available", function() {
 			  ok( window.BUS !== undefined, "BUS is available" );
 			  ok( window.BUS.on !== undefined, "BUS.on is available" );
-			  ok( window.BUS.fire !== undefined, "BUS.on is available" );
+			  ok( window.BUS.fire !== undefined, "BUS.fire is available" );
 			});
 
 			test("BUS fire simple", function() {
-				expect(1);
+				expect(3);
 				stop();
 				BUS.on('test', function(data) {
-					equal('Hello World!', data, 'Hello World message received!');
-					start();
+					equal('Hello World!', data, '"Hello World" message received!');
 				});
+				BUS.on('test', function(data) {
+					equal('Hello World!', data, '"Hello World" message received!');
+					equal('Stephan', this.name, 'BUS.on supports context')
+				}, {name: 'Stephan'});
 				BUS.fire('test', 'Hello World!');
+				start();
 			});
 
 			module("RPC");
@@ -59,7 +62,6 @@
 			  	
 			  });
 			});
-
 		  });
   		</script>
   
