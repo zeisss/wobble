@@ -32,24 +32,21 @@
 			});
 
 			module("RPC");
-			test("RPC object available", function() {
+			test("RPC object available", 1, function() {
 			  ok( window.RPC !== undefined, "RPC is available" );
 			});
-			test('System Functions', function() {
-				expect(2);
-				stop();
+			asyncTest('System Functions', 2, function() {
 				RPC.doRPC('system.listMethods', {}, function(err, result) {
 					equal(err, null, 'No error');
 					ok(result.length > 0, 'Positive length');
 					start();
 				});
 			});
-			test('Echo Test', function() {
-				expect(4);
-				stop();
+			asyncTest('Echo Test', 5, function() {
 				RPC.doRPC('echo', ['ABCDEFG', '12345'], function(err, result) {
-					equal(err, null, 'No error');
-					equal(result.length, 2, 'Length = 2');
+					strictEqual(err, undefined, 'No error');
+					ok(result != null, 'Result received');
+					equal(result && result.length, 2, 'Length = 2');
 					equal('ABCDEFG', result[0], 'First echo parameter');
 					equal('12345', result[1], 'Second echo parameter');
 					start();
@@ -57,12 +54,14 @@
 			});
 
 			module ("API");
-			test("API available", function() {
+			test("API available", 1, function() {
 			  ok( window.API !== undefined, "API is available" );
 			});
-			test("simple login+whoami+logout", function() {
-			  expect(7);
-			  stop();
+			test('generate_id()', 1, function() {
+				ok(API.generate_id(), 'Not null/undefined ID');
+			});
+			
+			asyncTest("simple login+whoami+logout", 7, function() {
 			  API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
 			  	equal(err, null, "No error retrieved");
 			  	equal(result, true, "TRUE received");

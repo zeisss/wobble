@@ -40,10 +40,8 @@
 		// Contact list
 		array('file' => 'api_user.php', 'method' => 'user_get_contacts'),
 		array('file' => 'api_user.php', 'method' => 'user_add_contact'),
-		array('file' => 'api_user.php', 'method' => 'user_remove_contact'),
+		array('file' => 'api_user.php', 'method' => 'user_remove_contact')
 		
-		// Test functions
-		array('file' => 'api_test.php', 'method' => 'testecho', 'name' => 'echo')
 	));
 
 	function ctx_before_request($method, $params) {
