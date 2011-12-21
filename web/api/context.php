@@ -43,10 +43,12 @@
 		array('file' => 'api_user.php', 'method' => 'user_remove_contact'),
 		
 		// Test functions
-		array('file' => 'api_test.php', 'method' => 'testecho')
+		array('file' => 'api_test.php', 'method' => 'testecho', 'name' => 'echo')
 	));
 
 	function ctx_before_request($method, $params) {
+		session_name('WOBBLEID');
+		session_set_cookie_params(60 * 60 * 24 * 31);
 		session_start();
 		if ( !empty($_SESSION['userid'])) {
 			UserRepository::touch($_SESSION['userid']);
