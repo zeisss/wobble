@@ -35,6 +35,26 @@
 			test("RPC object available", function() {
 			  ok( window.RPC !== undefined, "RPC is available" );
 			});
+			test('System Functions', function() {
+				expect(2);
+				stop();
+				RPC.doRPC('system.listMethods', {}, function(err, result) {
+					equal(err, null, 'No error');
+					ok(result.length > 0, 'Positive length');
+					start();
+				});
+			});
+			test('Echo Test', function() {
+				expect(4);
+				stop();
+				RPC.doRPC('echo', ['ABCDEFG', '12345'], function(err, result) {
+					equal(err, null, 'No error');
+					equal(result.length, 2, 'Length = 2');
+					equal('ABCDEFG', result[0], 'First echo parameter');
+					equal('12345', result[1], 'Second echo parameter');
+					start();
+				});
+			});
 
 			module ("API");
 			test("API available", function() {
@@ -62,12 +82,23 @@
 			  	
 			  });
 			});
+
+			module('Wobble');
+			test('Test wobble-api-version', function() {
+				expect(2);
+				stop();
+				API.wobble_api_version(function(err, result) {
+					equal(err, null, 'No error received');
+					equal(result, '0.0.1', 'Version is 0.0.1');
+					start();
+				});
+			});
 		  });
   		</script>
   
 	</head>
 <body>
-  <h1 id="qunit-header">QUnit example</h1>
+  <h1 id="qunit-header">Wobble API Tests</h1>
  <h2 id="qunit-banner"></h2>
  <div id="qunit-testrunner-toolbar"></div>
  <h2 id="qunit-userAgent"></h2>

@@ -11,7 +11,7 @@
 
 	jsonrpc_export_functions(array (
 		// Core
-		array('file' => 'api_core.php', 'method' => 'api_version'),
+		array('file' => 'api_core.php', 'method' => 'wobble_api_version', 'name'=>'wobble.api_version'),
 		
 		// Topics
 		array('file' => 'api_topiclist.php', 'method' => 'topics_list'),
@@ -68,8 +68,6 @@
 	# Helper Functions
 	#
 	#
-
-
 	global $PDO_CONTEXT_VAR;
 	$PDO_CONTEXT_VAR = null;
 	function ctx_getpdo() {

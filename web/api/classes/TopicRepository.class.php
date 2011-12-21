@@ -46,7 +46,12 @@ class TopicRepository {
 		}
 	}
 
+	/**
+	 * Returns the user objects for every reader of a topic. Readers are the user which are allowed 
+	 * to read and write to a topic.
+	 */
 	function getReaders($topic_id, $limit = FALSE) {
+		assert('!empty($topic_id)');
 		$pdo = ctx_getpdo();
 		
 		$sql = 'SELECT u.id id, u.name name, u.email email, md5(u.email) img, COALESCE(last_touch > (UNIX_TIMESTAMP() - 300), false) online ' . 
