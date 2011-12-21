@@ -12,7 +12,7 @@
 	function topics_list() {
 		$self_user_id = ctx_getuserid();
 
-		ValidationService::check_not_empty($self_user_id);
+		ValidationService::validate_not_empty($self_user_id);
 		
 		$pdo = ctx_getpdo();
 		$stmt = $pdo->prepare('SELECT 
