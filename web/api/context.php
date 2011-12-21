@@ -11,7 +11,7 @@
 
 	jsonrpc_export_functions(array (
 		// Core
-		array('file' => 'api_core.php', 'method' => 'api_version'),
+		array('file' => 'api_core.php', 'method' => 'wobble_api_version', 'name'=>'wobble.api_version'),
 		
 		// Topics
 		array('file' => 'api_topiclist.php', 'method' => 'topics_list'),
@@ -40,13 +40,13 @@
 		// Contact list
 		array('file' => 'api_user.php', 'method' => 'user_get_contacts'),
 		array('file' => 'api_user.php', 'method' => 'user_add_contact'),
-		array('file' => 'api_user.php', 'method' => 'user_remove_contact'),
+		array('file' => 'api_user.php', 'method' => 'user_remove_contact')
 		
-		// Test functions
-		array('file' => 'api_test.php', 'method' => 'testecho')
 	));
 
 	function ctx_before_request($method, $params) {
+		session_name('WOBBLEID');
+		session_set_cookie_params(60 * 60 * 24 * 31);
 		session_start();
 		if ( !empty($_SESSION['userid'])) {
 			UserRepository::touch($_SESSION['userid']);
@@ -66,8 +66,6 @@
 	# Helper Functions
 	#
 	#
-
-
 	global $PDO_CONTEXT_VAR;
 	$PDO_CONTEXT_VAR = null;
 	function ctx_getpdo() {

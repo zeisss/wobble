@@ -1,0 +1,27 @@
+[	
+	{
+		"id": "0",
+		"method": "user_login",
+		"params": {
+			"email": "stephan.zeissler@moinz.de",
+			"password": "asd"
+		}	
+	},
+	{
+		"id": "1", 
+		"method": "post_create", 
+		"params": {
+			"topic_id": "1-1323269718635", 
+			"post_id": "2", 
+			"parent_post_id": "1"
+		}
+	},
+	{
+		"id": "2", 
+		"method": "post_delete", 
+		"params": {
+			"topic_id": "1-1323269718635", 
+			"post_id": "2"
+		}
+	}
+]

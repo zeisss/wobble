@@ -91,8 +91,7 @@ ListContactsChooserDisplay.prototype.render = function() {
 	if ( this.contacts.length == 0 ) {
 		$contactList.append('<li>No contacts</li>');
 	} else {
-		for (var i = 0; i < this.contacts.length; i++) {
-			var contact = this.contacts[i];
+		jQuery.each(this.contacts, $.proxy(function(i, contact) {
 			var template = "<li class=contact title='{{email}}'>" + 
 							"<div class='usericon usericon{{size}}'>" +
 							"<div><img src='http://gravatar.com/avatar/{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
@@ -124,7 +123,7 @@ ListContactsChooserDisplay.prototype.render = function() {
 				// Autoselect the first element
 				this.setSelectedContact(contact);
 			}
-		};
+		}, this));
 	}
 
 	// Install button-listeners

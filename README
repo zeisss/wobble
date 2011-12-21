@@ -1,8 +1,21 @@
-Use `vagrant up` to start the VM. You can then connect to it on http://localhost:8080/.
-
-The content of the web/ folder is available at the URL above.
-
-The Puppet cookbooks are copied from http://community.opscode.com/cookbooks.
+What is Wobble
+==============
+Wobble is a replacement for Google Wave.
 
 
-This is tested with Vagrant 0.8.7 and Virtualbox 4.1.2.
+Features
+--------
+
+- Contacts
+  - Add your friends
+  - See who is online
+
+- Topics
+  - Create topics, invite your friends and post messages
+  - See unread messages immediately, since the topicsList and each post has an unread-status. Click on it to mark it as read.
+
+
+Getting Started
+---------------
+The main-code is located at GitHub: https://github.com/ZeissS/wobble. An installation guide is located in the wiki: https://github.com/ZeissS/wobble/wiki
+If you have any problem, please create an issue there as well.

@@ -117,6 +117,9 @@
 					if ( isset($export['file'])) {
 						require_once($export['file']);
 					}
+					if ( !function_exists($export['method'])) {
+						throw new Exception("Expected that {$export['method']} gets defined in {$export['file']}. Function not found.");
+					}
 
 					$response = call_user_func($export['method'], $request['params']);
 					

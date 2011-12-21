@@ -6,40 +6,62 @@
   		<link rel="stylesheet" href="css/ext/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="js/ext/qunit.js"></script>
 
-		<script src="js/jquery.wobble.js"></script>
+		<script src="js/wobble.js"></script>
 
   		<script>
 		  $(document).ready(function(){
 			module("BUS");  
-			
 			test("BUS available", function() {
 			  ok( window.BUS !== undefined, "BUS is available" );
 			  ok( window.BUS.on !== undefined, "BUS.on is available" );
-			  ok( window.BUS.fire !== undefined, "BUS.on is available" );
+			  ok( window.BUS.fire !== undefined, "BUS.fire is available" );
 			});
 
 			test("BUS fire simple", function() {
-				expect(1);
+				expect(3);
 				stop();
 				BUS.on('test', function(data) {
-					equal('Hello World!', data, 'Hello World message received!');
-					start();
+					equal('Hello World!', data, '"Hello World" message received!');
 				});
+				BUS.on('test', function(data) {
+					equal('Hello World!', data, '"Hello World" message received!');
+					equal('Stephan', this.name, 'BUS.on supports context')
+				}, {name: 'Stephan'});
 				BUS.fire('test', 'Hello World!');
+				start();
 			});
 
 			module("RPC");
-			test("RPC object available", function() {
+			test("RPC object available", 1, function() {
 			  ok( window.RPC !== undefined, "RPC is available" );
+			});
+			asyncTest('System Functions', 2, function() {
+				RPC.doRPC('system.listMethods', {}, function(err, result) {
+					equal(err, null, 'No error');
+					ok(result.length > 0, 'Positive length');
+					start();
+				});
+			});
+			asyncTest('Echo Test', 5, function() {
+				RPC.doRPC('echo', ['ABCDEFG', '12345'], function(err, result) {
+					strictEqual(err, undefined, 'No error');
+					ok(result != null, 'Result received');
+					equal(result && result.length, 2, 'Length = 2');
+					equal('ABCDEFG', result[0], 'First echo parameter');
+					equal('12345', result[1], 'Second echo parameter');
+					start();
+				});
 			});
 
 			module ("API");
-			test("API available", function() {
+			test("API available", 1, function() {
 			  ok( window.API !== undefined, "API is available" );
 			});
-			test("simple login+whoami+logout", function() {
-			  expect(7);
-			  stop();
+			test('generate_id()', 1, function() {
+				ok(API.generate_id(), 'Not null/undefined ID');
+			});
+			
+			asyncTest("simple login+whoami+logout", 7, function() {
 			  API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
 			  	equal(err, null, "No error retrieved");
 			  	equal(result, true, "TRUE received");
@@ -60,12 +82,22 @@
 			  });
 			});
 
+			module('Wobble');
+			test('Test wobble-api-version', function() {
+				expect(2);
+				stop();
+				API.wobble_api_version(function(err, result) {
+					equal(err, null, 'No error received');
+					equal(result, '0.0.1', 'Version is 0.0.1');
+					start();
+				});
+			});
 		  });
   		</script>
   
 	</head>
 <body>
-  <h1 id="qunit-header">QUnit example</h1>
+  <h1 id="qunit-header">Wobble API Tests</h1>
  <h2 id="qunit-banner"></h2>
  <div id="qunit-testrunner-toolbar"></div>
  <h2 id="qunit-userAgent"></h2>

@@ -149,7 +149,7 @@ window.API = {
 	// Async stuff
 	/* Core / Basic Stuff */
 	wobble_api_version: function(callback) {
-		RPC.doRPC('wobble_api_version', callback);
+		RPC.doRPC('wobble.api_version', callback);
 	},
 	systemListMethods: function(callback) {
 		RPC.doRPC('system.listMethods', callback);	
