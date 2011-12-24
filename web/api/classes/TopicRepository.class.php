@@ -81,4 +81,27 @@ class TopicRepository {
 		}
 		return $result;
 	}
+
+	/**
+	 * Returns the user objects for every user ever written in a topic. 
+	 */
+	function getWriters($topic_id, $limit = FALSE) {
+		assert('!empty($topic_id)');
+		$pdo = ctx_getpdo();
+		
+		$sql = 'SELECT u.id id, u.name name, u.email email, md5(u.email) img, COALESCE(last_touch > (UNIX_TIMESTAMP() - 300), false) online ' . 
+			  'FROM users u, post_editors pe ' . 
+			  'WHERE u.id = pe.user_id AND pe.topic_id = ?';
+		if ( $limit ) {
+			$sql .= ' LIMIT ' . $limit;
+		}
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute(array($topic_id));
+		$result =  $stmt->fetchAll();
+		foreach($result AS $i => $user) {
+			$result[$i]['id'] = intval($user['id']); # convert id to int
+			$result[$i]['online'] = intval($user['online']); 
+		}
+		return $result;
+	}
 }

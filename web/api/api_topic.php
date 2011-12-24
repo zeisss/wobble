@@ -18,7 +18,7 @@
 	 * authenticated and a member of the topic.
 	 *
 	 * input = {'id': TopicId}
-	 * result = {'id':TopicId, 'users': [User], 'posts': [Post]} 
+	 * result = {'id':TopicId, 'readers': [User], 'writers': [User], 'posts': [Post]} 
 	 *
 	 * User = {'id': UserId, 'name': string(), 'online': int(), 
 	 *         'email': string(), 'img': string()}
@@ -42,7 +42,8 @@
 		
 		$pdo = ctx_getpdo();
 		
-		$users = TopicRepository::getReaders($topic_id);
+		$readers = TopicRepository::getReaders($topic_id);
+		$writers = TopicRepository::getWriters($topic_id);
 				
 		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent, p.last_touch timestamp, p.deleted deleted, coalesce((select 0 from post_users_read where topic_id = p.topic_id AND post_id = p.post_id AND user_id = ?), 1) unread 
 								FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
@@ -67,7 +68,8 @@
 		
 		return array (
 			'id' => $topic_id,
-			'users' => $users,
+			'readers' => $readers,
+			'writers' => $writers,
 			'posts' => $posts
 		);
 	}
