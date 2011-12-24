@@ -103,8 +103,8 @@
 				window.location.hash = topicId; // Note the current topicId in the URL, so its visible for the user and we can work with it on page reloads
 			});
 			
-			
-			API.init(); // Loads current user ID infos (so its cached locally)
+			// Loads current user ID infos (so its cached locally)
+			window.API = new WobbleAPI(new JSONRPC('./api/endpoint.php')); 
 		</script>
 	</head>
 	<body>

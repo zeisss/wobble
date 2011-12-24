@@ -1,9 +1,7 @@
 
 "use strict";
 /*
-This file provides the EventBus window.BUS and the Wobble API window.API.
-
-There is also a RPC object for json-rpc 2.0 calls. It is used by the API object.
+This file provides the EventBus window.BUS, and two classes: JSONRPC and the WobbleAPI .
 */
 
 function log(s) {
@@ -50,181 +48,181 @@ if ( window.addEventListener) {
 }
 
 
-// RPC Wrapper (JSON-RPC 2.0 - http://json-rpc.org/wiki/specification)
-window.RPC = {
-	idSequence: 1,
-	
-	/**
-	 * Notifications are calls, where no response is expected/wished.
-	 */
-	doNotification: function(name, args) {
-		RPC._call(null, name, args, null);
-	},
-	/**
-	 * Normal RPC call.
-	 */
-	doRPC: function(name, args, callback) {
-		if ( arguments.length == 2 ) {
-			callback = args;
-			args = null;
-		}
-		var requestId = this.idSequence;
-		this.idSequence++;
-		
-		RPC._call(requestId, name, args, callback);
-	},
-	_call: function(requestId, name, args, callback) {			
-		var body = {
-			jsonrpc: "2.0",
-			method: name,
-		};
-		if (args) {
-			body.params = args;
-		}
-		if (requestId) {
-			body.id = requestId;
-		}
-		
-		var ajaxSettings = {
-			type:'POST',
-			cache: false,
-			data: JSON.stringify(body),
-			dataType: "json",
-			processData: false,
-			headers: {
-				'Content-Type': 'application/json; charset=utf-8'
-			},
-			success: function(data, textStatus, jqXHR) {					
-				if ( data.error ) {
-					BUS.fire('rpc.error', {
-						request: body,
-						error: data.error
-					});
-				}
-				if (!callback) 
-					return;
-				if ( data.error ) {
-					callback(data.error);
-				} else {
-					callback(undefined, data.result);
-				}
-			}
-		};
-		if ( callback ) {
-			ajaxSettings.error = function(jqXHR, textStatus, errorThrown) {
-				BUS.fire('rpc.connectionerror', {text: textStatus, error: errorThrown});
-				callback(errorThrown);
-			};
-			
-		}
-		$.ajax('api/endpoint.php', ajaxSettings);
+// RPC Wrapper (JSON-RPC 2.0 - http://json-this.RPC.org/wiki/specification)
+var JSONRPC = function(url) {
+	this.url = url;
+	this.idSequence = 1;
+}
+/**
+ * Notifications are calls, where no response is expected/wished.
+ */
+JSONRPC.prototype.doNotification = function(name, args) {
+	RPC._call(null, name, args, null);
+};
+/**
+ * Normal RPC call.
+ */
+JSONRPC.prototype.doRPC = function(name, args, callback) {
+	if ( arguments.length == 2 ) {
+		callback = args;
+		args = null;
 	}
+	var requestId = this.idSequence;
+	this.idSequence++;
+	
+	this._call(requestId, name, args, callback);
+};
+JSONRPC.prototype._call = function(requestId, name, args, callback) {			
+	var body = {
+		jsonrpc: "2.0",
+		method: name,
+	};
+	if (args) {
+		body.params = args;
+	}
+	if (requestId) {
+		body.id = requestId;
+	}
+	
+	var ajaxSettings = {
+		type:'POST',
+		cache: false,
+		data: JSON.stringify(body),
+		dataType: "json",
+		processData: false,
+		headers: {
+			'Content-Type': 'application/json; charset=utf-8'
+		},
+		success: function(data, textStatus, jqXHR) {					
+			if ( data.error ) {
+				BUS.fire('this.RPC.error', {
+					request: body,
+					error: data.error
+				});
+			}
+			if (!callback) 
+				return;
+			if ( data.error ) {
+				callback(data.error);
+			} else {
+				callback(undefined, data.result);
+			}
+		}
+	};
+	if ( callback ) {
+		ajaxSettings.error = function(jqXHR, textStatus, errorThrown) {
+			BUS.fire('this.RPC.connectionerror', {text: textStatus, error: errorThrown});
+			callback(errorThrown);
+		};
+		
+	}
+	$.ajax(this.url, ajaxSettings);
 };
 
 // API Wrapper functions
-window.API = {
-	_user: undefined,
-	
-	// Directly returning functions
-	/** Builds an ID by combining the user_id with the current time. */
-	generate_id: function() {
+var WobbleAPI = function(RPC) {
+	if (!RPC) {
+		throw new Error('RPC object is required for WobbleAPI object');
+	}
+	this.RPC = RPC;
+	this._user = undefined;
+
+	this.user_get(function(err, user) {
+		if ( !err && user) {
+			API._user = user;
+			BUS.fire('api.user', user);
+		}
+	});
+};
+
+// Directly returning functions
+/** Builds an ID by combining the user_id with the current time. */
+WobbleAPI.prototype.generate_id = function() {
 		var id = API.user_id() + "-" + (new Date().getTime());
 		return id;
-	},
-	user_id: function() {
-		return this._user ? this._user.id : null;
-	},
-	user:function() {
-		return this._user;
-	},
-	
-	/** Loads initial data */
-	init: function() {
-		this.user_get(function(err, user) {
-			if ( !err && user) {
-				API._user = user;
-				BUS.fire('api.user', user);
-			}
-		});
-	},
-	
-	// Async stuff
-	/* Core / Basic Stuff */
-	wobble_api_version: function(callback) {
-		RPC.doRPC('wobble.api_version', callback);
-	},
-	systemListMethods: function(callback) {
-		RPC.doRPC('system.listMethods', callback);	
-	},
+};
+WobbleAPI.prototype.user_id = function() {
+	return this._user ? this._user.id : null;
+};
+WobbleAPI.prototype.user = function() {
+	return this._user;
+},
 
-	/* Notifications */
-	get_notifications: function(timestamp, callback) {
-		RPC.doRPC('get_notifications', {next_timestamp: timestamp}, callback);
-	},
-	
-	/* REGISTER / LOGIN ----------------- */
-	register: function(email, password, callback) {
-		RPC.doRPC('user_register', {'email': email, 'password': password}, callback);
-	},
-	login: function(email, password, callback) {
-		RPC.doRPC('user_login', {'email': email, 'password': password}, callback);
-	},
-	signout: function(callback) {
-		RPC.doRPC('user_signout', callback);
-	},
-	
-	user_change_name: function(newName, callback) {
-		RPC.doRPC('user_change_name', {name: newName}, callback);
-	},
-	user_get: function(callback) {
-		RPC.doRPC('user_get', callback);
-	},
-	
-	/* TOPICS Functions ----------------- */
-	topics_create: function(id, callback) {
-		RPC.doRPC('topics_create', {id: id}, callback);
-	},
+// Async stuff
+/* Core / Basic Stuff */
+WobbleAPI.prototype.wobble_api_version = function(callback) {
+	this.RPC.doRPC('wobble.api_version', callback);
+};
+WobbleAPI.prototype.systemListMethods = function(callback) {
+	this.RPC.doRPC('system.listMethods', callback);	
+};
 
-	load_topic_details: function(topicId, callback) {
-		RPC.doRPC('topic_get_details', {id: topicId}, callback);
-	},
-	
-	list_topics: function (callback) {
-		RPC.doRPC('topics_list', callback);
-	},
-	
-	/* CONTACTS Functions --------------- */
-	
-	add_contact: function(email, callback) {
-		RPC.doRPC('user_add_contact', {'contact_email': email}, callback);
-	},
-	get_contacts: function (callback) {
-		RPC.doRPC('user_get_contacts', callback);
-	},
-	contact_remove: function(contact_id, callback) {
-		RPC.doRPC('user_remove_contact', {contact_id: contact_id}, callback);
-	},
-	
-	/* TOPIC Functions ------------------ */
-	topic_add_user: function(topicId, contactId, callback) {
-		RPC.doRPC('topic_add_user', {topic_id: topicId, contact_id: contactId}, callback);
-	},
-	topic_remove_user: function(topicId, contactId, callback) {
-		RPC.doRPC('topic_remove_user', {topic_id: topicId, contact_id: contactId}, callback);
-	},
-	
-	post_change_read: function(topicId, postId, readStatus, callback) {
-		RPC.doRPC('post_read', {topic_id: topicId, post_id: postId, read: readStatus}, callback);	
-	},
-	post_create: function(topicId, postId, parentPostId, callback) {
-		RPC.doRPC('post_create', {topic_id: topicId, post_id: postId, parent_post_id: parentPostId}, callback);
-	},
-	post_edit: function(topicId, postId, content, revision_no, callback) {
-		RPC.doRPC('post_edit', {topic_id: topicId, post_id: postId, revision_no: revision_no, content: content}, callback);
-	},
-	post_delete: function(topicId, postId, callback) {
-		RPC.doRPC('post_delete', {topic_id: topicId, post_id: postId}, callback);
-	}
+/* Notifications */
+WobbleAPI.prototype.get_notifications = function(timestamp, callback) {
+	this.RPC.doRPC('get_notifications', {next_timestamp: timestamp}, callback);
+};
+
+/* REGISTER / LOGIN ----------------- */
+WobbleAPI.prototype.register = function(email, password, callback) {
+	this.RPC.doRPC('user_register', {'email': email, 'password': password}, callback);
+};
+WobbleAPI.prototype.login = function(email, password, callback) {
+	this.RPC.doRPC('user_login', {'email': email, 'password': password}, callback);
+};
+WobbleAPI.prototype.signout = function(callback) {
+	this.RPC.doRPC('user_signout', callback);
+};
+
+WobbleAPI.prototype.user_change_name = function(newName, callback) {
+	this.RPC.doRPC('user_change_name', {name: newName}, callback);
+};
+WobbleAPI.prototype.user_get = function(callback) {
+	this.RPC.doRPC('user_get', callback);
+};
+
+/* TOPICS Functions ----------------- */
+WobbleAPI.prototype.topics_create = function(id, callback) {
+	this.RPC.doRPC('topics_create', {id: id}, callback);
+};
+
+WobbleAPI.prototype.load_topic_details = function(topicId, callback) {
+	this.RPC.doRPC('topic_get_details', {id: topicId}, callback);
+};
+
+WobbleAPI.prototype.list_topics = function (callback) {
+	this.RPC.doRPC('topics_list', callback);
+};
+
+/* CONTACTS Functions --------------- */
+WobbleAPI.prototype.add_contact = function(email, callback) {
+	this.RPC.doRPC('user_add_contact', {'contact_email': email}, callback);
+};
+WobbleAPI.prototype.get_contacts = function (callback) {
+	this.RPC.doRPC('user_get_contacts', callback);
+};
+WobbleAPI.prototype.contact_remove = function(contact_id, callback) {
+	this.RPC.doRPC('user_remove_contact', {contact_id: contact_id}, callback);
+};
+
+/* TOPIC Functions ------------------ */
+WobbleAPI.prototype.topic_add_user = function(topicId, contactId, callback) {
+	this.RPC.doRPC('topic_add_user', {topic_id: topicId, contact_id: contactId}, callback);
+};
+WobbleAPI.prototype.topic_remove_user = function(topicId, contactId, callback) {
+	this.RPC.doRPC('topic_remove_user', {topic_id: topicId, contact_id: contactId}, callback);
+};
+
+WobbleAPI.prototype.post_change_read = function(topicId, postId, readStatus, callback) {
+	this.RPC.doRPC('post_read', {topic_id: topicId, post_id: postId, read: readStatus}, callback);	
+};
+WobbleAPI.prototype.post_create = function(topicId, postId, parentPostId, callback) {
+	this.RPC.doRPC('post_create', {topic_id: topicId, post_id: postId, parent_post_id: parentPostId}, callback);
+};
+WobbleAPI.prototype.post_edit = function(topicId, postId, content, revision_no, callback) {
+	this.RPC.doRPC('post_edit', {topic_id: topicId, post_id: postId, revision_no: revision_no, content: content}, callback);
+};
+WobbleAPI.prototype.post_delete = function(topicId, postId, callback) {
+	this.RPC.doRPC('post_delete', {topic_id: topicId, post_id: postId}, callback);
 };
 
 
