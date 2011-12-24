@@ -184,9 +184,8 @@
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				NotificationRepository::push($user['id'], array(
-					'type' => 'post_changed',
-					'topic_id' => $topic_id,
-					'post_id' => $post_id
+					'type' => 'topic_changed',
+					'topic_id' => $topic_id
 				));
 			}
 			
