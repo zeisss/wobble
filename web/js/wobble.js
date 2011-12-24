@@ -43,9 +43,11 @@ window.BUS = {
 		this.listeners = {};
 	}
 };
-window.addEventListener('unload', function() {
-	BUS.clear();
-});
+if ( window.addEventListener) {
+	window.addEventListener('unload', function() {
+		BUS.clear();
+	});
+}
 
 
 // RPC Wrapper (JSON-RPC 2.0 - http://json-rpc.org/wiki/specification)
