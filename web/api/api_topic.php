@@ -90,7 +90,7 @@
 		
 		$pdo = ctx_getpdo();
 		if ( _topic_has_access($pdo, $topic_id) ) {
-			$pdo->prepare('REPLACE topic_readers (topic_id, user_id) VALUES (?,?)')->execute(array($topic_id, $user_id));
+			TopicRepository::addReader($topic_id, $user_id);
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				NotificationRepository::push($user['id'], array(
@@ -137,9 +137,7 @@
 				));
 			}
 			# Delete afterwards. The other way around, the deleted user wouldn't get the notification
-			$pdo->prepare('DELETE FROM topic_readers WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
-
-			$pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
+			TopicRepository::removeReader($topic_id, $user_id);
 			
 			return TRUE;
 		}

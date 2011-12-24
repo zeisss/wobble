@@ -51,7 +51,20 @@ function user_register($params) {
 		throw new Exception('You are already registered!');
 	}
 	
-	$_SESSION['userid'] = UserRepository::create($email, $password_hashed, $email);
+	$user_id = UserRepository::create($email, $password_hashed, $email);
+
+	if ( defined('WELCOME_TOPIC_ID')) {
+		TopicRepository::addReader(WELCOME_TOPIC_ID, $user_id);
+
+		foreach(TopicRepository::getReaders($topic_id) as $user) {
+			NotificationRepository::push($user['id'], array(
+				'type' => 'topic_changed',
+				'topic_id' => $topic_id
+			));
+		}
+	}
+
+	$_SESSION['userid'] = $user_id;
 	return TRUE;
 }
 

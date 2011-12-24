@@ -3,6 +3,18 @@
  * The TopicRepository provides convienience function to access the storage for Topics.
  */
 class TopicRepository {
+	function addReader($topic_id, $user_id) {
+		$pdo = ctx_getpdo();
+
+		$pdo->prepare('REPLACE topic_readers (topic_id, user_id) VALUES (?,?)')->execute(array($topic_id, $user_id));
+	}
+
+	function removeReader($topic_id, $user_id) {
+		$pdo = ctx_getpdo();
+		$pdo->prepare('DELETE FROM topic_readers WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
+
+		$pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
+	}
 	function setPostReadStatus($user_id, $topic_id, $post_id, $read_status) {
 		$pdo = ctx_getpdo();
 		#var_dump($read_status);
