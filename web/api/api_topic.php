@@ -329,7 +329,8 @@
 		$user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
 		$post_id = $params['post_id'];
-		$read = $params['read'];
+		$read = $params['read']
+		$pdo = ctx_getpdo();
 
 		ValidationService::validate_not_empty($user_id);
 		ValidationService::validate_not_empty($topic_id);
