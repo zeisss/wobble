@@ -74,6 +74,11 @@ class TopicRepository {
 		}
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute(array($topic_id));
-		return $stmt->fetchAll();
+		$result =  $stmt->fetchAll();
+		foreach($result AS $i => $user) {
+			$result[$i]['id'] = intval($user['id']); # convert id to int
+			$result[$i]['online'] = intval($user['online']); 
+		}
+		return $result;
 	}
 }
