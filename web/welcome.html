@@ -37,6 +37,8 @@
 		</style>
 		<script>
 			$(document).ready(function() {
+				window.API = new WobbleAPI(new JSONRPC('./api/endpoint.php'));
+				
 				$("#register").click(function() {
 					var buttons = $("button");
 					

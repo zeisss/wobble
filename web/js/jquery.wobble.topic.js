@@ -45,9 +45,13 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 		this.setEnabled(true);
 
 		this.jTopicReaders.empty();
-		for (var i = 0; i < topicDetails.users.length; ++i) {
-			var user = topicDetails.users[i];
-			userCache[Number(user.id)] = user; // Cache user object (user later to show the user post images)
+		for (var i = 0; i<  topicDetails.writers.length; ++i) {
+			var user = topicDetails.writers[i];
+			userCache[user.id] = user;
+		}
+		for (var i = 0; i < topicDetails.readers.length; ++i) {
+			var user = topicDetails.readers[i];
+			userCache[user.id] = user; // Cache user object (user later to show the user post images)
 			this._renderReader(user);
 		}
 		

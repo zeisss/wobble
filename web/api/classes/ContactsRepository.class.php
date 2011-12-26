@@ -23,6 +23,11 @@ class ContactsRepository {
 		                      'FROM users u, users_contacts c WHERE u.id = c.contact_user_id AND c.user_id = ?' . 
 							  'ORDER BY online DESC, u.name');
 		$stmt->execute(array($user_id));
-		return $stmt->fetchAll();
+		$result =  $stmt->fetchAll();
+		foreach($result AS $i => $user) {
+			$result[$i]['id'] = intval($user['id']); # convert id to int
+			$result[$i]['online'] = intval($user['online']); 
+		}
+		return $result;
 	}
 }

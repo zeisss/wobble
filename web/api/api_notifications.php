@@ -12,7 +12,7 @@ function get_notifications($params) {
 	session_write_close(); # we dont need to modify the session after here
 	
 	$self_user_id = ctx_getuserid();
-	$timestamp = $params['next_timestamp'];
+	$timestamp = @$params['next_timestamp'];
 
 	if ( $timestamp != NULL )
 	{

@@ -5,7 +5,7 @@ TopicsDisplay.prototype.onTopicClicked = function(topic) {};
 TopicsDisplay.prototype.onCreateNewTopic = function() {};
 // Methods --------------------------------------------------------
 TopicsDisplay.prototype.setActiveTopic = function(topic) {};
-TopicsDisplay.prototype.addTopic = function(topic) {};
+TopicsDisplay.prototype.renderTopics = function(topics) {};
 TopicsDisplay.prototype.clear = function() {};
 
 
@@ -16,6 +16,7 @@ TopicsDisplay.prototype.clear = function() {};
 function TopicsPresenter (view) {
 	this.view = view;
 	this.selectedTopicId = null;
+	this.topics = [];
 	
 	this.refreshTopicsList();
 	
@@ -37,7 +38,8 @@ function TopicsPresenter (view) {
 		this.refreshTopicsList();
 	}, this);
 	BUS.on('api.notification', function(message) {
-		if ( message.type == 'topic_changed' ) {
+		if ( message.type == 'topic_changed' ||
+			 message.type == 'post_changed' /* Unread message counter propably got changed */ ) {
 			this.refreshTopicsList();
 		}
 	}, this);
@@ -45,19 +47,20 @@ function TopicsPresenter (view) {
 };
 /** Called by the view when a new topic should be created */
 TopicsPresenter.prototype.refreshTopicsList = function() {
-	var that = this;
-	API.list_topics(function(err, list) {
+	API.list_topics($.proxy(function(err, list) {
 		if ( !err ) {
-			that.view.clear();
+			this.view.clear();
+			this.topics = list;
+			this.view.renderTopics(list);
+
 			for (var i = 0; i < list.length; i++) {
 				var data = list[i];
-				that.view.addTopic(data);
-				if ( that.selectedTopicId && that.selectedTopicId == data.id) {
-					that.view.setActiveTopic(data);
+				if ( this.selectedTopicId && this.selectedTopicId == data.id) {
+					this.view.setActiveTopic(data);
 				}
 			}
 		}
-	});
+	}, this));
 };
 TopicsPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
 	this.selectedTopicId = topic.id;
@@ -83,7 +86,8 @@ TopicsPresenter.prototype.createNewTopic = function() {
 	var topicDetails = {
 		id: topicId,
 		abstract: '-',
-		users: [API.user()],
+		readers: [API.user()],
+		writer: [API.user()],
 		posts: [
 			{
 				id: '1', // First post always has the '1'
@@ -93,7 +97,9 @@ TopicsPresenter.prototype.createNewTopic = function() {
 			}
 		]
 	};
-	this.view.addTopic(topicDetails, true);
+
+	this.topics.push(topicDetails);
+	this.view.addTopic(this.topics);
 	this.setSelectedTopic(topicDetails, true);
 };
 

@@ -18,7 +18,7 @@
 	 * authenticated and a member of the topic.
 	 *
 	 * input = {'id': TopicId}
-	 * result = {'id':TopicId, 'users': [User], 'posts': [Post]} 
+	 * result = {'id':TopicId, 'readers': [User], 'writers': [User], 'posts': [Post]} 
 	 *
 	 * User = {'id': UserId, 'name': string(), 'online': int(), 
 	 *         'email': string(), 'img': string()}
@@ -42,7 +42,8 @@
 		
 		$pdo = ctx_getpdo();
 		
-		$users = TopicRepository::getReaders($topic_id);
+		$readers = TopicRepository::getReaders($topic_id);
+		$writers = TopicRepository::getWriters($topic_id);
 				
 		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent, p.last_touch timestamp, p.deleted deleted, coalesce((select 0 from post_users_read where topic_id = p.topic_id AND post_id = p.post_id AND user_id = ?), 1) unread 
 								FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
@@ -67,7 +68,8 @@
 		
 		return array (
 			'id' => $topic_id,
-			'users' => $users,
+			'readers' => $readers,
+			'writers' => $writers,
 			'posts' => $posts
 		);
 	}
@@ -90,7 +92,7 @@
 		
 		$pdo = ctx_getpdo();
 		if ( _topic_has_access($pdo, $topic_id) ) {
-			$pdo->prepare('REPLACE topic_readers (topic_id, user_id) VALUES (?,?)')->execute(array($topic_id, $user_id));
+			TopicRepository::addReader($topic_id, $user_id);
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				NotificationRepository::push($user['id'], array(
@@ -137,9 +139,7 @@
 				));
 			}
 			# Delete afterwards. The other way around, the deleted user wouldn't get the notification
-			$pdo->prepare('DELETE FROM topic_readers WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
-
-			$pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
+			TopicRepository::removeReader($topic_id, $user_id);
 			
 			return TRUE;
 		}
@@ -184,9 +184,8 @@
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				NotificationRepository::push($user['id'], array(
-					'type' => 'post_changed',
-					'topic_id' => $topic_id,
-					'post_id' => $post_id
+					'type' => 'topic_changed',
+					'topic_id' => $topic_id
 				));
 			}
 			
@@ -332,6 +331,7 @@
 		$topic_id = $params['topic_id'];
 		$post_id = $params['post_id'];
 		$read = $params['read'];
+		$pdo = ctx_getpdo();
 
 		ValidationService::validate_not_empty($user_id);
 		ValidationService::validate_not_empty($topic_id);

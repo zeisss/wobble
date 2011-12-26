@@ -23,4 +23,4 @@ function fetch_notifications(next_timestamp) {
 	});
 }
 
-BUS.on('api.user', fetch_notifications); // Start fetching, when user is available
+BUS.on('api.user', function() { fetch_notifications(); } ); // Start fetching, when user is available

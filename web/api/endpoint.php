@@ -4,7 +4,8 @@
 
 	require_once 'config.php';
 	require_once 'context.php'; # introduces session setup, db connection, utility classes, ...
-	require_once 'jsonrpc_system.php';
+	require_once 'jsonrpc_system.php'; # Exports the default system.listMethods and echo APICalls
+	
 	##############################################################
 	## Endpoint for JSON-RPC 2.0 Calls. 
 	##############################################################

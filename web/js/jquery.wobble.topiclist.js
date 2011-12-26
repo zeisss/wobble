@@ -23,8 +23,23 @@ jQueryTopicsView.prototype.setActiveTopic = function(topic) {
 	$("#topics li.active").removeClass("active");
 	$("#topic-" + topic.id).addClass("active");
 };
-jQueryTopicsView.prototype.addTopic = function(topic, prepend) {
-
+jQueryTopicsView.prototype.renderTopics = function(topics, prepend) {
+	var user = API.user();
+	if (user && topics) {
+		var unreadTopics = jQuery.grep(topics, function(topic) {
+			return topic.post_count_unread > 0;
+		}).length;
+		if ( unreadTopics == 0 ) {
+			document.title = user.name + " - Wobble";
+		} else {
+			document.title = "(" + unreadTopics + ") " + user.name + " - Wobble";
+		}
+	}
+	for (var i = 0; i < topics.length; ++i) {
+		this.renderTopic(topics[i], prepend);
+	}
+};
+jQueryTopicsView.prototype.renderTopic = function(topic, prepend) {
 	var template = '<li id="{{id}}" class="topic_header">' + 
 				   ' <div class="abstract"></div>' + 
 				   (topic.post_count_unread == 0 ?
@@ -40,7 +55,7 @@ jQueryTopicsView.prototype.addTopic = function(topic, prepend) {
 		'users': topic.users,
 		'unread': topic.post_count_unread,
 		'total': topic.post_count_total,
-		'time': this.renderTimestamp(topic.max_last_touch)
+		'time': this.renderTopicTimestamp(topic.max_last_touch)
 	})).click(function() { 
 		that.onTopicClicked(topic);
 	});
@@ -56,7 +71,7 @@ jQueryTopicsView.prototype.addTopic = function(topic, prepend) {
 		li.appendTo(this.jTopics)
 	}
 };
-jQueryTopicsView.prototype.renderTimestamp = function(timestamp) {
+jQueryTopicsView.prototype.renderTopicTimestamp = function(timestamp) {
 	if (!timestamp) {
 		return "";
 	}
