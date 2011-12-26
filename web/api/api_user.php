@@ -28,7 +28,7 @@ function user_login($params) {
 		foreach(user_get_contacts() AS $contact) {
 			NotificationRepository::push($contact['id'], array (
 				'type' => 'user_online',
-				'user_id' => $user['id'];
+				'user_id' => $user['id']
 			));
 		}
 		return TRUE;
