@@ -55,8 +55,8 @@
 		$self_user_id = ctx_getuserid();
 		$topic_id = $params['id'];
 
-		ValidationService::check_not_empty($self_user_id);
-		ValidationService::check_not_empty($topic_id);
+		ValidationService::validate_not_empty($self_user_id);
+		ValidationService::validate_not_empty($topic_id);
 
 		$pdo = ctx_getpdo();
 		
