@@ -98,8 +98,8 @@ TopicsPresenter.prototype.createNewTopic = function() {
 		]
 	};
 
-	this.topics.push(topicDetails);
-	this.view.addTopic(this.topics);
+	this.topics.splice(0, 0, topicDetails);
+	this.view.renderTopics(this.topics);
 	this.setSelectedTopic(topicDetails, true);
 };
 
