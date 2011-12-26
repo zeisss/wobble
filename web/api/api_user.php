@@ -16,7 +16,6 @@ function user_signout($params) {
 function user_login($params) {
 	$email = $params['email'];
 	$password = $params['password'];
-	$self_user_id = ctx_getuserid();
 	
 	ValidationService::validate_email($email);
 	ValidationService::validate_not_empty($password);
@@ -29,7 +28,7 @@ function user_login($params) {
 		foreach(user_get_contacts() AS $contact) {
 			NotificationRepository::push($contact['id'], array (
 				'type' => 'user_online',
-				'user_id' => $self_user_id
+				'user_id' => $user['id'];
 			));
 		}
 		return TRUE;
