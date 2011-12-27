@@ -9,6 +9,9 @@
 		<script src="js/wobble.js"></script>
 
   		<script>
+  		  window.RPC = new JSONRPC('./api/endpoint.php');
+  		  window.API = new WobbleAPI(window.RPC); 
+
 		  $(document).ready(function(){
 			module("BUS");  
 			test("BUS available", function() {
@@ -37,7 +40,7 @@
 			});
 			asyncTest('System Functions', 2, function() {
 				RPC.doRPC('system.listMethods', {}, function(err, result) {
-					equal(err, null, 'No error');
+					equal(err, undefined, 'No error');
 					ok(result.length > 0, 'Positive length');
 					start();
 				});
@@ -63,16 +66,16 @@
 			
 			asyncTest("simple login+whoami+logout", 7, function() {
 			  API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
-			  	equal(err, null, "No error retrieved");
+			  	equal(err, undefined, "No error retrieved");
 			  	equal(result, true, "TRUE received");
 			  	
 			  	API.user_get(function(err, result) {
-			  		equal(err, null, "No error retrieved");
+			  		equal(err, undefined, "No error retrieved");
 			  		ok(result != null, "TRUE received");
 			  		equals("stephan.zeissler@moinz.de", result.email, "Email is stephan.zeissler@moinz.de");
 
 			  		API.signout(function(err, result) {
-			  			equal(err, null, "No error retrieved");
+			  			equal(err, undefined, "No error retrieved");
 			  			equal(result, true, "TRUE received");
 					  	start();		
 			  		});
@@ -87,11 +90,22 @@
 				expect(2);
 				stop();
 				API.wobble_api_version(function(err, result) {
-					equal(err, null, 'No error received');
+					equal(err, undefined, 'No error received');
 					equal(result, '0.0.1', 'Version is 0.0.1');
 					start();
 				});
 			});
+
+			module('Contacts');
+			asyncTest('Prvent user adding himself', 2, function() {
+				API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
+					API.add_contact('stephan.zeissler@moinz.de', function(err, result) {
+						equal(err, undefined);
+						equal(result, false, 'Contact should not be added.');
+						start();
+					});	
+				});
+			})
 		  });
   		</script>
   
