@@ -57,6 +57,7 @@
 
 		ValidationService::validate_not_empty($self_user_id);
 		ValidationService::validate_not_empty($topic_id);
+		ValidationService::validate_topicid($topic_id);
 
 		$pdo = ctx_getpdo();
 		

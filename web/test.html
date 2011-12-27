@@ -97,7 +97,7 @@
 			});
 
 			module('Contacts');
-			asyncTest('Prvent user adding himself', 2, function() {
+			asyncTest('Prevent user adding himself', 2, function() {
 				API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
 					API.add_contact('stephan.zeissler@moinz.de', function(err, result) {
 						equal(err, undefined);
@@ -106,7 +106,66 @@
 					});	
 				});
 			})
-		  });
+			
+			module('Topics');
+			test('Invalid topic-id', 10, function() {
+				stop();
+				API.login('stephan.zeissler@moinz.de', 'stephan99', function(err, result) {
+					equal(err, undefined);
+					equal(result, true);
+
+					// The . in the id should be invalid
+					stop();
+					API.topics_create("Qunit." + API.generate_id(), function(err, result) {
+						equal(result, undefined);
+						deepEqual(err, {
+							code: -32603,
+							message: 'Invalid Input!'
+						});
+
+						start();
+					});
+
+					// The + in the id should be invalid
+					stop();
+					API.topics_create("Qunit+" + API.generate_id(), function(err, result) {
+						equal(result, undefined);
+						deepEqual(err, {
+							code: -32603,
+							message: 'Invalid Input!'
+						});
+
+						start();
+					});
+
+					// The % in the id should be invalid
+					stop();
+					API.topics_create("Qunit%" + API.generate_id(), function(err, result) {
+						equal(result, undefined);
+						deepEqual(err, {
+							code: -32603,
+							message: 'Invalid Input!'
+						});
+
+						start();
+					});
+
+					// The # in the id should be invalid
+					stop();
+					API.topics_create("Qunit#" + API.generate_id(), function(err, result) {
+						equal(result, undefined);
+						deepEqual(err, {
+							code: -32603,
+							message: 'Invalid Input!'
+						});
+
+						start();
+					});
+
+					start();
+				});
+			});
+		});
   		</script>
   
 	</head>

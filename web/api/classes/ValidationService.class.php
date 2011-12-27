@@ -1,5 +1,9 @@
 <?php
 class ValidationService {
+	function validate_topicid($input) {
+		$pattern = '/^[\w]*$/';
+		ValidationService::check(preg_match($pattern, $input));
+	}
 	function validate_email($input) {
 		ValidationService::check(!empty($input) && strpos($input, '@') > 0, 'Valid email adress required: ' . $input);
 	}
