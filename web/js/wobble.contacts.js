@@ -98,9 +98,7 @@ function ContactsPresenter(display, model) {
 	};
 	display.onNameChange = function(newName) {
 		API.user_change_name(newName, function(err, result) {
-			if ( !err ) {
-				API.init();
-			}
+			API.refreshUser();
 		});
 	};
 	
@@ -136,7 +134,7 @@ ContactsPresenter.prototype.addUserByEmail = function(email) {
 			that.refreshContacts();
 			that.display.showMessage('Contact added!');
 		} else {
-			that.display.showMessage('Contact not found!');
+			that.display.showMessage('Contact could not be added.');
 		}
 	});
 };

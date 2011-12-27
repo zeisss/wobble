@@ -1,7 +1,8 @@
 "use strict";
 
 function JQueryContactsView() {
-	var that = this;
+	this.e = $("#contacts");
+
 	// UI Event Handlers		
 	$("#contacts_add").click($.proxy(function() {
 		var contactEmail = window.prompt("Enter the new contact's email address");
@@ -15,13 +16,13 @@ function JQueryContactsView() {
 			this.onNameChange(newName);
 		}
 	}, this));
-}
+};
 JQueryContactsView.prototype = new ContactsDisplay();
 JQueryContactsView.prototype.constructor = JQueryContactsView;
 
 // Methods 
 JQueryContactsView.prototype.renderContacts = function (list) {
-	var $ul = $("#contacts ul").empty();
+	var $ul = $(".contactslist", this.e).empty();
 	
 	jQuery.each(list, $.proxy(function(i, contact) {
 		var template = "<li class=contact title='{{email}}'>" + 
@@ -43,9 +44,9 @@ JQueryContactsView.prototype.renderContacts = function (list) {
 	}, this));
 };
 JQueryContactsView.prototype.renderWhoAmI = function(user) {
-	var whoami = $("#contacts .whoami").empty();
+	var $whoami = $(".whoami", this.e).empty();
 	var template = "<img title='That is you!' src='http://gravatar.com/avatar/{{{img}}}?s=32' width=32 height=32> <span class=name>{{name}}</span>";
-	whoami.append(Mustache.to_html(template, user));
+	$whoami.append(Mustache.to_html(template, user));
 };
 
 

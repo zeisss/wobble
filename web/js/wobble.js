@@ -126,20 +126,22 @@ var WobbleAPI = function(RPC) {
 	}
 	this.RPC = RPC;
 	this._user = undefined;
-
-	this.user_get(function(err, user) {
+	this.refreshUser();
+};
+WobbleAPI.prototype.refreshUser = function() {
+	this.user_get($.proxy(function(err, user) {
 		if ( !err && user) {
-			API._user = user;
+			this._user = user;
 			BUS.fire('api.user', user);
 		}
-	});
+	}, this));
 };
 
 // Directly returning functions
 /** Builds an ID by combining the user_id with the current time. */
 WobbleAPI.prototype.generate_id = function() {
-		var id = API.user_id() + "-" + (new Date().getTime());
-		return id;
+	var id = this.user_id() + "-" + (new Date().getTime());
+	return id;
 };
 WobbleAPI.prototype.user_id = function() {
 	return this._user ? this._user.id : null;
