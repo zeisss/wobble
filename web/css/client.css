@@ -130,9 +130,10 @@ Lighter Green: #9b0
 	
 	
 	position:absolute;
-	top:55px;
+	top:56px;
 	left:0px;
 	right:0px;
+	height:24px;
 }
 #contacts .contactslist {
 	background-color:white;
@@ -172,8 +173,9 @@ Lighter Green: #9b0
 }
 #topics_wrapper #topics_actions {
 	
-	margin-top:55px;
+	margin-top:56px;
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
+	height:24px;
 	padding-left:5px;
 }
 
@@ -273,10 +275,11 @@ Lighter Green: #9b0
 }
 #topic_actions {
 	position:absolute;
-	top:55px;
+	top:56px;
 	left:0px;
 	padding-left:5px;
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
+	height:24px;
 	right:0px;
 }
 #topic_posts {
