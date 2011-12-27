@@ -63,8 +63,8 @@ function TopicModel() {
 	};
 }
 TopicModel.prototype.addUser = function(user) {
-	if (_.contains(this.getTopic().users, user)) {
-		this.getTopic().users.push(user);	
+	if (_.contains(this.getTopic().readers, user)) {
+		this.getTopic().readers.push(user);	
 	}
 };
 TopicModel.prototype.removeUser = function(user, callback) {
@@ -72,7 +72,7 @@ TopicModel.prototype.removeUser = function(user, callback) {
 	
 	API.topic_remove_user(topic.id, user.id, function(err, result) {
 		if ( !err ) {
-			topic.users = _.filter(topic.users, function(tuser) {
+			topic.readers = _.filter(topic.readers, function(tuser) {
 				return user.id != tuser.id; // Filter the given user
 			});
 		}	
@@ -83,8 +83,8 @@ TopicModel.prototype.getUserIds = function() {
 	var topic = this.getTopic();
 	var result = [];
 	
-	for (var i = 0; i < topic.users.length; i++) {
-		result.push(topic.users[i].id);
+	for (var i = 0; i < topic.readers.length; i++) {
+		result.push(topic.readers[i].id);
 	}
 
 	return result;
