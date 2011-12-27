@@ -23,8 +23,7 @@ JQueryContactsView.prototype.constructor = JQueryContactsView;
 JQueryContactsView.prototype.renderContacts = function (list) {
 	var $ul = $("#contacts ul").empty();
 	
-	for (var i = 0; i < list.length; i++) {
-		var contact = list[i];
+	jQuery.each(list, $.proxy(function(i, contact) {
 		var template = "<li class=contact title='{{email}}'>" + 
 						"<div class='usericon usericon{{size}}'>" +
 						"<div><img src='http://gravatar.com/avatar/{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
@@ -41,7 +40,7 @@ JQueryContactsView.prototype.renderContacts = function (list) {
 		})).appendTo($ul).click($.proxy(function() {
 			this.onContactClick(contact);
 		}, this));
-	}
+	}, this));
 };
 JQueryContactsView.prototype.renderWhoAmI = function(user) {
 	var whoami = $("#contacts .whoami").empty();
