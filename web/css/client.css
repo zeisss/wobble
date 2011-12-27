@@ -354,6 +354,9 @@ Lighter Green: #9b0
 	right:0px;
 	bottom:0px;
 }
+#topic_posts .post>.content {
+	padding-bottom:22px;
+}
 #topic_posts .post_replies {
 	margin-left:15px;
 	border-left:1px gray solid;
