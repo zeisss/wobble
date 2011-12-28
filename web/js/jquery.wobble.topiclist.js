@@ -17,7 +17,7 @@ function jQueryTopicsView () {
 		that.onCreateNewTopic();
 	}).appendTo(this.$topicsAction);
 };
-jQueryTopicsView.prototype = new TopicsDisplay;
+jQueryTopicsView.prototype = new TopicsListDisplay;
 jQueryTopicsView.prototype.constructor = jQueryTopicsView;
 
 // Methods --------------------------------------------------------

@@ -1,12 +1,12 @@
 "use strict";
-function TopicsDisplay() {};
+function TopicsListDisplay() {};
 // Event Handlers -------------------------------------------------
-TopicsDisplay.prototype.onTopicClicked = function(topic) {};
-TopicsDisplay.prototype.onCreateNewTopic = function() {};
+TopicsListDisplay.prototype.onTopicClicked = function(topic) {};
+TopicsListDisplay.prototype.onCreateNewTopic = function() {};
 // Methods --------------------------------------------------------
-TopicsDisplay.prototype.setActiveTopic = function(topic) {};
-TopicsDisplay.prototype.renderTopics = function(topics) {};
-TopicsDisplay.prototype.clear = function() {};
+TopicsListDisplay.prototype.setActiveTopic = function(topic) {};
+TopicsListDisplay.prototype.renderTopics = function(topics) {};
+TopicsListDisplay.prototype.clear = function() {};
 
 
 
