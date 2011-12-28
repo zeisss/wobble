@@ -6,7 +6,10 @@ function WobbleMobileClient() {
 	}, this);
 
 	// Append the Mobile.css to the html tree
+	$('<link href="css/client.css" media="all" rel="stylesheet" type="text/css" />').appendTo('head');
 	$('<link href="css/mobile.css" media="all" rel="stylesheet" type="text/css" />').appendTo('head');
+
+	$('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />').appendTo('head');
 }
 WobbleMobileClient.prototype = new WobbleApplication;
 WobbleMobileClient.prototype.init = function() {
@@ -23,7 +26,7 @@ WobbleMobileClient.prototype.init = function() {
 	this.topicListView = new jQueryTopicsView();
 	this.topicView = new jQueryTopicView();
 
-	var map = {'width': '100%', 'height':'100%'};
+	var map = {'position':'absolute', 'width':'', 'left': '0px', 'right':'0px'};
 	this.contactsView.e.css(map);
 	this.topicListView.e.css(map);
 	this.topicView.e.css(map);

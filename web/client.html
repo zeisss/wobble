@@ -54,7 +54,7 @@
 
 			window.WobbleApp = (function() {
 				var ua = navigator.userAgent;
-				if (true || ua.match(/android/i) || 
+				if (true ||ua.match(/android/i) || 
 					ua.match(/iphone/i)) {
 					return new WobbleMobileClient();
 				} else {
@@ -62,11 +62,10 @@
 				}
 			})();
 			$(document).ready(function() {
-				window.WobbleApp.init();
+				window.WobbleApp.bootstrap();
 			});
 		</script>
 	</head>
 	<body>
-		<div id="widgets"></div>
 	</body>
 </html>

@@ -1,13 +1,20 @@
 "use strict";
 
 function WobbleApplication() {
-	var that = this;
+	
+	
+};
+WobbleApplication.prototype.bootstrap = function() {
+	$('<div></div>').attr('id', 'widgets').appendTo($('body'));
 
 	// Show a reload dialog, when an RPC error occurs
 	BUS.on('rpc.error', function(err) {
-		that.onRPCError(err);
-	});
-};
+		this.onRPCError(err);
+	}, this);
+
+	// Create global #widgets holder
+	this.init();
+}
 WobbleApplication.prototype.init = function() {
 	// Called 
 };

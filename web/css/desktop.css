@@ -1,0 +1,25 @@
+/* --------------------------------------------------------- */
+#contacts .contactslist {
+	overflow:auto;
+}
+/* --------------------------------------------------------- */
+#topics_wrapper #topics {
+	overflow:auto;
+	
+	position:absolute;
+	top:76px;
+	bottom:0px;
+}
+/* --------------------------------------------------------- */
+#topic_wrapper #topic_actions {
+
+}
+#topic_wrapper #topic_posts {
+	overflow:auto;
+
+	position:absolute;
+	top:76px;
+	bottom:0px;
+}
+
+/* --------------------------------------------------------- */

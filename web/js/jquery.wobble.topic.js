@@ -7,9 +7,10 @@ function jQueryTopicView() {	// The UI handler for the single topic
 	
 	this.e = $('<div></div>').addClass('widget').attr('id', 'topic_wrapper').appendTo('#widgets');
 
-	this.jTopicPosts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
+	
 	this.jTopicReaders = $('<div></div>').attr('id', 'topic_readers').appendTo(this.e);
 	this.jTopicActions = $('<div></div>').attr('id', 'topic_actions').appendTo(this.e);
+	this.jTopicPosts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
 	
 	this._renderTopicActions(false);	
 };
