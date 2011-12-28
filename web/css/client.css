@@ -6,6 +6,11 @@ Green (Active Item): #789E35
 	+ Border: #CED697;
 Lighter Green: #9b0
 */
+
+#widgets {
+	position: relative;
+}
+
 .widget {
 	display: block;
 	position: absolute;
@@ -28,6 +33,16 @@ Lighter Green: #9b0
 	border:1px #5590d2 solid;
 	box-shadow: 3px 3px 0px 0px #888;
 }
+/* ------------------------------------------------------------------------- */
+
+#headline .navigation{
+	text-align:right;
+	position:relative;
+	top:0px;
+	right:0px;
+}
+
+
 /* ------------------------------------------------------------------------- */
 #contactschooser {
 	top:200px;
