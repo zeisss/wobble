@@ -1,7 +1,9 @@
 "use strict";
 
 function jQueryTopicsView () {
-	this.jTopicsWrapper = $("#topics_wrapper").append('<div id="topics_actions"></div>' + 
+	this.e = $('<div></div>').addClass('widget').attr('id', 'topics_wrapper').appendTo('#widgets');
+	
+	this.jTopicsWrapper = this.e.append('<div id="topics_actions"></div>' + 
 						'<ul id="topics">' + 
 						'  <li>Loading ...</li>' + 
 						'</ul>');
