@@ -37,7 +37,7 @@ WobbleMobileClient.prototype.init = function() {
 	this.onNavigation('navContacts');
 };
 WobbleMobileClient.prototype.onNavigation = function(targetId) {
-	this.$widgets.empty();
+	$(">*", this.$widgets).detach(); // Detach() does not destroy the event handlers
 
 	if ( targetId == 'navContacts') {
 		// Show the ContactsList
