@@ -10,10 +10,10 @@ function jQueryTopicsView () {
 						
 	this.$topics = $("#topics");
 	
-	this.$topicsAction = $("#topics_actions");
+	this.$topicsAction = $("#topics_actions", this.e);
 	
 	var that = this;
-	$("<button>New</button>").bind('click', function() {
+	$("<button>New</button>").click(function() {
 		that.onCreateNewTopic();
 	}).appendTo(this.$topicsAction);
 };
@@ -61,9 +61,15 @@ jQueryTopicsView.prototype.renderTopic = function(topic, prepend) {
 		'unread': topic.post_count_unread,
 		'total': topic.post_count_total,
 		'time': this.renderTopicTimestamp(topic.max_last_touch)
-	})).bind('click', function() { 
-		that.onTopicClicked(topic);
+	})).data('topic', topic);
+
+	$li.on('click', function() {
+		var topic = $(this).data('topic');
+		if (topic) {
+			that.onTopicClicked(topic);
+		}
 	});
+
 	var abstract = $(".abstract", $li).html(topic.abstract);
 
 	if ( topic.post_count_unread > 0) {

@@ -37,17 +37,24 @@
 		<script src="js/jquery.wobble.topic.js"></script>
 		<script src="js/jquery.wobble.contacts.js"></script>
 
-
 		
+		<script src="js/desktop/DesktopClientHeader.js"></script>
+		<script src="js/desktop/WobbleDesktopClient.js"></script>
+
+		<script src="js/mobile/MobileNavigator.js"></script>
+		<script src="js/mobile/WobbleMobileClient.js"></script>
+		
+		
+		<!-- The other css files are loaded by the App object -->
 		<link href="css/wobble.css" media="all" rel="stylesheet" type="text/css" />
-		<link href="css/client.css" media="all" rel="stylesheet" type="text/css" />
+
 		<script>
 			// Loads current user ID infos (so its cached locally)
 			window.API = new WobbleAPI(new JSONRPC('./api/endpoint.php')); 
 
 			window.WobbleApp = (function() {
 				var ua = navigator.userAgent;
-				if (ua.match(/android/i) || 
+				if (true || ua.match(/android/i) || 
 					ua.match(/iphone/i)) {
 					return new WobbleMobileClient();
 				} else {

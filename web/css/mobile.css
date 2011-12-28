@@ -1,0 +1,28 @@
+#navigator {
+	position:absolute;
+
+	bottom:0px;
+	left:0px;
+	right:0px;
+	height:120px;
+
+	background-color:gray;
+}
+#navigator button {
+	width:33%;
+	height:100%;
+
+	font-weight:bold;
+}
+/* --------------------------------------------------------- */
+#widgets {
+	position:absolute;
+
+	top:0px;
+	left:0px;
+	right:0px;
+	bottom:120px; /* See #navigator */
+	padding:5px;
+
+	overflow:auto;
+}

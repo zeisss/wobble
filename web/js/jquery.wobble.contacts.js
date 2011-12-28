@@ -22,6 +22,10 @@ function JQueryContactsView() {
 		'<ul class="contactslist"></ul>';
 	this.e = $('<div></div>').addClass('widget').attr('id', 'contacts').appendTo('#widgets');
 
+	// NOTE: Makes sure that thie contactsList does not start with a 100% width 
+	// and thus prvents the other widgets from beeing rendered
+	this.e.css('width', '180px'); 
+
 	this.e.append(template);
 
 
