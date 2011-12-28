@@ -5,8 +5,8 @@
 
 button {
 	height:40px;
-	padding-left:40px;
-	padding-right:40px;
+	padding-left:30px;
+	padding-right:30px;
 }
 /* --------------------------------------------------------- */
 #navigator {
@@ -20,11 +20,10 @@ button {
 	background-color:gray;
 }
 #navigator button {
-	width:33%;
+	width:30%;
 	height:100%;
 
 	font-weight:bold;
-	margin-right:0.33%;
 }
 /* --------------------------------------------------------- */
 #contacts .actions {
