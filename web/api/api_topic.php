@@ -17,6 +17,10 @@
 	 * Returns the topic object which is specified by the parameter 'id'. The client must be 
 	 * authenticated and a member of the topic.
 	 *
+	 * The resulting object contains two lists of users: Readers and Writers.
+	 * The readers are the users that currently belong to a topic. Any user can modify this list.
+	 * The writers are all users that have ever written anything into a topic. This is intended as a help for the UI to be able to show the user info for posts of users, that no longer belong to a post.
+	 *
 	 * input = {'id': TopicId}
 	 * result = {'id':TopicId, 'readers': [User], 'writers': [User], 'posts': [Post]} 
 	 *
