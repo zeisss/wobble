@@ -5,12 +5,14 @@ var userCache = {}; // id => {id, name, email, img}
 function jQueryTopicView() {	// The UI handler for the single topic
 	this.editingPostId = null;
 	
-	this.jTopicPosts = $("#topic_posts");
-	this.jTopicReaders = $("#topic_readers");
-	this.jTopicActions = $("#topic_actions");
+	this.e = $('<div></div>').addClass('widget').attr('id', 'topic_wrapper').appendTo('#widgets');
+
 	
-	this._renderTopicActions(false);
+	this.jTopicReaders = $('<div></div>').attr('id', 'topic_readers').appendTo(this.e);
+	this.jTopicActions = $('<div></div>').attr('id', 'topic_actions').appendTo(this.e);
+	this.jTopicPosts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
 	
+	this._renderTopicActions(false);	
 };
 jQueryTopicView.prototype = new TopicDisplay;
 jQueryTopicView.prototype.constructor = jQueryTopicView;
