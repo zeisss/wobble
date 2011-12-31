@@ -57,7 +57,7 @@ jQueryTopicsView.prototype.renderTopic = function(topic, prepend) {
 	var that = this;
 	var $li = $(Mustache.to_html(template, {
 		'id': 'topic-' + topic.id,
-		'users': topic.users.slice(0,3) /* Make sure we only have 3 users */,
+		'users': topic.readers.slice(0,3) /* Make sure we only have 3 users */,
 		'unread': topic.post_count_unread,
 		'total': topic.post_count_total,
 		'time': this.renderTopicTimestamp(topic.max_last_touch)
