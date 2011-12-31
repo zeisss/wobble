@@ -165,6 +165,36 @@
 					start();
 				});
 			});
+			asyncTest('Topic: Invalid script content', 7, function() {
+				API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
+					equal(err, undefined);
+					equal(result, true);
+
+					var topicId = "QUnit-" + (new Date().getTime());
+					var postId = '1';
+					var content = 'Bla bla<s' + 'cript>alert("hi");</s' + 'cript> Blubb';
+					var revision_no = 1; // Always starts with 1
+
+					ok(topicId != null, 'Generated topicId is not null: ' + topicId);
+
+					API.topics_create(topicId, function(err, result) {
+						equal(err, undefined);
+						equal(result, topicId);
+
+						// We can fire off an edit here, because topics_create created an initial
+						// post with ID='1' for us.
+						API.post_edit(topicId, postId, content, revision_no, function(err, result) {
+							deepEqual(err, {
+							  "code": -32603,
+							  "message": "Invalid Input!"
+							} );
+							equal(result, undefined);
+
+							start();
+						});
+					});
+				});
+			});
 		});
   		</script>
   

@@ -7,7 +7,8 @@
 	 * input = {}
 	 *
 	 * result = [MetaTopic]
-	 * MetaTopic = {'id': TopicId, 'abstract': string()}
+	 * MetaTopic = {'id': TopicId, 'abstract': string(), 'users': [User], 'max_last_touch': int(), 
+	 *              'post_count_unread': int(), 'post_count_total': int()}
 	 */
 	function topics_list() {
 		$self_user_id = ctx_getuserid();
@@ -53,7 +54,7 @@
 	 */
 	function topics_create($params) {
 		$self_user_id = ctx_getuserid();
-		$topic_id = $params['id'];
+		$topic_id = @$params['id']; 
 
 		ValidationService::validate_not_empty($self_user_id);
 		ValidationService::validate_not_empty($topic_id);
@@ -63,7 +64,7 @@
 		
 		// Create topic
 		$stmt = $pdo->prepare('INSERT INTO topics VALUES (?)');
-		$stmt->bindValue(1, $topic_id);
+		$stmt->bindValue(1, $topic_id, PDO::PARAM_STR);
 		$stmt->execute();
 		
 		$stmt = $pdo->prepare('INSERT INTO topic_readers (topic_id, user_id) VALUES (?,?)');

@@ -229,6 +229,7 @@
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_not_empty($post_id);
 		ValidationService::validate_not_empty($revision);
+		ValidationService::validate_content($content);
 		
 		$pdo = ctx_getpdo();
 		
