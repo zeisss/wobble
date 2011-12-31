@@ -213,7 +213,9 @@ WobbleAPI.prototype.topic_add_user = function(topicId, contactId, callback) {
 WobbleAPI.prototype.topic_remove_user = function(topicId, contactId, callback) {
 	this.RPC.doRPC('topic_remove_user', {topic_id: topicId, contact_id: contactId}, callback);
 };
-
+WobbleAPI.prototype.post_change_lock = function(topicId, postId, lockStatus, callback) {
+	this.RPC.doRPC('post_change_lock', {topic_id: topicId, post_id: postId, lock: lockStatus}, callback);	
+};
 WobbleAPI.prototype.post_change_read = function(topicId, postId, readStatus, callback) {
 	this.RPC.doRPC('post_change_read', {topic_id: topicId, post_id: postId, read: readStatus}, callback);	
 };
