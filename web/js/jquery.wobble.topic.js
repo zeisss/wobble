@@ -6,18 +6,32 @@ function jQueryTopicView() {	// The UI handler for the single topic
 	this.editingPostId = null;
 	
 	this.e = $('<div></div>').addClass('widget').attr('id', 'topic_wrapper').appendTo('#widgets');
-
 	
 	this.jTopicReaders = $('<div></div>').attr('id', 'topic_readers').appendTo(this.e);
 	this.jTopicActions = $('<div></div>').attr('id', 'topic_actions').appendTo(this.e);
 	this.jTopicPosts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
 	
 	this._renderTopicActions(false);	
+
+	// On a window.resize event wait for the transformations to finish (should be done in 300ms) and recalc height
+	BUS.on('window.resize', function() {
+		var t = this;
+		window.setTimeout( function() {
+			t.onResize();
+		}, 350);
+	}, this);
 };
 jQueryTopicView.prototype = new TopicDisplay;
 jQueryTopicView.prototype.constructor = jQueryTopicView;
 
 // Methods --------------------------------------------------------
+jQueryTopicView.prototype.onResize = function() {
+	
+	var viewHeight = this.e.innerHeight();
+	var offsetX = this.jTopicReaders.outerHeight() + this.jTopicActions.outerHeight()
+
+	this.jTopicPosts.css('height', viewHeight - offsetX);
+};
 jQueryTopicView.prototype.clear = function() {
 	this.editingPostId = null;
 	this.jTopicPosts.empty();
@@ -47,19 +61,21 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 		this.setEnabled(true);
 
 		this.jTopicReaders.empty();
+		// Only cache the writers
 		for (var i = 0; i<  topicDetails.writers.length; ++i) {
 			var user = topicDetails.writers[i];
 			userCache[user.id] = user;
 		}
+		// Cache & render the readers
 		for (var i = 0; i < topicDetails.readers.length; ++i) {
 			var user = topicDetails.readers[i];
 			userCache[user.id] = user; // Cache user object (user later to show the user post images)
 			this._renderReader(user);
 		}
 		
-		for (var i = 0; i < topicDetails.posts.length; i++) {
-			this.renderPost(topicDetails, topicDetails.posts[i]);
-		}
+		this.onResize();
+
+		this.renderPosts(topicDetails);
 	} else {
 		this.setEnabled(false);
 	}	
@@ -85,7 +101,11 @@ jQueryTopicView.prototype._renderReader= function(user) {
 		that.onUserClicked(user);
 	});
 };
-
+jQueryTopicView.prototype.renderPosts = function(topicDetails) {
+	for (var i = 0; i < topicDetails.posts.length; i++) {
+		this.renderPost(topicDetails, topicDetails.posts[i]);
+	}	
+};
 jQueryTopicView.prototype.renderPost = function(topic, post) {
 	var elementPostId = 'post-' + post.id;
 	var that = this;

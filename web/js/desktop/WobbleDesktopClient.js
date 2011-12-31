@@ -67,9 +67,11 @@ WobbleDesktopClient.prototype.doLayout = function(data) {
 	var topicWidth = Math.max(data.to.w - topicLeft - 20, minWidth(topics));
 	topic.css('left', topicLeft);
 	topic.width(topicWidth);
-	
-	contacts.height(data.to.h - headline.height() - 20);
-	topics.height(data.to.h - headline.height() - 20);
-	topic.height(data.to.h - headline.height() - 20);
+
+	var borderBottom = 35;
+	contacts.height(data.to.h - headline.height() - borderBottom);
+	topics.height(data.to.h - headline.height() - borderBottom);
+	topic.height(data.to.h - headline.height() - borderBottom);
+
 };
 
