@@ -1,4 +1,11 @@
 <?php
+	/**
+	 * Global Types:
+	 * TopicId, PostId = string()
+	 * UserId = int()
+	 **/
+	
+
 	function _topic_has_access($pdo, $topic_id) {
 		$stmt = $pdo->prepare('SELECT COUNT(*) cnt FROM topic_readers r WHERE r.user_id = ? AND r.topic_id = ?');
 		$stmt->execute(array(ctx_getuserid(), $topic_id));
@@ -6,6 +13,26 @@
 		return $result[0]['cnt'] > 0;
 	}
 	
+	/**
+	 * Returns the topic object which is specified by the parameter 'id'. The client must be 
+	 * authenticated and a member of the topic.
+	 *
+	 * The resulting object contains two lists of users: Readers and Writers.
+	 * The readers are the users that currently belong to a topic. Any user can modify this list.
+	 * The writers are all users that have ever written anything into a topic. This is intended as a help for the UI to be able to show the user info for posts of users, that no longer belong to a post.
+	 *
+	 * input = {'id': TopicId}
+	 * result = {'id':TopicId, 'readers': [User], 'writers': [User], 'posts': [Post]} 
+	 *
+	 * User = {'id': UserId, 'name': string(), 'online': int(), 
+	 *         'email': string(), 'img': string()}
+	 * 
+	 * Post = {'id': PostId, 'content':string(), 'revision_no': int(), 
+	 *         'parent': PostId, 'timestamp': int(), 'deleted': int(), 
+	 *         'unread': int()}
+	 *
+	 * 
+	 */
 	function topic_get_details($params) {
 		$self_user_id = ctx_getuserid();
 		$topic_id = $params['id'];
@@ -19,7 +46,8 @@
 		
 		$pdo = ctx_getpdo();
 		
-		$users = TopicRepository::getReaders($topic_id);
+		$readers = TopicRepository::getReaders($topic_id);
+		$writers = TopicRepository::getWriters($topic_id);
 				
 		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent, p.last_touch timestamp, p.deleted deleted, coalesce((select 0 from post_users_read where topic_id = p.topic_id AND post_id = p.post_id AND user_id = ?), 1) unread 
 								FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
@@ -46,22 +74,31 @@
 		
 		return array (
 			'id' => $topic_id,
-			'users' => $users,
+			'readers' => $readers,
+			'writers' => $writers,
 			'posts' => $posts
 		);
 	}
 	
-	
+	/**
+	 * Adds a user to the specified topic. The user must be authenticated and a reader of the specified topic.
+	 * Raises an error if not a member
+	 *
+	 * input = {'topic_id': TopicId, 'contact_id': UserId}
+	 * result = true
+	 */
 	function topic_add_user($params) {
+		$self_user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
 		$user_id = $params['contact_id'];
 		
+		ValidationService::validate_not_empty($self_user_id);
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_not_empty($user_id);
 		
 		$pdo = ctx_getpdo();
 		if ( _topic_has_access($pdo, $topic_id) ) {
-			$pdo->prepare('REPLACE topic_readers (topic_id, user_id) VALUES (?,?)')->execute(array($topic_id, $user_id));
+			TopicRepository::addReader($topic_id, $user_id);
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				NotificationRepository::push($user['id'], array(
@@ -78,6 +115,19 @@
 			throw new Exception('Illegal Access!');
 		}
 	}
+
+	/**
+	 * Removes a user from a topic. Any read/unread message status or other user information regarding the 
+	 * topic are immediately destroyed. 
+	 *
+	 * E.g. if the user gets later readded to the topic, all posts are marked as unread.
+	 *
+	 * The client must be authenticated and a reader of the topic. 
+	 * An exception is raised, if the client is not a member.
+	 * 
+	 * input = {'topic_id': TopicId, 'contact_id': UserId}
+	 * result = TRUE
+	 */
 	function topic_remove_user($params) {
 		$topic_id = $params['topic_id'];
 		$user_id = $params['contact_id'];
@@ -95,9 +145,7 @@
 				));
 			}
 			# Delete afterwards. The other way around, the deleted user wouldn't get the notification
-			$pdo->prepare('DELETE FROM topic_readers WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
-
-			$pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
+			TopicRepository::removeReader($topic_id, $user_id);
 			
 			return TRUE;
 		}
@@ -106,6 +154,16 @@
 		}
 	}
 	
+	/**
+	 * Creates a new post as a child in the given topic. The post is created for the current 
+	 * user and has an empty content. A notification is sent to all readers of the topic to inform
+	 * them about the new post.
+	 *
+	 * The client must be authenticated and a reader of the given topic.
+	 *
+	 * input = {'topic_id': TopicId, 'post_id': PostId, 'parent_post_id': PostId}
+	 * result = true
+	 */
 	function post_create($params) {
 		$self_user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
@@ -119,22 +177,12 @@
 		$pdo = ctx_getpdo();
 		
 		if ( _topic_has_access($pdo, $topic_id) ) {
-			// Create empty root post
-			$stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content, parent_post_id, created_at, last_touch)  VALUES (?,?, "",?, unix_timestamp(), unix_timestamp())');
-			$stmt->execute(array($topic_id, $post_id, $parent_post_id));
-			
-			// Assoc first post with current user
-			$stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id) VALUES (?,?,?)');
-			$stmt->bindValue(1, $topic_id);
-			$stmt->bindValue(2, $post_id);
-			$stmt->bindValue(3, $self_user_id);
-			$stmt->execute();
+			TopicRepository::createPost($topic_id, $post_id, $self_user_id, $parent_post_id);
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				NotificationRepository::push($user['id'], array(
-					'type' => 'post_changed',
-					'topic_id' => $topic_id,
-					'post_id' => $post_id
+					'type' => 'topic_changed',
+					'topic_id' => $topic_id
 				));
 			}
 			
@@ -150,6 +198,19 @@
 		}
 	}
 	
+	/**
+	 * Changes the content of a post. The revision_no must match the current revision number, 
+	 * otherwise an exception will be thrown. This prevents overwritting changes of other users.
+	 * The new revision_no is returned.
+	 *
+	 * Upon a change, the read status of the post for all other users will resetted. Also a 'post_changed'
+	 * notification will be generated for all other readers.
+	 *
+	 * The client must be authenticated and the user must be a reader of the topic.
+	 *
+	 * input = {'topic_id': TopicId, 'post_id': PostId, 'content': string(), 'revision_no': int()}
+	 * result = {'revision_no': int()}
+	 */
 	function post_edit($params) {
 		$self_user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
@@ -161,6 +222,7 @@
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_not_empty($post_id);
 		ValidationService::validate_not_empty($revision);
+		ValidationService::validate_content($content);
 		
 		$pdo = ctx_getpdo();
 		
@@ -221,6 +283,16 @@
 		}
 	}
 	
+	/**
+	 * Marks the post as deleted, if it has children. Otherwise delete the post completly.
+	 * This is due the tree-like arrangement of the posts, so one can only delete a post really from the 
+	 * storage, if it has no children which refer to it.
+	 *
+	 * The client must be authenticated and the user must be a reader of the topic.
+	 *
+	 * input = {'topic_id': TopicId, 'post_id': PostId}
+	 * result = true
+	 */
 	function post_delete($params) {
 		$self_user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
@@ -259,18 +331,33 @@
 		}
 	}
 	
+	
+
+	/**
+	 * Sets the (un)read status of a post.
+	 *
+	 * The client must be authenticated and the user must be a reader of the topic.
+	 *
+	 * input = {'topic_id': TopicId, 'post_id': PostId, 'read': 0|1}
+	 * result = true
+	 */
 	function post_change_read($params) {
 		$user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
 		$post_id = $params['post_id'];
 		$read = $params['read'];
+		$pdo = ctx_getpdo();
 
 		ValidationService::validate_not_empty($user_id);
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_not_empty($post_id);
 		ValidationService::validate_not_empty($read);
-
-		TopicRepository::setPostReadStatus($user_id, $topic_id, $post_id, $read);
+		
+		if ( _topic_has_access($pdo, $topic_id) ) {
+			TopicRepository::setPostReadStatus($user_id, $topic_id, $post_id, $read);
+		} else {
+			throw new Exception('Illegal Access!');
+		}
 		return TRUE;
 	}
 

@@ -6,6 +6,7 @@
 		
 		<script src="js/ext/jquery.min.js"></script>
 		
+		<script src="js/wobble.js"></script>
 		<script src="js/jquery.wobble.js"></script>
 		
 		<style>
@@ -36,6 +37,8 @@
 		</style>
 		<script>
 			$(document).ready(function() {
+				window.API = new WobbleAPI(new JSONRPC('./api/endpoint.php'));
+				
 				$("#register").click(function() {
 					var buttons = $("button");
 					

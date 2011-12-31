@@ -3,6 +3,33 @@
  * The TopicRepository provides convienience function to access the storage for Topics.
  */
 class TopicRepository {
+
+	function createPost($topic_id, $post_id, $user_id, $parent_post_id = NULL) {
+		$pdo = ctx_getpdo();
+
+		// Create empty root post
+		$stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content, parent_post_id, created_at, last_touch)  VALUES (?,?, "",?, unix_timestamp(), unix_timestamp())');
+		$stmt->execute(array($topic_id, $post_id, $parent_post_id));
+		
+		// Assoc first post with current user
+		$stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id) VALUES (?,?,?)');
+		$stmt->bindValue(1, $topic_id);
+		$stmt->bindValue(2, $post_id);
+		$stmt->bindValue(3, $user_id);
+		$stmt->execute();		
+	}
+	function addReader($topic_id, $user_id) {
+		$pdo = ctx_getpdo();
+
+		$pdo->prepare('REPLACE topic_readers (topic_id, user_id) VALUES (?,?)')->execute(array($topic_id, $user_id));
+	}
+
+	function removeReader($topic_id, $user_id) {
+		$pdo = ctx_getpdo();
+		$pdo->prepare('DELETE FROM topic_readers WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
+
+		$pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
+	}
 	function setPostReadStatus($user_id, $topic_id, $post_id, $read_status) {
 		$pdo = ctx_getpdo();
 		#var_dump($read_status);
@@ -68,7 +95,12 @@ class TopicRepository {
 		}
 	}
 
+	/**
+	 * Returns the user objects for every reader of a topic. Readers are the user which are allowed 
+	 * to read and write to a topic.
+	 */
 	function getReaders($topic_id, $limit = FALSE) {
+		assert('!empty($topic_id)');
 		$pdo = ctx_getpdo();
 		
 		$sql = 'SELECT u.id id, u.name name, u.email email, md5(u.email) img, COALESCE(last_touch > (UNIX_TIMESTAMP() - 300), false) online ' . 
@@ -79,6 +111,34 @@ class TopicRepository {
 		}
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute(array($topic_id));
-		return $stmt->fetchAll();
+		$result =  $stmt->fetchAll();
+		foreach($result AS $i => $user) {
+			$result[$i]['id'] = intval($user['id']); # convert id to int
+			$result[$i]['online'] = intval($user['online']); 
+		}
+		return $result;
+	}
+
+	/**
+	 * Returns the user objects for every user ever written in a topic. 
+	 */
+	function getWriters($topic_id, $limit = FALSE) {
+		assert('!empty($topic_id)');
+		$pdo = ctx_getpdo();
+		
+		$sql = 'SELECT u.id id, u.name name, u.email email, md5(u.email) img, COALESCE(last_touch > (UNIX_TIMESTAMP() - 300), false) online ' . 
+			  'FROM users u, post_editors pe ' . 
+			  'WHERE u.id = pe.user_id AND pe.topic_id = ?';
+		if ( $limit ) {
+			$sql .= ' LIMIT ' . $limit;
+		}
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute(array($topic_id));
+		$result =  $stmt->fetchAll();
+		foreach($result AS $i => $user) {
+			$result[$i]['id'] = intval($user['id']); # convert id to int
+			$result[$i]['online'] = intval($user['online']); 
+		}
+		return $result;
 	}
 }

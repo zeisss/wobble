@@ -1,8 +1,0 @@
-Use `vagrant up` to start the VM. You can then connect to it on http://localhost:8080/.
-
-The content of the web/ folder is available at the URL above.
-
-The Puppet cookbooks are copied from http://community.opscode.com/cookbooks.
-
-
-This is tested with Vagrant 0.8.7 and Virtualbox 4.1.2.

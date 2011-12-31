@@ -1,0 +1,7 @@
+{
+	"id": "1",
+	"method": "echo",
+	"params": [
+		"Hello World!"
+	]
+}

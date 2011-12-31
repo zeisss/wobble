@@ -1,30 +1,56 @@
 "use strict";
 
+/**
+ * <div id="contacts" class="widget">
+ *		<div class="whoami">
+ *		</div>
+ *		<div class="actions">
+ *			<button id="contacts_add">Add</button>
+ *			<button id="user_change_name">Change my name</button>
+ *		</div>
+ *		<ul class="contactslist">
+ *		</ul>
+ *	</div>
+ */
 function JQueryContactsView() {
-	var that = this;
+	var template = 
+		'<div class="whoami"></div>' + 
+		'<div class="actions">' + 
+		'	<button id="contacts_add">Add</button>' + 
+		'	<button id="user_change_name">Change my name</button>' + 
+		'</div>' + 
+		'<ul class="contactslist"></ul>';
+	this.e = $('<div></div>').addClass('widget').attr('id', 'contacts').appendTo('#widgets');
+
+	// NOTE: Makes sure that thie contactsList does not start with a 100% width 
+	// and thus prvents the other widgets from beeing rendered
+	this.e.css('width', '180px'); 
+
+	this.e.append(template);
+
+
 	// UI Event Handlers		
-	$("#contacts_add").click(function() {
+	$("#contacts_add").click($.proxy(function() {
 		var contactEmail = window.prompt("Enter the new contact's email address");
 		if (contactEmail !== null) {
-			that.onAddContact(contactEmail);
+			this.onAddContact(contactEmail);
 		}
-	});
-	$("#user_change_name").click(function() {
+	}, this));
+	$("#user_change_name").click($.proxy(function() {
 		var newName = window.prompt("What should your new name be?");
 		if ( newName !== null ) {
-			that.onNameChange(newName);
+			this.onNameChange(newName);
 		}
-	});
-}
+	}, this));
+};
 JQueryContactsView.prototype = new ContactsDisplay();
 JQueryContactsView.prototype.constructor = JQueryContactsView;
 
 // Methods 
 JQueryContactsView.prototype.renderContacts = function (list) {
-	var that = this;
-	var ul = $("#contacts ul").empty();
+	var $ul = $(".contactslist", this.e).empty();
 	
-	$.each(list, function(i, contact) {
+	jQuery.each(list, $.proxy(function(i, contact) {
 		var template = "<li class=contact title='{{email}}'>" + 
 						"<div class='usericon usericon{{size}}'>" +
 						"<div><img src='http://gravatar.com/avatar/{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
@@ -32,21 +58,21 @@ JQueryContactsView.prototype.renderContacts = function (list) {
 						"</div>" + 
 						"<span class=name>{{name}}</span>" +
 						"</li>";
-		ul.append($(Mustache.to_html(template, {
+		$(Mustache.to_html(template, {
 				size: 20,
 				email: contact.email,
 				name: contact.name,
 				img: contact.img,
 				online: contact.online == 1 ? 'online' : 'offline'
-			})).click(function() {
-			that.onContactClick(contact);
-		}));
-	});
+		})).appendTo($ul).click($.proxy(function() {
+			this.onContactClick(contact);
+		}, this));
+	}, this));
 };
 JQueryContactsView.prototype.renderWhoAmI = function(user) {
-	var whoami = $("#contacts .whoami").empty();
+	var $whoami = $(".whoami", this.e).empty();
 	var template = "<img title='That is you!' src='http://gravatar.com/avatar/{{{img}}}?s=32' width=32 height=32> <span class=name>{{name}}</span>";
-	whoami.append(Mustache.to_html(template, user));
+	$whoami.append(Mustache.to_html(template, user));
 };
 
 
@@ -213,9 +239,10 @@ ListContactsChooserDisplay.prototype.refreshFilteredContactList = function(filte
 	$(".contact", this.e).css('display', ''); // Show all contacts
 
 	filterText = filterText.toLowerCase();
-	jQuery.each(this.contacts, $.proxy(function(i, contact) {
+
+	for (var i = 0; i < this.contacts.length; i++) {
+		var contact = this.contacts[i];
 		// Show all elements
-		
 		if (!(contact.name.toLowerCase().indexOf(filterText) >= 0 || contact.email.indexOf(filterText) >= 0 )) {
 			// text not found in name or email
 			var $contact = $("#contactchooser-contact-"+ contact.id);
@@ -229,10 +256,8 @@ ListContactsChooserDisplay.prototype.refreshFilteredContactList = function(filte
 			if ( firstContact == null ) {
 				firstContact = contact;
 			}
-		}
-
-		
-	}, this));
+		}	
+	};
 
 	
 	if ( this.selectedContact == null && firstContact != null) {
@@ -263,8 +288,54 @@ SimpleContactsChooserDisplay.prototype.show = function(title, contacts) {
 		}
 		// No contact entered or found, closing
 		that.close();
-	}, 0);
+	});
 };
 SimpleContactsChooserDisplay.prototype.close = function() {
 	this.onClose();
+};
+
+
+/**
+ * 
+ */
+function jQueryContactsDetailDisplay(x,y) {
+	this.e = $('<div class="dialog contactdetail"></div>').appendTo($('body')).css('display', 'none').css('left', x).css('top', y);
+	this.contact = null;
+	
+	var that = this;
+	this.e.click(function() {
+		that.hide();
+	});
+};
+jQueryContactsDetailDisplay.prototype = new ContactsDetailDisplay;
+jQueryContactsDetailDisplay.prototype.constructor = jQueryContactsDetailDisplay;
+
+jQueryContactsDetailDisplay.prototype.show = function(contact) {
+	this.contact = contact;
+	
+	
+	var template =  ' <div class="usericon usericon{{size}}">' +
+					'   <div><img src="http://gravatar.com/avatar/{{img}}?s={{size}}" width="{{size}}" height="{{size}}"></div>' +
+					'   <div class="status {{status}}"></div>' + 
+					' </div>'+ 
+					' <div class=name>{{name}}</div>' + 
+					' <div class=email>{{email}}</div>';
+					
+	var html = Mustache.to_html(template, {
+		'img': contact.img,
+		'name': contact.name,
+		'email': contact.email,
+		'status': contact.online == 1 ? 'online': 'offline',
+		'size': 100
+	});
+	this.e.html(html).css('display', '');
+};
+jQueryContactsDetailDisplay.prototype.hide = function() {
+	this.e.css('display', 'none');
+	this.onClose();
+	this.contact = null;
+};
+
+jQueryContactsDetailDisplay.prototype.addAction = function(title, callback) {
+	$('<button></button>').text(title).click(callback).appendTo(this.e);
 };

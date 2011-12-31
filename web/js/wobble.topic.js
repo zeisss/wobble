@@ -28,7 +28,7 @@ function TopicModel() {
 	
 	// Methods ------------------------------------------
 	that.removePost = function(post) {
-		topic.posts = jQuery.grep(topic.posts, function(post2, i) {
+		topic.posts = _.filter(topic.posts, function(post2) {
 			return post.id === post2.id;
 		});
 	};
@@ -51,11 +51,11 @@ function TopicModel() {
 	
 	that.addUserToPost = function(post, user) {
 		var found = false;
-		jQuery.each(post.users, function(i, user_id) {
-			if ( user_id === user.id) {
+		for (var i = 0; i < post.users.length; i++) {
+			if ( post.users[i] === user.id) {
 				found = true;
 			}
-		});
+		}
 		if (!found) {
 			post.users.push(user.id);
 			// We can assume here, that the user is part of topic.users, otherwise he shouldn't see this post
@@ -63,8 +63,8 @@ function TopicModel() {
 	};
 }
 TopicModel.prototype.addUser = function(user) {
-	if (jQuery.inArray(user, this.getTopic().users) < 0 ) {
-		this.getTopic().users.push(user);	
+	if (_.contains(this.getTopic().readers, user)) {
+		this.getTopic().readers.push(user);	
 	}
 };
 TopicModel.prototype.removeUser = function(user, callback) {
@@ -72,7 +72,7 @@ TopicModel.prototype.removeUser = function(user, callback) {
 	
 	API.topic_remove_user(topic.id, user.id, function(err, result) {
 		if ( !err ) {
-			topic.users = jQuery.grep(topic.users, function(tuser, index) {
+			topic.readers = _.filter(topic.readers, function(tuser) {
 				return user.id != tuser.id; // Filter the given user
 			});
 		}	
@@ -83,9 +83,9 @@ TopicModel.prototype.getUserIds = function() {
 	var topic = this.getTopic();
 	var result = [];
 	
-	jQuery.each(topic.users, function(index, user) {
-		result.push(user.id);
-	});
+	for (var i = 0; i < topic.readers.length; i++) {
+		result.push(topic.readers[i].id);
+	}
 
 	return result;
 };

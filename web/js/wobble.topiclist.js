@@ -1,12 +1,12 @@
 "use strict";
-function TopicsDisplay() {};
+function TopicsListDisplay() {};
 // Event Handlers -------------------------------------------------
-TopicsDisplay.prototype.onTopicClicked = function(topic) {};
-TopicsDisplay.prototype.onCreateNewTopic = function() {};
+TopicsListDisplay.prototype.onTopicClicked = function(topic) {};
+TopicsListDisplay.prototype.onCreateNewTopic = function() {};
 // Methods --------------------------------------------------------
-TopicsDisplay.prototype.setActiveTopic = function(topic) {};
-TopicsDisplay.prototype.addTopic = function(topic) {};
-TopicsDisplay.prototype.clear = function() {};
+TopicsListDisplay.prototype.setActiveTopic = function(topic) {};
+TopicsListDisplay.prototype.renderTopics = function(topics) {};
+TopicsListDisplay.prototype.clear = function() {};
 
 
 
@@ -16,6 +16,7 @@ TopicsDisplay.prototype.clear = function() {};
 function TopicsPresenter (view) {
 	this.view = view;
 	this.selectedTopicId = null;
+	this.topics = [];
 	
 	this.refreshTopicsList();
 	
@@ -37,7 +38,8 @@ function TopicsPresenter (view) {
 		this.refreshTopicsList();
 	}, this);
 	BUS.on('api.notification', function(message) {
-		if ( message.type == 'topic_changed' ) {
+		if ( message.type == 'topic_changed' ||
+			 message.type == 'post_changed' /* Unread message counter propably got changed */ ) {
 			this.refreshTopicsList();
 		}
 	}, this);
@@ -45,18 +47,20 @@ function TopicsPresenter (view) {
 };
 /** Called by the view when a new topic should be created */
 TopicsPresenter.prototype.refreshTopicsList = function() {
-	var that = this;
-	API.list_topics(function(err, list) {
+	API.list_topics($.proxy(function(err, list) {
 		if ( !err ) {
-			that.view.clear();
-			$.each(list, function(i, data) {
-				that.view.addTopic(data);
-				if ( that.selectedTopicId && that.selectedTopicId == data.id) {
-					that.view.setActiveTopic(data);
+			this.view.clear();
+			this.topics = list;
+			this.view.renderTopics(list);
+
+			for (var i = 0; i < list.length; i++) {
+				var data = list[i];
+				if ( this.selectedTopicId && this.selectedTopicId == data.id) {
+					this.view.setActiveTopic(data);
 				}
-			});
+			}
 		}
-	});
+	}, this));
 };
 TopicsPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
 	this.selectedTopicId = topic.id;
@@ -67,32 +71,33 @@ TopicsPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
 };
 TopicsPresenter.prototype.createNewTopic = function() {
 	// TODO: Check if the user is currently editing something and submit that before going on
-	
+	var that = this;
+
 	var topicId = API.generate_id();
 	
 	// Create a topic on the server and notify the TopicView
 	var that = this;
 	API.topics_create(topicId, function(err, topic_id) {
+		if (err) {
+			that.refreshTopicsList();
+		}
 		if (topic_id !== undefined) {					
 			BUS.fire('topic.topic.created', topicId);
 		}
 	});
 	
-	// Create a dummy topic, so we can render something immediately	
+	// Create a dummy TopicHeader, so we can render something immediately	
 	var topicDetails = {
 		id: topicId,
 		abstract: '-',
 		users: [API.user()],
-		posts: [
-			{
-				id: '1', // First post always has the '1'
-				content: 'Write some text!', 
-				revision_no: 1, 
-				users:[API.user_id()]
-			}
-		]
+		post_count_total: 1,
+		post_count_unread: 0
 	};
-	this.view.addTopic(topicDetails, true);
+
+	this.topics.splice(0, 0, topicDetails); // Prepend the item to the ViewList
+	this.view.clear();
+	this.view.renderTopics(this.topics);
 	this.setSelectedTopic(topicDetails, true);
 };
 

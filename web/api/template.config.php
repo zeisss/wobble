@@ -8,3 +8,6 @@
 
 	# Replace value with something totally random for Production environments. Leave empty for only md5-ing the passwords
 	define('PASSWORD_SALT', 'myStaticSalt'); 
+
+	# Define a topic id to which every newly registered user gets added
+	# define ('WELCOME_TOPIC_ID', '1-1323269956900');

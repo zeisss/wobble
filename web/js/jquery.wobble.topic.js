@@ -5,17 +5,33 @@ var userCache = {}; // id => {id, name, email, img}
 function jQueryTopicView() {	// The UI handler for the single topic
 	this.editingPostId = null;
 	
-	this.jTopicPosts = $("#topic_posts");
-	this.jTopicReaders = $("#topic_readers");
-	this.jTopicActions = $("#topic_actions");
+	this.e = $('<div></div>').addClass('widget').attr('id', 'topic_wrapper').appendTo('#widgets');
 	
-	this._renderTopicActions(false);
+	this.jTopicReaders = $('<div></div>').attr('id', 'topic_readers').appendTo(this.e);
+	this.jTopicActions = $('<div></div>').attr('id', 'topic_actions').appendTo(this.e);
+	this.jTopicPosts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
 	
+	this._renderTopicActions(false);	
+
+	// On a window.resize event wait for the transformations to finish (should be done in 300ms) and recalc height
+	BUS.on('window.resize', function() {
+		var t = this;
+		window.setTimeout( function() {
+			t.onResize();
+		}, 350);
+	}, this);
 };
 jQueryTopicView.prototype = new TopicDisplay;
 jQueryTopicView.prototype.constructor = jQueryTopicView;
 
 // Methods --------------------------------------------------------
+jQueryTopicView.prototype.onResize = function() {
+	
+	var viewHeight = this.e.innerHeight();
+	var offsetX = this.jTopicReaders.outerHeight() + this.jTopicActions.outerHeight()
+
+	this.jTopicPosts.css('height', viewHeight - offsetX);
+};
 jQueryTopicView.prototype.clear = function() {
 	this.editingPostId = null;
 	this.jTopicPosts.empty();
@@ -28,7 +44,7 @@ jQueryTopicView.prototype.setEnabled = function(enabled) {
 	} else {
 		$("button", this.jTopicActions).attr('disabled', 'disabled');
 	}
-},
+};
 
 jQueryTopicView.prototype.setLoadingState = function() {
 	this.clear();
@@ -43,21 +59,28 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 	
 	if ( topicDetails ) {
 		this.setEnabled(true);
-		
-		var that = this;
+
 		this.jTopicReaders.empty();
-		$.each(topicDetails.users, function(i, user) {
-			userCache[Number(user.id)] = user; // Cache user object (user later to show the user post images)
-			that._renderReader(user);
-		});
+		// Only cache the writers
+		for (var i = 0; i<  topicDetails.writers.length; ++i) {
+			var user = topicDetails.writers[i];
+			userCache[user.id] = user;
+		}
+		// Cache & render the readers
+		for (var i = 0; i < topicDetails.readers.length; ++i) {
+			var user = topicDetails.readers[i];
+			userCache[user.id] = user; // Cache user object (user later to show the user post images)
+			this._renderReader(user);
+		}
 		
-		$.each(topicDetails.posts, function(i, post) {
-			that.renderPost(topicDetails, post);
-		});
+		this.onResize();
+
+		this.renderPosts(topicDetails);
 	} else {
 		this.setEnabled(false);
 	}	
 };
+
 jQueryTopicView.prototype._renderReader= function(user) {
 	var that = this;
 	var containerId = "topic-reader-" + user.id;
@@ -78,7 +101,11 @@ jQueryTopicView.prototype._renderReader= function(user) {
 		that.onUserClicked(user);
 	});
 };
-
+jQueryTopicView.prototype.renderPosts = function(topicDetails) {
+	for (var i = 0; i < topicDetails.posts.length; i++) {
+		this.renderPost(topicDetails, topicDetails.posts[i]);
+	}	
+};
 jQueryTopicView.prototype.renderPost = function(topic, post) {
 	var elementPostId = 'post-' + post.id;
 	var that = this;
@@ -155,6 +182,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
 		$(">.post",jPostWrapper).detach();
 	}
 };
+
 jQueryTopicView.prototype._renderTime = function(timestamp) {
 	if (!timestamp) {
 		return "";
@@ -184,6 +212,7 @@ jQueryTopicView.prototype._renderTime = function(timestamp) {
 		return createdAt.getDate() + "." + month + "."+ (1900 + createdAt.getYear()) + " " + time;
 	}
 };
+
 jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 	if (postElement == null) {
 		postElement = $("#post-" + post.id + ">.post>.users");
@@ -193,14 +222,15 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 	var minHeight = 16;
 	if ( post.id != ROOT_ID) { // No user icons for the root
 		var size = post.users.length == 1 ? 25 : 21;
-		$.each(post.users, function(j, postUserId) {
+		for (var i = 0; i < post.users.length; i++) {
+			var postUserId = post.users[i];
 			var template = "<img width='{{size}}' height='{{size}}' src='http://gravatar.com/avatar/{{img}}?s={{size}}' title='{{name}}'/>";
 			postElement.append(Mustache.to_html(template, {
 				'img': userCache[postUserId].img,
 				'name': userCache[postUserId].name,
 				'size': size
 			}));
-		});
+		}
 		minHeight = size;
 	} 
 
@@ -230,6 +260,7 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 	if (minHeight) postElement.css('min-height', minHeight);
 
 };
+
 jQueryTopicView.prototype.removePost = function(post) {	
 	var jpost = $('#post-' + post.id + ">.post").detach();
 };
@@ -349,5 +380,3 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 		});
 	}
 };
-
-

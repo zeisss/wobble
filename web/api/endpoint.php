@@ -4,7 +4,8 @@
 
 	require_once 'config.php';
 	require_once 'context.php'; # introduces session setup, db connection, utility classes, ...
-	require_once 'jsonrpc_system.php';
+	require_once 'jsonrpc_system.php'; # Exports the default system.listMethods and echo APICalls
+	
 	##############################################################
 	## Endpoint for JSON-RPC 2.0 Calls. 
 	##############################################################
@@ -116,6 +117,9 @@
 					}
 					if ( isset($export['file'])) {
 						require_once($export['file']);
+					}
+					if ( !function_exists($export['method'])) {
+						throw new Exception("Expected that {$export['method']} gets defined in {$export['file']}. Function not found.");
 					}
 
 					$response = call_user_func($export['method'], $request['params']);

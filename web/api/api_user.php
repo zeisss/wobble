@@ -17,7 +17,6 @@ function user_signout($params) {
 function user_login($params) {
 	$email = $params['email'];
 	$password = $params['password'];
-	$self_user_id = ctx_getuserid();
 	
 	ValidationService::validate_email($email);
 	ValidationService::validate_not_empty($password);
@@ -30,7 +29,7 @@ function user_login($params) {
 		foreach(user_get_contacts() AS $contact) {
 			NotificationRepository::push($contact['id'], array (
 				'type' => 'user_online',
-				'user_id' => $self_user_id
+				'user_id' => $user['id']
 			));
 		}
 		return TRUE;
@@ -52,7 +51,20 @@ function user_register($params) {
 		throw new Exception('You are already registered!');
 	}
 	
-	$_SESSION['userid'] = UserRepository::create($email, $password_hashed, $email);
+	$user_id = UserRepository::create($email, $password_hashed, $email);
+
+	if ( defined('WELCOME_TOPIC_ID')) {
+		TopicRepository::addReader(WELCOME_TOPIC_ID, $user_id);
+
+		foreach(TopicRepository::getReaders($topic_id) as $user) {
+			NotificationRepository::push($user['id'], array(
+				'type' => 'topic_changed',
+				'topic_id' => $topic_id
+			));
+		}
+	}
+
+	$_SESSION['userid'] = $user_id;
 	return TRUE;
 }
 
@@ -91,11 +103,14 @@ function user_add_contact($params) {
 	$contact_email = $params['contact_email'];
 	
 	ValidationService::validate_not_empty($self_user_id);
-	ValidationService::validate_not_empty($contact_email);
+	ValidationService::validate_email($contact_email);
 	
 	$user = UserRepository::getUserByEmail($contact_email);
 
 	if ( $user !== NULL ) {
+		if ($user['id'] == $self_user_id) {
+			return FALSE;
+		}
 		ContactsRepository::addUser($self_user_id, $user['id']);
 		return TRUE;
 	}
