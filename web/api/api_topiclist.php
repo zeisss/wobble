@@ -67,22 +67,8 @@
 		$stmt->bindValue(1, $topic_id, PDO::PARAM_STR);
 		$stmt->execute();
 		
-		$stmt = $pdo->prepare('INSERT INTO topic_readers (topic_id, user_id) VALUES (?,?)');
-		$stmt->execute(array($topic_id, $self_user_id));
-		
-		// Create empty root post
-		$stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content)  VALUES (?,?,?)');
-		$stmt->bindValue(1, $topic_id);
-		$stmt->bindValue(2, '1'); # default ROOT ID
-		$stmt->bindValue(3, '');
-		$stmt->execute();
-		
-		// Assoc first post with current user
-		$stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id) VALUES (?,?,?)');
-		$stmt->bindValue(1, $topic_id);
-		$stmt->bindValue(2, '1');
-		$stmt->bindValue(3, $self_user_id);
-		$stmt->execute();
+		TopicRepository::addReader($topic_id, $self_user_id);
+		TopicRepository::createPost($topic_id, '1', $self_user_id);
 		
 		return $topic_id;
 	}

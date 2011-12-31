@@ -175,16 +175,7 @@
 		$pdo = ctx_getpdo();
 		
 		if ( _topic_has_access($pdo, $topic_id) ) {
-			// Create empty root post
-			$stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content, parent_post_id, created_at, last_touch)  VALUES (?,?, "",?, unix_timestamp(), unix_timestamp())');
-			$stmt->execute(array($topic_id, $post_id, $parent_post_id));
-			
-			// Assoc first post with current user
-			$stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id) VALUES (?,?,?)');
-			$stmt->bindValue(1, $topic_id);
-			$stmt->bindValue(2, $post_id);
-			$stmt->bindValue(3, $self_user_id);
-			$stmt->execute();
+			TopicRepository::createPost($topic_id, $post_id, $self_user_id, $parent_post_id);
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				NotificationRepository::push($user['id'], array(
