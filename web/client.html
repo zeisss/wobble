@@ -41,9 +41,10 @@
 		<script src="js/desktop/DesktopClientHeader.js"></script>
 		<script src="js/desktop/WobbleDesktopClient.js"></script>
 
+		<!--
 		<script src="js/mobile/MobileNavigator.js"></script>
 		<script src="js/mobile/WobbleMobileClient.js"></script>
-		
+		-->
 		
 		<!-- The other css files are loaded by the App object -->
 		<link href="css/wobble.css" media="all" rel="stylesheet" type="text/css" />
@@ -53,13 +54,14 @@
 			window.API = new WobbleAPI(new JSONRPC('./api/endpoint.php')); 
 
 			window.WobbleApp = (function() {
-				var ua = navigator.userAgent;
+				/*var ua = navigator.userAgent;
 				if (true ||ua.match(/android/i) || 
 					ua.match(/iphone/i)) {
 					return new WobbleMobileClient();
 				} else {
 					return new WobbleDesktopClient();
-				}
+				}*/
+				return new WobbleDesktopClient();
 			})();
 			$(document).ready(function() {
 				window.WobbleApp.bootstrap();
