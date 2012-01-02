@@ -94,7 +94,7 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 		},
 		success: function(data, textStatus, jqXHR) {					
 			if ( data.error ) {
-				BUS.fire('this.RPC.error', {
+				BUS.fire('rpc.error', {
 					request: body,
 					error: data.error
 				});
@@ -110,7 +110,7 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 	};
 	if ( callback ) {
 		ajaxSettings.error = function(jqXHR, textStatus, errorThrown) {
-			BUS.fire('this.RPC.connectionerror', {text: textStatus, error: errorThrown});
+			BUS.fire('rpc.connectionerror', {text: textStatus, error: errorThrown});
 			callback(errorThrown);
 		};
 		
