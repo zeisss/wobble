@@ -1,7 +1,33 @@
 "use strict";
 
+/**
+ * <div id="contacts" class="widget">
+ *		<div class="whoami">
+ *		</div>
+ *		<div class="actions">
+ *			<button id="contacts_add">Add</button>
+ *			<button id="user_change_name">Change my name</button>
+ *		</div>
+ *		<ul class="contactslist">
+ *		</ul>
+ *	</div>
+ */
 function JQueryContactsView() {
-	this.e = $("#contacts");
+	var template = 
+		'<div class="whoami"></div>' + 
+		'<div class="actions">' + 
+		'	<button id="contacts_add">Add</button>' + 
+		'	<button id="user_change_name">Change my name</button>' + 
+		'</div>' + 
+		'<ul class="contactslist"></ul>';
+	this.e = $('<div></div>').addClass('widget').attr('id', 'contacts').appendTo('#widgets');
+
+	// NOTE: Makes sure that thie contactsList does not start with a 100% width 
+	// and thus prvents the other widgets from beeing rendered
+	this.e.css('width', '180px'); 
+
+	this.e.append(template);
+
 
 	// UI Event Handlers		
 	$("#contacts_add").click($.proxy(function() {

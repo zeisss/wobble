@@ -1,29 +1,32 @@
 "use strict";
 
 function jQueryTopicsView () {
-	this.jTopicsWrapper = $("#topics_wrapper").append('<div id="topics_actions"></div>' + 
+	this.e = $('<div></div>').addClass('widget').attr('id', 'topics_wrapper').appendTo('#widgets');
+	
+	this.jTopicsWrapper = this.e.append('<div id="topics_actions"></div>' + 
 						'<ul id="topics">' + 
 						'  <li>Loading ...</li>' + 
 						'</ul>');
 						
-	this.jTopics = $("#topics");
+	this.$topics = $("#topics");
 	
-	this.jTopicsAction = $("#topics_actions");
+	this.$topicsAction = $("#topics_actions", this.e);
 	
 	var that = this;
-	this.jTopicsAction.append($("<button>New</button>").click(function() {
+	$("<button>New</button>").click(function() {
 		that.onCreateNewTopic();
-	}));
+	}).appendTo(this.$topicsAction);
 };
-jQueryTopicsView.prototype = new TopicsDisplay;
+jQueryTopicsView.prototype = new TopicsListDisplay;
 jQueryTopicsView.prototype.constructor = jQueryTopicsView;
 
 // Methods --------------------------------------------------------
 jQueryTopicsView.prototype.setActiveTopic = function(topic) {
-	$("#topics li.active").removeClass("active");
+	$(">li.active", this.$topics).removeClass("active");
 	$("#topic-" + topic.id).addClass("active");
 };
 jQueryTopicsView.prototype.renderTopics = function(topics, prepend) {
+	// Update document title
 	var user = API.user();
 	if (user && topics) {
 		var unreadTopics = jQuery.grep(topics, function(topic) {
@@ -35,6 +38,8 @@ jQueryTopicsView.prototype.renderTopics = function(topics, prepend) {
 			document.title = "(" + unreadTopics + ") " + user.name + " - Wobble";
 		}
 	}
+
+	// Render to html list
 	for (var i = 0; i < topics.length; ++i) {
 		this.renderTopic(topics[i], prepend);
 	}
@@ -50,25 +55,31 @@ jQueryTopicsView.prototype.renderTopic = function(topic, prepend) {
 				   ' <div class="users">{{#users}}<img title="{{name}}" src="http://gravatar.com/avatar/{{img}}?s=32" width="32" height="32">{{/users}}</div>' + 
 				   '</li>';
 	var that = this;
-	var li = $(Mustache.to_html(template, {
+	var $li = $(Mustache.to_html(template, {
 		'id': 'topic-' + topic.id,
-		'users': topic.users,
+		'users': topic.users.slice(0,3) /* Make sure we only have 3 users */,
 		'unread': topic.post_count_unread,
 		'total': topic.post_count_total,
 		'time': this.renderTopicTimestamp(topic.max_last_touch)
-	})).click(function() { 
-		that.onTopicClicked(topic);
+	})).data('topic', topic);
+
+	$li.on('click', function() {
+		var topic = $(this).data('topic');
+		if (topic) {
+			that.onTopicClicked(topic);
+		}
 	});
-	var abstract = $(".abstract", li).html(topic.abstract);
+
+	var abstract = $(".abstract", $li).html(topic.abstract);
 
 	if ( topic.post_count_unread > 0) {
 		abstract.css('font-weight', 'bold');
 	}
 	
 	if ( prepend ) {
-		li.prependTo(this.jTopics);
+		$li.prependTo(this.$topics);
 	} else {
-		li.appendTo(this.jTopics)
+		$li.appendTo(this.$topics)
 	}
 };
 jQueryTopicsView.prototype.renderTopicTimestamp = function(timestamp) {
@@ -105,5 +116,5 @@ jQueryTopicsView.prototype.renderTopicTimestamp = function(timestamp) {
 	}
 };
 jQueryTopicsView.prototype.clear = function() {
-	this.jTopics.empty();
+	this.$topics.empty();
 };

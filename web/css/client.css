@@ -6,6 +6,11 @@ Green (Active Item): #789E35
 	+ Border: #CED697;
 Lighter Green: #9b0
 */
+
+#widgets {
+	position: relative;
+}
+
 .widget {
 	display: block;
 	position: absolute;
@@ -28,6 +33,16 @@ Lighter Green: #9b0
 	border:1px #5590d2 solid;
 	box-shadow: 3px 3px 0px 0px #888;
 }
+/* ------------------------------------------------------------------------- */
+
+#headline .navigation{
+	text-align:right;
+	position:relative;
+	top:0px;
+	right:0px;
+}
+
+
 /* ------------------------------------------------------------------------- */
 #contactschooser {
 	top:200px;
@@ -121,30 +136,31 @@ Lighter Green: #9b0
 
 /* ------------------------------------------------------------------------- */
 #contacts {
-	min-width:180px;
+	min-width:200px;
 	min-height:400px;
+
+	background:white;
 }
 #contacts .actions {
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
 	padding-left:5px;
 	
 	
-	position:absolute;
-	top:56px;
+	position:relative;
+	top:0px;
 	left:0px;
 	right:0px;
 	height:24px;
 }
 #contacts .contactslist {
-	background-color:white;
 	border-radius:0px 0px 5px 5px;
 	list-style-type:none;
 	
 	padding:5px;
 	margin:0px;
 	
-	position:absolute;
-	top:80px;
+	position:relative;
+	top:0px;
 	left:0px;
 	right:0px;
 	bottom:0px;
@@ -158,9 +174,11 @@ Lighter Green: #9b0
 	margin-left: 5px;
 }
 #contacts .whoami {
-	margin-left:10px;
-	margin-top:10px;
-	
+	padding-left:10px;
+	padding-top:10px;
+	background:#C9E2FC;
+	border-radius:5px 5px 0px 0px;
+	height:44px;
 }
 #contacts .whoami .name {
 	font-weight:bold;
@@ -173,7 +191,7 @@ Lighter Green: #9b0
 }
 #topics_wrapper #topics_actions {
 	
-	margin-top:56px;
+	margin-top:54px;
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
 	height:24px;
 	padding-left:5px;
@@ -188,8 +206,8 @@ Lighter Green: #9b0
 	
 	margin:0px;
 	padding:0px;
-	position:absolute;
-	top:80px;
+	position:relative;
+	top:0px;
 	bottom:0px;
 	left:0px;
 	right:0px;
@@ -261,21 +279,24 @@ Lighter Green: #9b0
 	min-height:400px;
 	min-width:300px;
 	
+	background:white;
 	
 }
 #topic_readers {
-	position:absolute;
+	background:#C9E2FC;
+	border-radius:5px 5px 0 0;
 	right:10px;
-	left:10px;
-	height:40px;
-	top:10px;
+	min-height:44px;
+	padding-top:8px;
+	padding-left:10px;
+	padding-bottom:2px;
 }
 #topic_readers>* {
 	padding-right:4px;
 }
 #topic_actions {
-	position:absolute;
-	top:56px;
+	position:relative;
+	top:0px;
 	left:0px;
 	padding-left:5px;
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
@@ -283,14 +304,15 @@ Lighter Green: #9b0
 	right:0px;
 }
 #topic_posts {
-	background-color:white;
 	border-radius: 0px 0px 5px 5px;
 	overflow:auto;
+
+	min-height:100px;
 	
-	position:absolute;
+	position:relative;
 	left:0px;
 	right:0px;
-	top:80px;
+	top:0px;
 	bottom:0px;
 }
 #topic_posts .loading {

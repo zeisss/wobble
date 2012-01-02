@@ -3,6 +3,21 @@
  * The TopicRepository provides convienience function to access the storage for Topics.
  */
 class TopicRepository {
+
+	function createPost($topic_id, $post_id, $user_id, $parent_post_id = NULL) {
+		$pdo = ctx_getpdo();
+
+		// Create empty root post
+		$stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content, parent_post_id, created_at, last_touch)  VALUES (?,?, "",?, unix_timestamp(), unix_timestamp())');
+		$stmt->execute(array($topic_id, $post_id, $parent_post_id));
+		
+		// Assoc first post with current user
+		$stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id) VALUES (?,?,?)');
+		$stmt->bindValue(1, $topic_id);
+		$stmt->bindValue(2, $post_id);
+		$stmt->bindValue(3, $user_id);
+		$stmt->execute();		
+	}
 	function addReader($topic_id, $user_id) {
 		$pdo = ctx_getpdo();
 
