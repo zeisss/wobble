@@ -27,6 +27,9 @@ class UserRepository {
 		$stmt->execute(array($name, $user_id));
 	}
 	
+	/**
+	 * Returns the user with the given ID including the hashed password.
+	 */
 	function get($user_id) {
 		$pdo = ctx_getpdo();
 		

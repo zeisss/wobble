@@ -1,4 +1,8 @@
-<?php	
+<?php
+/**
+ * Input = {}
+ * Result = true 
+ */
 function user_signout($params) {
 	$self_user_id = ctx_getuserid();
 	
@@ -13,6 +17,12 @@ function user_signout($params) {
 	$_SESSION['userid'] = null;
 	return TRUE;
 }
+
+/**
+ * Input = {'email': Email, 'password': Password}
+ * Email = Password = string()
+ * Result = true
+ */
 function user_login($params) {
 	$email = $params['email'];
 	$password = $params['password'];
@@ -37,6 +47,11 @@ function user_login($params) {
 	}
 }
 
+/**
+ * Input = {'email': Email, 'password': Password}
+ * Email = Password = string()
+ * Result = true
+ */
 function user_register($params) {
 	$email = $params['email'];
 	$password = $params['password'];
@@ -67,6 +82,11 @@ function user_register($params) {
 	return TRUE;
 }
 
+/**
+ * Input = {'name': Username}
+ * Username = string()
+ * Result = true
+ */
 function user_change_name($params) {
 	$self_user_id = ctx_getuserid();
 	$name = $params['name'];
@@ -76,6 +96,11 @@ function user_change_name($params) {
 	return TRUE;
 }	
 
+/**
+ * Input = {'id': UserId, 'email': Email, 'img': GravatarEmailHash, 'name': Username, 'online': 1|0}
+ * Username = Email = GravatarEmailHash = string()
+ * Result = true
+ */
 function user_get() {
 	$pdo = ctx_getpdo();
 	$self_user_id = ctx_getuserid();
@@ -85,10 +110,23 @@ function user_get() {
 	return UserRepository::get($self_user_id);
 	
 }
+/**
+ * Returns the id of the currently logged in user.
+ *
+ * Input = {}
+ * Result = int()
+ */
 function user_get_id() {
 	return ctx_getuserid();
 }
 
+/**
+ * Returns all contacts for the currently logged in user.
+ *
+ * Input = {}
+ * Result = [Contact]
+ * Contact = {...?...} id, name, email, img, online
+ */
 function user_get_contacts() {
 	$self_user_id = ctx_getuserid();
 	
@@ -97,6 +135,12 @@ function user_get_contacts() {
 	return ContactsRepository::getContacts($self_user_id);
 }
 
+/**
+ * Input = {'contact_email': Email}
+ * Email = string()
+ *
+ * Result = true|false
+ */
 function user_add_contact($params) {
 	$self_user_id = ctx_getuserid();
 	$contact_email = $params['contact_email'];
@@ -116,6 +160,12 @@ function user_add_contact($params) {
 	return FALSE;
 }
 
+/**
+ * Removes the user with the given ID from the currently logged in user.
+ *
+ * Input = {'contact_id': UserId}
+ * Result = true
+ */
 function user_remove_contact($params) {
 	$self_user_id = ctx_getuserid();
 	$contact_id = $params['contact_id'];
