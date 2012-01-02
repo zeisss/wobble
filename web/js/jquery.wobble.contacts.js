@@ -17,36 +17,66 @@ function JQueryContactsView() {
 		'<div class="whoami"></div>' + 
 		'<div class="actions">' + 
 		'	<button id="contacts_add">Add</button>' + 
-		'	<button id="user_change_name">Change my name</button>' + 
+		'	<button id="show_my_profile">Show my profile</button>' + 
 		'</div>' + 
 		'<ul class="contactslist"></ul>';
 	this.e = $('<div></div>').addClass('widget').attr('id', 'contacts').appendTo('#widgets');
-
+    
+    
+   
 	// NOTE: Makes sure that thie contactsList does not start with a 100% width 
 	// and thus prvents the other widgets from beeing rendered
 	this.e.css('width', '180px'); 
 
 	this.e.append(template);
+    this.$whoami = $(".whoami", this.e);
 
-
-	// UI Event Handlers		
+	// UI Event Handlers	
+	this.$whoami.click($.proxy(function() {
+	   this.fireWhoamiClicked();
+	}, this));
 	$("#contacts_add").click($.proxy(function() {
 		var contactEmail = window.prompt("Enter the new contact's email address");
 		if (contactEmail !== null) {
 			this.onAddContact(contactEmail);
 		}
 	}, this));
-	$("#user_change_name").click($.proxy(function() {
-		var newName = window.prompt("What should your new name be?");
-		if ( newName !== null ) {
-			this.onNameChange(newName);
-		}
+	$("#show_my_profile").click($.proxy(function() {
+	   var that = this;
+	   that.fireWhoamiClicked();		
 	}, this));
 };
 JQueryContactsView.prototype = new ContactsDisplay();
 JQueryContactsView.prototype.constructor = JQueryContactsView;
 
 // Methods 
+JQueryContactsView.prototype.fireWhoamiClicked = function() {
+  var that = this;
+  BUS.fire('contact.clicked', {
+      'contact': API.user(),
+      'actions': [
+        {title: 'Change my name', callback: function() {
+            var newName = window.prompt("What should your new name be?");
+    		if ( newName !== null ) {
+    			that.onNameChange(newName);
+    		}
+        }},
+        {title: 'Change password', callback: function() {
+           var p1 = window.prompt('What should your new password be?');
+           if (p1 !== null) {
+             var p2 = window.prompt('And once again to be sure:');
+             if (p2 !== null) {
+               if (p1 === p2) {
+                   that.onPasswordChange(p1);
+               } else {
+                   window.alert('Your two passwords do not match. Try again.');   
+               }
+             }   
+           }
+        }}
+      ]
+   });
+};
 JQueryContactsView.prototype.renderContacts = function (list) {
 	var $ul = $(".contactslist", this.e).empty();
 	

@@ -63,6 +63,7 @@ function ContactsDisplay() {}
 ContactsDisplay.prototype.onAddContact = function(contactEmail) {};
 ContactsDisplay.prototype.onContactClick = function(contact) {};
 ContactsDisplay.prototype.onNameChange = function(new_name) {};
+ContactsDisplay.prototype.onPasswordChange = function(new_password) {};
 // Methods
 ContactsDisplay.prototype.renderContacts = function (list) {};
 ContactsDisplay.prototype.renderWhoAmI = function(user) {};
@@ -100,6 +101,13 @@ function ContactsPresenter(display, model) {
 		API.user_change_name(newName, function(err, result) {
 			API.refreshUser();
 		});
+	};
+	display.onPasswordChange = function(newPassword) {
+	   API.user_change_password(newPassword, function(err, result) {
+	       if (result) {
+	           window.alert('Password changed successfully.');    
+	       }   
+	   });
 	};
 	
 	// BUS Handler  ---------------------------------------------------

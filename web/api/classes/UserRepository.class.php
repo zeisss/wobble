@@ -27,6 +27,12 @@ class UserRepository {
 		$stmt->execute(array($name, $user_id));
 	}
 	
+	function updatePassword($user_id, $hashedPassword) {
+		$pdo = ctx_getpdo();
+		$stmt = $pdo->prepare('UPDATE users SET password_hashed = ? WHERE id = ?');
+		$stmt->execute(array($hashedPassword, $user_id));	   
+	}
+	
 	/**
 	 * Returns the user with the given ID including the hashed password.
 	 */

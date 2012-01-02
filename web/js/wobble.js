@@ -1,4 +1,3 @@
-
 "use strict";
 /*
 This file provides the EventBus window.BUS, and two classes: JSONRPC and the WobbleAPI .
@@ -174,7 +173,9 @@ WobbleAPI.prototype.login = function(email, password, callback) {
 WobbleAPI.prototype.signout = function(callback) {
 	this.RPC.doRPC('user_signout', callback);
 };
-
+WobbleAPI.prototype.user_change_password = function(newPassword, callback) {
+	this.RPC.doRPC('user_change_password', {password: newPassword}, callback);
+};
 WobbleAPI.prototype.user_change_name = function(newName, callback) {
 	this.RPC.doRPC('user_change_name', {name: newName}, callback);
 };

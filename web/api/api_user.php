@@ -97,6 +97,22 @@ function user_change_name($params) {
 }	
 
 /**
+ * Input = {'password': string()}
+ * Result = true
+ */
+function user_change_password($params) {
+    $self_user_id = ctx_getuserid();
+    $password = $params['password'];
+    
+    ValidationService::validate_not_empty($self_user_id);
+    ValidationService::validate_not_empty($password);
+    
+    $hashed = SecurityService::hashPassword($password);
+    UserRepository::updatePassword($self_user_id, $hashed);
+    return TRUE;
+}
+
+/**
  * Input = {'id': UserId, 'email': Email, 'img': GravatarEmailHash, 'name': Username, 'online': 1|0}
  * Username = Email = GravatarEmailHash = string()
  * Result = true
