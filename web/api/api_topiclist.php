@@ -20,7 +20,7 @@
 			  t.id id, 
 			  substr(p.content, 1, 200) abstract, 
 			  (select max(last_touch) from posts WHERE topic_id = t.id) max_last_touch, 
-			  (select count(*) from posts where topic_id = t.id) post_count_total, 
+			  (select count(*) from posts where topic_id = t.id and deleted = 0) post_count_total, 
 			  (select count(*) from post_users_read where topic_id = p.topic_id AND user_id = r.user_id) post_count_read 
 		 FROM topics t, topic_readers r, posts p 
 		WHERE r.user_id = ? AND r.topic_id = t.id AND t.id = p.topic_id AND p.post_id = cast(1 as char)
