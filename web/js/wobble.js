@@ -135,7 +135,6 @@ WobbleAPI.prototype.refreshUser = function() {
 		}
 	}, this));
 };
-
 // Directly returning functions
 /** Builds an ID by combining the user_id with the current time. */
 WobbleAPI.prototype.generate_id = function() {

@@ -133,7 +133,6 @@ function TopicPresenter(view, model) {
 			'actions': actions
 		});
 	};
-
 	view.onPostClicked = function(post) {
 		// remove unread class on click + mark read on server side
 		if ( post.unread == 1 ) {
@@ -153,9 +152,9 @@ function TopicPresenter(view, model) {
 				BUS.fire('topic.post.changed', model.getTopic().id);
 			}); 
 		}
-	};
-	
+	};	
 	view.onStartPostEdit = function(post) {
+	    // Create the lock
 		API.post_change_lock(model.getTopic().id, post.id, 1, function(err, success) {
 			if ( success ) {
 				model.addUserToPost(post, API.user());
@@ -176,8 +175,6 @@ function TopicPresenter(view, model) {
 			post.locked = false;
 			view.renderPost(model.getTopic(), post);
 		});
-		
-		
 	};
 	
 	view.onReplyPost = function(post) {

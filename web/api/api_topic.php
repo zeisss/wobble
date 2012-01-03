@@ -19,10 +19,11 @@
 	 *
 	 * The resulting object contains two lists of users: Readers and Writers.
 	 * The readers are the users that currently belong to a topic. Any user can modify this list.
-	 * The writers are all users that have ever written anything into a topic. This is intended as a help for the UI to be able to show the user info for posts of users, that no longer belong to a post.
+	 * The writers are all users that have ever written anything into a topic. This is intended as a help 
+	 * for the UI to be able to show the user info for posts of users, that no longer belong to a post.
 	 *
-	 * input = {'id': TopicId}
-	 * result = {'id':TopicId, 'readers': [User], 'writers': [User], 'posts': [Post]} 
+	 * Input = {'id': TopicId}
+	 * Result = {'id':TopicId, 'readers': [User], 'writers': [User], 'posts': [Post]} 
 	 *
 	 * User = {'id': UserId, 'name': string(), 'online': int(), 
 	 *         'email': string(), 'img': string()}
@@ -267,8 +268,7 @@
 					$self_user_id, $topic_id, $post_id, 1 # Mark post as read for requesting user
 				);	
 			}
-
-			
+						
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				if ( $user['id'] == $self_user_id)  # Skip for requesting user
@@ -374,7 +374,15 @@
 		}
 		return TRUE;
 	}
-
+    
+    /**
+     * Creates or deletes a lock owned by the current user for the given post. Returns true
+     * if the lock status was changed, false if it remains as before (no change).
+     *
+     * Input = {'topic_id': TopicId, 'post_id': PostId, 'user_id': UserId, 'lock': 1|0}
+     *
+     * Result = true|false
+     */
 	function post_change_lock($params) {
 		$user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
