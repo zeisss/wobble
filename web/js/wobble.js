@@ -43,7 +43,7 @@ window.BUS = {
 if ( window.addEventListener) {
 	window.addEventListener('unload', function() {
 		BUS.clear();
-	});
+	}, false)
 }
 
 
