@@ -3,16 +3,11 @@
 -- Host: localhost    Database: wobble
 -- ------------------------------------------------------
 -- Server version	5.1.52
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO,NO_TABLE_OPTIONS' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
@@ -29,7 +24,7 @@ CREATE TABLE `notifications` (
   `time` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `i_notifications_user_id` (`user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3063 DEFAULT CHARSET=latin1;
+);
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +39,25 @@ CREATE TABLE `post_editors` (
   `post_id` varchar(255) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   UNIQUE KEY `ui_post_editors` (`topic_id`,`post_id`,`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `post_locks`
+--
+
+DROP TABLE IF EXISTS `post_locks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `post_locks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `topic_id` varchar(255) NOT NULL,
+  `post_id` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `created_at` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ui_post_locks` (`topic_id`,`post_id`)
+);
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -61,7 +74,7 @@ CREATE TABLE `post_users_read` (
   `post_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ui_post_users_read` (`topic_id`,`post_id`,`user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=627 DEFAULT CHARSET=latin1;
+);
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -81,7 +94,7 @@ CREATE TABLE `posts` (
   `last_touch` int(11) DEFAULT NULL,
   `deleted` int(11) NOT NULL DEFAULT '0',
   UNIQUE KEY `ui_posts_id` (`topic_id`,`post_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+);
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +110,7 @@ CREATE TABLE `topic_readers` (
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ui_topic_readers` (`topic_id`,`user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=150 DEFAULT CHARSET=latin1;
+);
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -110,7 +123,7 @@ DROP TABLE IF EXISTS `topics`;
 CREATE TABLE `topics` (
   `id` varchar(255) NOT NULL,
   UNIQUE KEY `topics_id_ui` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+);
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -129,7 +142,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   KEY `i_user_name` (`name`),
   KEY `ui_users_email` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
+);
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -146,16 +159,13 @@ CREATE TABLE `users_contacts` (
   PRIMARY KEY (`id`),
   KEY `i_contacts_user_id` (`user_id`),
   KEY `ui_contacts_user_contact` (`user_id`,`contact_user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=141 DEFAULT CHARSET=latin1;
+);
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-01-03 11:24:39
+-- Dump completed on 2012-01-03 20:05:42

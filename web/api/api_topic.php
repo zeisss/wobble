@@ -49,7 +49,9 @@
 		$readers = TopicRepository::getReaders($topic_id);
 		$writers = TopicRepository::getWriters($topic_id);
 				
-		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent, p.last_touch timestamp, p.deleted deleted, coalesce((select 0 from post_users_read where topic_id = p.topic_id AND post_id = p.post_id AND user_id = ?), 1) unread 
+		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent, 
+		                              p.last_touch timestamp, p.deleted deleted, 
+		                              coalesce((select 0 from post_users_read where topic_id = p.topic_id AND post_id = p.post_id AND user_id = ?), 1) unread 
 								FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
 		$stmt->execute(array($self_user_id, $topic_id));
 		$posts = $stmt->fetchAll();
@@ -63,6 +65,9 @@
 			$posts[$i]['unread'] = intval($posts[$i]['unread']);
 
 			$posts[$i]['locked'] = TopicRepository::getPostLockStatus($topic_id, $posts[$i]['id']);
+			if ($posts[$i]['locked']['user_id'] == $self_user_id) {
+			  $posts[$i]['locked'] = NULL;
+			}
 
 			# Subobject
 			$posts[$i]['users'] = array();
@@ -179,17 +184,18 @@
 		if ( _topic_has_access($pdo, $topic_id) ) {
 			TopicRepository::createPost($topic_id, $post_id, $self_user_id, $parent_post_id);
 			
+			TopicRepository::setPostLockStatus($topic_id, $post_id, 1, $self_user_id);
+			
+			TopicRepository::setPostReadStatus(
+				$self_user_id, $topic_id, $post_id, 1
+			);
+			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				NotificationRepository::push($user['id'], array(
 					'type' => 'topic_changed',
 					'topic_id' => $topic_id
 				));
 			}
-			
-
-			TopicRepository::setPostReadStatus(
-				$self_user_id, $topic_id, $post_id, 1
-			);
 			
 			return TRUE;
 		}
@@ -236,16 +242,23 @@
 				return NULL;
 			}
 			
+			# RevisionNo must match (to prevent accidental overwrites)
 			if ($posts[0]['revision_no'] != $revision) {
 				throw new Exception('RevisionNo is not correct. Somebody else changed the post already. (Value: ' . $posts[0]['revision_no'] . ')');
 			}
 			
-
+			# Check if there is a lock
+			$lock = TopicRepository::getPostLockStatus($topic_id, $post_id);
+			if ($lock !== NULL && $lock["user_id"] !== $self_user_id) {
+			     throw new Exception("You don't own the lock on this post!");
+			}
+			
+            # Update the post
 			$pdo->prepare('UPDATE posts SET content = ?, revision_no = revision_no + 1, last_touch = unix_timestamp() WHERE post_id = ? AND topic_id = ?')->execute(array($content, $post_id, $topic_id));
 			$pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id) VALUES (?,?,?)')->execute(array($topic_id, $post_id, $self_user_id));
 
 			TopicRepository::setPostLockStatus( 
-				$self_user_id, $topic_id, $post_id, 0 # Clear the lock
+				$topic_id, $post_id, 0, $self_user_id # Clear the lock
 			);
 
 			if ( $posts[0]['content'] !== $content) {
@@ -266,8 +279,9 @@
 					'topic_id' => $topic_id,
 					'post_id' => $post_id
 				));
-
-				if ( $posts[0]['content'] !== $content) {
+                
+                # If the content actually changed, mark the post as unread.
+				if ($posts[0]['content'] !== $content) {
 					TopicRepository::setPostReadStatus(
 						$user['id'], $topic_id, $post_id, 0
 					);
@@ -372,10 +386,11 @@
 		ValidationService::validate_not_empty($post_id);
 		ValidationService::validate_not_empty($lock);
 
-		$status = TopicRepository::getPostLockStatus($topic_id, $post_id);
+		$current_lock = TopicRepository::getPostLockStatus($topic_id, $post_id);
 
-		if ( $status == 0 ) {
-			TopicRepository::setPostLockStatus($user_id, $topic_id, $post_id, $lock);
+        # Allow the lock to be changed, when there is no lock or the lock is owner by the current user
+        if ($current_lock == NULL || $current_lock['user_id'] === $user_id) {
+			TopicRepository::setPostLockStatus($topic_id, $post_id, $lock, $user_id);
 			
 			# Notify other readers, that this post is locked now
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
