@@ -32,6 +32,7 @@
 		array('file' => 'api_user.php', 'method' => 'user_get_id'),
 		array('file' => 'api_user.php', 'method' => 'user_register'),
 		array('file' => 'api_user.php', 'method' => 'user_change_name'),
+		array('file' => 'api_user.php', 'method' => 'user_change_password'),		
 		array('file' => 'api_user.php', 'method' => 'user_login'),
 		array('file' => 'api_user.php', 'method' => 'user_signout'),
 		

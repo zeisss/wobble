@@ -1,4 +1,3 @@
-
 "use strict";
 /*
 This file provides the EventBus window.BUS, and two classes: JSONRPC and the WobbleAPI .
@@ -95,7 +94,7 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 		},
 		success: function(data, textStatus, jqXHR) {					
 			if ( data.error ) {
-				BUS.fire('this.RPC.error', {
+				BUS.fire('rpc.error', {
 					request: body,
 					error: data.error
 				});
@@ -111,7 +110,7 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 	};
 	if ( callback ) {
 		ajaxSettings.error = function(jqXHR, textStatus, errorThrown) {
-			BUS.fire('this.RPC.connectionerror', {text: textStatus, error: errorThrown});
+			BUS.fire('rpc.connectionerror', {text: textStatus, error: errorThrown});
 			callback(errorThrown);
 		};
 		
@@ -174,7 +173,9 @@ WobbleAPI.prototype.login = function(email, password, callback) {
 WobbleAPI.prototype.signout = function(callback) {
 	this.RPC.doRPC('user_signout', callback);
 };
-
+WobbleAPI.prototype.user_change_password = function(newPassword, callback) {
+	this.RPC.doRPC('user_change_password', {password: newPassword}, callback);
+};
 WobbleAPI.prototype.user_change_name = function(newName, callback) {
 	this.RPC.doRPC('user_change_name', {name: newName}, callback);
 };

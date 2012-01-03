@@ -71,27 +71,31 @@ class TopicRepository {
 
 		$pdo = ctx_getpdo();
 		
-		$sql = 'SELECT parent_post_id FROM posts WHERE topic_id = ? AND post_id = ? LIMIT 1';
+		# Fetch the deleted flag of the current post
+		$sql = 'SELECT deleted, parent_post_id FROM posts WHERE topic_id = ? AND post_id = ?';
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute(array($topic_id, $post_id));
 		$post = $stmt->fetchAll();
-		var_dump($post);
-
+		
+		if ( $post[0]['deleted'] !== 1) { # Abort is given post is not deleted
+		  return;
+		}
+		
+		# Count how many children the given post has.
 		$sql = 'SELECT COUNT(*) child_count FROM posts WHERE topic_id = ? AND parent_post_id = ?'	;
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute(array($topic_id, $post_id));
 		$result = $stmt->fetchAll();
-		var_dump($result);
 
+        # If the post has no children, we can delete it savely.
 		if ( intval($result[0]['child_count']) === 0 ) {
-			# Delete the post
-			$sql = 'DELETE FROM posts WHERE topic_id = ? AND post_id = ?';
+            # Delete the post
+			$sql = 'DELETE FROM posts WHERE topic_id = ? AND post_id = ? AND deleted = 1';
 			$stmt = $pdo->prepare($sql);
 			$stmt->execute(array($topic_id, $post_id));
 
 			# Check if we can delete its parent
 			TopicRepository::deletePostsIfNoChilds($topic_id, $post[0]['parent_post_id']);
-
 		}
 	}
 
