@@ -9,8 +9,16 @@
  * Listens:
  * o api.user
  */
+function NotificationHandler() {
+	// Start fetching, when user is available
+	BUS.on('api.user', function() { 
+		this.fetch_notifications(); 
+	},this); 
+};
 
-function fetch_notifications(next_timestamp) {
+NotificationHandler.prototype.fetch_notifications = function (next_timestamp) {
+	var that = this;
+
 	API.get_notifications(next_timestamp, function(err, notifications) {
 		if (notifications && notifications.messages) {
 			for (var i = 0; i < notifications.messages.length; i++) {
@@ -18,9 +26,8 @@ function fetch_notifications(next_timestamp) {
 			}
 		}
 		window.setTimeout(function() {
-			fetch_notifications(notifications ? notifications.next_timestamp : null);
+			that.fetch_notifications(notifications ? notifications.next_timestamp : null);
 		}, 500);  // Check in 0.5secs
 	});
 }
 
-BUS.on('api.user', function() { fetch_notifications(); } ); // Start fetching, when user is available

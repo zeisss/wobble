@@ -11,7 +11,7 @@ function WobbleMobileClient() {
 
 	$('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />').appendTo('head');
 }
-WobbleMobileClient.prototype = new WobbleApplication;
+WobbleMobileClient.prototype = new BasicApplication;
 WobbleMobileClient.prototype.init = function() {
 	this.$widgets = $("#widgets");
 

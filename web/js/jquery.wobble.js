@@ -14,7 +14,7 @@
 		var old_size = get_size();
 		BUS.fire('window.resize', {before: old_size, 'to': old_size});
 
-		// List for changes
+		// Listen for changes
 		$window.resize(function() {
 			var new_size = get_size();
 			BUS.fire('window.resize', {

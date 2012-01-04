@@ -104,7 +104,7 @@ function ContactsPresenter(display, model) {
 	};
 	display.onPasswordChange = function(newPassword) {
 	   API.user_change_password(newPassword, function(err, result) {
-	       if (result) {
+	       if (result) {
 	           window.alert('Password changed successfully.');    
 	       }   
 	   });

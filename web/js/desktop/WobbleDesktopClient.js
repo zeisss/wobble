@@ -8,7 +8,7 @@ function WobbleDesktopClient() {
 	// $('<link href="css/client.css" media="all" rel="stylesheet" type="text/css" />').appendTo('head');
 	// $('<link href="css/desktop.css" media="all" rel="stylesheet" type="text/css" />').appendTo('head');
 };
-WobbleDesktopClient.prototype = new WobbleApplication;
+WobbleDesktopClient.prototype = new BasicApplication;
 WobbleDesktopClient.prototype.init = function() {
 	this.contactsModel = new ContactsModel();
 	this.contactsChooserPresenter = new ContactsChooserPresenter(
