@@ -156,9 +156,8 @@ Lighter Green: #9b0
 	border-radius:0px 0px 5px 5px;
 	list-style-type:none;
 	
-	padding-left:5px;
-	padding-right:5px;
-	margin:0px;
+	padding:0;
+	margin:0;
 	
 	position:relative;
 	top:0px;
@@ -169,10 +168,28 @@ Lighter Green: #9b0
 	overflow:auto;	
 }
 #contacts .contact {
-	cursor:pointer;
+	cursor: pointer;
+	position: relative;
+	height:28px;
+	padding-left:5px;
+	padding-right:5px;
+}
+#contacts .contact:hover {
+	background: #AFAFAF;
+	color: white;
+	font-weight: bold;
+}
+#contacts .contact .usericon {
+	display:block;
+	padding-top:3px;
+}
+#contacts .contact .usericon img {
+	display:block;
 }
 #contacts .contact .name {
-	margin-left: 5px;
+	position:absolute;
+	top:4px;
+	left:34px;
 }
 #contacts .whoami {
 	padding-left:10px;
@@ -268,6 +285,10 @@ Lighter Green: #9b0
 	border:1px white solid;
 }
 
+#topics li:hover {
+	background: #AFAFAF;
+	color: white;
+}
 #topics li.active {
 	background-color: #789E35;
 }
