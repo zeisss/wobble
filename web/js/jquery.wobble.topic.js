@@ -355,20 +355,47 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 	if ( editing ) {
 		// See http://www.quirksmode.org/dom/execCommand/
 		// for an example of commands
-		$('<button class="icon boldicon"></button>').appendTo(this.jTopicActions).click(function() {
-			document.execCommand('bold', false, null); // $(".editing")[0].execCommand(
+		$('<button class="icon rightborder">Clear</button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('RemoveFormat', false, null); 
+		});
+
+		$('<button class="icon boldicon rightborder"></button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('bold', false, null); 
 		});
 		$('<button class="icon italicicon"></button>').appendTo(this.jTopicActions).click(function() {
-			document.execCommand('italic', false, null); // $(".editing")[0].execCommand(
+			document.execCommand('italic', false, null);
 		});
 		$('<button class="icon underlineicon"></button>').appendTo(this.jTopicActions).click(function() {
-			document.execCommand('underline', false, null); // $(".editing")[0].execCommand(
+			document.execCommand('underline', false, null);
 		});
-		$('<button class="icon strikeicon" style="margin-right:10px; padding-right:12px; border-right:1px black solid"></button>').appendTo(this.jTopicActions).click(function() {
-			document.execCommand('strikethrough', false, null); // $(".editing")[0].execCommand(
+		$('<button class="icon strikeicon borderright"></button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('strikethrough', false, null);
 		});
-		$('<button class="icon listicon"></button>').appendTo(this.jTopicActions).click(function() {
-			document.execCommand('insertunorderedlist', false, null); // $(".editing")[0].execCommand(
+
+		$('<button class="icon">BG</button>').appendTo(this.jTopicActions).click(function() {
+			var color = window.prompt('Color? (#FF0000 or red)');
+			if (color!=null)
+				document.execCommand('backcolor', true, color ||'white');
+		});
+		$('<button class="icon">FG</button>').appendTo(this.jTopicActions).click(function() {
+			var color = window.prompt('Color? (#FF0000 or red)');
+			if (color!=null)
+				document.execCommand('forecolor', false, color ||'black'); 
+		});
+		/* Not supported by IE8
+		$('<button class="icon borderright">Hi</button>').appendTo(this.jTopicActions).click(function() {
+			var color = window.prompt('Color? (#FF0000 or red)');
+			if (color!=null)
+				document.execCommand('hilitecolor', false, color || 'black'); 
+		});
+		*/
+
+		
+		$('<button class="icon olisticon"></button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('insertorderedlist', false, null);
+		});
+		$('<button class="icon listicon borderright"></button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('insertunorderedlist', false, null);
 		});
 		$('<button class="icon imgicon">img</button>').appendTo(this.jTopicActions).click(function() {
 			var url = window.prompt("URL?");
@@ -381,6 +408,11 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 			if ( url != null ) {
 				document.execCommand('createLink', false, url); // $(".editing")[0].execCommand(
 			}
+		});
+
+		$('<button class="icon"><s>URL</s></button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('Unlink');
+			
 		});
 	} else {
 		var that = this;

@@ -34,7 +34,6 @@ Lighter Green: #9b0
 	border:1px #5590d2 solid;
 	box-shadow: 3px 3px 0px 0px #888;
 }
-/* ------------------------------------------------------------------------- */
 
 
 /* ------------------------------------------------------------------------- */
@@ -463,8 +462,16 @@ Lighter Green: #9b0
 	padding-right:10px;
 
 }
+.borderright {
+	 margin-right:10px; 
+	 padding-right:12px; 
+	 border-right:1px black solid;
+}
 .urlicon {
 	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAABBUlEQVR42mNgGAWjgLrAbsV/DDGH5Q4MdssP4NcHlAepI8YCEEAXBgo5A/EpfBZsPvr0Okgd6RY4rDIAik+Ayk+A4g9gDJJDsuD0jTf+QPENcHHiLFjuIOC59ixQeAbIILP0XfdB7P5VN//5VR7+B2Qbg8QX7Xxwm89z7R2pwA3ZQLGdYHFiLRD1W3cRHESIoNgJElcM33wXzAaK87iv+SMZuPEqkH8biFNJ8gEWC5zRxRvmX3mon7TjP8gnJMYBcRaAxFftfzyB12PN3yv338fjTqYoGJL8iLUAJK4Vu20mNG4EsdrxHxOcQk6mMD568kUTbwfHDf1zMTUxkcFDERgte4kCABl+tI2JVfmHAAAAAElFTkSuQmCC) no-repeat;
+}
+.olisticon {
+	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAATCAYAAACdkl3yAAAARUlEQVR42mNgGAXEgv/UMuQ/CFDFMDSD/pOIMTShmkwCwNBEcRgxUCuAqBlzDEheG2aBTb0ESbXUTa2UjRxrlAU2Jd4BAAwCBAtmEJv9AAAAAElFTkSuQmCC) no-repeat;
 }
 .listicon {
 	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAAAP0lEQVR42mNgGAUjDkQC8X8oTRPwH4aBIA5djEhM2AfLli0DWQBX/J9EgN8LQJdD1cWNRvJoJI9G8mgkDxcAABlUBFwoPRjrAAAAAElFTkSuQmCC) no-repeat;
