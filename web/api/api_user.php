@@ -149,7 +149,21 @@ function user_get_contacts() {
 	
 	ValidationService::validate_not_empty($self_user_id);
 
-	return ContactsRepository::getContacts($self_user_id);
+	$contacts = ContactsRepository::getContacts($self_user_id);
+	usort($contacts, function($a, $b) {
+		if ($a['online'] == $b['online']) {
+			return strcasecmp($a['name'], $b['name']);
+		}
+		else {
+			if ($a['online'] == 1) {
+				return -1;
+			}
+			else {
+				return 1;
+			}
+		}
+	});
+	return $contacts;
 }
 
 /**
