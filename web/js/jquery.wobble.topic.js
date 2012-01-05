@@ -284,6 +284,10 @@ jQueryTopicView.prototype.openEditor = function(post) {
 			// contenteditable from the div while it has focus (the editing border does not get removed, until you click somewhere)
 			$(">.buttons>button", jpost).focus(); 
 			that.closeEditor();
+
+			event.stopPropagation();
+			event.preventDefault();
+			event.stopImmediatePropagation();
 		}
 	});
 	this._addDefaultButtons($(">.buttons", jpost).empty(), post);
@@ -314,8 +318,13 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 	var that = this;
 
 	if ( this.editingPostId == post.id ) {
-		$("<button><b>Done</b> <span style='font-size:small; color:gray'>[Shift+Enter]</span></button>").appendTo(jbuttons).click(function() {
+		$("<button><b>Done</b> <span style='font-size:small; color:gray'>[Shift+Enter]</span></button>").appendTo(jbuttons).click(function(event) {
 			that.closeEditor();
+
+			event.stopPropagation();
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			
 		});
 	} else {
 		jbuttons.append($("<button>Edit</button>").click(function(event) {
