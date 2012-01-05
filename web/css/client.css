@@ -247,7 +247,8 @@ Lighter Green: #9b0
 #topics li.topic_header .abstract {
 	position:absolute;
 	left:116px;
-	right:50px;
+	right:56px;
+	overflow:hidden;
 }
 #topics li.topic_header .messages {
 	display:inline;
