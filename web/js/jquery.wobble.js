@@ -12,7 +12,10 @@
 	$(document).ready(function() {
 		// Fire initial event to setup UI
 		var old_size = get_size();
-		BUS.fire('window.resize', {before: old_size, 'to': old_size});
+
+		window.setTimeout(function() {
+			BUS.fire('window.resize', {before: old_size, 'to': old_size});
+		}, 10); // Add a little delay so the UI can be constructed
 
 		// Listen for changes
 		$window.resize(function() {

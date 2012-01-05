@@ -30,6 +30,8 @@ function JQueryContactsView() {
 
 	this.e.append(template);
     this.$whoami = $(".whoami", this.e);
+    this.$actions = $(".actions", this.e);
+    this.$contactsList = $(".contactslist", this.e);
 
 	// UI Event Handlers	
 	this.$whoami.click($.proxy(function() {
@@ -45,11 +47,26 @@ function JQueryContactsView() {
 	   var that = this;
 	   that.fireWhoamiClicked();		
 	}, this));
+
+	// On a window.resize event wait for the transformations to finish (should be done in 300ms) and recalc height
+	BUS.on('window.resize', function() {
+		var t = this;
+		window.setTimeout( function() {
+			t.onResize();
+		}, 350);
+	}, this);
 };
 JQueryContactsView.prototype = new ContactsDisplay();
 JQueryContactsView.prototype.constructor = JQueryContactsView;
 
 // Methods 
+JQueryContactsView.prototype.onResize = function() {
+	var viewHeight = this.e.innerHeight();
+	var offsetX = this.$whoami.outerHeight() + this.$actions.outerHeight()
+
+	this.$contactsList.css('height', viewHeight - offsetX);
+};
+
 JQueryContactsView.prototype.fireWhoamiClicked = function() {
   var that = this;
   BUS.fire('contact.clicked', {
@@ -78,7 +95,7 @@ JQueryContactsView.prototype.fireWhoamiClicked = function() {
    });
 };
 JQueryContactsView.prototype.renderContacts = function (list) {
-	var $ul = $(".contactslist", this.e).empty();
+	this.$contactsList.empty();
 	
 	jQuery.each(list, $.proxy(function(i, contact) {
 		var template = "<li class=contact title='{{email}}'>" + 
@@ -94,15 +111,15 @@ JQueryContactsView.prototype.renderContacts = function (list) {
 				name: contact.name,
 				img: contact.img,
 				online: contact.online == 1 ? 'online' : 'offline'
-		})).appendTo($ul).click($.proxy(function() {
+		})).appendTo(this.$contactsList).click($.proxy(function() {
 			this.onContactClick(contact);
 		}, this));
 	}, this));
 };
 JQueryContactsView.prototype.renderWhoAmI = function(user) {
-	var $whoami = $(".whoami", this.e).empty();
+	this.$whoami.empty();
 	var template = "<img title='That is you!' src='http://gravatar.com/avatar/{{{img}}}?s=32' width=32 height=32> <span class=name>{{name}}</span>";
-	$whoami.append(Mustache.to_html(template, user));
+	this.$whoami.append(Mustache.to_html(template, user));
 };
 
 
