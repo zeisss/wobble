@@ -16,7 +16,7 @@ BasicApplication.prototype.bootstrap = function() {
 	this.init();
 }
 BasicApplication.prototype.init = function() {
-	// Called 
+	// Overwrite in Implementation 
 };
 BasicApplication.prototype.onRPCError = function(err) {
 	

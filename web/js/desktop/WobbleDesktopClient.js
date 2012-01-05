@@ -26,12 +26,11 @@ WobbleDesktopClient.prototype.init = function() {
 	this.topHeader = new DesktopClientHeader();
 
 	this.doLayout();
+
 	// Recalculate the position of the widgets, when window is resized
 	BUS.on('window.resize', function(data) {
 		this.doLayout(data);
-	}, this);
-
-	
+	}, this);	
 };
 WobbleDesktopClient.prototype.onRPCError = function(err) {
 	var doReload = window.confirm('Whoooops! Something went wrong! We will reload now, ok?');

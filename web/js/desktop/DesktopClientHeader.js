@@ -10,6 +10,7 @@ function DesktopClientHeader() {
 
     // 
 	$("#signout").click(function() {
+		console.log("Signout => Bye bye!");
 		API.signout(function(err, data) {
 			if (!err) window.location.reload();
 		});
