@@ -8,6 +8,13 @@ function user_signout($params) {
 	
 	SessionService::signoff(session_id()); # mark offline in database
 	
+	foreach(user_get_contacts() AS $user) {
+		NotificationRepository::push($user['id'], array (
+			'type' => 'user_signout',
+			'user_id' => $self_user_id
+		));
+	}
+	
 	$_SESSION['userid'] = null;
 	session_destroy();
 	return TRUE;

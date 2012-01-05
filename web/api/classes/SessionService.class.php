@@ -11,12 +11,6 @@
 			$stmt = $pdo->prepare($sql);
 			$stmt->execute(array($session_id));
 
-			foreach(user_get_contacts() AS $user) {
-				NotificationRepository::push($user['id'], array (
-					'type' => 'user_signout',
-					'user_id' => $self_user_id
-				));
-			}
 		}
 		public static function touch($session_id, $user_id, $timestamp = FALSE) {
 			if ( $timestamp === FALSE) {
