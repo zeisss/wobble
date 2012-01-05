@@ -4,3 +4,11 @@ body {
 
 	direction:ltr;
 }
+
+
+a {
+	color:blue;
+}
+a:visited {
+	color: blue;
+}

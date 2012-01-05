@@ -8,12 +8,6 @@
 	font-weight: bold;
 	font-size: 13px;
 }
-a {
-	color:blue;
-}
-a:visited {
-	color: blue;
-}
 
 /* --------------------------------------------------------- */
 #contacts .contactslist {
