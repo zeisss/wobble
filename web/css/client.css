@@ -19,7 +19,8 @@ Lighter Green: #9b0
 	transition-duration: 300ms;
 	
 	background-color: #C9E2FC;
-	border:1px black solid; 
+
+	border:1px gray solid; 
 	border-radius: 5px;
 
 	box-shadow: 5px 5px 0px 0px #888;
@@ -372,21 +373,20 @@ Lighter Green: #9b0
 	float:right;
 	font-size:small;
 }
-#topic_posts .post .users {
+#topic_posts .post>.users {
 	padding-top:3px;
 	display:block;
 	position:relative;
 }
-#topic_posts .post .users img {
+#topic_posts .post>.users>img {
 	padding-left:3px;
-
+	padding-right:5px;
 }
 #topic_posts .post>.users>.names {
 	color:gray;
 	font-weight:bold;
 	font-size:small;
 	clear:both;
-	padding-left:3px;
 
 	position:absolute;
 	top:3px;
