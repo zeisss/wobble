@@ -4,6 +4,11 @@ function BasicApplication() {
 	
 	
 };
+
+/**
+ * Called when all dependencies are loaded. Initializes the basic objects 
+ * like API, RPC.
+ */
 BasicApplication.prototype.bootstrap = function() {
 	$('<div></div>').attr('id', 'widgets').appendTo($('body'));
 
@@ -11,13 +16,45 @@ BasicApplication.prototype.bootstrap = function() {
 	BUS.on('rpc.error', function(err) {
 		this.onRPCError(err);
 	}, this);
+	BUS.on('rpc.connectionerror', function(err) {
+		this.onRPCError(err);
+	}, this);
 
-	// Create global #widgets holder
-	this.init();
+	var that = this;
+	$(window).bind('beforeunload', function() {
+		that.unload();
+	});
+
+	// Initialize the API and app, when user data is loaded
+	
+	window.RPC = new JSONRPC('./api/endpoint.php');
+	window.API = new WobbleAPI(
+		window.RPC,
+		function(user) {
+			that.preinit(user);
+		}
+	);
+	
 }
-BasicApplication.prototype.init = function() {
+BasicApplication.prototype.preinit = function(user) {
+	this.notificationFetcher = new NotificationHandler();
+	
+
+	$('body').empty().append('<div id=widgets></div>');
+
+	this.init(user);
+};
+BasicApplication.prototype.init = function(user) {
 	// Overwrite in Implementation 
 };
+BasicApplication.prototype.unload = function(user) {
+	console.log('Unload detected. Marking backend object as destroyed.');
+	// Overwrite in Implementation 
+	if (this.notificationFetcher) this.notificationFetcher.destroy();
+	if(window.RPC) window.RPC.destroy();
+	if(window.API) window.API.destroy();
+};
+
 BasicApplication.prototype.onRPCError = function(err) {
 	
 };

@@ -35,6 +35,10 @@ function user_login($params) {
 	$password_hashed = SecurityService::hashPassword($password);
 	$user = UserRepository::getUserByEmail($email);
 	if ( $user != NULL && $password_hashed === $user['password_hashed']) {
+		# Valid login given. We must start a session now (we dont want the cookie)
+		
+		session_start();
+		
 		$_SESSION['userid'] = $user['id'];
 		
 		SessionService::signon(session_id(), $user['id']);
@@ -45,7 +49,9 @@ function user_login($params) {
 				'user_id' => $user['id']
 			));
 		}
-		return TRUE;
+		return array(
+			'apikey' => session_id()
+		);
 	} else {
 		throw new Exception('Illegal email or password!');
 	}
@@ -70,6 +76,8 @@ function user_register($params) {
 	}
 	
 	$user_id = UserRepository::create($email, $password_hashed, $email);
+
+	session_start();
 	$_SESSION['userid'] = $user_id;
 
 	# We skip the contact-notifications here, since the user shouldn't have any friends
@@ -87,7 +95,9 @@ function user_register($params) {
 	}
 
 	
-	return TRUE;
+	return array(
+		'apikey' => session_id()
+	);
 }
 
 /**

@@ -1,4 +1,6 @@
 <?php
+	ini_set('session.use_cookies', '0');
+	
 	require_once 'config.php';
 
 	# TODO: Replace with __autoload()
@@ -48,13 +50,17 @@
 
 	function ctx_before_request($method, $params) {
 		session_name('WOBBLEID');
-		session_set_cookie_params(60 * 60 * 24 * 31);
-		session_start();
+		if (isset($params['apikey'])) {
+			session_id($params['apikey']);
+			session_set_cookie_params(60 * 60 * 24 * 31); # tell php to keep this session alive 1 month
+			session_start();
+		}
+		
 		if ( !empty($_SESSION['userid'])) {
 			SessionService::touch(session_id(), $_SESSION['userid']);
 		}
 	}
-	jsonrpc_export_before('ctx_before_request'); # Is there a more php5-ish way?
+	jsonrpc_export_before('ctx_before_request'); # TODO: Replace this with a closure?
 
 	function ctx_after_request($method, $params, $result, $exception) {
 	

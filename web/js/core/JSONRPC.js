@@ -6,6 +6,14 @@ var JSONRPC = function(url) {
 	this.idSequence = 1;
 }
 /**
+ * Mark this RPC object as aborted, so any result that comes in is not propagated further.
+ * This means no callbacks will be called anymore.
+ */
+JSONRPC.prototype.destroy = function(name) {
+	this.aborted = true;	
+};
+
+/**
  * Notifications are calls, where no response is expected/wished.
  */
 JSONRPC.prototype.doNotification = function(name, args) {
@@ -24,7 +32,9 @@ JSONRPC.prototype.doRPC = function(name, args, callback) {
 	
 	this._call(requestId, name, args, callback);
 };
-JSONRPC.prototype._call = function(requestId, name, args, callback) {			
+JSONRPC.prototype._call = function(requestId, name, args, callback) {	
+	var that = this;
+			
 	var body = {
 		jsonrpc: "2.0",
 		method: name,
@@ -46,16 +56,18 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 			'Content-Type': 'application/json; charset=utf-8'
 		},
 		success: function(data, textStatus, jqXHR) {					
-			if ( data.error ) {
-				BUS.fire('rpc.error', {
-					request: body,
-					error: data.error
-				});
-			}
+			if(that.aborted)
+				return;
 			if (!callback) 
 				return;
 			if ( data.error ) {
-				callback(data.error);
+				var errorHandled = callback(data.error);
+				if (!errorHandled) {
+					BUS.fire('rpc.error', {
+						request: body,
+						error: data.error
+					});
+				}
 			} else {
 				callback(undefined, data.result);
 			}
@@ -63,6 +75,9 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 	};
 	if ( callback ) {
 		ajaxSettings.error = function(jqXHR, textStatus, errorThrown) {
+			if(that.aborted)
+				return;
+
 			BUS.fire('rpc.connectionerror', {text: textStatus, error: errorThrown});
 			callback(errorThrown);
 		};

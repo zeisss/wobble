@@ -35,7 +35,7 @@ EventBUS.prototype.clear = function() {
 
 // Create the Global BUS
 window.BUS = new EventBUS();
-if ( window.addEventListener) {
+if (window.addEventListener) {
 	window.addEventListener('unload', function() {
 		BUS.clear();
 	}, false)

@@ -44,30 +44,42 @@
 		<script src="js/desktop/DesktopClientHeader.js"></script>
 		<script src="js/desktop/WobbleDesktopClient.js"></script>
 
-		<!--
+		<!-- Login files -->
+		<script src="js/login/LoginModel.js"></script>
+		<script src="js/login/AbstractLoginView.js"></script>
+		<script src="js/login/DesktopLoginView.js"></script>
+		<script src="js/login/MobileLoginView.js"></script>
+		<script src="js/login/LoginPresenter.js"></script>
+
+		<!-- Mobile -->
 		<script src="js/mobile/MobileNavigator.js"></script>
 		<script src="js/mobile/WobbleMobileClient.js"></script>
-		-->
+		
 		
 		<link href="css/wobble.css" media="all" rel="stylesheet" type="text/css" />
 		<link href="css/client.css" media="all" rel="stylesheet" type="text/css" />
-		<link href="css/desktop.css" media="all" rel="stylesheet" type="text/css" />
+		<!-- <link href="css/desktop.css" media="all" rel="stylesheet" type="text/css" />-->
 		
-
 		<script>
-			// Loads current user ID infos (so its cached locally)
-			window.API = new WobbleAPI(new JSONRPC('./api/endpoint.php')); 
-			window.APIHandler = new NotificationHandler();
-
 			window.WobbleApp = (function() {
-				/*var ua = navigator.userAgent;
-				if (true ||ua.match(/android/i) || 
+				// An enforced app has priority over the UA detection
+				var appName = localStorage.getItem('WOBBLE_ENFORCE_APP');
+				if (appName == "mobile") {
+					return new WobbleMobileClient();
+				} else if(appName == "desktop") {
+					return new WobbleDesktopClient();
+				}
+
+				// If the UA detects a mobile browser, use that
+				var ua = navigator.userAgent;
+				if (ua.match(/android/i) || 
 					ua.match(/iphone/i)) {
 					return new WobbleMobileClient();
-				} else {
-					return new WobbleDesktopClient();
-				}*/
+				} 
+				
+				// Fallback: Standard desktop version
 				return new WobbleDesktopClient();
+				
 			})();
 			$(document).ready(function() {
 				window.WobbleApp.bootstrap();
@@ -75,5 +87,6 @@
 		</script>
 	</head>
 	<body>
+		Loading ...
 	</body>
 </html>

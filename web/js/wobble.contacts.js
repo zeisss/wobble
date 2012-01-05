@@ -75,7 +75,10 @@ function ContactsPresenter(display, model) {
 	this.model = model;
 	
 	this.refreshContacts(); // Load initially
-	
+	if (model.getUser()) {
+		this.display.renderWhoAmI(model.getUser());
+	}
+
 	var that = this;
 	
 	// Timers & Data Loading  ----------------------------------

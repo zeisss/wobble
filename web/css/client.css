@@ -391,9 +391,7 @@ Lighter Green: #9b0
 	top:3px;
 }
 #topic_posts .post>.buttons {
-	position:absolute;
-	right:0px;
-	bottom:0px;
+	text-align:right;
 }
 #topic_posts .post>.content {
 	padding-bottom:22px;

@@ -3,9 +3,9 @@
 function MobileNavigation(app) {
 	this.e = $('<div></div>').attr('id', 'navigator').appendTo('body');
 
-	var template = '<button id="navContacts">Contacts</button>' + 
-				   '<button id="navOverview">Overview</button>' + 
-				   '<button id="navTopic">Topic</button>';
+	var template = '<button id="navOverview">Overview</button>' + 
+				   '<button id="navContacts">Contacts</button>' + 				   
+				   '<button id="navLogout">Logout</button>'
 	this.e.append(template);
 
 	$('button', this.e).click(function() {
