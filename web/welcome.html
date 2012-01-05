@@ -3,6 +3,7 @@
 	<head>
 		<title>Welcome - Wooble</title>
 		<link href="css/wobble.css" media="all" rel="stylesheet" type="text/css" />
+		<link href="css/client.css" media="all" rel="stylesheet" type="text/css" />
 		
 		<script src="js/ext/jquery.min.js"></script>
 		
@@ -13,41 +14,6 @@
 		<script src="js/login/LoginModel.js"></script>
 		<script src="js/login/DesktopLoginView.js"></script>
 		<script src="js/login/LoginPresenter.js"></script>
-		
-		<style>
-		body { 
-			margin:0px;
-		}
-		#desktoploginview {
-			min-height:240px;
-			height:100%;
-		}
-		#desktoploginview .content {
-			background-color:gray;
-			color:white;
-			font-family: arial;
-			
-			
-			position: relative;
-			
-			top:200px;
-
-			left:0px;
-			right:0px;
-
-			padding:70px;
-		}
-		#desktoploginview label {
-			
-			font-weight: bold;
-			
-		}
-		#desktoploginview button {
-			padding:10px;
-			padding-right:25px;
-			padding-left:25px;
-		}
-		</style>
 		<script>
 			$(document).ready(function() {
 				window.API = new WobbleAPI(new JSONRPC('./api/endpoint.php'));

@@ -1,15 +1,8 @@
 "use strict";
+function MobileLoginView() {
+	this.e = $("<div></div>").attr('id', 'mobileloginview').appendTo('body');
 
-/**
- * The loginview should support the following features:
- * - Login by email + password
- * - Register with email+password
- */
-function DesktopLoginView() {
 	var that = this;
-
-	this.e = $('<div></div>').attr('id', 'desktoploginview').appendTo('body').css('display', 'none');
-
 	this.e.load('js/login/template.html', function() {
 		// When the view is loaded, register handlers
 		$("#password").keypress(function(event) {
@@ -27,4 +20,4 @@ function DesktopLoginView() {
 		});
 	});
 };
-DesktopLoginView.prototype = new AbstractLoginView();
+MobileLoginView.prototype = new AbstractLoginView();

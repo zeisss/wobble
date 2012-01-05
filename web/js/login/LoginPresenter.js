@@ -13,6 +13,7 @@ function LoginPresenter(display, model, callback) {
 
 			if ( err ) {
 				alert(err.message);
+				return true;
 			} else {
 				callback();
 			}
@@ -25,6 +26,7 @@ function LoginPresenter(display, model, callback) {
 			display.setEnabled(true);
 			if ( err ) {
 				alert(err.message);
+				return true;
 			} else {
 				callback();
 			}
