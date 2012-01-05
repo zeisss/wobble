@@ -1,3 +1,20 @@
+
+#headline .navigation{
+	text-align:right;
+	position:relative;
+	top:0px;
+	right:0px;
+
+	font-weight: bold;
+	font-size: 13px;
+}
+a {
+	color:blue;
+}
+a:visited {
+	color: blue;
+}
+
 /* --------------------------------------------------------- */
 #contacts .contactslist {
 	overflow:auto;

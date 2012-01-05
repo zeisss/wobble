@@ -35,13 +35,6 @@ Lighter Green: #9b0
 }
 /* ------------------------------------------------------------------------- */
 
-#headline .navigation{
-	text-align:right;
-	position:relative;
-	top:0px;
-	right:0px;
-}
-
 
 /* ------------------------------------------------------------------------- */
 #contactschooser {
@@ -217,6 +210,10 @@ Lighter Green: #9b0
 
 #topics_wrapper #topics {
 	background-color: white;
+	color:black;
+	
+	font-size:13px;
+
 	border-radius: 0px 0px 5px 5px;
 	
 	overflow: auto;
