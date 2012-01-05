@@ -9,110 +9,66 @@
 		<script src="js/core/BUS.js"></script>
 		<script src="js/core/JSONRPC.js"></script>
 		<script src="js/core/WobbleAPI.js"></script>
+
+		<script src="js/login/LoginModel.js"></script>
+		<script src="js/login/DesktopLoginView.js"></script>
+		<script src="js/login/LoginPresenter.js"></script>
 		
 		<style>
 		body { 
 			margin:0px;
 		}
-		#content {
-			height:200px;
-			position: relative;
-			top:200px;
+		#desktoploginview {
+			min-height:240px;
+			height:100%;
+		}
+		#desktoploginview .content {
 			background-color:gray;
-			padding-top:50px;
-			padding-left:50px;
-		}
-		label {
-			font-family: arial;
-			font-weight: bold;
 			color:white;
+			font-family: arial;
+			
+			
+			position: relative;
+			
+			top:200px;
+
+			left:0px;
+			right:0px;
+
+			padding:70px;
 		}
-		button {
+		#desktoploginview label {
+			
+			font-weight: bold;
+			
+		}
+		#desktoploginview button {
 			padding:10px;
 			padding-right:25px;
 			padding-left:25px;
-		}
-		.buttons {
-			
 		}
 		</style>
 		<script>
 			$(document).ready(function() {
 				window.API = new WobbleAPI(new JSONRPC('./api/endpoint.php'));
 				
-				$("#register").click(function() {
-					var buttons = $("button");
-					
-					buttons.attr('disabled', 'disabled');
-					
-					API.register(
-						$("#email").val(), 
-						$("#password").val(), 
-						function(err, data) {
-							buttons.removeAttr('disabled');
-							if ( err ) {
-								alert(err.message);
-							} else {
-								window.location.reload();
-							}
-						}
-					);
-				});
-				$("#login").click(function() {
-					var buttons = $("button");
-					
-					buttons.attr('disabled', 'disabled');
-					
-					API.login(
-						$("#email").val(), 
-						$("#password").val(), 
-						function(err, data) {
-							buttons.removeAttr('disabled');
-							if ( err ) {
-								alert(err.message);
-							} else {
-								window.location.reload();
-							}
-						}
-					);
-				});
-				$("#password").keypress(function(event) {
-					if ( event.which == 13 ) {
-						$("#login").focus().click();
+				var lv = new DesktopLoginView();
+				var lp = new LoginPresenter(
+					lv,
+					new LoginModel(),
+					function() {
+						lv.destroy(); // Remove the LoginView from the document
+						
+						// More code to show the actuall app
+						window.location.reload();	
 					}
-				});
+				);				
 			});
 		</script>
 	</head>
 	<body>
-		<div id="content">
-			<table>
-				<tr>
-					<td>
-						<label for="email">Email</label>
-					</td>
-					<td>
-						<input type="text" name="email" id="email" />
-					</td>
-				</tr>
-				
-				<tr>
-					<td>
-						<label for="password">Password</label>
-					</td>
-					<td>
-						<input type="password" name="password" id="password" />
-					</td>
-				</tr>
-					
-				<tr>
-					<td></td>
-					<td class="buttons">
-						<button id="register">Register</button>
-						<button id="login">Login</button>
-					</td>
-				</tr>
-			</table>
-		</div>
+		<noscript>
+			This application requires JavaScript to work. Also enable Cookies.
+		</noscript>
 	</body>
 </html>
