@@ -49,8 +49,13 @@
 		$readers = TopicRepository::getReaders($topic_id);
 		$writers = TopicRepository::getWriters($topic_id);
 				
-		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent, p.last_touch timestamp, p.deleted deleted, coalesce((select 0 from post_users_read where topic_id = p.topic_id AND post_id = p.post_id AND user_id = ?), 1) unread 
-								FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
+		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, 
+				p.parent_post_id parent, p.last_touch timestamp, p.deleted deleted, 
+				coalesce((select 0 from post_users_read 
+						  where topic_id = p.topic_id AND post_id = p.post_id AND user_id = ?), 1) unread 
+			 FROM posts p 
+			WHERE p.topic_id = ? 
+			ORDER BY created_at');
 		$stmt->execute(array($self_user_id, $topic_id));
 		$posts = $stmt->fetchAll();
 		
@@ -240,15 +245,7 @@
 			$pdo->prepare('UPDATE posts SET content = ?, revision_no = revision_no + 1, last_touch = unix_timestamp() WHERE post_id = ? AND topic_id = ?')->execute(array($content, $post_id, $topic_id));
 			$pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id) VALUES (?,?,?)')->execute(array($topic_id, $post_id, $self_user_id));
 
-
-			TopicRepository::setPostReadStatus(
-				$self_user_id, $topic_id, $post_id, 1 # Mark post as read for requesting user
-			);
-			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
-				if ( $user['id'] == $self_user_id)  # Skip for requesting user
-					continue;
-
 				NotificationRepository::push($user['id'], array(
 					'type' => 'post_changed',
 					'topic_id' => $topic_id,
@@ -259,6 +256,10 @@
 					$user['id'], $topic_id, $post_id, 0
 				);
 			}
+
+			TopicRepository::setPostReadStatus(
+				$self_user_id, $topic_id, $post_id, 1 # Mark post as read for requesting user
+			);
 			
 			return array (
 				'revision_no' => ($revision + 1)

@@ -7,6 +7,7 @@
 	require_once dirname(__FILE__).'/classes/UserRepository.class.php';
 	require_once dirname(__FILE__).'/classes/ContactsRepository.class.php';
 	require_once dirname(__FILE__).'/classes/SecurityService.class.php';
+	require_once dirname(__FILE__).'/classes/SessionService.class.php';
 	require_once dirname(__FILE__).'/classes/ValidationService.class.php';
 
 	jsonrpc_export_functions(array (
@@ -50,7 +51,7 @@
 		session_set_cookie_params(60 * 60 * 24 * 31);
 		session_start();
 		if ( !empty($_SESSION['userid'])) {
-			UserRepository::touch($_SESSION['userid']);
+			SessionService::touch(session_id(), $_SESSION['userid']);
 		}
 	}
 	jsonrpc_export_before('ctx_before_request'); # Is there a more php5-ish way?

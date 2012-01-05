@@ -6,15 +6,10 @@
 function user_signout($params) {
 	$self_user_id = ctx_getuserid();
 	
-	UserRepository::touch($self_user_id, NULL); # mark offline in database
+	SessionService::signoff(session_id()); # mark offline in database
 	
-	foreach(user_get_contacts() AS $user) {
-		NotificationRepository::push($user['id'], array (
-			'type' => 'user_signout',
-			'user_id' => $self_user_id
-		));
-	}
 	$_SESSION['userid'] = null;
+	session_destroy();
 	return TRUE;
 }
 
@@ -35,6 +30,8 @@ function user_login($params) {
 	if ( $user != NULL && $password_hashed === $user['password_hashed']) {
 		$_SESSION['userid'] = $user['id'];
 		
+		SessionService::signon(session_id(), $user['id']);
+
 		foreach(user_get_contacts() AS $contact) {
 			NotificationRepository::push($contact['id'], array (
 				'type' => 'user_online',
@@ -66,7 +63,11 @@ function user_register($params) {
 	}
 	
 	$user_id = UserRepository::create($email, $password_hashed, $email);
+	$_SESSION['userid'] = $user_id;
 
+	# We skip the contact-notifications here, since the user shouldn't have any friends
+
+	# ADd the new user to the welcome topic, if defined
 	if ( defined('WELCOME_TOPIC_ID')) {
 		TopicRepository::addReader(WELCOME_TOPIC_ID, $user_id);
 
@@ -78,7 +79,7 @@ function user_register($params) {
 		}
 	}
 
-	$_SESSION['userid'] = $user_id;
+	
 	return TRUE;
 }
 
