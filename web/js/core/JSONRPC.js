@@ -60,7 +60,18 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 				return;
 			if (!callback) 
 				return;
-			if ( data.error ) {
+
+			if (data == undefined) {
+				var error = {'message': 'Empty response'};
+				var errorHandled = callback(error);
+				if (!errorHandled) {
+					BUS.fire('rpc.error', {
+						request: body,
+						error: error
+					});
+				}
+			}
+			else if (data.error) {
 				var errorHandled = callback(data.error);
 				if (!errorHandled) {
 					BUS.fire('rpc.error', {
