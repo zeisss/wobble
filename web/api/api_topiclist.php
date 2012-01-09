@@ -18,7 +18,7 @@
 		$pdo = ctx_getpdo();
 		$stmt = $pdo->prepare('SELECT 
 			  t.id id, 
-			  substr(p.content, 1, 200) abstract, 
+			  p.content abstract, 
 			  (select max(p.last_touch) from posts p WHERE p.topic_id = t.id) max_last_touch, 
 			  (select count(*) from posts where topic_id = t.id and deleted = 0) post_count_total, 
 			  (select count(*) from post_users_read where topic_id = p.topic_id AND user_id = r.user_id) post_count_read 
@@ -37,7 +37,7 @@
 			$result[$i]['post_count_unread'] = $result[$i]['post_count_total'] - intval($result[$i]['post_count_read']);
 			unset($result[$i]['post_count_read']);		
 			
-			$result[$i]['abstract']	= substr(strip_tags($result[$i]['abstract']), 0, 100);
+			$result[$i]['abstract']	= strip_tags(substr($result[$i]['abstract'], 0, 100));
 		}
 		
 		return $result;
