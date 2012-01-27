@@ -52,9 +52,7 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 		data: JSON.stringify(body),
 		dataType: "json",
 		processData: false,
-		headers: {
-			'Content-Type': 'application/json; charset=utf-8'
-		},
+		contentType: 'application/json; charset=utf-8',
 		success: function(data, textStatus, jqXHR) {					
 			if(that.aborted)
 				return;
