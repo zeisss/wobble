@@ -39,7 +39,7 @@ jQueryTopicView.prototype.clear = function() {
 };
 
 jQueryTopicView.prototype.setEnabled = function(enabled) {
-	if ( enabled ) {
+	if (enabled) {
 		$("button", this.jTopicActions).removeAttr('disabled');
 	} else {
 		$("button", this.jTopicActions).attr('disabled', 'disabled');
@@ -57,7 +57,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 	
 	this._renderTopicActions($(".editing").length > 0);
 	
-	if ( topicDetails ) {
+	if (topicDetails) {
 		this.setEnabled(true);
 
 		this.jTopicReaders.empty();
@@ -85,7 +85,7 @@ jQueryTopicView.prototype._renderReader= function(user) {
 	var that = this;
 	var containerId = "topic-reader-" + user.id;
 	var container = $('#' + containerId);
-	if ( container.length == 0 ) {
+	if (container.length == 0) {
 		container = $("<span></span>").attr('id', containerId).appendTo(this.jTopicReaders);
 	}
 	var template = "<div class='usericon usericon40'>" + 
@@ -157,7 +157,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
 			that.onPostClicked(post);
 		});
 	
-	if ( post.deleted != 1) {
+	if (post.deleted != 1) {
 		// Render children
 		
 		var ePostUsers = $(">.post>.users", jPostWrapper);
@@ -279,7 +279,7 @@ jQueryTopicView.prototype.openEditor = function(post) {
 	var eContent = $(">.content", jpost).attr('contenteditable', 'true');
 	eContent.addClass('editing')./* makes formatting buttons unusable: blur(submitPostEditing).*/focus();
 	eContent.keydown(function(event) {
-		if ( event.shiftKey && event.which == 13) {
+		if (event.shiftKey && event.which == 13) {
 			// Focus the button, otherwise there is a rendering bug in chrome when removing the 
 			// contenteditable from the div while it has focus (the editing border does not get removed, until you click somewhere)
 			$(">.buttons>button", jpost).focus(); 
@@ -317,7 +317,7 @@ jQueryTopicView.prototype.closeEditor = function() {
 jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 	var that = this;
 
-	if ( this.editingPostId == post.id ) {
+	if (this.editingPostId == post.id) {
 		$("<button><b>Done</b> <span style='font-size:small; color:gray'>[Shift+Enter]</span></button>").appendTo(jbuttons).click(function(event) {
 			that.closeEditor();
 
@@ -352,7 +352,7 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 jQueryTopicView.prototype._renderTopicActions = function(editing) {
 	this.jTopicActions.empty();
 	
-	if ( editing ) {
+	if (editing) {
 		// See http://www.quirksmode.org/dom/execCommand/
 		// for an example of commands
 		$('<button class="icon rightborder">Clear</button>').appendTo(this.jTopicActions).click(function() {
