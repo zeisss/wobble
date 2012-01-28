@@ -79,6 +79,10 @@ WobbleMobileClient.prototype.initApp = function() {
 	this.onNavigation('navOverview');
 
 	this.doLayout();
+
+	BUS.on('topic.topic.created', function(topicId) {
+		this.onNavigation('navTopic');
+	}, this);
 };
 WobbleMobileClient.prototype.doLayout = function() {
 	var map = {'position':'absolute', 'width':'', 'left': '0px', 'right':'0px'};
