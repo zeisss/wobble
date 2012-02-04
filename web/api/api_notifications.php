@@ -30,7 +30,7 @@ function get_notifications($params) {
 				'messages' => $messages
 			);
 		}
-		usleep(100 * 1000); /* 100ms */
+		usleep(250 * 1000); /* 250ms */
 	}
 	return NULL;
 }
