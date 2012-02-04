@@ -1,7 +1,9 @@
 <?php
 /**
- * Returns the notifications for the current user. If no notifications are available, this wait up to 10secs.
- * A notification is normally an object with a field 'type' which describes the notification further.
+ * Returns the notifications for the current user. If no notifications are available, 
+ * this wait up to 10secs.
+ * A notification is normally an object with a field 'type' which describes 
+ * the notification further.
  * 
  * input = {'next_timestamp': int()}
  * 

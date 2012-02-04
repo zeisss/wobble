@@ -57,7 +57,17 @@
 		}
 		
 		if ( !empty($_SESSION['userid'])) {
-			SessionService::touch(session_id(), $_SESSION['userid']);
+			$userid = $_SESSION['userid'];
+			$user = UserRepository::get($userid);
+			if (!$user['online']) {
+				foreach(user_get_contacts() AS $contact) {
+					NotificationRepository::push($contact['id'], array (
+						'type' => 'user_online',
+						'user_id' => $userid
+					));
+				}
+			}
+			SessionService::touch(session_id(), $userid);
 		}
 	}
 	jsonrpc_export_before('ctx_before_request'); # TODO: Replace this with a closure?
