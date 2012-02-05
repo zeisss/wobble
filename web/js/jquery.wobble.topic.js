@@ -338,7 +338,9 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 		}));
 		if ( post.id != ROOT_ID ) { // You cannot delete the root
 			$("<button>Delete</button>").appendTo(jbuttons).click(function() {
-				that.onDeletePost(post);
+				if (window.confirm('Are you sure to delete this post?')) {
+					that.onDeletePost(post);
+				}
 			});
 		}
 	}
