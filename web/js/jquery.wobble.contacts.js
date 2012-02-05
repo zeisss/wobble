@@ -49,12 +49,15 @@ function JQueryContactsView() {
 	}, this));
 
 	// On a window.resize event wait for the transformations to finish (should be done in 300ms) and recalc height
-	BUS.on('window.resize', function() {
+	function on_window_resize() {
 		var t = this;
 		window.setTimeout( function() {
 			t.onResize();
 		}, 350);
-	}, this);
+	}
+	BUS.on('window.resize', on_window_resize, this);
+	on_window_resize.call(this); // Fire it once initially (with a delay)
+
 };
 JQueryContactsView.prototype = new ContactsDisplay();
 JQueryContactsView.prototype.constructor = JQueryContactsView;
