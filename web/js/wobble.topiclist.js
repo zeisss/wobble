@@ -19,7 +19,7 @@ function TopicListPresenter (view, cache) {
 	this.cacheTimeout = 60 * 60 * 24 * 5;
 
 	this.selectedTopicId = null;
-	this.topics = cache.get('topicslistpresenter.topics');	
+	this.topics = cache.get('topicslistpresenter.topics') || [];	
 
 	// Start fetching an up2date list
 	this.refreshTopicsList();
