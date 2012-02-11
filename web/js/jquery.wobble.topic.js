@@ -4,6 +4,7 @@
 var userCache = {}; // id => {id, name, email, img}
 function jQueryTopicView() {	// The UI handler for the single topic
 	this.editingPostId = null;
+	this.currentTopic = null;
 	
 	this.e = $('<div></div>').addClass('widget').attr('id', 'topic_wrapper').appendTo('#widgets');
 	
@@ -34,8 +35,10 @@ jQueryTopicView.prototype.onResize = function() {
 };
 jQueryTopicView.prototype.clear = function() {
 	this.editingPostId = null;
+	this.currentTopic = null;
 	this.jTopicPosts.empty();
 	this.jTopicReaders.empty();
+	this.jTopicActions.empty();
 };
 
 jQueryTopicView.prototype.setEnabled = function(enabled) {
@@ -54,6 +57,8 @@ jQueryTopicView.prototype.setLoadingState = function() {
 
 jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 	$("#topic_posts .loading").detach();
+
+	this.currentTopic = topicDetails;
 	
 	this._renderTopicActions($(".editing").length > 0);
 	
@@ -421,5 +426,20 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 		$('<button id="topic_invite_user">Invite user</button>').appendTo(this.jTopicActions).click(function() {
 			that.onInviteUserAction();
 		});
+
+		if (that.currentTopic) {
+			if (that.currentTopic.archived == 1) {
+				var bMoveToInbox = $('<button id="topic_move_to_inbox">Move to inbox</button>').appendTo(this.jTopicActions).click(function() {
+					that.onMoveToInbox();
+				});
+			}
+
+			if (that.currentTopic.archived == 0) {
+				var bMoveToArchive = $('<button id="topic_move_to_archive">Move to archive</button>').appendTo(this.jTopicActions).click(function() {
+					that.onMoveToArchive();
+				});
+			}
+
+		}
 	}
 };

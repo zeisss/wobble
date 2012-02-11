@@ -9,7 +9,8 @@ TopicDisplay.prototype.onUserClicked = function(user) {};
 TopicDisplay.prototype.onDeletePost = function(post) {};
 TopicDisplay.prototype.onReplyPost = function(post) {};
 TopicDisplay.prototype.onPostClicked = function(post) {};
-
+TopicDisplay.prototype.onMoveToInbox = function() {};
+TopicDisplay.prototype.onMoveToArchive = function() {};
 
 
 var ROOT_ID = '1'; // the id of the root post
@@ -198,6 +199,21 @@ function TopicPresenter(view, model) {
 		model.removePost(post);
 	};
 	
+	view.onMoveToArchive = function() {
+		API.topic_set_archived(model.getTopic().id, 1, function() {
+
+		});
+		view.clear();
+		model.setTopic(null);
+	};
+	view.onMoveToInbox = function() {
+		API.topic_set_archived(model.getTopic().id, 0, function() {
+		});
+		view.clear();
+		model.setTopic(null);
+	};
+
+
 	/**
 	 * BUS Handlers
 	 */

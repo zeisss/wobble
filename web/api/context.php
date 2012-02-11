@@ -11,6 +11,7 @@
 	require_once dirname(__FILE__).'/classes/SecurityService.class.php';
 	require_once dirname(__FILE__).'/classes/SessionService.class.php';
 	require_once dirname(__FILE__).'/classes/ValidationService.class.php';
+	require_once dirname(__FILE__).'/classes/USerArchivedTopicsRepository.class.php';
 
 	jsonrpc_export_functions(array (
 		// Core
@@ -24,6 +25,7 @@
 		array('file' => 'api_topic.php', 'method' => 'topic_get_details'),
 		array('file' => 'api_topic.php', 'method' => 'topic_add_user'),
 		array('file' => 'api_topic.php', 'method' => 'topic_remove_user'),
+		array('file' => 'api_topic.php', 'method' => 'topic_set_archived'),
 		array('file' => 'api_topic.php', 'method' => 'post_create'),
 		array('file' => 'api_topic.php', 'method' => 'post_edit'),
 		array('file' => 'api_topic.php', 'method' => 'post_delete'),

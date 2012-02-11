@@ -3,7 +3,10 @@ function TopicsListDisplay() {};
 // Event Handlers -------------------------------------------------
 TopicsListDisplay.prototype.onTopicClicked = function(topic) {};
 TopicsListDisplay.prototype.onCreateNewTopic = function() {};
+TopicsListDisplay.prototype.onShowArchived = function() {};
+TopicsListDisplay.prototype.onShowInbox = function() {};
 // Methods --------------------------------------------------------
+TopicsListDisplay.prototype.showLoading = function() {};
 TopicsListDisplay.prototype.setActiveTopic = function(topic) {};
 TopicsListDisplay.prototype.renderTopicList = function(topics) {};
 TopicsListDisplay.prototype.clear = function() {};
@@ -19,7 +22,8 @@ function TopicListPresenter (view, cache) {
 	this.cacheTimeout = 60 * 60 * 24 * 5;
 
 	this.selectedTopicId = null;
-	this.topics = cache.get('topicslistpresenter.topics') || [];	
+	this.topics = cache.get('topicslistpresenter.topics') || [];
+	this.show_archived = cache.get('topicslistpresenter.show_archived') || 0;
 
 	// Start fetching an up2date list
 	this.refreshTopicsList();
@@ -36,6 +40,12 @@ function TopicListPresenter (view, cache) {
 	this.view.onCreateNewTopic = function() {
 		that.createNewTopic();
 	};
+	this.view.onShowArchived = $.proxy(function() {
+		that.setShowArchived(1);
+	}, this);
+	this.view.onShowInbox = function() {
+		that.setShowArchived(0);
+	}
 	
 	// BUS Events
 	BUS.on('topic.changed', function(_data) {
@@ -55,8 +65,8 @@ function TopicListPresenter (view, cache) {
 };
 /** Called by the view when a new topic should be created */
 TopicListPresenter.prototype.refreshTopicsList = function() {
-	API.list_topics($.proxy(function(err, list) {
-		if ( !err ) {
+	API.list_topics(this.show_archived, $.proxy(function(err, list) {
+		if (!err) {
 			this.cache.set('topicslistpresenter.topics', list, this.cacheTimeout);
 
 			this.view.clear();
@@ -72,6 +82,16 @@ TopicListPresenter.prototype.refreshTopicsList = function() {
 		}
 	}, this));
 };
+
+TopicListPresenter.prototype.setShowArchived = function setShowArchived(show_archived) {
+	this.view.showLoading();
+	this.show_archived = show_archived;
+	this.cache.set('topicslistpresenter.show_archived', show_archived, this.cacheTimeout);
+
+	this.selectedTopicId = null;
+	this.refreshTopicsList();
+}
+
 TopicListPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
 	this.selectedTopicId = topic.id;
 	this.view.setActiveTopic(topic);

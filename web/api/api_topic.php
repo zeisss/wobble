@@ -75,11 +75,18 @@
 			}
 		}
 		
+		// Archived?
+		$stmt = $pdo->prepare('SELECT COUNT(*) cnt FROM user_archived_topics WHERE user_id = ? AND topic_id = ?');
+		$stmt->execute(array($self_user_id, $topic_id));
+		$archived = $stmt->fetchObject()->cnt;
+
 		return array (
 			'id' => $topic_id,
 			'readers' => $readers,
 			'writers' => $writers,
-			'posts' => $posts
+			'posts' => $posts,
+			'archived' => intval($archived)
+
 		);
 	}
 	
@@ -108,6 +115,9 @@
 					'type' => 'topic_changed',
 					'topic_id' => $topic_id
 				));
+				
+				# Move topic back to inbox, if changed
+				UserArchivedTopicsRepository::set_archived($user['id'], $topic_id, 0);
 			}
 
 			# NOTE: No need to mark all posts as unread, as we store only the 'read' status, no unread messages.
@@ -146,6 +156,9 @@
 					'type' => 'topic_changed',
 					'topic_id' => $topic_id
 				));
+
+				# Move topic back to inbox, if changed
+				UserArchivedTopicsRepository::set_archived($user['id'], $topic_id, 0);
 			}
 			# Delete afterwards. The other way around, the deleted user wouldn't get the notification
 			TopicRepository::removeReader($topic_id, $user_id);
@@ -187,6 +200,9 @@
 					'type' => 'topic_changed',
 					'topic_id' => $topic_id
 				));
+
+				# Move topic back to inbox, if changed
+				UserArchivedTopicsRepository::set_archived($user['id'], $topic_id, 0);
 			}
 			
 
@@ -255,6 +271,9 @@
 				TopicRepository::setPostReadStatus(
 					$user['id'], $topic_id, $post_id, 0
 				);
+
+				# Move topic back to inbox, if changed
+				UserArchivedTopicsRepository::set_archived($user['id'], $topic_id, 0);
 			}
 
 			TopicRepository::setPostReadStatus(
@@ -308,6 +327,9 @@
 					'topic_id' => $topic_id,
 					'post_id' => $post_id
 				));
+
+				# Move topic back to inbox, if changed
+				UserArchivedTopicsRepository::set_archived($user['id'], $topic_id, 0);
 			}
 			return TRUE;
 		} else {
@@ -341,4 +363,27 @@
 			throw new Exception('Illegal Access!');
 		}
 		return TRUE;
+	}
+
+	/**
+	 * Marks the given topic as archived or not.
+	 *
+	 * input = {'topic_id': TopicId, 'archived': Boolean}
+	 */
+	function topic_set_archived($params) {
+		$user_id = ctx_getuserid();
+		$topic_id = $params['topic_id'];
+		$archived_flag = $params['archived'];
+
+		ValidationService::validate_not_empty($user_id);
+		ValidationService::validate_not_empty($topic_id);
+		ValidationService::validate_list($archived_flag, array('1', '0'));
+
+		UserArchivedTopicsRepository::set_archived($user_id, $topic_id, $archived_flag);
+
+		# Notify ourself only, so we now our topic changed
+		NotificationRepository::push($user_id, array(
+			'type' => 'topic_changed',
+			'topic_id' => $topic_id
+		));
 	}

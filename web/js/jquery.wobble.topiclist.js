@@ -16,6 +16,16 @@ function jQueryTopicsView () {
 	$("<button>New</button>").click(function() {
 		that.onCreateNewTopic();
 	}).appendTo(this.$topicsAction);
+	$('<button>Show archived</button>').click(function() {
+		var button = $(this);
+		if (button.text() == 'Show archived') {
+			that.onShowArchived();
+			button.text('Show Inbox');
+		} else {
+			that.onShowInbox();
+			button.text('Show archived');
+		}
+	}).appendTo(this.$topicsAction);
 };
 jQueryTopicsView.prototype = new TopicsListDisplay;
 jQueryTopicsView.prototype.constructor = jQueryTopicsView;
@@ -40,6 +50,9 @@ jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, pr
 	}
 
 	// Render to html list
+	if (topics.length == 0) {
+		this.renderText('No topics here. Try to create one :)');
+	}
 	for (var i = 0; i < topics.length; ++i) {
 		this.renderTopic(topics[i], prepend);
 	}
@@ -117,4 +130,10 @@ jQueryTopicsView.prototype.renderTopicTimestamp = function renderTopicTimestamp(
 };
 jQueryTopicsView.prototype.clear = function clear() {
 	this.$topics.empty();
+};
+jQueryTopicsView.prototype.showLoading = function showLoading() {
+	this.renderText('Loading ...');
+};
+jQueryTopicsView.prototype.renderText = function renderText(text) {
+	this.$topics.html('<li>' + text + '</li>');
 };
