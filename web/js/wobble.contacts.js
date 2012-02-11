@@ -75,7 +75,10 @@ function ContactsPresenter(display, model) {
 	this.model = model;
 	
 	this.refreshContacts(); // Load initially
-	
+	if (model.getUser()) {
+		this.display.renderWhoAmI(model.getUser());
+	}
+
 	var that = this;
 	
 	// Timers & Data Loading  ----------------------------------
@@ -104,7 +107,7 @@ function ContactsPresenter(display, model) {
 	};
 	display.onPasswordChange = function(newPassword) {
 	   API.user_change_password(newPassword, function(err, result) {
-	       if (result) {
+	       if (result) {
 	           window.alert('Password changed successfully.');    
 	       }   
 	   });

@@ -6,8 +6,7 @@
 function user_signout($params) {
 	$self_user_id = ctx_getuserid();
 
-	# Clear any open lock the user has
-	UserRepository::touch($self_user_id, NULL); # mark offline in database
+	SessionService::signoff(session_id()); # mark offline in database
 	
 	foreach(user_get_contacts() AS $user) {
 		NotificationRepository::push($user['id'], array (
@@ -15,7 +14,9 @@ function user_signout($params) {
 			'user_id' => $self_user_id
 		));
 	}
+	
 	$_SESSION['userid'] = null;
+	session_destroy();
 	return TRUE;
 }
 
@@ -34,15 +35,23 @@ function user_login($params) {
 	$password_hashed = SecurityService::hashPassword($password);
 	$user = UserRepository::getUserByEmail($email);
 	if ( $user != NULL && $password_hashed === $user['password_hashed']) {
+		# Valid login given. We must start a session now (we dont want the cookie)
+		
+		session_start();
+		
 		$_SESSION['userid'] = $user['id'];
 		
+		SessionService::signon(session_id(), $user['id']);
+
 		foreach(user_get_contacts() AS $contact) {
 			NotificationRepository::push($contact['id'], array (
 				'type' => 'user_online',
 				'user_id' => $user['id']
 			));
 		}
-		return TRUE;
+		return array(
+			'apikey' => session_id()
+		);
 	} else {
 		throw new Exception('Illegal email or password!');
 	}
@@ -68,6 +77,12 @@ function user_register($params) {
 	
 	$user_id = UserRepository::create($email, $password_hashed, $email);
 
+	session_start();
+	$_SESSION['userid'] = $user_id;
+
+	# We skip the contact-notifications here, since the user shouldn't have any friends
+
+	# ADd the new user to the welcome topic, if defined
 	if ( defined('WELCOME_TOPIC_ID')) {
 		TopicRepository::addReader(WELCOME_TOPIC_ID, $user_id);
 
@@ -79,8 +94,10 @@ function user_register($params) {
 		}
 	}
 
-	$_SESSION['userid'] = $user_id;
-	return TRUE;
+	
+	return array(
+		'apikey' => session_id()
+	);
 }
 
 /**
@@ -149,7 +166,21 @@ function user_get_contacts() {
 	
 	ValidationService::validate_not_empty($self_user_id);
 
-	return ContactsRepository::getContacts($self_user_id);
+	$contacts = ContactsRepository::getContacts($self_user_id);
+	usort($contacts, function($a, $b) {
+		if ($a['online'] == $b['online']) {
+			return strcasecmp($a['name'], $b['name']);
+		}
+		else {
+			if ($a['online'] == 1) {
+				return -1;
+			}
+			else {
+				return 1;
+			}
+		}
+	});
+	return $contacts;
 }
 
 /**

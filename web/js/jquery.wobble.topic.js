@@ -39,7 +39,7 @@ jQueryTopicView.prototype.clear = function() {
 };
 
 jQueryTopicView.prototype.setEnabled = function(enabled) {
-	if ( enabled ) {
+	if (enabled) {
 		$("button", this.jTopicActions).removeAttr('disabled');
 	} else {
 		$("button", this.jTopicActions).attr('disabled', 'disabled');
@@ -57,7 +57,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 	
 	this._renderTopicActions($(".editing").length > 0);
 	
-	if ( topicDetails ) {
+	if (topicDetails) {
 		this.setEnabled(true);
 
 		this.jTopicReaders.empty();
@@ -85,7 +85,7 @@ jQueryTopicView.prototype._renderReader= function(user) {
 	var that = this;
 	var containerId = "topic-reader-" + user.id;
 	var container = $('#' + containerId);
-	if ( container.length == 0 ) {
+	if (container.length == 0) {
 		container = $("<span></span>").attr('id', containerId).appendTo(this.jTopicReaders);
 	}
 	var template = "<div class='usericon usericon40'>" + 
@@ -157,7 +157,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
 			that.onPostClicked(post);
 		});
 	
-	if ( post.deleted != 1) {
+	if (post.deleted != 1) {
 		// Render children
 		
 		var ePostUsers = $(">.post>.users", jPostWrapper);
@@ -279,11 +279,15 @@ jQueryTopicView.prototype.openEditor = function(post) {
 	var eContent = $(">.content", jpost).attr('contenteditable', 'true');
 	eContent.addClass('editing')./* makes formatting buttons unusable: blur(submitPostEditing).*/focus();
 	eContent.keydown(function(event) {
-		if ( event.shiftKey && event.which == 13) {
+		if (event.shiftKey && event.which == 13) {
 			// Focus the button, otherwise there is a rendering bug in chrome when removing the 
 			// contenteditable from the div while it has focus (the editing border does not get removed, until you click somewhere)
 			$(">.buttons>button", jpost).focus(); 
 			that.closeEditor();
+
+			event.stopPropagation();
+			event.preventDefault();
+			event.stopImmediatePropagation();
 		}
 	});
 	this._addDefaultButtons($(">.buttons", jpost).empty(), post);
@@ -313,9 +317,14 @@ jQueryTopicView.prototype.closeEditor = function() {
 jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 	var that = this;
 
-	if ( this.editingPostId == post.id ) {
-		$("<button><b>Done</b> <span style='font-size:small; color:gray'>[Shift+Enter]</span></button>").appendTo(jbuttons).click(function() {
+	if (this.editingPostId == post.id) {
+		$("<button><b>Done</b> <span style='font-size:small; color:gray'>[Shift+Enter]</span></button>").appendTo(jbuttons).click(function(event) {
 			that.closeEditor();
+
+			event.stopPropagation();
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			
 		});
 	} else {
 		jbuttons.append($("<button>Edit</button>").click(function(event) {
@@ -329,7 +338,9 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 		}));
 		if ( post.id != ROOT_ID ) { // You cannot delete the root
 			$("<button>Delete</button>").appendTo(jbuttons).click(function() {
-				that.onDeletePost(post);
+				if (window.confirm('Are you sure to delete this post?')) {
+					that.onDeletePost(post);
+				}
 			});
 		}
 	}
@@ -343,23 +354,50 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 jQueryTopicView.prototype._renderTopicActions = function(editing) {
 	this.jTopicActions.empty();
 	
-	if ( editing ) {
+	if (editing) {
 		// See http://www.quirksmode.org/dom/execCommand/
 		// for an example of commands
-		$('<button class="icon boldicon"></button>').appendTo(this.jTopicActions).click(function() {
-			document.execCommand('bold', false, null); // $(".editing")[0].execCommand(
+		$('<button class="icon rightborder">Clear</button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('RemoveFormat', false, null); 
+		});
+
+		$('<button class="icon boldicon rightborder"></button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('bold', false, null); 
 		});
 		$('<button class="icon italicicon"></button>').appendTo(this.jTopicActions).click(function() {
-			document.execCommand('italic', false, null); // $(".editing")[0].execCommand(
+			document.execCommand('italic', false, null);
 		});
 		$('<button class="icon underlineicon"></button>').appendTo(this.jTopicActions).click(function() {
-			document.execCommand('underline', false, null); // $(".editing")[0].execCommand(
+			document.execCommand('underline', false, null);
 		});
-		$('<button class="icon strikeicon" style="margin-right:10px; padding-right:12px; border-right:1px black solid"></button>').appendTo(this.jTopicActions).click(function() {
-			document.execCommand('strikethrough', false, null); // $(".editing")[0].execCommand(
+		$('<button class="icon strikeicon borderright"></button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('strikethrough', false, null);
 		});
-		$('<button class="icon listicon"></button>').appendTo(this.jTopicActions).click(function() {
-			document.execCommand('insertunorderedlist', false, null); // $(".editing")[0].execCommand(
+
+		$('<button class="icon">BG</button>').appendTo(this.jTopicActions).click(function() {
+			var color = window.prompt('Color? (#FF0000 or red)');
+			if (color!=null)
+				document.execCommand('backcolor', true, color ||'white');
+		});
+		$('<button class="icon">FG</button>').appendTo(this.jTopicActions).click(function() {
+			var color = window.prompt('Color? (#FF0000 or red)');
+			if (color!=null)
+				document.execCommand('forecolor', false, color ||'black'); 
+		});
+		/* Not supported by IE8
+		$('<button class="icon borderright">Hi</button>').appendTo(this.jTopicActions).click(function() {
+			var color = window.prompt('Color? (#FF0000 or red)');
+			if (color!=null)
+				document.execCommand('hilitecolor', false, color || 'black'); 
+		});
+		*/
+
+		
+		$('<button class="icon olisticon"></button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('insertorderedlist', false, null);
+		});
+		$('<button class="icon listicon borderright"></button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('insertunorderedlist', false, null);
 		});
 		$('<button class="icon imgicon">img</button>').appendTo(this.jTopicActions).click(function() {
 			var url = window.prompt("URL?");
@@ -372,6 +410,11 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 			if ( url != null ) {
 				document.execCommand('createLink', false, url); // $(".editing")[0].execCommand(
 			}
+		});
+
+		$('<button class="icon"><s>URL</s></button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('Unlink');
+			
 		});
 	} else {
 		var that = this;

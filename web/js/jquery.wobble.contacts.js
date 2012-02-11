@@ -30,6 +30,8 @@ function JQueryContactsView() {
 
 	this.e.append(template);
     this.$whoami = $(".whoami", this.e);
+    this.$actions = $(".actions", this.e);
+    this.$contactsList = $(".contactslist", this.e);
 
 	// UI Event Handlers	
 	this.$whoami.click($.proxy(function() {
@@ -45,11 +47,29 @@ function JQueryContactsView() {
 	   var that = this;
 	   that.fireWhoamiClicked();		
 	}, this));
+
+	// On a window.resize event wait for the transformations to finish (should be done in 300ms) and recalc height
+	function on_window_resize() {
+		var t = this;
+		window.setTimeout( function() {
+			t.onResize();
+		}, 350);
+	}
+	BUS.on('window.resize', on_window_resize, this);
+	on_window_resize.call(this); // Fire it once initially (with a delay)
+
 };
 JQueryContactsView.prototype = new ContactsDisplay();
 JQueryContactsView.prototype.constructor = JQueryContactsView;
 
 // Methods 
+JQueryContactsView.prototype.onResize = function() {
+	var viewHeight = this.e.innerHeight();
+	var offsetX = this.$whoami.outerHeight() + this.$actions.outerHeight()
+
+	this.$contactsList.css('height', viewHeight - offsetX);
+};
+
 JQueryContactsView.prototype.fireWhoamiClicked = function() {
   var that = this;
   BUS.fire('contact.clicked', {
@@ -78,7 +98,7 @@ JQueryContactsView.prototype.fireWhoamiClicked = function() {
    });
 };
 JQueryContactsView.prototype.renderContacts = function (list) {
-	var $ul = $(".contactslist", this.e).empty();
+	this.$contactsList.empty();
 	
 	jQuery.each(list, $.proxy(function(i, contact) {
 		var template = "<li class=contact title='{{email}}'>" + 
@@ -94,15 +114,15 @@ JQueryContactsView.prototype.renderContacts = function (list) {
 				name: contact.name,
 				img: contact.img,
 				online: contact.online == 1 ? 'online' : 'offline'
-		})).appendTo($ul).click($.proxy(function() {
+		})).appendTo(this.$contactsList).click($.proxy(function() {
 			this.onContactClick(contact);
 		}, this));
 	}, this));
 };
 JQueryContactsView.prototype.renderWhoAmI = function(user) {
-	var $whoami = $(".whoami", this.e).empty();
+	this.$whoami.empty();
 	var template = "<img title='That is you!' src='http://gravatar.com/avatar/{{{img}}}?s=32' width=32 height=32> <span class=name>{{name}}</span>";
-	$whoami.append(Mustache.to_html(template, user));
+	this.$whoami.append(Mustache.to_html(template, user));
 };
 
 
@@ -189,21 +209,21 @@ ListContactsChooserDisplay.prototype.render = function() {
 
 	$filterText = $("#contactschooser_filter_text");
 	$filterText.keydown($.proxy(function(e) {
-		if ( e.which == 27 ) {
+		if (e.which == 27) {
 			// Close dialog on escape
 			this.close();
 		}
-		else if ( e.which == 38) {
+		else if (e.which == 38) {
 			// Naviagte up
 			this.navigatePreviousContact();
 			e.preventDefault();
 		}
-		else if ( e.which == 40) {
+		else if (e.which == 40) {
 			// Navigate down
 			this.navigateNextContact();
 			e.preventDefault();
 		}
-		else if ( e.which == 13) {
+		else if (e.which == 13) {
 			e.preventDefault();
 			$('#contactchooser-contact-' + this.selectedContact.id).click(); // Simulate clicking on it
 		}
@@ -215,7 +235,7 @@ ListContactsChooserDisplay.prototype.render = function() {
 	}, this));
 
 	// Position it relative to this.relativeTo
-	if ( this.relativeTo ) {
+	if (this.relativeTo) {
 		var relativeElem = $(this.relativeTo);
 		var pos = relativeElem.offset();
 		this.e.css('top', pos.top).css('left', pos.left - (this.e.width() * 0.75));

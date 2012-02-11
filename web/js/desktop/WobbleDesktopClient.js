@@ -1,37 +1,74 @@
 
 function WobbleDesktopClient() {
-	BUS.on('topic.selected', function(topicId) {
-		window.location.hash = topicId; // Note the current topicId in the URL, so its visible for the user and we can work with it on page reloads
-	});
-
 	// Load the client.css
-	// $('<link href="css/client.css" media="all" rel="stylesheet" type="text/css" />').appendTo('head');
-	// $('<link href="css/desktop.css" media="all" rel="stylesheet" type="text/css" />').appendTo('head');
+	$('<link />').appendTo('head').attr({
+		'media': 'all',
+		'rel': 'stylesheet',
+		'type': 'text/css',
+		'href': 'css/desktop.css'		
+	});
+	
 };
-WobbleDesktopClient.prototype = new WobbleApplication;
-WobbleDesktopClient.prototype.init = function() {
+WobbleDesktopClient.prototype = new BasicApplication;
+WobbleDesktopClient.prototype.init = function(user) {
+	if (user != null) {
+		this.initApp();
+	} else {
+		this.initLogin();
+	}
+};
+WobbleDesktopClient.prototype.initLogin = function() {
+	var that = this;
+	
+	this.loginView = new DesktopLoginView();
+	this.loginModel = new LoginModel();
+
+	this.loginPresenter = new LoginPresenter(
+		this.loginView,
+		this.loginModel,
+		function() {
+			that.loginView.destroy(); // Remove the LoginView from the document
+			
+			API.refreshUser(); 
+
+			// More code to show the actuall app
+			that.initApp();
+		}
+	);	
+};
+
+WobbleDesktopClient.prototype.initApp = function() {
+	// Models
 	this.contactsModel = new ContactsModel();
+
+	// Views
+	this.topHeader = new DesktopClientHeader();
+
+	// Presenter
+	
 	this.contactsChooserPresenter = new ContactsChooserPresenter(
 			new ListContactsChooserDisplay('#topic_invite_user'), 
 			this.contactsModel
 	);
 	this.contactsPresenter = new ContactsPresenter(new JQueryContactsView(), this.contactsModel);
-	
 	this.topicsPresenter = new TopicsPresenter(new jQueryTopicsView());
 	
 	this.contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(100, 100), this.contactsModel, 'contact.clicked');
 	this.topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(600, 100), this.contactsModel, 'topic.user.clicked');
 
 	this.topicPresenter = new TopicPresenter(new jQueryTopicView(), new TopicModel());	
-	this.topHeader = new DesktopClientHeader();
-
+	
+	// Ok, all done. Lay it out
 	this.doLayout();
+
 	// Recalculate the position of the widgets, when window is resized
 	BUS.on('window.resize', function(data) {
 		this.doLayout(data);
-	}, this);
+	}, this);	
 
-	
+	BUS.on('topic.selected', function(topicId) {
+		window.location.hash = topicId; // Note the current topicId in the URL, so its visible for the user and we can work with it on page reloads
+	});
 };
 WobbleDesktopClient.prototype.onRPCError = function(err) {
 	var doReload = window.confirm('Whoooops! Something went wrong! We will reload now, ok?');
@@ -55,16 +92,18 @@ WobbleDesktopClient.prototype.doLayout = function(data) {
 	var topics = $("#topics_wrapper");
 	var topic = $("#topic_wrapper");
 	var contacts = $("#contacts");
+
+	contacts.css('left', 5);
 	
-	var rightPart = data.to.w - contacts.width();
+	var rightPart = data.to.w - (parseFloat(contacts.css('left')) + contacts.width());
 	
-	var topicsLeft = contacts.width() + 10;
+	var topicsLeft = contacts.width() + 15;
 	var topicsWidth = Math.max(rightPart * 0.4, minWidth(topics));
 	topics.css('left', topicsLeft);
 	topics.width(topicsWidth);
 	
 	var topicLeft = topicsLeft + topicsWidth + 10;
-	var topicWidth = Math.max(data.to.w - topicLeft - 20, minWidth(topics));
+	var topicWidth = Math.max(data.to.w - topicLeft - 15, minWidth(topics));
 	topic.css('left', topicLeft);
 	topic.width(topicWidth);
 

@@ -1,12 +1,34 @@
 
 #widgets {
 	top:50px;
+	margin:5px;
 }
 
 button {
 	height:40px;
-	padding-left:30px;
-	padding-right:30px;
+	padding-left:25px;
+	padding-right:25px;
+}
+/* --------------------------------------------------------- */
+#contactschooser {
+	top: 70px;
+	left:10px;
+}
+/* --------------------------------------------------------- */
+#mobileloginview {
+	margin:20px;
+}
+#mobileloginview .content {
+	
+}
+#mobileloginview .loginform {
+	background:gray;
+	color:white;
+	margin-bottom:30px;
+	width:100%;
+}
+#mobileloginview button {
+	height:40px;
 }
 /* --------------------------------------------------------- */
 #navigator {

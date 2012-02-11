@@ -18,8 +18,8 @@
 		$pdo = ctx_getpdo();
 		$stmt = $pdo->prepare('SELECT 
 			  t.id id, 
-			  substr(p.content, 1, 200) abstract, 
-			  (select max(last_touch) from posts WHERE topic_id = t.id) max_last_touch, 
+			  p.content abstract, 
+			  (select max(p.last_touch) from posts p WHERE p.topic_id = t.id) max_last_touch, 
 			  (select count(*) from posts where topic_id = t.id and deleted = 0) post_count_total, 
 			  (select count(*) from post_users_read where topic_id = p.topic_id AND user_id = r.user_id) post_count_read 
 		 FROM topics t, topic_readers r, posts p 
@@ -37,7 +37,7 @@
 			$result[$i]['post_count_unread'] = $result[$i]['post_count_total'] - intval($result[$i]['post_count_read']);
 			unset($result[$i]['post_count_read']);		
 			
-			$result[$i]['abstract']	= substr(strip_tags($result[$i]['abstract']), 0, 100);
+			$result[$i]['abstract']	= strip_tags(substr($result[$i]['abstract'], 0, 100));
 		}
 		
 		return $result;
@@ -60,15 +60,7 @@
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_topicid($topic_id);
 
-		$pdo = ctx_getpdo();
-		
-		// Create topic
-		$stmt = $pdo->prepare('INSERT INTO topics VALUES (?)');
-		$stmt->bindValue(1, $topic_id, PDO::PARAM_STR);
-		$stmt->execute();
-		
-		TopicRepository::addReader($topic_id, $self_user_id);
-		TopicRepository::createPost($topic_id, '1', $self_user_id);
+		TopicRepository::create($topic_id, $self_user_id);		
 		
 		return $topic_id;
 	}

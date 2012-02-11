@@ -5,6 +5,10 @@
 
 		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 		
+		<link href="css/wobble.css" media="all" rel="stylesheet" type="text/css" />
+		<link href="css/client.css" media="all" rel="stylesheet" type="text/css" />
+		<!-- <link href="css/desktop.css" media="all" rel="stylesheet" type="text/css" />-->
+		
 		<!--
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.3.0/mustache.min.js"></script>
@@ -13,10 +17,13 @@
 		<script src="js/ext/underscore.js"></script>
 		<!-- <script src="js/ext/underscore-min.js"></script> -->
 		
-		<script src="js/wobble.js"></script>
-		<script src="js/wobble.notification.js"></script>
+		<script src="js/core/BUS.js"></script>
+		<script src="js/core/JSONRPC.js"></script>
+		<script src="js/core/WobbleAPI.js"></script>
+
+		<script src="js/core/NotificationHandler.js"></script>
 		
-		<script src="js/wobble.app.js"></script>
+		<script src="js/core/BasicApplication.js"></script>
 
 		<script src="js/wobble.contacts.js"></script>
 		<script src="js/wobble.contactschooser.js"></script>
@@ -41,35 +48,24 @@
 		<script src="js/desktop/DesktopClientHeader.js"></script>
 		<script src="js/desktop/WobbleDesktopClient.js"></script>
 
-		<!--
+		<!-- Login files -->
+		<script src="js/login/LoginModel.js"></script>
+		<script src="js/login/AbstractLoginView.js"></script>
+		<script src="js/login/DesktopLoginView.js"></script>
+		<script src="js/login/MobileLoginView.js"></script>
+		<script src="js/login/LoginPresenter.js"></script>
+
+		<!-- Mobile -->
 		<script src="js/mobile/MobileNavigator.js"></script>
 		<script src="js/mobile/WobbleMobileClient.js"></script>
-		-->
 		
-		<link href="css/wobble.css" media="all" rel="stylesheet" type="text/css" />
-		<link href="css/client.css" media="all" rel="stylesheet" type="text/css" />
-		<link href="css/desktop.css" media="all" rel="stylesheet" type="text/css" />
 		
-
-		<script>
-			// Loads current user ID infos (so its cached locally)
-			window.API = new WobbleAPI(new JSONRPC('./api/endpoint.php')); 
-
-			window.WobbleApp = (function() {
-				/*var ua = navigator.userAgent;
-				if (true ||ua.match(/android/i) || 
-					ua.match(/iphone/i)) {
-					return new WobbleMobileClient();
-				} else {
-					return new WobbleDesktopClient();
-				}*/
-				return new WobbleDesktopClient();
-			})();
-			$(document).ready(function() {
-				window.WobbleApp.bootstrap();
-			});
-		</script>
+		
+		
+		
 	</head>
 	<body>
+		Loading ...
+		<script src="js/bootstrap.js"></script>
 	</body>
 </html>

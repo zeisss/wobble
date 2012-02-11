@@ -36,32 +36,32 @@ function TopicModel() {
 		topic.posts.push(post);
 	};
 	
-	that.createReply = function(post) {
-		return {
-			id: API.generate_id(),
-			parent: post.id,
-			locked: false,
-			content: '\n<br>\n<br>', 
-			revision_no: 1,
-			users: [API.user_id()],
-			deleted: 0,
-			unread: 0
-		};
-	};
 	
-	that.addUserToPost = function(post, user) {
-		var found = false;
-		for (var i = 0; i < post.users.length; i++) {
-			if ( post.users[i] === user.id) {
-				found = true;
-			}
-		}
-		if (!found) {
-			post.users.push(user.id);
-			// We can assume here, that the user is part of topic.users, otherwise he shouldn't see this post
-		}
+};
+TopicModel.prototype.createReply = function(post) {
+	return {
+		id: API.generate_id(),
+		parent: post.id,
+		locked: false,
+		content: '\n<br>\n<br>', 
+		revision_no: 1,
+		users: [API.user_id()],
+		deleted: 0,
+		unread: 0
 	};
-}
+};
+TopicModel.prototype.addUserToPost = function(post, user) {
+	var found = false;
+	for (var i = 0; i < post.users.length; i++) {
+		if ( post.users[i] === user.id) {
+			found = true;
+		}
+	}
+	if (!found) {
+		post.users.push(user.id);
+		// We can assume here, that the user is part of topic.users, otherwise he shouldn't see this post
+	}
+};
 TopicModel.prototype.addUser = function(user) {
 	if (_.contains(this.getTopic().readers, user)) {
 		this.getTopic().readers.push(user);	

@@ -3,7 +3,28 @@
  * The TopicRepository provides convienience function to access the storage for Topics.
  */
 class TopicRepository {
+	/**
+	 * Creates a new topic with an initial empty post belongign to the given user.
+	 * This user is also the only reader in the created topic.
+	 */
+	function createTopic($topic_id, $user_id) 
+	{
+		$pdo = ctx_getpdo();
+		
+		// Create topic
+		$stmt = $pdo->prepare('INSERT INTO topics VALUES (?)');
+		$stmt->bindValue(1, $topic_id, PDO::PARAM_STR);
+		$stmt->execute();
 
+		TopicRepository::addReader($topic_id, $user_id);
+		TopicRepository::createPost($topic_id, '1', $user_id);
+	}
+
+	/**
+	 * Creates a new post with the given $post_id in the given topic.
+	 * The user $user_id is set as the owner and the post is a child of $parent_post_id.
+	 *
+	 */
 	function createPost($topic_id, $post_id, $user_id, $parent_post_id = NULL) {
 		$pdo = ctx_getpdo();
 
@@ -112,41 +133,43 @@ class TopicRepository {
 		assert('!empty($topic_id)');
 		$pdo = ctx_getpdo();
 		
-		$sql = 'SELECT u.id id, u.name name, u.email email, md5(u.email) img, COALESCE(last_touch > (UNIX_TIMESTAMP() - 300), false) online ' . 
-			  'FROM users u, topic_readers r ' . 
-			  'WHERE u.id = r.user_id AND r.topic_id = ?';
-		if ( $limit ) {
+		$sql = 'SELECT r.user_id id
+			      FROM topic_readers r 
+			     WHERE r.topic_id = ?';
+		if ($limit) {
 			$sql .= ' LIMIT ' . $limit;
 		}
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute(array($topic_id));
-		$result =  $stmt->fetchAll();
-		foreach($result AS $i => $user) {
-			$result[$i]['id'] = intval($user['id']); # convert id to int
-			$result[$i]['online'] = intval($user['online']); 
+		$result =  array();
+		foreach($stmt->fetchAll() AS $i => $userid) {
+			$user = UserRepository::get($userid['id']); 
+			if ($user) {
+				$result[] = $user;
+			}
 		}
 		return $result;
 	}
 
 	/**
-	 * Returns the user objects for every user ever written in a topic. 
+	 * Returns the user objects for every user ever written or edited a post in that Topic. 
 	 */
 	function getWriters($topic_id, $limit = FALSE) {
 		assert('!empty($topic_id)');
 		$pdo = ctx_getpdo();
 		
-		$sql = 'SELECT u.id id, u.name name, u.email email, md5(u.email) img, COALESCE(last_touch > (UNIX_TIMESTAMP() - 300), false) online ' . 
-			  'FROM users u, post_editors pe ' . 
-			  'WHERE u.id = pe.user_id AND pe.topic_id = ?';
-		if ( $limit ) {
+		$sql = 'SELECT DISTINCT pe.user_id id FROM post_editors pe WHERE pe.topic_id = ?';
+		if ($limit) {
 			$sql .= ' LIMIT ' . $limit;
 		}
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute(array($topic_id));
-		$result =  $stmt->fetchAll();
-		foreach($result AS $i => $user) {
-			$result[$i]['id'] = intval($user['id']); # convert id to int
-			$result[$i]['online'] = intval($user['online']); 
+		$result =  array();
+		foreach($stmt->fetchAll() AS $i => $userid) {
+			$user = UserRepository::get($userid['id']); 
+			if ($user) {
+				$result[] = $user;
+			}
 		}
 		return $result;
 	}

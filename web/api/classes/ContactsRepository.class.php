@@ -19,14 +19,13 @@ class ContactsRepository {
 
 	function getContacts($user_id) {
 		$pdo = ctx_getpdo();
-		$stmt = $pdo->prepare('SELECT u.id id, u.name name, u.email email, md5(u.email) img, COALESCE(last_touch > (UNIX_TIMESTAMP() - 300), false) online ' . 
-		                      'FROM users u, users_contacts c WHERE u.id = c.contact_user_id AND c.user_id = ?' . 
-							  'ORDER BY online DESC, u.name');
+		$stmt = $pdo->prepare('SELECT DISTINCT c.contact_user_id id FROM users_contacts c WHERE c.user_id = ?');
 		$stmt->execute(array($user_id));
-		$result =  $stmt->fetchAll();
-		foreach($result AS $i => $user) {
-			$result[$i]['id'] = intval($user['id']); # convert id to int
-			$result[$i]['online'] = intval($user['online']); 
+		
+		$result = array();
+		foreach($stmt->fetchAll() AS $id) {
+			$user = UserRepository::get($id['id']);
+			$result[] = $user;
 		}
 		return $result;
 	}
