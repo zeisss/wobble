@@ -25,14 +25,14 @@ jQueryTopicsView.prototype.setActiveTopic = function(topic) {
 	$(">li.active", this.$topics).removeClass("active");
 	$("#topic-" + topic.id).addClass("active");
 };
-jQueryTopicsView.prototype.renderTopics = function(topics, prepend) {
+jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
 	// Update document title
 	var user = API.user();
 	if (user && topics) {
 		var unreadTopics = jQuery.grep(topics, function(topic) {
 			return topic.post_count_unread > 0;
 		}).length;
-		if ( unreadTopics == 0 ) {
+		if (unreadTopics == 0) {
 			document.title = user.name + " - Wobble";
 		} else {
 			document.title = "(" + unreadTopics + ") " + user.name + " - Wobble";
@@ -44,7 +44,7 @@ jQueryTopicsView.prototype.renderTopics = function(topics, prepend) {
 		this.renderTopic(topics[i], prepend);
 	}
 };
-jQueryTopicsView.prototype.renderTopic = function(topic, prepend) {
+jQueryTopicsView.prototype.renderTopic = function renderTopic(topic, prepend) {
 	var template = '<li id="{{id}}" class="topic_header">' + 
 				   ' <div class="abstract"></div>' + 
 				   (topic.post_count_unread == 0 ?
@@ -72,17 +72,17 @@ jQueryTopicsView.prototype.renderTopic = function(topic, prepend) {
 
 	var abstract = $(".abstract", $li).html(topic.abstract);
 
-	if ( topic.post_count_unread > 0) {
+	if (topic.post_count_unread > 0) {
 		abstract.css('font-weight', 'bold');
 	}
 	
-	if ( prepend ) {
+	if (prepend) {
 		$li.prependTo(this.$topics);
 	} else {
 		$li.appendTo(this.$topics)
 	}
 };
-jQueryTopicsView.prototype.renderTopicTimestamp = function(timestamp) {
+jQueryTopicsView.prototype.renderTopicTimestamp = function renderTopicTimestamp(timestamp) {
 	if (!timestamp) {
 		return "";
 	}
@@ -115,6 +115,6 @@ jQueryTopicsView.prototype.renderTopicTimestamp = function(timestamp) {
 		return createdAt.getDate() + "." + month + "."+ (1900 + createdAt.getYear());
 	}
 };
-jQueryTopicsView.prototype.clear = function() {
+jQueryTopicsView.prototype.clear = function clear() {
 	this.$topics.empty();
 };

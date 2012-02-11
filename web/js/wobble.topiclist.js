@@ -5,7 +5,7 @@ TopicsListDisplay.prototype.onTopicClicked = function(topic) {};
 TopicsListDisplay.prototype.onCreateNewTopic = function() {};
 // Methods --------------------------------------------------------
 TopicsListDisplay.prototype.setActiveTopic = function(topic) {};
-TopicsListDisplay.prototype.renderTopics = function(topics) {};
+TopicsListDisplay.prototype.renderTopicList = function(topics) {};
 TopicsListDisplay.prototype.clear = function() {};
 
 
@@ -26,7 +26,7 @@ function TopicListPresenter (view, cache) {
 
 	// Prerender the view from the cache
 	this.view.clear();
-	this.view.renderTopics(this.topics);
+	this.view.renderTopicList(this.topics);
 	
 	var that = this;
 	// UI Callbacks
@@ -61,11 +61,11 @@ TopicListPresenter.prototype.refreshTopicsList = function() {
 
 			this.view.clear();
 			this.topics = list;
-			this.view.renderTopics(list);
+			this.view.renderTopicList(list);
 
 			for (var i = 0; i < list.length; i++) {
 				var data = list[i];
-				if ( this.selectedTopicId && this.selectedTopicId == data.id) {
+				if (this.selectedTopicId && this.selectedTopicId == data.id) {
 					this.view.setActiveTopic(data);
 				}
 			}
@@ -107,7 +107,7 @@ TopicListPresenter.prototype.createNewTopic = function() {
 
 	this.topics.splice(0, 0, topicDetails); // Prepend the item to the ViewList
 	this.view.clear();
-	this.view.renderTopics(this.topics);
+	this.view.renderTopicList(this.topics);
 	this.setSelectedTopic(topicDetails, true);
 };
 
