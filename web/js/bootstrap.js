@@ -1,6 +1,10 @@
 (function() {
 	var files = [
-		'js/core/cache.js'
+		'js/core/cache.js',
+		'js/views/jquery.wobble.js',
+		'js/views/jquery.wobble.topiclist.js',
+		'js/views/jquery.wobble.topic.js',
+		'js/views/jquery.wobble.contacts.js'
 	];
 
 	for(var i = 0; i < files.length; i++) {
