@@ -4,6 +4,7 @@
 var JSONRPC = function(url) {
 	this.url = url;
 	this.idSequence = 1;
+	this.stateWaiting = [];
 }
 /**
  * Mark this RPC object as aborted, so any result that comes in is not propagated further.
@@ -92,5 +93,21 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 		};
 		
 	}
-	$.ajax(this.url, ajaxSettings);
+
+	var that = this;
+	var req = $.ajax(this.url, ajaxSettings).always(function() {
+		that.stateWaiting = jQuery.grep(that.stateWaiting, function(areq, i) {
+			return areq !== req;
+		});
+		that.requestFinished();
+	});
+	this.stateWaiting.push(req);
+	that.requestStarted();
+};
+
+JSONRPC.prototype.requestStarted = function requestStarted() {
+	BUS.fire('rpc.queue.length', this.stateWaiting.length);
+};
+JSONRPC.prototype.requestFinished = function requestFinished() {
+	BUS.fire('rpc.queue.length', this.stateWaiting.length);
 };
