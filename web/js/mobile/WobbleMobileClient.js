@@ -68,7 +68,7 @@ WobbleMobileClient.prototype.initApp = function() {
 	this.contactsPresenter = new ContactsPresenter(this.contactsView, this.contactsModel);
 	this.contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(20, 20), this.contactsModel, 'contact.clicked');
 	this.topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(20, 20), this.contactsModel, 'topic.user.clicked');
-	this.topicsPresenter = new TopicsPresenter(this.topicListView);
+	this.topicsPresenter = new TopicListPresenter(this.topicListView, window.localcache.getCache());
 	this.topicPresenter = new TopicPresenter(this.topicView, new TopicModel());	
 	this.contactsChooserPresenter = new ContactsChooserPresenter(
 			new ListContactsChooserDisplay(), 

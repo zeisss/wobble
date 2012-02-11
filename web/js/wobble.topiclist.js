@@ -13,7 +13,7 @@ TopicsListDisplay.prototype.clear = function() {};
 /**
  * The Business logic for the topics list-view
  */
-function TopicsPresenter (view) {
+function TopicListPresenter (view, cache) {
 	this.view = view;
 	this.selectedTopicId = null;
 	this.topics = [];
@@ -46,7 +46,7 @@ function TopicsPresenter (view) {
 	
 };
 /** Called by the view when a new topic should be created */
-TopicsPresenter.prototype.refreshTopicsList = function() {
+TopicListPresenter.prototype.refreshTopicsList = function() {
 	API.list_topics($.proxy(function(err, list) {
 		if ( !err ) {
 			this.view.clear();
@@ -62,14 +62,14 @@ TopicsPresenter.prototype.refreshTopicsList = function() {
 		}
 	}, this));
 };
-TopicsPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
+TopicListPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
 	this.selectedTopicId = topic.id;
 	this.view.setActiveTopic(topic);
 	if (!noEvent) {
 		BUS.fire('topic.selected', topic.id);
 	}
 };
-TopicsPresenter.prototype.createNewTopic = function() {
+TopicListPresenter.prototype.createNewTopic = function() {
 	// TODO: Check if the user is currently editing something and submit that before going on
 	var that = this;
 
