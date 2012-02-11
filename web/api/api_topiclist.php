@@ -70,7 +70,7 @@
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_topicid($topic_id);
 
-		TopicRepository::create($topic_id, $self_user_id);		
+		TopicRepository::createTopic($topic_id, $self_user_id);		
 		
 		return $topic_id;
 	}
