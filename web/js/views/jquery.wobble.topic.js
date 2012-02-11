@@ -389,6 +389,12 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 			if (color!=null)
 				document.execCommand('forecolor', false, color ||'black'); 
 		});
+		$('<button class="icon">&gt;&gt;</button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('indent', false); 
+		});
+		$('<button class="icon">&lt;&lt;</button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('outdent', false); 
+		});
 		/* Not supported by IE8
 		$('<button class="icon borderright">Hi</button>').appendTo(this.jTopicActions).click(function() {
 			var color = window.prompt('Color? (#FF0000 or red)');
