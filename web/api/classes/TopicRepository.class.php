@@ -3,7 +3,28 @@
  * The TopicRepository provides convienience function to access the storage for Topics.
  */
 class TopicRepository {
+	/**
+	 * Creates a new topic with an initial empty post belongign to the given user.
+	 * This user is also the only reader in the created topic.
+	 */
+	function createTopic($topic_id, $user_id) 
+	{
+		$pdo = ctx_getpdo();
+		
+		// Create topic
+		$stmt = $pdo->prepare('INSERT INTO topics VALUES (?)');
+		$stmt->bindValue(1, $topic_id, PDO::PARAM_STR);
+		$stmt->execute();
 
+		TopicRepository::addReader($topic_id, $user_id);
+		TopicRepository::createPost($topic_id, '1', $user_id);
+	}
+
+	/**
+	 * Creates a new post with the given $post_id in the given topic.
+	 * The user $user_id is set as the owner and the post is a child of $parent_post_id.
+	 *
+	 */
 	function createPost($topic_id, $post_id, $user_id, $parent_post_id = NULL) {
 		$pdo = ctx_getpdo();
 

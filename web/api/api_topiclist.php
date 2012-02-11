@@ -60,15 +60,7 @@
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_topicid($topic_id);
 
-		$pdo = ctx_getpdo();
-		
-		// Create topic
-		$stmt = $pdo->prepare('INSERT INTO topics VALUES (?)');
-		$stmt->bindValue(1, $topic_id, PDO::PARAM_STR);
-		$stmt->execute();
-		
-		TopicRepository::addReader($topic_id, $self_user_id);
-		TopicRepository::createPost($topic_id, '1', $self_user_id);
+		TopicRepository::create($topic_id, $self_user_id);		
 		
 		return $topic_id;
 	}
