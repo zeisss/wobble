@@ -58,14 +58,27 @@
 			session_start();
 		}
 		
-		if ( !empty($_SESSION['userid'])) {
-			SessionService::touch(session_id(), $_SESSION['userid']);
+		if (!empty($_SESSION['userid'])) {
+			// Load the current user and check if he was marked offline
+      		$userid = $_SESSION['userid'];
+      		$user = UserRepository::get($userid);
+      		if (!$user['online']) {
+      			// Ok, we were offline, so notify everybody that we are back
+        		foreach(ContactsRepository::getContacts($userid) AS $contact) {
+          			NotificationRepository::push($contact['id'], array (
+            			'type' => 'user_online',
+            			'user_id' => $userid
+          			));
+
+        		}
+
+    		}
+      		SessionService::touch(session_id(), $userid);
 		}
 	}
 	jsonrpc_export_before('ctx_before_request'); # TODO: Replace this with a closure?
 
 	function ctx_after_request($method, $params, $result, $exception) {
-	
 	}
 	jsonrpc_export_after('ctx_after_request');
 	
