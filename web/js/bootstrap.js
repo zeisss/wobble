@@ -29,7 +29,7 @@
 		files.push(
 			'js/ext/underscore.js',
 			'js/ext/jquery-1.7.1.js',
-			'js/ext/mustache.min.js'
+			'js/ext/mustache.js'
 		);
 	} else {
 		files.push(
@@ -49,7 +49,6 @@
 		'js/core/BasicApplication.js'
 	)
 	// Wobble Modules
-
 	files.push(
 		'js/modules/wobble.contacts.js',
 		'js/modules/wobble.contactschooser.js',
