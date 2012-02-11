@@ -11,7 +11,7 @@
 
 	function LocalStorageCache() {}
 	LocalStorageCache.prototype._now = function _now() {
-		return Math.ceil(Date.now() / 1000);
+		return Math.ceil(new Date().getTime() / 1000);
 	}
 	LocalStorageCache.prototype.set = function set(key, value, timeout) {
 		window.localStorage.setItem(key, JSON.stringify({

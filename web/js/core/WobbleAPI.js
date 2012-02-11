@@ -68,7 +68,7 @@ WobbleAPI.prototype.refreshUser = function(callback) {
 // Directly returning functions
 /** Builds an ID by combining the user_id with the current time. */
 WobbleAPI.prototype.generate_id = function() {
-	var id = this.user_id() + "-" + (new Date().getTime());
+	var id = this.user_id() + "-" + (new Date().getTime()) + "-" + Math.ceil(Math.random() * 100000);
 	return id;
 };
 WobbleAPI.prototype.user_id = function() {
