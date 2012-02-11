@@ -15,10 +15,18 @@ TopicsListDisplay.prototype.clear = function() {};
  */
 function TopicListPresenter (view, cache) {
 	this.view = view;
+	this.cache = cache
+	this.cacheTimeout = 60 * 60 * 24 * 5;
+
 	this.selectedTopicId = null;
-	this.topics = [];
-	
+	this.topics = cache.get('topicslistpresenter.topics');	
+
+	// Start fetching an up2date list
 	this.refreshTopicsList();
+
+	// Prerender the view from the cache
+	this.view.clear();
+	this.view.renderTopics(this.topics);
 	
 	var that = this;
 	// UI Callbacks
@@ -49,6 +57,8 @@ function TopicListPresenter (view, cache) {
 TopicListPresenter.prototype.refreshTopicsList = function() {
 	API.list_topics($.proxy(function(err, list) {
 		if ( !err ) {
+			this.cache.set('topicslistpresenter.topics', list, this.cacheTimeout);
+
 			this.view.clear();
 			this.topics = list;
 			this.view.renderTopics(list);
