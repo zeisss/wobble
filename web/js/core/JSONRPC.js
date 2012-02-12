@@ -91,7 +91,6 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 			BUS.fire('rpc.connectionerror', {text: textStatus, error: errorThrown});
 			callback(errorThrown);
 		};
-		
 	}
 
 	var that = this;
@@ -99,15 +98,8 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 		that.stateWaiting = jQuery.grep(that.stateWaiting, function(areq, i) {
 			return areq !== req;
 		});
-		that.requestFinished();
+		BUS.fire('rpc.queue.length', that.stateWaiting.length);
 	});
 	this.stateWaiting.push(req);
-	that.requestStarted();
-};
-
-JSONRPC.prototype.requestStarted = function requestStarted() {
-	BUS.fire('rpc.queue.length', this.stateWaiting.length);
-};
-JSONRPC.prototype.requestFinished = function requestFinished() {
 	BUS.fire('rpc.queue.length', this.stateWaiting.length);
 };
