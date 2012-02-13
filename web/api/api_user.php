@@ -143,7 +143,9 @@ function user_get() {
 	if ( empty ($self_user_id)) {
 		return null;
 	}
-	return UserRepository::get($self_user_id);
+	$user = UserRepository::get($self_user_id);
+	unset($user['password_hashed']);
+	return $user;
 	
 }
 /**
