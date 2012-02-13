@@ -57,5 +57,3 @@ class InputSanitizer {
         }
     }
 }
-
-print (InputSanitizer::sanitizePostContent('<a target="_new" href="http://ec2-46-51-143-163.eu-west-1.compute.amazonaws.com/dev/#7-1328992318043">http://ec2-46-51-143-163.eu-west-1.compute.amazonaws.com/dev/#7-1328992318043</a>'));
