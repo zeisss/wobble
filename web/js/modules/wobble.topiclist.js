@@ -25,16 +25,16 @@ function TopicListModel(cache) {
 	
 	// BUS Events
 	BUS.on('topic.changed', function(_data) {
-		this.refreshTopicsList();
+		this.refreshTopicList();
 	}, this);
 	
 	BUS.on('topic.post.changed', function(_data) {
-		this.refreshTopicsList();
+		this.refreshTopicList();
 	}, this);
 	BUS.on('api.notification', function(message) {
 		if ( message.type == 'topic_changed' ||
 			 message.type == 'post_changed' /* Unread message counter propably got changed */ ) {
-			this.refreshTopicsList();
+			this.refreshTopicList();
 		}
 	}, this);
 }
@@ -64,7 +64,7 @@ TopicListModel.prototype.createNewTopic = function(topicId) {
     // Create a topic on the server and notify the TopicView (async)
 	API.topics_create(topicId, $.proxy(function(err, topic_id) {
 		if (err) {
-			this.refreshTopicsList();
+			this.refreshTopicList();
 		}
 		if (topic_id !== undefined) {					
 			BUS.fire('topic.topic.created', topicId);
@@ -146,7 +146,7 @@ TopicListPresenter.prototype.onSetShowArchived = function setShowArchived(show_a
 	this.model.setShowArchived(show_archived);
 	
 	this.selectedTopicId = null;
-	this.model.refreshTopicsList();
+	this.model.refreshTopicList();
 }
 
 TopicListPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
