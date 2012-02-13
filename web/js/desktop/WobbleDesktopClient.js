@@ -9,7 +9,7 @@ function WobbleDesktopClient() {
 	});
 	
 };
-WobbleDesktopClient.prototype = new BasicApplication;
+WobbleDesktopClient.prototype = new BasicClient;
 WobbleDesktopClient.prototype.init = function(user) {
 	if (user != null) {
 		this.initApp();
