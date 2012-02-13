@@ -19,13 +19,21 @@ class InputSanitizer {
     }
     
     public static function sanitizeLinks($content) {
+        $keyword = '<a';
+        $replacement = $keyword . ' target="_new"';
+
         $offset = 0;
         
         while (true) {
-            $i = strpos($content, '<a', $offset);
+            $i = strpos($content, $keyword, $offset);
             if ($i === FALSE) {
                 return $content;
-            }    
+            }
+            if (substr($content, $i, strlen($replacement)) === $replacement) {
+                # We already sanitized this once, skip this link
+                $offset ++;
+                continue;    
+            }
             
             $end = strpos($content, '>', $i);
             if ($end === FALSE) {
@@ -36,7 +44,7 @@ class InputSanitizer {
             if ($j === FALSE) {
                 # no target was found. Just replace the starting tag and be done.
                 $content = substr($content, 0, $i) .
-                           '<a target="_new"' .
+                           $replacement .
                            substr($content, $i + 2);
                 $offset = $i + 16;
             }
@@ -50,4 +58,4 @@ class InputSanitizer {
     }
 }
 
-print (InputSanitizer::sanitizePostContent('<a href="http://ec2-46-51-143-163.eu-west-1.compute.amazonaws.com/dev/#7-1328992318043">http://ec2-46-51-143-163.eu-west-1.compute.amazonaws.com/dev/#7-1328992318043</a>'));
+print (InputSanitizer::sanitizePostContent('<a target="_new" href="http://ec2-46-51-143-163.eu-west-1.compute.amazonaws.com/dev/#7-1328992318043">http://ec2-46-51-143-163.eu-west-1.compute.amazonaws.com/dev/#7-1328992318043</a>'));
