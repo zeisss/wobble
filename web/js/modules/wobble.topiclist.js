@@ -101,7 +101,8 @@ function TopicListPresenter (view, model) {
 	}
 	
 	// Start fetching an up2date list
-	this.refreshTopicsList();
+	if (!this.model.topics)
+	   this.model.refreshTopicsList();
 
 	// Prerender the view from the cache
 	this.view.clear();
