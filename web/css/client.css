@@ -6,6 +6,11 @@ Green (Active Item): #789E35
 	+ Border: #CED697;
 Lighter Green: #9b0
 */
+
+#widgets {
+	position: relative;
+}
+
 .widget {
 	display: block;
 	position: absolute;
@@ -14,7 +19,8 @@ Lighter Green: #9b0
 	transition-duration: 300ms;
 	
 	background-color: #C9E2FC;
-	border:1px black solid; 
+
+	border:1px gray solid; 
 	border-radius: 5px;
 
 	box-shadow: 5px 5px 0px 0px #888;
@@ -28,6 +34,8 @@ Lighter Green: #9b0
 	border:1px #5590d2 solid;
 	box-shadow: 3px 3px 0px 0px #888;
 }
+
+
 /* ------------------------------------------------------------------------- */
 #contactschooser {
 	top:200px;
@@ -121,44 +129,67 @@ Lighter Green: #9b0
 
 /* ------------------------------------------------------------------------- */
 #contacts {
-	min-width:180px;
+	min-width:200px;
 	min-height:400px;
+
+	background:white;
 }
 #contacts .actions {
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
 	padding-left:5px;
 	
 	
-	position:absolute;
-	top:55px;
+	position:relative;
+	top:0px;
 	left:0px;
 	right:0px;
+	height:24px;
 }
-#contacts ul {
-	background-color:white;
+#contacts .contactslist {
 	border-radius:0px 0px 5px 5px;
 	list-style-type:none;
 	
-	padding:5px;
-	margin:0px;
+	padding:0;
+	margin:0;
 	
-	position:absolute;
-	top:80px;
+	position:relative;
+	top:0px;
 	left:0px;
 	right:0px;
 	bottom:0px;
-	
+
+	overflow:auto;	
 }
 #contacts .contact {
-	cursor:pointer;
+	cursor: pointer;
+	position: relative;
+	height:28px;
+	padding-left:5px;
+	padding-right:5px;
+}
+#contacts .contact:hover {
+	background: #AFAFAF;
+	color: white;
+	font-weight: bold;
+}
+#contacts .contact .usericon {
+	display:block;
+	padding-top:3px;
+}
+#contacts .contact .usericon img {
+	display:block;
 }
 #contacts .contact .name {
-	margin-left: 5px;
+	position:absolute;
+	top:4px;
+	left:34px;
 }
 #contacts .whoami {
-	margin-left:10px;
-	margin-top:10px;
-	
+	padding-left:10px;
+	padding-top:10px;
+	background:#C9E2FC;
+	border-radius:5px 5px 0px 0px;
+	height:44px;
 }
 #contacts .whoami .name {
 	font-weight:bold;
@@ -171,13 +202,18 @@ Lighter Green: #9b0
 }
 #topics_wrapper #topics_actions {
 	
-	margin-top:55px;
+	margin-top:54px;
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
+	height:24px;
 	padding-left:5px;
 }
 
 #topics_wrapper #topics {
 	background-color: white;
+	color:black;
+	
+	font-size:13px;
+
 	border-radius: 0px 0px 5px 5px;
 	
 	overflow: auto;
@@ -185,8 +221,8 @@ Lighter Green: #9b0
 	
 	margin:0px;
 	padding:0px;
-	position:absolute;
-	top:80px;
+	position:relative;
+	top:0px;
 	bottom:0px;
 	left:0px;
 	right:0px;
@@ -208,7 +244,8 @@ Lighter Green: #9b0
 #topics li.topic_header .abstract {
 	position:absolute;
 	left:116px;
-	right:50px;
+	right:56px;
+	overflow:hidden;
 }
 #topics li.topic_header .messages {
 	display:inline;
@@ -246,11 +283,15 @@ Lighter Green: #9b0
 	border:1px white solid;
 }
 
+#topics li:hover {
+	background: #AFAFAF;
+	color: white;
+}
 #topics li.active {
 	background-color: #789E35;
 }
 #topics li.active .users img {
-	border:1px black solid;
+	border:1px white solid;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -258,35 +299,40 @@ Lighter Green: #9b0
 	min-height:400px;
 	min-width:300px;
 	
+	background:white;
 	
 }
 #topic_readers {
-	position:absolute;
+	background:#C9E2FC;
+	border-radius:5px 5px 0 0;
 	right:10px;
-	left:10px;
-	height:40px;
-	top:10px;
+	min-height:44px;
+	padding-top:8px;
+	padding-left:10px;
+	padding-bottom:2px;
 }
 #topic_readers>* {
 	padding-right:4px;
 }
 #topic_actions {
-	position:absolute;
-	top:55px;
+	position:relative;
+	top:0px;
 	left:0px;
 	padding-left:5px;
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
+	height:24px;
 	right:0px;
 }
 #topic_posts {
-	background-color:white;
 	border-radius: 0px 0px 5px 5px;
 	overflow:auto;
+
+	min-height:100px;
 	
-	position:absolute;
+	position:relative;
 	left:0px;
 	right:0px;
-	top:80px;
+	top:0px;
 	bottom:0px;
 }
 #topic_posts .loading {
@@ -326,29 +372,29 @@ Lighter Green: #9b0
 	float:right;
 	font-size:small;
 }
-#topic_posts .post .users {
+#topic_posts .post>.users {
 	padding-top:3px;
 	display:block;
 	position:relative;
 }
-#topic_posts .post .users img {
+#topic_posts .post>.users>img {
 	padding-left:3px;
-
+	padding-right:5px;
 }
 #topic_posts .post>.users>.names {
 	color:gray;
 	font-weight:bold;
 	font-size:small;
 	clear:both;
-	padding-left:3px;
 
 	position:absolute;
 	top:3px;
 }
 #topic_posts .post>.buttons {
-	position:absolute;
-	right:0px;
-	bottom:0px;
+	text-align:right;
+}
+#topic_posts .post>.content {
+	padding-bottom:22px;
 }
 #topic_posts .post_replies {
 	margin-left:15px;
@@ -414,8 +460,16 @@ Lighter Green: #9b0
 	padding-right:10px;
 
 }
+.borderright {
+	 margin-right:10px; 
+	 padding-right:12px; 
+	 border-right:1px black solid;
+}
 .urlicon {
 	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAABBUlEQVR42mNgGAWjgLrAbsV/DDGH5Q4MdssP4NcHlAepI8YCEEAXBgo5A/EpfBZsPvr0Okgd6RY4rDIAik+Ayk+A4g9gDJJDsuD0jTf+QPENcHHiLFjuIOC59ixQeAbIILP0XfdB7P5VN//5VR7+B2Qbg8QX7Xxwm89z7R2pwA3ZQLGdYHFiLRD1W3cRHESIoNgJElcM33wXzAaK87iv+SMZuPEqkH8biFNJ8gEWC5zRxRvmX3mon7TjP8gnJMYBcRaAxFftfzyB12PN3yv338fjTqYoGJL8iLUAJK4Vu20mNG4EsdrxHxOcQk6mMD568kUTbwfHDf1zMTUxkcFDERgte4kCABl+tI2JVfmHAAAAAElFTkSuQmCC) no-repeat;
+}
+.olisticon {
+	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAATCAYAAACdkl3yAAAARUlEQVR42mNgGAXEgv/UMuQ/CFDFMDSD/pOIMTShmkwCwNBEcRgxUCuAqBlzDEheG2aBTb0ESbXUTa2UjRxrlAU2Jd4BAAwCBAtmEJv9AAAAAElFTkSuQmCC) no-repeat;
 }
 .listicon {
 	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAAAP0lEQVR42mNgGAUjDkQC8X8oTRPwH4aBIA5djEhM2AfLli0DWQBX/J9EgN8LQJdD1cWNRvJoJI9G8mgkDxcAABlUBFwoPRjrAAAAAElFTkSuQmCC) no-repeat;

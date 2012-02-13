@@ -1,12 +1,12 @@
 "use strict";
-function TopicsDisplay() {};
+function TopicsListDisplay() {};
 // Event Handlers -------------------------------------------------
-TopicsDisplay.prototype.onTopicClicked = function(topic) {};
-TopicsDisplay.prototype.onCreateNewTopic = function() {};
+TopicsListDisplay.prototype.onTopicClicked = function(topic) {};
+TopicsListDisplay.prototype.onCreateNewTopic = function() {};
 // Methods --------------------------------------------------------
-TopicsDisplay.prototype.setActiveTopic = function(topic) {};
-TopicsDisplay.prototype.renderTopics = function(topics) {};
-TopicsDisplay.prototype.clear = function() {};
+TopicsListDisplay.prototype.setActiveTopic = function(topic) {};
+TopicsListDisplay.prototype.renderTopics = function(topics) {};
+TopicsListDisplay.prototype.clear = function() {};
 
 
 
@@ -71,34 +71,32 @@ TopicsPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
 };
 TopicsPresenter.prototype.createNewTopic = function() {
 	// TODO: Check if the user is currently editing something and submit that before going on
-	
+	var that = this;
+
 	var topicId = API.generate_id();
 	
-	// Create a topic on the server and notify the TopicView
+	// Create a topic on the server and notify the TopicView (async)
 	var that = this;
 	API.topics_create(topicId, function(err, topic_id) {
+		if (err) {
+			that.refreshTopicsList();
+		}
 		if (topic_id !== undefined) {					
 			BUS.fire('topic.topic.created', topicId);
 		}
 	});
 	
-	// Create a dummy topic, so we can render something immediately	
+	// Create a dummy TopicHeader, so we can render something immediately	
 	var topicDetails = {
 		id: topicId,
 		abstract: '-',
-		readers: [API.user()],
-		writer: [API.user()],
-		posts: [
-			{
-				id: '1', // First post always has the '1'
-				content: 'Write some text!', 
-				revision_no: 1, 
-				users:[API.user_id()]
-			}
-		]
+		users: [API.user()],
+		post_count_total: 1,
+		post_count_unread: 0
 	};
 
-	this.topics.splice(0, 0, topicDetails);
+	this.topics.splice(0, 0, topicDetails); // Prepend the item to the ViewList
+	this.view.clear();
 	this.view.renderTopics(this.topics);
 	this.setSelectedTopic(topicDetails, true);
 };

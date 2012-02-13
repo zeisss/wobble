@@ -63,6 +63,7 @@ function ContactsDisplay() {}
 ContactsDisplay.prototype.onAddContact = function(contactEmail) {};
 ContactsDisplay.prototype.onContactClick = function(contact) {};
 ContactsDisplay.prototype.onNameChange = function(new_name) {};
+ContactsDisplay.prototype.onPasswordChange = function(new_password) {};
 // Methods
 ContactsDisplay.prototype.renderContacts = function (list) {};
 ContactsDisplay.prototype.renderWhoAmI = function(user) {};
@@ -74,7 +75,10 @@ function ContactsPresenter(display, model) {
 	this.model = model;
 	
 	this.refreshContacts(); // Load initially
-	
+	if (model.getUser()) {
+		this.display.renderWhoAmI(model.getUser());
+	}
+
 	var that = this;
 	
 	// Timers & Data Loading  ----------------------------------
@@ -98,10 +102,15 @@ function ContactsPresenter(display, model) {
 	};
 	display.onNameChange = function(newName) {
 		API.user_change_name(newName, function(err, result) {
-			if ( !err ) {
-				API.init();
-			}
+			API.refreshUser();
 		});
+	};
+	display.onPasswordChange = function(newPassword) {
+	   API.user_change_password(newPassword, function(err, result) {
+	       if (result) {
+	           window.alert('Password changed successfully.');    
+	       }   
+	   });
 	};
 	
 	// BUS Handler  ---------------------------------------------------
@@ -136,7 +145,7 @@ ContactsPresenter.prototype.addUserByEmail = function(email) {
 			that.refreshContacts();
 			that.display.showMessage('Contact added!');
 		} else {
-			that.display.showMessage('Contact not found!');
+			that.display.showMessage('Contact could not be added.');
 		}
 	});
 };

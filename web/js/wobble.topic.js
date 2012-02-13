@@ -36,35 +36,35 @@ function TopicModel() {
 		topic.posts.push(post);
 	};
 	
-	that.createReply = function(post) {
-		return {
-			id: API.generate_id(),
-			parent: post.id,
-			locked: false,
-			content: '\n<br>\n<br>', 
-			revision_no: 1,
-			users: [API.user_id()],
-			deleted: 0,
-			unread: 0
-		};
-	};
 	
-	that.addUserToPost = function(post, user) {
-		var found = false;
-		for (var i = 0; i < post.users.length; i++) {
-			if ( post.users[i] === user.id) {
-				found = true;
-			}
-		}
-		if (!found) {
-			post.users.push(user.id);
-			// We can assume here, that the user is part of topic.users, otherwise he shouldn't see this post
-		}
+};
+TopicModel.prototype.createReply = function(post) {
+	return {
+		id: API.generate_id(),
+		parent: post.id,
+		locked: false,
+		content: '\n<br>\n<br>', 
+		revision_no: 1,
+		users: [API.user_id()],
+		deleted: 0,
+		unread: 0
 	};
-}
+};
+TopicModel.prototype.addUserToPost = function(post, user) {
+	var found = false;
+	for (var i = 0; i < post.users.length; i++) {
+		if ( post.users[i] === user.id) {
+			found = true;
+		}
+	}
+	if (!found) {
+		post.users.push(user.id);
+		// We can assume here, that the user is part of topic.users, otherwise he shouldn't see this post
+	}
+};
 TopicModel.prototype.addUser = function(user) {
-	if (_.contains(this.getTopic().users, user)) {
-		this.getTopic().users.push(user);	
+	if (_.contains(this.getTopic().readers, user)) {
+		this.getTopic().readers.push(user);	
 	}
 };
 TopicModel.prototype.removeUser = function(user, callback) {
@@ -72,7 +72,7 @@ TopicModel.prototype.removeUser = function(user, callback) {
 	
 	API.topic_remove_user(topic.id, user.id, function(err, result) {
 		if ( !err ) {
-			topic.users = _.filter(topic.users, function(tuser) {
+			topic.readers = _.filter(topic.readers, function(tuser) {
 				return user.id != tuser.id; // Filter the given user
 			});
 		}	
@@ -83,8 +83,8 @@ TopicModel.prototype.getUserIds = function() {
 	var topic = this.getTopic();
 	var result = [];
 	
-	for (var i = 0; i < topic.users.length; i++) {
-		result.push(topic.users[i].id);
+	for (var i = 0; i < topic.readers.length; i++) {
+		result.push(topic.readers[i].id);
 	}
 
 	return result;

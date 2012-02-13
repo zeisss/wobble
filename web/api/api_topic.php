@@ -17,6 +17,10 @@
 	 * Returns the topic object which is specified by the parameter 'id'. The client must be 
 	 * authenticated and a member of the topic.
 	 *
+	 * The resulting object contains two lists of users: Readers and Writers.
+	 * The readers are the users that currently belong to a topic. Any user can modify this list.
+	 * The writers are all users that have ever written anything into a topic. This is intended as a help for the UI to be able to show the user info for posts of users, that no longer belong to a post.
+	 *
 	 * input = {'id': TopicId}
 	 * result = {'id':TopicId, 'readers': [User], 'writers': [User], 'posts': [Post]} 
 	 *
@@ -45,8 +49,13 @@
 		$readers = TopicRepository::getReaders($topic_id);
 		$writers = TopicRepository::getWriters($topic_id);
 				
-		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, p.parent_post_id parent, p.last_touch timestamp, p.deleted deleted, coalesce((select 0 from post_users_read where topic_id = p.topic_id AND post_id = p.post_id AND user_id = ?), 1) unread 
-								FROM posts p WHERE p.topic_id = ? ORDER BY created_at');
+		$stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no, 
+				p.parent_post_id parent, p.last_touch timestamp, p.deleted deleted, 
+				coalesce((select 0 from post_users_read 
+						  where topic_id = p.topic_id AND post_id = p.post_id AND user_id = ?), 1) unread 
+			 FROM posts p 
+			WHERE p.topic_id = ? 
+			ORDER BY created_at');
 		$stmt->execute(array($self_user_id, $topic_id));
 		$posts = $stmt->fetchAll();
 		
@@ -171,16 +180,7 @@
 		$pdo = ctx_getpdo();
 		
 		if ( _topic_has_access($pdo, $topic_id) ) {
-			// Create empty root post
-			$stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content, parent_post_id, created_at, last_touch)  VALUES (?,?, "",?, unix_timestamp(), unix_timestamp())');
-			$stmt->execute(array($topic_id, $post_id, $parent_post_id));
-			
-			// Assoc first post with current user
-			$stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id) VALUES (?,?,?)');
-			$stmt->bindValue(1, $topic_id);
-			$stmt->bindValue(2, $post_id);
-			$stmt->bindValue(3, $self_user_id);
-			$stmt->execute();
+			TopicRepository::createPost($topic_id, $post_id, $self_user_id, $parent_post_id);
 			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
 				NotificationRepository::push($user['id'], array(
@@ -225,6 +225,7 @@
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_not_empty($post_id);
 		ValidationService::validate_not_empty($revision);
+		ValidationService::validate_content($content);
 		
 		$pdo = ctx_getpdo();
 		
@@ -244,15 +245,7 @@
 			$pdo->prepare('UPDATE posts SET content = ?, revision_no = revision_no + 1, last_touch = unix_timestamp() WHERE post_id = ? AND topic_id = ?')->execute(array($content, $post_id, $topic_id));
 			$pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id) VALUES (?,?,?)')->execute(array($topic_id, $post_id, $self_user_id));
 
-
-			TopicRepository::setPostReadStatus(
-				$self_user_id, $topic_id, $post_id, 1 # Mark post as read for requesting user
-			);
-			
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
-				if ( $user['id'] == $self_user_id)  # Skip for requesting user
-					continue;
-
 				NotificationRepository::push($user['id'], array(
 					'type' => 'post_changed',
 					'topic_id' => $topic_id,
@@ -263,6 +256,10 @@
 					$user['id'], $topic_id, $post_id, 0
 				);
 			}
+
+			TopicRepository::setPostReadStatus(
+				$self_user_id, $topic_id, $post_id, 1 # Mark post as read for requesting user
+			);
 			
 			return array (
 				'revision_no' => ($revision + 1)

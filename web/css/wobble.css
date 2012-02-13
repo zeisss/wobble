@@ -1,11 +1,16 @@
 body {
 	font-family: arial, sans-serif;
 	background:#d8dce0 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABMCAIAAAAjsUpsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAEVJREFUeNqMTlsKACAMku5/Z9sL1lpUH6JMJ4LkAGBQTdVxIwUQXVizNK+zd1Tecjfv1RHbnE/bcmPrKL8/XYufG6cAAwBFymotT/a6tQAAAABJRU5ErkJggg==') repeat-x;
+
+	direction:ltr;
+
+	margin:0;
 }
 
-#headline .navigation{
-	text-align:right;
-	position:relative;
-	top:0px;
-	right:0px;
+
+a {
+	color:blue;
+}
+a:visited {
+	color: blue;
 }

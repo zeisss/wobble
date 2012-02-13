@@ -1,30 +1,106 @@
 "use strict";
 
+/**
+ * <div id="contacts" class="widget">
+ *		<div class="whoami">
+ *		</div>
+ *		<div class="actions">
+ *			<button id="contacts_add">Add</button>
+ *			<button id="user_change_name">Change my name</button>
+ *		</div>
+ *		<ul class="contactslist">
+ *		</ul>
+ *	</div>
+ */
 function JQueryContactsView() {
-	var that = this;
-	// UI Event Handlers		
+	var template = 
+		'<div class="whoami"></div>' + 
+		'<div class="actions">' + 
+		'	<button id="contacts_add">Add</button>' + 
+		'	<button id="show_my_profile">Show my profile</button>' + 
+		'</div>' + 
+		'<ul class="contactslist"></ul>';
+	this.e = $('<div></div>').addClass('widget').attr('id', 'contacts').appendTo('#widgets');
+    
+    
+   
+	// NOTE: Makes sure that thie contactsList does not start with a 100% width 
+	// and thus prvents the other widgets from beeing rendered
+	this.e.css('width', '180px'); 
+
+	this.e.append(template);
+    this.$whoami = $(".whoami", this.e);
+    this.$actions = $(".actions", this.e);
+    this.$contactsList = $(".contactslist", this.e);
+
+	// UI Event Handlers	
+	this.$whoami.click($.proxy(function() {
+	   this.fireWhoamiClicked();
+	}, this));
 	$("#contacts_add").click($.proxy(function() {
 		var contactEmail = window.prompt("Enter the new contact's email address");
 		if (contactEmail !== null) {
 			this.onAddContact(contactEmail);
 		}
 	}, this));
-	$("#user_change_name").click($.proxy(function() {
-		var newName = window.prompt("What should your new name be?");
-		if ( newName !== null ) {
-			this.onNameChange(newName);
-		}
+	$("#show_my_profile").click($.proxy(function() {
+	   var that = this;
+	   that.fireWhoamiClicked();		
 	}, this));
-}
+
+	// On a window.resize event wait for the transformations to finish (should be done in 300ms) and recalc height
+	function on_window_resize() {
+		var t = this;
+		window.setTimeout( function() {
+			t.onResize();
+		}, 350);
+	}
+	BUS.on('window.resize', on_window_resize, this);
+	on_window_resize.call(this); // Fire it once initially (with a delay)
+
+};
 JQueryContactsView.prototype = new ContactsDisplay();
 JQueryContactsView.prototype.constructor = JQueryContactsView;
 
 // Methods 
+JQueryContactsView.prototype.onResize = function() {
+	var viewHeight = this.e.innerHeight();
+	var offsetX = this.$whoami.outerHeight() + this.$actions.outerHeight()
+
+	this.$contactsList.css('height', viewHeight - offsetX);
+};
+
+JQueryContactsView.prototype.fireWhoamiClicked = function() {
+  var that = this;
+  BUS.fire('contact.clicked', {
+      'contact': API.user(),
+      'actions': [
+        {title: 'Change my name', callback: function() {
+            var newName = window.prompt("What should your new name be?");
+    		if ( newName !== null ) {
+    			that.onNameChange(newName);
+    		}
+        }},
+        {title: 'Change password', callback: function() {
+           var p1 = window.prompt('What should your new password be?');
+           if (p1 !== null) {
+             var p2 = window.prompt('And once again to be sure:');
+             if (p2 !== null) {
+               if (p1 === p2) {
+                   that.onPasswordChange(p1);
+               } else {
+                   window.alert('Your two passwords do not match. Try again.');   
+               }
+             }   
+           }
+        }}
+      ]
+   });
+};
 JQueryContactsView.prototype.renderContacts = function (list) {
-	var $ul = $("#contacts ul").empty();
+	this.$contactsList.empty();
 	
-	for (var i = 0; i < list.length; i++) {
-		var contact = list[i];
+	jQuery.each(list, $.proxy(function(i, contact) {
 		var template = "<li class=contact title='{{email}}'>" + 
 						"<div class='usericon usericon{{size}}'>" +
 						"<div><img src='http://gravatar.com/avatar/{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
@@ -38,15 +114,15 @@ JQueryContactsView.prototype.renderContacts = function (list) {
 				name: contact.name,
 				img: contact.img,
 				online: contact.online == 1 ? 'online' : 'offline'
-		})).appendTo($ul).click($.proxy(function() {
+		})).appendTo(this.$contactsList).click($.proxy(function() {
 			this.onContactClick(contact);
 		}, this));
-	}
+	}, this));
 };
 JQueryContactsView.prototype.renderWhoAmI = function(user) {
-	var whoami = $("#contacts .whoami").empty();
+	this.$whoami.empty();
 	var template = "<img title='That is you!' src='http://gravatar.com/avatar/{{{img}}}?s=32' width=32 height=32> <span class=name>{{name}}</span>";
-	whoami.append(Mustache.to_html(template, user));
+	this.$whoami.append(Mustache.to_html(template, user));
 };
 
 
@@ -133,21 +209,21 @@ ListContactsChooserDisplay.prototype.render = function() {
 
 	$filterText = $("#contactschooser_filter_text");
 	$filterText.keydown($.proxy(function(e) {
-		if ( e.which == 27 ) {
+		if (e.which == 27) {
 			// Close dialog on escape
 			this.close();
 		}
-		else if ( e.which == 38) {
+		else if (e.which == 38) {
 			// Naviagte up
 			this.navigatePreviousContact();
 			e.preventDefault();
 		}
-		else if ( e.which == 40) {
+		else if (e.which == 40) {
 			// Navigate down
 			this.navigateNextContact();
 			e.preventDefault();
 		}
-		else if ( e.which == 13) {
+		else if (e.which == 13) {
 			e.preventDefault();
 			$('#contactchooser-contact-' + this.selectedContact.id).click(); // Simulate clicking on it
 		}
@@ -159,7 +235,7 @@ ListContactsChooserDisplay.prototype.render = function() {
 	}, this));
 
 	// Position it relative to this.relativeTo
-	if ( this.relativeTo ) {
+	if (this.relativeTo) {
 		var relativeElem = $(this.relativeTo);
 		var pos = relativeElem.offset();
 		this.e.css('top', pos.top).css('left', pos.left - (this.e.width() * 0.75));

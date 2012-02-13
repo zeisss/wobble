@@ -7,7 +7,8 @@
 	 * input = {}
 	 *
 	 * result = [MetaTopic]
-	 * MetaTopic = {'id': TopicId, 'abstract': string()}
+	 * MetaTopic = {'id': TopicId, 'abstract': string(), 'users': [User], 'max_last_touch': int(), 
+	 *              'post_count_unread': int(), 'post_count_total': int()}
 	 */
 	function topics_list() {
 		$self_user_id = ctx_getuserid();
@@ -17,9 +18,9 @@
 		$pdo = ctx_getpdo();
 		$stmt = $pdo->prepare('SELECT 
 			  t.id id, 
-			  substr(p.content, 1, 200) abstract, 
-			  (select max(last_touch) from posts WHERE topic_id = t.id) max_last_touch, 
-			  (select count(*) from posts where topic_id = t.id) post_count_total, 
+			  p.content abstract, 
+			  (select max(p.last_touch) from posts p WHERE p.topic_id = t.id) max_last_touch, 
+			  (select count(*) from posts where topic_id = t.id and deleted = 0) post_count_total, 
 			  (select count(*) from post_users_read where topic_id = p.topic_id AND user_id = r.user_id) post_count_read 
 		 FROM topics t, topic_readers r, posts p 
 		WHERE r.user_id = ? AND r.topic_id = t.id AND t.id = p.topic_id AND p.post_id = cast(1 as char)
@@ -36,7 +37,7 @@
 			$result[$i]['post_count_unread'] = $result[$i]['post_count_total'] - intval($result[$i]['post_count_read']);
 			unset($result[$i]['post_count_read']);		
 			
-			$result[$i]['abstract']	= substr(strip_tags($result[$i]['abstract']), 0, 100);
+			$result[$i]['abstract']	= strip_tags(substr($result[$i]['abstract'], 0, 100));
 		}
 		
 		return $result;
@@ -53,34 +54,13 @@
 	 */
 	function topics_create($params) {
 		$self_user_id = ctx_getuserid();
-		$topic_id = $params['id'];
+		$topic_id = @$params['id']; 
 
-		ValidationService::check_not_empty($self_user_id);
-		ValidationService::check_not_empty($topic_id);
+		ValidationService::validate_not_empty($self_user_id);
+		ValidationService::validate_not_empty($topic_id);
+		ValidationService::validate_topicid($topic_id);
 
-		$pdo = ctx_getpdo();
-		
-		// Create topic
-		$stmt = $pdo->prepare('INSERT INTO topics VALUES (?)');
-		$stmt->bindValue(1, $topic_id);
-		$stmt->execute();
-		
-		$stmt = $pdo->prepare('INSERT INTO topic_readers (topic_id, user_id) VALUES (?,?)');
-		$stmt->execute(array($topic_id, $self_user_id));
-		
-		// Create empty root post
-		$stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content)  VALUES (?,?,?)');
-		$stmt->bindValue(1, $topic_id);
-		$stmt->bindValue(2, '1'); # default ROOT ID
-		$stmt->bindValue(3, '');
-		$stmt->execute();
-		
-		// Assoc first post with current user
-		$stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id) VALUES (?,?,?)');
-		$stmt->bindValue(1, $topic_id);
-		$stmt->bindValue(2, '1');
-		$stmt->bindValue(3, $self_user_id);
-		$stmt->execute();
+		TopicRepository::create($topic_id, $self_user_id);		
 		
 		return $topic_id;
 	}

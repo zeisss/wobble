@@ -34,6 +34,11 @@ function ContactsChooserPresenter(display, model) {
 		});
 		this.open(options);
 	}, this);
+
+	// Autoclose the display when the topic changes
+	BUS.on('topic.selected', function() {
+		this.display.close();
+	}, this);
 };
 /**
  * Starts a loop where the user can add users. For each added user the options.on_add callback is executed.
