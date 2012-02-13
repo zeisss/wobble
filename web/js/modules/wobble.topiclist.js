@@ -101,12 +101,12 @@ function TopicListPresenter (view, model) {
 	}
 	
 	// Start fetching an up2date list
-	if (!this.model.topics)
-	   this.model.refreshTopicsList();
-
-	// Prerender the view from the cache
-	this.view.clear();
-	this.view.renderTopicList(this.topics);
+	this.model.refreshTopicList();
+	if (this.model.topics) {
+        // Prerender the view from the cache
+      	this.view.clear();
+      	this.view.renderTopicList(this.model.topics);
+    }
 	
 	var that = this;
 	// UI Callbacks
