@@ -49,14 +49,16 @@ WobbleDesktopClient.prototype.initApp = function() {
 	this.contactsChooserPresenter = new ContactsChooserPresenter(
 			new ListContactsChooserDisplay('#topic_invite_user'), 
 			this.contactsModel
-	);
+	);	
 	this.contactsPresenter = new ContactsPresenter(new JQueryContactsView(), this.contactsModel);
-	this.topicsPresenter = new TopicListPresenter(new jQueryTopicsView(), window.localcache.getCache());
-	
 	this.contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(100, 100), this.contactsModel, 'contact.clicked');
 	this.topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(600, 100), this.contactsModel, 'topic.user.clicked');
 
+	this.topicsPresenter = new TopicListPresenter(new jQueryTopicsView(), new TopicListModel(window.localcache.getCache()));	
 	this.topicPresenter = new TopicPresenter(new jQueryTopicView(), new TopicModel());	
+	
+	
+	
 	
 	// Ok, all done. Lay it out
 	this.doLayout();
