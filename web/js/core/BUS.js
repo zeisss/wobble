@@ -27,8 +27,9 @@ EventBUS.prototype.fire = function(eventName, data) {
 		var callbackEntry = this.listeners[eventName][i];
 		callbackEntry[1].apply(callbackEntry[0], [data, eventName]);
 	}
-
 }
+EventBUS.prototype.emit = EventBUS.prototype.fire;
+
 EventBUS.prototype.clear = function() {
 	this.listeners = {};
 };

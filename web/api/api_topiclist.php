@@ -21,7 +21,19 @@
 		ValidationService::validate_list($show_archived, array(true, false));
 		
 		$pdo = ctx_getpdo();
-
+		
+		# How many topics does the user have in total?
+		$stmt = $pdo->prepare('SELECT count(*) cnt FROM topic_readers WHERE user_id = ?');
+		$stmt->execute(array($self_user_id));
+		$topicsTotalUser = $stmt->fetchObject()->cnt;
+		
+		
+        $stmt = $pdo->prepare('SELECT count(*) cnt FROM user_archived_topics WHERE user_id = ?');
+        $stmt->execute(array($self_user_id));
+        $topicsTotalArchived = $stmt->fetchObject()->cnt;
+        $topicsTotalInbox = $topicsTotalUser - $topicsTotalArchived;
+		
+		
 		$stmt = $pdo->prepare('SELECT 
 			  t.id id, 
 			  p.content abstract, 
@@ -53,7 +65,12 @@
 			$result[$i]['archived'] = $show_archived;
 		}
 		
-		return $result;
+		return array(
+		  'size' => $topicsTotalUser,
+		  'size_archived' => $topicsTotalArchived,
+		  'size_inbox' => $topicsTotalInbox,
+		  'topics' => $result
+		);
 	}
 	
 	/**
