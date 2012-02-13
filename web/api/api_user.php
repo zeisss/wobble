@@ -32,6 +32,8 @@ function user_login($params) {
 	ValidationService::validate_email($email);
 	ValidationService::validate_not_empty($password);
 	
+	$email = InputSanitizer::sanitizeEmail($email);
+	
 	$password_hashed = SecurityService::hashPassword($password);
 	$user = UserRepository::getUserByEmail($email);
 	if ( $user != NULL && $password_hashed === $user['password_hashed']) {

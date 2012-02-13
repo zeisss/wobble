@@ -1,3 +1,4 @@
+
 <?php
 	ini_set('session.use_cookies', '0');
 	
@@ -12,6 +13,7 @@
 	require_once dirname(__FILE__).'/classes/SessionService.class.php';
 	require_once dirname(__FILE__).'/classes/ValidationService.class.php';
 	require_once dirname(__FILE__).'/classes/UserArchivedTopicsRepository.class.php';
+	require_once dirname(__FILE__).'/classes/InputSanitizer.class.php';	
 
 	jsonrpc_export_functions(array (
 		// Core
