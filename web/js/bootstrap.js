@@ -46,7 +46,7 @@
 		'js/core/JSONRPC.js',
 		'js/core/WobbleAPI.js',
 		'js/core/NotificationHandler.js',
-		'js/core/BasicApplication.js'
+		'js/core/BasicClient.js'
 	)
 	// Wobble Modules
 	files.push(
