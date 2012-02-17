@@ -118,7 +118,6 @@
 					'type' => 'topic_changed',
 					'topic_id' => $topic_id
 				));
-<<<<<<< HEAD
                 
                 TopicMessagesRepository::createMessage(
                     $topic_id,
@@ -129,11 +128,9 @@
                         'user_name' => $topic_user['name']
                     )
                 );
-=======
 				
 				# Move topic back to inbox, if changed
-				UserArchivedTopicsRepository::set_archived($user['id'], $topic_id, 0);
->>>>>>> origin/develop
+				UserArchivedTopicsRepository::set_archived($reader['id'], $topic_id, 0);
 			}
 
 			# NOTE: No need to mark all posts as unread, as we store only the 'read' status, no unread messages.
@@ -173,8 +170,7 @@
 					'type' => 'topic_changed',
 					'topic_id' => $topic_id
 				));
-<<<<<<< HEAD
-                
+
                 TopicMessagesRepository::createMessage(
                     $topic_id,
                     $reader['id'],
@@ -184,11 +180,9 @@
                         'user_name' => $topic_user['name']
                     )
                 );
-=======
 
 				# Move topic back to inbox, if changed
-				UserArchivedTopicsRepository::set_archived($user['id'], $topic_id, 0);
->>>>>>> origin/develop
+				UserArchivedTopicsRepository::set_archived($reader['id'], $topic_id, 0);
 			}
 			# Delete afterwards. The other way around, the deleted user wouldn't get the notification
 			TopicRepository::removeReader($topic_id, $user_id);
@@ -399,7 +393,6 @@
 		}
 		return TRUE;
 	}
-<<<<<<< HEAD
     
     /**
      * Removes the specified message from the given topic.
@@ -426,7 +419,6 @@
 
         return false;
     }
-=======
 
 	/**
 	 * Marks the given topic as archived or not.
@@ -450,4 +442,4 @@
 			'topic_id' => $topic_id
 		));
 	}
->>>>>>> origin/develop
+
