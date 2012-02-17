@@ -14,6 +14,11 @@ class ValidationService {
 		$pos = strpos($input, '<script');
 		ValidationService::check($pos === FALSE);
 	}
+
+	function validate_list($input, $list) {
+		$in_list = in_array($input, $list);
+		ValidationService::check($in_list !== FALSE);
+	}
 	
 	function check($boolean, $message = 'Invalid Input!') {
 		if ( !$boolean ) throw new Exception($message);

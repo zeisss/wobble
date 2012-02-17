@@ -13,6 +13,11 @@ BasicClient.prototype.bootstrap = function() {
 	$('<div></div>').attr('id', 'widgets').appendTo($('body'));
 
 	// Show a reload dialog, when an RPC error occurs
+	var rpcOperations = 0;
+	BUS.on('rpc.queue.length', function(length) {
+		rpcOperations = length;
+	});
+
 	BUS.on('rpc.error', function(err) {
 		this.onRPCError(err);
 	}, this);
@@ -22,6 +27,10 @@ BasicClient.prototype.bootstrap = function() {
 
 	var that = this;
 	$(window).bind('beforeunload', function() {
+		// We ignore 1 operation, because there is always a notification fetcher working
+		if (rpcOperations > 1) { 
+			return 'There are operations pending. Are you sure you want to close now?'
+		}
 		that.unload();
 	});
 

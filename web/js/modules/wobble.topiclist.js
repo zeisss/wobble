@@ -3,9 +3,12 @@ function TopicsListDisplay() {};
 // Event Handlers -------------------------------------------------
 TopicsListDisplay.prototype.onTopicClicked = function(topic) {};
 TopicsListDisplay.prototype.onCreateNewTopic = function() {};
+TopicsListDisplay.prototype.onShowArchived = function() {};
+TopicsListDisplay.prototype.onShowInbox = function() {};
 // Methods --------------------------------------------------------
+TopicsListDisplay.prototype.showLoading = function() {};
 TopicsListDisplay.prototype.setActiveTopic = function(topic) {};
-TopicsListDisplay.prototype.renderTopics = function(topics) {};
+TopicsListDisplay.prototype.renderTopicList = function(topics) {};
 TopicsListDisplay.prototype.clear = function() {};
 
 
@@ -13,12 +16,21 @@ TopicsListDisplay.prototype.clear = function() {};
 /**
  * The Business logic for the topics list-view
  */
-function TopicsPresenter (view) {
+function TopicListPresenter (view, cache) {
 	this.view = view;
+	this.cache = cache
+	this.cacheTimeout = 60 * 60 * 24 * 5;
+
 	this.selectedTopicId = null;
-	this.topics = [];
-	
+	this.topics = cache.get('topicslistpresenter.topics') || [];
+	this.show_archived = cache.get('topicslistpresenter.show_archived') || 0;
+
+	// Start fetching an up2date list
 	this.refreshTopicsList();
+
+	// Prerender the view from the cache
+	this.view.clear();
+	this.view.renderTopicList(this.topics);
 	
 	var that = this;
 	// UI Callbacks
@@ -28,6 +40,12 @@ function TopicsPresenter (view) {
 	this.view.onCreateNewTopic = function() {
 		that.createNewTopic();
 	};
+	this.view.onShowArchived = $.proxy(function() {
+		that.setShowArchived(1);
+	}, this);
+	this.view.onShowInbox = function() {
+		that.setShowArchived(0);
+	}
 	
 	// BUS Events
 	BUS.on('topic.changed', function(_data) {
@@ -46,30 +64,42 @@ function TopicsPresenter (view) {
 	
 };
 /** Called by the view when a new topic should be created */
-TopicsPresenter.prototype.refreshTopicsList = function() {
-	API.list_topics($.proxy(function(err, list) {
-		if ( !err ) {
+TopicListPresenter.prototype.refreshTopicsList = function() {
+	API.list_topics(this.show_archived, $.proxy(function(err, list) {
+		if (!err) {
+			this.cache.set('topicslistpresenter.topics', list, this.cacheTimeout);
+
 			this.view.clear();
 			this.topics = list;
-			this.view.renderTopics(list);
+			this.view.renderTopicList(list);
 
 			for (var i = 0; i < list.length; i++) {
 				var data = list[i];
-				if ( this.selectedTopicId && this.selectedTopicId == data.id) {
+				if (this.selectedTopicId && this.selectedTopicId == data.id) {
 					this.view.setActiveTopic(data);
 				}
 			}
 		}
 	}, this));
 };
-TopicsPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
+
+TopicListPresenter.prototype.setShowArchived = function setShowArchived(show_archived) {
+	this.view.showLoading();
+	this.show_archived = show_archived;
+	this.cache.set('topicslistpresenter.show_archived', show_archived, this.cacheTimeout);
+
+	this.selectedTopicId = null;
+	this.refreshTopicsList();
+}
+
+TopicListPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
 	this.selectedTopicId = topic.id;
 	this.view.setActiveTopic(topic);
 	if (!noEvent) {
 		BUS.fire('topic.selected', topic.id);
 	}
 };
-TopicsPresenter.prototype.createNewTopic = function() {
+TopicListPresenter.prototype.createNewTopic = function() {
 	// TODO: Check if the user is currently editing something and submit that before going on
 	var that = this;
 
@@ -97,7 +127,7 @@ TopicsPresenter.prototype.createNewTopic = function() {
 
 	this.topics.splice(0, 0, topicDetails); // Prepend the item to the ViewList
 	this.view.clear();
-	this.view.renderTopics(this.topics);
+	this.view.renderTopicList(this.topics);
 	this.setSelectedTopic(topicDetails, true);
 };
 

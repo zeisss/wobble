@@ -9,7 +9,8 @@ TopicDisplay.prototype.onUserClicked = function(user) {};
 TopicDisplay.prototype.onDeletePost = function(post) {};
 TopicDisplay.prototype.onReplyPost = function(post) {};
 TopicDisplay.prototype.onPostClicked = function(post) {};
-
+TopicDisplay.prototype.onMoveToInbox = function() {};
+TopicDisplay.prototype.onMoveToArchive = function() {};
 
 
 var ROOT_ID = '1'; // the id of the root post
@@ -53,7 +54,7 @@ TopicModel.prototype.createReply = function(post) {
 TopicModel.prototype.addUserToPost = function(post, user) {
 	var found = false;
 	for (var i = 0; i < post.users.length; i++) {
-		if ( post.users[i] === user.id) {
+		if (post.users[i] === user.id) {
 			found = true;
 		}
 	}
@@ -71,7 +72,7 @@ TopicModel.prototype.removeUser = function(user, callback) {
 	var topic = this.getTopic();
 	
 	API.topic_remove_user(topic.id, user.id, function(err, result) {
-		if ( !err ) {
+		if (!err) {
 			topic.readers = _.filter(topic.readers, function(tuser) {
 				return user.id != tuser.id; // Filter the given user
 			});
@@ -119,7 +120,7 @@ function TopicPresenter(view, model) {
 	view.onUserClicked = function(user) {
 		var actions = [];
 		
-		if ( user.id != API.user_id()) {
+		if (user.id != API.user_id()) {
 			actions.push({title: 'Remove from Topic', callback: function() {
 				that.model.removeUser(user, function(err, result) {
 					view.renderTopic(model.getTopic());
@@ -136,7 +137,7 @@ function TopicPresenter(view, model) {
 
 	view.onPostClicked = function(post) {
 		// remove unread class on click + mark read on server side
-		if ( post.unread == 1 ) {
+		if (post.unread == 1) {
 			var topic = model.getTopic();
 
 			post.unread = 0;
@@ -147,7 +148,7 @@ function TopicPresenter(view, model) {
 				post.locked = false;
 
 				// Still our topic? => Refresh View
-				if ( model.getTopic().id == topic.id) {
+				if (model.getTopic().id == topic.id) {
 					view.renderPost(topic, post);
 				}
 				BUS.fire('topic.post.changed', model.getTopic().id);
@@ -198,13 +199,28 @@ function TopicPresenter(view, model) {
 		model.removePost(post);
 	};
 	
+	view.onMoveToArchive = function() {
+		API.topic_set_archived(model.getTopic().id, 1, function() {
+
+		});
+		view.clear();
+		model.setTopic(null);
+	};
+	view.onMoveToInbox = function() {
+		API.topic_set_archived(model.getTopic().id, 0, function() {
+		});
+		view.clear();
+		model.setTopic(null);
+	};
+
+
 	/**
 	 * BUS Handlers
 	 */
 	 
 	// Fired by TopicsPresenter
 	BUS.on('topic.selected', function(topicId) {		
-		if ( model.getTopic() != null && model.getTopic().id == topicId ) {
+		if (model.getTopic() != null && model.getTopic().id == topicId) {
 			return;
 		}
 		model.setTopic({id: topicId});
@@ -223,7 +239,7 @@ function TopicPresenter(view, model) {
 	
 	BUS.on('api.notification', function(data) {
 		// Somebody else changed our topic
-		if ( model.getTopic() != null && (
+		if (model.getTopic() != null && (
 			data.type == 'topic_changed' && data.topic_id == model.getTopic().id || 
 			data.type == 'post_deleted' && data.topic_id == model.getTopic().id || 
 			data.type == 'post_changed' && data.topic_id == model.getTopic().id)) 
@@ -233,7 +249,7 @@ function TopicPresenter(view, model) {
 	});
 };
 TopicPresenter.prototype.refreshTopic = function(callback) {
-	if ( this.model.getTopic() == null )
+	if (this.model.getTopic() == null)
 		return;
 		
 	var that  = this;
@@ -252,7 +268,7 @@ TopicPresenter.prototype.refreshTopic = function(callback) {
  * Change the underlying topic
  */
 TopicPresenter.prototype.setSelectedTopic = function(topicDetails) {
-	if ( topicDetails === this.model.getTopic() ) {
+	if (topicDetails === this.model.getTopic()) {
 		return;
 	}
 	

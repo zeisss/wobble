@@ -1,10 +1,10 @@
 <?php
 	define('PDO_USER', 'root');
-	define('PDO_URL', 'mysql:dbname=wooble;host=localhost');
-	define('PDO_PASSWORD', 'lamproot');
+	define('PDO_URL', 'mysql:dbname=wobble;host=localhost');
+	define('PDO_PASSWORD', 'your_mysql_password');
 	
 	# Adds a usleep() call to each request to mimick internet latency on local development boxes
-	define('SIMULATE_LAG', true);
+	define('SIMULATE_LAG', false);
 
 	# Replace value with something totally random for Production environments. Leave empty for only md5-ing the passwords
 	define('PASSWORD_SALT', 'myStaticSalt'); 

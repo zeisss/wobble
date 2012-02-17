@@ -68,7 +68,7 @@ WobbleAPI.prototype.refreshUser = function(callback) {
 // Directly returning functions
 /** Builds an ID by combining the user_id with the current time. */
 WobbleAPI.prototype.generate_id = function() {
-	var id = this.user_id() + "-" + (new Date().getTime());
+	var id = this.user_id() + "-" + (new Date().getTime()) + "-" + Math.ceil(Math.random() * 100000);
 	return id;
 };
 WobbleAPI.prototype.user_id = function() {
@@ -140,8 +140,8 @@ WobbleAPI.prototype.load_topic_details = function(topicId, callback) {
 	this.doRPC('topic_get_details', {id: topicId}, callback);
 };
 
-WobbleAPI.prototype.list_topics = function (callback) {
-	this.doRPC('topics_list', callback);
+WobbleAPI.prototype.list_topics = function (show_archived, callback) {
+	this.doRPC('topics_list', {'archived': show_archived}, callback);
 };
 
 /* CONTACTS Functions --------------- */
@@ -161,6 +161,9 @@ WobbleAPI.prototype.topic_add_user = function(topicId, contactId, callback) {
 };
 WobbleAPI.prototype.topic_remove_user = function(topicId, contactId, callback) {
 	this.doRPC('topic_remove_user', {topic_id: topicId, contact_id: contactId}, callback);
+};
+WobbleAPI.prototype.topic_set_archived = function topic_set_archived(topicId, archived, callback) {
+	this.doRPC('topic_set_archived', {topic_id: topicId, archived: archived}, callback);
 };
 
 WobbleAPI.prototype.post_change_read = function(topicId, postId, readStatus, callback) {
