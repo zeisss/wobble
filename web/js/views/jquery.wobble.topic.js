@@ -10,6 +10,7 @@ function jQueryTopicView() {	// The UI handler for the single topic
 	
 	this.jTopicReaders = $('<div></div>').attr('id', 'topic_readers').appendTo(this.e);
 	this.jTopicActions = $('<div></div>').attr('id', 'topic_actions').appendTo(this.e);
+	this.$messages = $('<div></div>').attr('id', 'topic_messages').appendTo(this.e);
 	this.jTopicPosts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
 	
 	this._renderTopicActions(false);	
@@ -78,12 +79,37 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 			this._renderReader(user);
 		}
 		
+		this.renderMessages(topicDetails.messages);
+		
 		this.onResize();
 
 		this.renderPosts(topicDetails);
 	} else {
 		this.setEnabled(false);
 	}	
+};
+
+jQueryTopicView.prototype.renderMessages = function(messages) {
+    for (var i = 0; i < messages.length; i++) {
+        var msg = messages[i];
+        var str;
+        
+        if (msg.type == 'user_added') {
+            str = msg.user_name + ' was added.';
+        } else if (msg.type == 'user_removed') {
+            str = msg.user_name + ' was removed';
+        }
+        
+        if (str) {
+            var con = $('<div></div>');
+            $('<div></div>').html(str).appendTo(con);
+            $('<button>Remove</button').click(function() {
+                alert('topic_remove_message ' + msg.message_id);
+            });
+            
+            con.appendTo(this.$messages);
+        }
+    }
 };
 
 jQueryTopicView.prototype._renderReader= function(user) {
