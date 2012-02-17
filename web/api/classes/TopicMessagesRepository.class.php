@@ -21,7 +21,7 @@ class TopicMessagesRepository {
         $pdo = ctx_getpdo();
         
         $stmt = $pdo->prepare('INSERT INTO topic_messages (topic_id, user_id, data) VALUES (?,?,?)');
-        $stmt->execute(array($topic, $user_id, json_encode($data)));
+        $stmt->execute(array($topic_id, $user_id, json_encode($data)));
         
         return true;
     }
