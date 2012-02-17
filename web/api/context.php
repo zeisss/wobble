@@ -11,6 +11,7 @@
 	require_once dirname(__FILE__).'/classes/SecurityService.class.php';
 	require_once dirname(__FILE__).'/classes/SessionService.class.php';
 	require_once dirname(__FILE__).'/classes/ValidationService.class.php';
+    require_once dirname(__FILE__).'/classes/TopicMessagesRepository.class.php';
 
 	jsonrpc_export_functions(array (
 		// Core

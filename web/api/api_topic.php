@@ -78,6 +78,7 @@
 		return array (
 			'id' => $topic_id,
 			'readers' => $readers,
+            'messages' => TopicMessagesRepository::listMessages($topic_id, $self_user_id),
 			'writers' => $writers,
 			'posts' => $posts
 		);
@@ -101,13 +102,25 @@
 		
 		$pdo = ctx_getpdo();
 		if ( _topic_has_access($pdo, $topic_id) ) {
+            $topic_user = UserRepository::get($user_id);
+            
 			TopicRepository::addReader($topic_id, $user_id);
 			
-			foreach(TopicRepository::getReaders($topic_id) as $user) {
-				NotificationRepository::push($user['id'], array(
+			foreach(TopicRepository::getReaders($topic_id) as $reader) {
+				NotificationRepository::push($reader['id'], array(
 					'type' => 'topic_changed',
 					'topic_id' => $topic_id
 				));
+                
+                TopicMessagesRepository::createMessage(
+                    $topic_id,
+                    $reader['id'],
+                    array(
+                        'type' => 'user_added',
+                        'user_id' => $user_id,
+                        'user_name' => $topic_user['name']
+                    )
+                );
 			}
 
 			# NOTE: No need to mark all posts as unread, as we store only the 'read' status, no unread messages.
@@ -140,12 +153,23 @@
 		
 		$pdo = ctx_getpdo();
 		if ( _topic_has_access($pdo, $topic_id) ) {
-			
-			foreach(TopicRepository::getReaders($topic_id) as $user) {
-				NotificationRepository::push($user['id'], array(
+			$topic_user = UserRepository::get($user_id);
+            
+			foreach(TopicRepository::getReaders($topic_id) as $reader) {
+				NotificationRepository::push($reader['id'], array(
 					'type' => 'topic_changed',
 					'topic_id' => $topic_id
 				));
+                
+                TopicMessagesRepository::createMessage(
+                    $topic_id,
+                    $reader['id'],
+                    array(
+                        'type' => 'user_removed',
+                        'user_id' => $user_id,
+                        'user_name' => $topic_user['name']
+                    )
+                );
 			}
 			# Delete afterwards. The other way around, the deleted user wouldn't get the notification
 			TopicRepository::removeReader($topic_id, $user_id);
@@ -172,23 +196,22 @@
 		$topic_id = $params['topic_id'];
 		$post_id = $params['post_id'];
 		$parent_post_id = $params['parent_post_id'];
-		
+
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_not_empty($post_id);
 		ValidationService::validate_not_empty($parent_post_id);
-		
+
 		$pdo = ctx_getpdo();
-		
+
 		if ( _topic_has_access($pdo, $topic_id) ) {
 			TopicRepository::createPost($topic_id, $post_id, $self_user_id, $parent_post_id);
 			
-			foreach(TopicRepository::getReaders($topic_id) as $user) {
-				NotificationRepository::push($user['id'], array(
+			foreach(TopicRepository::getReaders($topic_id) as $reader) {
+				NotificationRepository::push($reader['id'], array(
 					'type' => 'topic_changed',
 					'topic_id' => $topic_id
 				));
 			}
-			
 
 			TopicRepository::setPostReadStatus(
 				$self_user_id, $topic_id, $post_id, 1
@@ -342,3 +365,29 @@
 		}
 		return TRUE;
 	}
+    
+    /**
+     * Removes the specified message from the given topic.
+     *
+     * input = {'topic_id': TopicId, 'message_id': MessageId}
+     * output = true
+     */
+    function topic_remove_message($params) {
+        $user_id = ctx_getuserid();
+        $topic_id = $params['topic_id'];
+        $message_id = $params['message_id'];
+        $pdo = ctx_getpdo();
+
+        ValidationService::validate_not_empty($user_id);
+    	ValidationService::validate_not_empty($topic_id);
+		ValidationService::validate_not_empty($message_id);
+        
+        if (_topic_has_access($pdo, $topic_id)) {
+            
+            TopicMessagesRepository::deleteMessage($topic_id, $user_id);
+            
+            return true;
+        }
+
+        return false;
+    }
