@@ -42,7 +42,7 @@
   // Wobble Core
   files.push(
     'js/core/cache.js',
-    'js/core/BUS.js',
+    'js/core/EventBUS.js',
     'js/core/JSONRPC.js',
     'js/core/WobbleAPI.js',
     'js/core/NotificationHandler.js',
