@@ -109,31 +109,43 @@
 		
 		$pdo = ctx_getpdo();
 		if ( _topic_has_access($pdo, $topic_id) ) {
-            $topic_user = UserRepository::get($user_id);
+      $topic_user = UserRepository::get($user_id);
             
-			TopicRepository::addReader($topic_id, $user_id);
-			
 			foreach(TopicRepository::getReaders($topic_id) as $reader) {
 				NotificationRepository::push($reader['id'], array(
 					'type' => 'topic_changed',
 					'topic_id' => $topic_id
 				));
-                
-                TopicMessagesRepository::createMessage(
-                    $topic_id,
-                    $reader['id'],
-                    array(
-                        'type' => 'user_added',
-                        'user_id' => $user_id,
-                        'user_name' => $topic_user['name']
-                    )
-                );
-				
-				# Move topic back to inbox, if changed
-				UserArchivedTopicsRepository::set_archived($reader['id'], $topic_id, 0);
-			}
 
-			# NOTE: No need to mark all posts as unread, as we store only the 'read' status, no unread messages.
+				# No message for the acting user
+				if ($reader['id'] !== $self_user_id) {
+          TopicMessagesRepository::createMessage(
+						$topic_id,
+						$reader['id'],
+            array(
+              'type' => 'user_added',
+              'user_id' => $user_id,
+              'user_name' => $topic_user['name']
+            )
+          );
+
+					# Move topic back to inbox, if changed
+					UserArchivedTopicsRepository::set_archived($reader['id'], $topic_id, 0);
+				}
+
+			}
+			
+			# Now add the user
+			TopicRepository::addReader($topic_id, $user_id);
+			
+			# And notify him
+			NotificationRepository::push($user_id, array(
+				'type' => 'topic_changed',
+				'topic_id' => $topic_id
+			));
+			
+			# NOTE: No need to mark all posts as unread for the new user, as we only store 
+			#       the 'read' status, no unread messages.
 
 			return TRUE;
 		}
@@ -155,6 +167,7 @@
 	 * result = TRUE
 	 */
 	function topic_remove_user($params) {
+		$self_user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
 		$user_id = $params['contact_id'];
 		
@@ -171,18 +184,21 @@
 					'topic_id' => $topic_id
 				));
 
-                TopicMessagesRepository::createMessage(
-                    $topic_id,
-                    $reader['id'],
-                    array(
-                        'type' => 'user_removed',
-                        'user_id' => $user_id,
-                        'user_name' => $topic_user['name']
-                    )
-                );
+                if ($self_user_id !== $reader['id']) {
+					TopicMessagesRepository::createMessage(
+                    	$topic_id,
+                    	$reader['id'],
+                    	array(
+                        	'type' => 'user_removed',
+                        	'user_id' => $user_id,
+                        	'user_name' => $topic_user['name']
+                    	)
+                	);
 
-				# Move topic back to inbox, if changed
-				UserArchivedTopicsRepository::set_archived($reader['id'], $topic_id, 0);
+					# Move topic back to inbox, if changed
+					UserArchivedTopicsRepository::set_archived($reader['id'], $topic_id, 0);
+				}
+
 			}
 			# Delete afterwards. The other way around, the deleted user wouldn't get the notification
 			TopicRepository::removeReader($topic_id, $user_id);
