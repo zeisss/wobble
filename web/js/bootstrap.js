@@ -46,7 +46,8 @@
     'js/core/JSONRPC.js',
     'js/core/WobbleAPI.js',
     'js/core/NotificationHandler.js',
-    'js/core/BasicClient.js'
+    'js/core/BasicClient.js',
+		'js/core/resize_observer.js'
   )
   // Wobble Modules
   files.push(
@@ -56,10 +57,13 @@
     'js/modules/wobble.topic.js',
     'js/modules/wobble.topiclist.js',
 
-    'js/views/jquery.wobble.js',
-    'js/views/jquery.wobble.topiclist.js',
-    'js/views/jquery.wobble.topic.js',
-    'js/views/jquery.wobble.contacts.js',
+    // Views
+    'js/views/jQueryTopicsView.js',
+    'js/views/jQueryTopicView.js',
+    'js/views/JQueryContactsView.js',
+    'js/views/jQueryContactsDetailDisplay.js',
+    'js/views/ListContactsChooserDisplay.js',
+//    'js/views/SimpleContactsChooserDisplay.js',
 
     'js/login/LoginModel.js',
     'js/login/AbstractLoginView.js',
