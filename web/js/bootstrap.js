@@ -41,13 +41,13 @@
 
   // Wobble Core
   files.push(
-    'js/core/cache.js',
+    'js/core/localcache.js',
+    'js/core/resize_observer.js',
     'js/core/EventBUS.js',
     'js/core/JSONRPC.js',
     'js/core/WobbleAPI.js',
     'js/core/NotificationHandler.js',
-    'js/core/BasicClient.js',
-		'js/core/resize_observer.js'
+    'js/core/BasicClient.js'
   )
   // Wobble Modules
   files.push(
