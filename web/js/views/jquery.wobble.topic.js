@@ -90,7 +90,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 };
 
 jQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
-    messages.forEach(function(msgObj) {
+    messages.forEach($.proxy(function(msgObj) {
         var msg = msgObj.message;
 				var message_id = msgObj.message_id;
         var str;
@@ -117,7 +117,7 @@ jQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
             }).appendTo(con);
             con.appendTo(this.$messages);
         }
-    });
+    }, this));
 };
 
 jQueryTopicView.prototype._renderReader= function(user) {
