@@ -91,20 +91,23 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 
 jQueryTopicView.prototype.renderMessages = function(messages) {
     for (var i = 0; i < messages.length; i++) {
-        var msg = messages[i];
+        var msg = messages[i].message;
+				var message_id = messages[i].message_id;
         var str;
         
         if (msg.type == 'user_added') {
             str = msg.user_name + ' was added.';
         } else if (msg.type == 'user_removed') {
             str = msg.user_name + ' was removed';
-        }
+        } else {
+					console.log('Unknown message type: ' + msg.type);
+				}
         
         if (str) {
             var con = $('<div></div>');
             $('<div></div>').html(str).appendTo(con);
             $('<button>Remove</button').click(function() {
-                alert('topic_remove_message ' + msg.message_id);
+                alert('topic_remove_message ' + message_id);
             });
             
             con.appendTo(this.$messages);
