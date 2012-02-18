@@ -1,8 +1,9 @@
 
 function WobbleMobileClient() {
 	
-	BUS.on('topic.selected', function() {
+	BUS.on('topic.selected', function(topicId) {
 		this.onNavigation('navTopic');
+		window.location.hash = topicId;
 	}, this);
 
 	// Append the Mobile.css to the html tree
@@ -93,7 +94,8 @@ WobbleMobileClient.prototype.doLayout = function() {
 
 WobbleMobileClient.prototype.onNavigation = function(targetId) {
 	$(">*", this.$widgets).detach(); // Detach() does not destroy the event handlers
-
+	
+	window.location.hash = "";
 	if ( targetId == 'navContacts') {
 		// Show the ContactsList
 		this.contactsView.e.appendTo(this.$widgets);
