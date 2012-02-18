@@ -106,8 +106,8 @@ jQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
         if (str) {
             var con = $('<div></div>');
             $('<div></div>').html(str).appendTo(con);
-            $('<button>Remove</button').click(function() {
-                console.log('topic_remove_message ' + message_id);
+            $('<button></button').text('Remove').click(function() {
+                console.log('topic_remove_message ' + topic_id + ', ' + message_id);
 								API.topic_remove_message(topic_id, message_id, function(err, result) {
 									if (!err) {
 										con.remove();

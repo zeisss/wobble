@@ -165,6 +165,9 @@ WobbleAPI.prototype.topic_remove_user = function(topicId, contactId, callback) {
 WobbleAPI.prototype.topic_set_archived = function topic_set_archived(topicId, archived, callback) {
 	this.doRPC('topic_set_archived', {topic_id: topicId, archived: archived}, callback);
 };
+WobbleAPI.prototype.topic_remove_message = function topic_remove_message(topicId, messageId, callback) {
+	this.doRPC('topic_remove_message', {topic_id: topicId, message_id: messageId}, callback);
+}
 
 WobbleAPI.prototype.post_change_read = function(topicId, postId, readStatus, callback) {
 	this.doRPC('post_read', {topic_id: topicId, post_id: postId, read: readStatus}, callback);	
