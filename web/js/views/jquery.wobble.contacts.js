@@ -51,7 +51,7 @@ function JQueryContactsView() {
 	// On a window.resize event wait for the transformations to finish (should be done in 300ms) and recalc height
 	function on_window_resize() {
 		var t = this;
-		window.setTimeout( function() {
+		window.setTimeout(function() {
 			t.onResize();
 		}, 350);
 	}
@@ -77,7 +77,7 @@ JQueryContactsView.prototype.fireWhoamiClicked = function() {
       'actions': [
         {title: 'Change my name', callback: function() {
             var newName = window.prompt("What should your new name be?");
-    		if ( newName !== null ) {
+    		if (newName !== null) {
     			that.onNameChange(newName);
     		}
         }},
@@ -164,7 +164,7 @@ ListContactsChooserDisplay.prototype.render = function() {
 		'title': this.title
 	}));
 	$contactList = $('#contactschooser_list', this.e);
-	if ( this.contacts.length == 0 ) {
+	if (this.contacts.length == 0) {
 		$contactList.append('<li>No contacts</li>');
 	} else {
 		jQuery.each(this.contacts, $.proxy(function(i, contact) {
@@ -253,7 +253,7 @@ ListContactsChooserDisplay.prototype.close = function() {
 };
 ListContactsChooserDisplay.prototype.setSelectedContact = function(contact) {
 	$('.active', this.e).removeClass('active');
-	if ( contact != null ) {
+	if (contact != null) {
 		$('#contactchooser-contact-' + contact.id, this.e).addClass('active');
 	}
 
@@ -267,7 +267,7 @@ ListContactsChooserDisplay.prototype.navigateNextContact = function() {
 		element = element.next();
 	} while (element.css('display') == 'none');
 
-	if ( element ) {
+	if (element) {
 		this.setSelectedContact(element.data('contact'));
 	}
 };
@@ -279,7 +279,7 @@ ListContactsChooserDisplay.prototype.navigatePreviousContact = function() {
 		element = element.prev();
 	} while (element.css('display') == 'none');
 
-	if ( element ) {
+	if (element) {
 		this.setSelectedContact(element.data('contact'));
 	}
 };
@@ -293,24 +293,24 @@ ListContactsChooserDisplay.prototype.refreshFilteredContactList = function(filte
 	for (var i = 0; i < this.contacts.length; i++) {
 		var contact = this.contacts[i];
 		// Show all elements
-		if (!(contact.name.toLowerCase().indexOf(filterText) >= 0 || contact.email.indexOf(filterText) >= 0 )) {
+		if (!(contact.name.toLowerCase().indexOf(filterText) >= 0 || contact.email.indexOf(filterText) >= 0)) {
 			// text not found in name or email
 			var $contact = $("#contactchooser-contact-"+ contact.id);
 			$contact.css('display', 'none');
 
 			// If the selectedContact is now hidden, set selectedContact to null
-			if ( contact == this.selectedContact) {
+			if (contact == this.selectedContact) {
 				this.setSelectedContact(null);
 			}
 		} else {
-			if ( firstContact == null ) {
+			if (firstContact == null) {
 				firstContact = contact;
 			}
 		}	
 	};
 
 	
-	if ( this.selectedContact == null && firstContact != null) {
+	if (this.selectedContact == null && firstContact != null) {
 		// No contact selected, mark the first visible one
 		this.setSelectedContact(firstContact);
 	}
@@ -327,11 +327,11 @@ SimpleContactsChooserDisplay.prototype.show = function(title, contacts) {
 	var that = this;
 	window.setTimeout(function() { // Do this async
 		var contactNameOrEmail = window.prompt(title);
-		if ( contactNameOrEmail != null ) {
+		if (contactNameOrEmail != null) {
 			var matchingContacts = jQuery.grep(contacts, function(contact, index) {
 				return contact.name == contactNameOrEmail || contact.email == contactNameOrEmail;
 			});
-			if (matchingContacts.length > 0 ) {
+			if (matchingContacts.length > 0) {
 				that.onAddContact(matchingContacts[0]);
 				return;
 			}

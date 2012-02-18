@@ -1,8 +1,9 @@
 
 function WobbleMobileClient() {
 	
-	BUS.on('topic.selected', function() {
+	BUS.on('topic.selected', function(topicId) {
 		this.onNavigation('navTopic');
+		window.location.hash = topicId;
 	}, this);
 
 	// Append the Mobile.css to the html tree
@@ -19,7 +20,7 @@ function WobbleMobileClient() {
 
 	$('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />').appendTo('head');
 }
-WobbleMobileClient.prototype = new BasicApplication;
+WobbleMobileClient.prototype = new BasicClient;
 
 WobbleMobileClient.prototype.init = function(user) {
 	if (user != null) {
@@ -68,7 +69,7 @@ WobbleMobileClient.prototype.initApp = function() {
 	this.contactsPresenter = new ContactsPresenter(this.contactsView, this.contactsModel);
 	this.contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(20, 20), this.contactsModel, 'contact.clicked');
 	this.topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(20, 20), this.contactsModel, 'topic.user.clicked');
-	this.topicsPresenter = new TopicsPresenter(this.topicListView);
+	this.topicsPresenter = new TopicListPresenter(this.topicListView, new TopicListModel(window.localcache.getCache()));
 	this.topicPresenter = new TopicPresenter(this.topicView, new TopicModel());	
 	this.contactsChooserPresenter = new ContactsChooserPresenter(
 			new ListContactsChooserDisplay(), 
@@ -93,7 +94,8 @@ WobbleMobileClient.prototype.doLayout = function() {
 
 WobbleMobileClient.prototype.onNavigation = function(targetId) {
 	$(">*", this.$widgets).detach(); // Detach() does not destroy the event handlers
-
+	
+	window.location.hash = "";
 	if ( targetId == 'navContacts') {
 		// Show the ContactsList
 		this.contactsView.e.appendTo(this.$widgets);

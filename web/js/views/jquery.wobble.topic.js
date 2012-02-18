@@ -4,11 +4,13 @@
 var userCache = {}; // id => {id, name, email, img}
 function jQueryTopicView() {	// The UI handler for the single topic
 	this.editingPostId = null;
+	this.currentTopic = null;
 	
 	this.e = $('<div></div>').addClass('widget').attr('id', 'topic_wrapper').appendTo('#widgets');
 	
 	this.jTopicReaders = $('<div></div>').attr('id', 'topic_readers').appendTo(this.e);
 	this.jTopicActions = $('<div></div>').attr('id', 'topic_actions').appendTo(this.e);
+	this.$messages = $('<div></div>').attr('id', 'topic_messages').appendTo(this.e);
 	this.jTopicPosts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
 	
 	this._renderTopicActions(false);	
@@ -16,7 +18,7 @@ function jQueryTopicView() {	// The UI handler for the single topic
 	// On a window.resize event wait for the transformations to finish (should be done in 300ms) and recalc height
 	BUS.on('window.resize', function() {
 		var t = this;
-		window.setTimeout( function() {
+		window.setTimeout(function() {
 			t.onResize();
 		}, 350);
 	}, this);
@@ -34,8 +36,10 @@ jQueryTopicView.prototype.onResize = function() {
 };
 jQueryTopicView.prototype.clear = function() {
 	this.editingPostId = null;
+	this.currentTopic = null;
 	this.jTopicPosts.empty();
 	this.jTopicReaders.empty();
+	this.jTopicActions.empty();
 };
 
 jQueryTopicView.prototype.setEnabled = function(enabled) {
@@ -54,6 +58,8 @@ jQueryTopicView.prototype.setLoadingState = function() {
 
 jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 	$("#topic_posts .loading").detach();
+
+	this.currentTopic = topicDetails;
 	
 	this._renderTopicActions($(".editing").length > 0);
 	
@@ -73,12 +79,47 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 			this._renderReader(user);
 		}
 		
+		this.renderMessages(topicDetails.id, topicDetails.messages);
+		
 		this.onResize();
 
 		this.renderPosts(topicDetails);
 	} else {
 		this.setEnabled(false);
 	}	
+};
+
+jQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
+		this.$messages.empty();
+    messages.forEach($.proxy(function(msgObj) {
+        var msg = msgObj.message;
+				var message_id = msgObj.message_id;
+        var str;
+        
+        if (msg.type == 'user_added') {
+            str = msg.user_name + ' was added.';
+        } else if (msg.type == 'user_removed') {
+            str = msg.user_name + ' was removed';
+        } else {
+					console.log('Unknown message type: ' + msg.type);
+				}
+        
+        if (str) {
+            var con = $('<div></div>');
+            con.addClass('message');
+            $('<div></div>').html(str).appendTo(con);
+            $('<button></button').text('Remove').click(function() {
+                console.log('topic_remove_message ' + topic_id + ', ' + message_id);
+								API.topic_remove_message(topic_id, message_id, function(err, result) {
+									if (!err) {
+										con.remove();
+										con = null;
+									}
+								});
+            }).appendTo(con);
+            con.appendTo(this.$messages);
+        }
+    }, this));
 };
 
 jQueryTopicView.prototype._renderReader= function(user) {
@@ -111,7 +152,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
 	var that = this;
 	
 	var jPostWrapper = $("#" + elementPostId);
-	if (jPostWrapper.length == 0 ) {
+	if (jPostWrapper.length == 0) {
 		// Post does not exist yet in the UI
 		jPostWrapper = $(
 			"<div class='post_wrapper'>" + 
@@ -130,7 +171,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
 			// This is achieved by putting the first reply in a separate div below the intended replies
 			var parentPostId = '#post-' + post.parent;
 			var ePostFirstReply = $(parentPostId + ">.post_first_reply");
-			if ( ePostFirstReply.length == 0 ) {
+			if (ePostFirstReply.length == 0) {
 				// No first post-element found, so lets create
 				ePostFirstReply = $("<div class='post_first_reply'></div>").appendTo($(parentPostId));
 				jPostWrapper.appendTo(ePostFirstReply);
@@ -164,10 +205,10 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
 		this._renderPostUsers(post, ePostUsers);
 		
 		var ePostContent = $(">.post>.content", jPostWrapper);
-		if (post.id != this.editingPostId ) { // Leave the content untouched, if the user is editing it
+		if (post.id != this.editingPostId) { // Leave the content untouched, if the user is editing it
 			ePostContent.html(post.content);
 		}
-		if ( post.unread == 1) {
+		if (post.unread == 1) {
 			$("<div></div>").addClass('unread').appendTo($(">.post", jPostWrapper));
 		} else {
 			$('>.post>.unread', jPostWrapper).detach();
@@ -194,17 +235,17 @@ jQueryTopicView.prototype._renderTime = function(timestamp) {
 		hours = "0" + hours;
 	}
 	var minutes = createdAt.getMinutes();
-	if ( minutes < 10) {
+	if (minutes < 10) {
 		minutes = "0" + minutes;
 	}
 	var time = hours + ":" + minutes;
 
 	var month = createdAt.getMonth() + 1;
-	if ( month < 0 ){
+	if (month < 0){
 		month = "0" + month;
 	}
 	
-	if ( createdAt.getYear() == now.getYear() &&
+	if (createdAt.getYear() == now.getYear() &&
 		 createdAt.getMonth() == now.getMonth() &&
 		 createdAt.getDate() == now.getDate()) { // This post is from today, only show the time
 		return time;
@@ -220,7 +261,7 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 	postElement.empty();
 	
 	var minHeight = 16;
-	if ( post.id != ROOT_ID) { // No user icons for the root
+	if (post.id != ROOT_ID) { // No user icons for the root
 		var size = post.users.length == 1 ? 25 : 21;
 		for (var i = 0; i < post.users.length; i++) {
 			var postUserId = post.users[i];
@@ -236,7 +277,7 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 
 	// Part 2: Render the author names
 	function name(index) {
-		if ( userCache[post.users[index]].id == API.user_id()) {
+		if (userCache[post.users[index]].id == API.user_id()) {
 			return "Me";
 		} else {
 			return userCache[post.users[index]].name;
@@ -244,13 +285,13 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 	};
 	var apiUserId = API.user_id();
 	var authorLine = null;
-	if ( post.users.length == 1 && (post.id != ROOT_ID || post.users[0] != apiUserId) /* no authorline for ourself */) {
+	if (post.users.length == 1 && (post.id != ROOT_ID || post.users[0] != apiUserId) /* no authorline for ourself */) {
 		authorLine = name(0);
-	} else if ( post.users.length == 2) {
+	} else if (post.users.length == 2) {
 		authorLine = name(0) + " and " + name(1);
-	} else if ( post.users.length == 3) {
+	} else if (post.users.length == 3) {
 		authorLine = name(0) + ", " + name(1) + " and " + name(2);
-	} else if ( post.users.length >= 4) {
+	} else if (post.users.length >= 4) {
 		authorLine = name(0) + ", " + name(1) + " and " + (post.users.length-2) + " more";
 	} else {
 		// NO authorlines (also no icons) => No min height
@@ -304,7 +345,7 @@ jQueryTopicView.prototype.closeEditor = function() {
 		jediting.attr('contenteditable', 'false').removeClass('editing');
 		
 		var post = jediting.parentsUntil('.post_wrapper').parent().data('post');
-		if ( post ) {
+		if (post) {
 			var jpost = $("#post-" + post.id + ">.post");
 			this._addDefaultButtons($(".buttons", jpost).empty(), post);
 			
@@ -336,7 +377,7 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 			event.stopImmediatePropagation();
 			that.onReplyPost(post);
 		}));
-		if ( post.id != ROOT_ID ) { // You cannot delete the root
+		if (post.id != ROOT_ID) { // You cannot delete the root
 			$("<button>Delete</button>").appendTo(jbuttons).click(function() {
 				if (window.confirm('Are you sure to delete this post?')) {
 					that.onDeletePost(post);
@@ -345,7 +386,7 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 		}
 	}
 	
-	if ( post.locked ) {
+	if (post.locked) {
 		$("button", jbuttons).attr('disabled', 'disabled');
 	}
 	return jbuttons;
@@ -384,6 +425,12 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 			if (color!=null)
 				document.execCommand('forecolor', false, color ||'black'); 
 		});
+		$('<button class="icon">&gt;&gt;</button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('indent', false); 
+		});
+		$('<button class="icon">&lt;&lt;</button>').appendTo(this.jTopicActions).click(function() {
+			document.execCommand('outdent', false); 
+		});
 		/* Not supported by IE8
 		$('<button class="icon borderright">Hi</button>').appendTo(this.jTopicActions).click(function() {
 			var color = window.prompt('Color? (#FF0000 or red)');
@@ -401,13 +448,13 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 		});
 		$('<button class="icon imgicon">img</button>').appendTo(this.jTopicActions).click(function() {
 			var url = window.prompt("URL?");
-			if ( url != null ) {
+			if (url != null) {
 				document.execCommand('insertimage', false, url); // $(".editing")[0].execCommand(
 			}
 		});
 		$('<button class="icon urlicon"></button>').appendTo(this.jTopicActions).click(function() {
 			var url = window.prompt("URL?");
-			if ( url != null ) {
+			if (url != null) {
 				document.execCommand('createLink', false, url); // $(".editing")[0].execCommand(
 			}
 		});
@@ -421,5 +468,20 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 		$('<button id="topic_invite_user">Invite user</button>').appendTo(this.jTopicActions).click(function() {
 			that.onInviteUserAction();
 		});
+
+		if (that.currentTopic) {
+			if (that.currentTopic.archived == 1) {
+				var bMoveToInbox = $('<button id="topic_move_to_inbox">Move to inbox</button>').appendTo(this.jTopicActions).click(function() {
+					that.onMoveToInbox();
+				});
+			}
+
+			if (that.currentTopic.archived == 0) {
+				var bMoveToArchive = $('<button id="topic_move_to_archive">Move to archive</button>').appendTo(this.jTopicActions).click(function() {
+					that.onMoveToArchive();
+				});
+			}
+
+		}
 	}
 };

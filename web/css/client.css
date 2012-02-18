@@ -5,6 +5,8 @@ Lighter Blue:  #C9E2FC
 Green (Active Item): #789E35
 	+ Border: #CED697;
 Lighter Green: #9b0
+
+Notification Yellow: #FC0
 */
 
 #widgets {
@@ -406,6 +408,20 @@ Lighter Green: #9b0
 #topic_posts .post .post {
 	padding-left:3px;
 }
+
+#topic_messages .message {
+	background-color: #FC0;
+	border-bottom: 1px black solid;
+	height: 20px;
+	padding: 5px;
+	position:relative;
+}
+#topic_messages .message button {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+}
+
 /* ------------------------------------------------------------------------- */
 .usericon {
 	display:inline;

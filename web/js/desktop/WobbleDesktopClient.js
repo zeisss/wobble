@@ -9,7 +9,7 @@ function WobbleDesktopClient() {
 	});
 	
 };
-WobbleDesktopClient.prototype = new BasicApplication;
+WobbleDesktopClient.prototype = new BasicClient;
 WobbleDesktopClient.prototype.init = function(user) {
 	if (user != null) {
 		this.initApp();
@@ -51,7 +51,7 @@ WobbleDesktopClient.prototype.initApp = function() {
 			this.contactsModel
 	);
 	this.contactsPresenter = new ContactsPresenter(new JQueryContactsView(), this.contactsModel);
-	this.topicsPresenter = new TopicsPresenter(new jQueryTopicsView());
+	this.topicsPresenter = new TopicListPresenter(new jQueryTopicsView(), window.localcache.getCache());
 	
 	this.contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(100, 100), this.contactsModel, 'contact.clicked');
 	this.topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(600, 100), this.contactsModel, 'topic.user.clicked');

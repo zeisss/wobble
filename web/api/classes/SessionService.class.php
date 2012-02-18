@@ -13,7 +13,7 @@
 
 		}
 		public static function touch($session_id, $user_id, $timestamp = FALSE) {
-			if ( $timestamp === FALSE) {
+			if ($timestamp === FALSE) {
 				$timestamp = time();
 			}
 			$pdo = ctx_getpdo();
