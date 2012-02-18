@@ -90,9 +90,9 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 };
 
 jQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
-    for (var i = 0; i < messages.length; i++) {
-        var msg = messages[i].message;
-				var message_id = messages[i].message_id;
+    messages.forEach(function(msgObj) {
+        var msg = msgObj.message;
+				var message_id = msgObj.message_id;
         var str;
         
         if (msg.type == 'user_added') {
@@ -117,7 +117,7 @@ jQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
             }).appendTo(con);
             con.appendTo(this.$messages);
         }
-    }
+    });
 };
 
 jQueryTopicView.prototype._renderReader= function(user) {
