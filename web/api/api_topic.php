@@ -428,7 +428,7 @@
         
         if (_topic_has_access($pdo, $topic_id)) {
             
-            TopicMessagesRepository::deleteMessage($topic_id, $user_id);
+            TopicMessagesRepository::deleteMessage($topic_id, $user_id, $message_id);
             
             return true;
         }
