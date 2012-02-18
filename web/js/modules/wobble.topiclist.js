@@ -39,12 +39,12 @@ function TopicListPresenter (view, cache) {
   this.view.onCreateNewTopic = function() {
     that.createNewTopic();
   };
-  this.view.onShowArchived = $.proxy(function() {
-    this.setShowArchived(1);
-  }, this);
-  this.view.onShowInbox = $.proxy(function() {
+  this.view.onShowArchived = function() {
+    that.setShowArchived(1);
+  };
+  this.view.onShowInbox = function() {
     that.setShowArchived(0);
-  }, this);
+  };
 
   // BUS Events
   BUS.on('topic.changed', function(_data) {
@@ -64,22 +64,23 @@ function TopicListPresenter (view, cache) {
 };
 /** Called by the view when a new topic should be created */
 TopicListPresenter.prototype.refreshTopicsList = function() {
-  API.list_topics(this.show_archived, $.proxy(function(err, list) {
+	var that = this;
+  API.list_topics(this.show_archived, function(err, list) {
     if (!err) {
-      this.cache.set('topicslistpresenter.topics', list, this.cacheTimeout);
+      that.cache.set('topicslistpresenter.topics', list, that.cacheTimeout);
 
-      this.view.clear();
-      this.topics = list;
-      this.view.renderTopicList(list);
+      that.view.clear();
+      that.topics = list;
+      that.view.renderTopicList(list);
 
       for (var i = 0; i < list.length; i++) {
         var data = list[i];
-        if (this.selectedTopicId && this.selectedTopicId == data.id) {
-          this.view.setActiveTopic(data);
+        if (that.selectedTopicId && that.selectedTopicId == data.id) {
+          that.view.setActiveTopic(data);
         }
       }
     }
-  }, this));
+  });
 };
 
 TopicListPresenter.prototype.setShowArchived = function setShowArchived(show_archived) {

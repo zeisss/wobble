@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * 
+ * Implements the ContactsDetailDisplay as a dialog which flies over all other elements (thank to css z-index).
  */
 function jQueryContactsDetailDisplay(x,y) {
   this.e = $('<div class="dialog contactdetail"></div>').appendTo($('body')).css('display', 'none').css('left', x).css('top', y);
