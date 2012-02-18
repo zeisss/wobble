@@ -428,6 +428,12 @@
         if (_topic_has_access($pdo, $topic_id)) {
             
             TopicMessagesRepository::deleteMessage($topic_id, $user_id, $message_id);
+
+            # Notify ourself (e.g. other sessions)
+            NotificationRepository::push($user_id, array(
+              'type' => 'topic_changed',
+              'topic_id' => $topic_id
+            ));
             
             return true;
         }
