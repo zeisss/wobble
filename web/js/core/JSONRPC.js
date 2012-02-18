@@ -83,7 +83,7 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 			}
 		}
 	};
-	if ( callback ) {
+	if (callback) {
 		ajaxSettings.error = function(jqXHR, textStatus, errorThrown) {
 			if(that.aborted)
 				return;

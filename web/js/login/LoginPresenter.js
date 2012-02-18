@@ -11,7 +11,7 @@ function LoginPresenter(display, model, callback) {
 		model.doLogin(fields.email, fields.password, function(err, result) {
 			display.setEnabled(true);
 
-			if ( err ) {
+			if (err) {
 				alert(err.message);
 				return true;
 			} else {
@@ -24,7 +24,7 @@ function LoginPresenter(display, model, callback) {
 		display.setEnabled(false);
 		model.doRegister(fields.email, fields.password, function(err, result) {
 			display.setEnabled(true);
-			if ( err ) {
+			if (err) {
 				alert(err.message);
 				return true;
 			} else {
