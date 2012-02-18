@@ -134,7 +134,6 @@ function TopicPresenter(view, model) {
 			'actions': actions
 		});
 	};
-
 	view.onPostClicked = function(post) {
 		// remove unread class on click + mark read on server side
 		if (post.unread == 1) {
@@ -155,10 +154,16 @@ function TopicPresenter(view, model) {
 			}); 
 		}
 	};
-	
 	view.onStartPostEdit = function(post) {
-		model.addUserToPost(post, API.user());
-		view.renderPost(model.getTopic(), post);
+		// Create the lock
+		API.post_change_lock(model.getTopic().id, post.id, 1, function(err, success) {
+			if (err || !success) {
+				alert('Failed to create lock for post. Try again later or refresh your browser.');
+			} else {
+				model.addUserToPost(post, API.user());
+				view.renderPost(model.getTopic(), post);
+			}
+		});
 	};
 	view.onStopPostEdit = function(post, content) {
 		post.locked = true; // Lock post until saved
@@ -173,8 +178,6 @@ function TopicPresenter(view, model) {
 			post.locked = false;
 			view.renderPost(model.getTopic(), post);
 		});
-		
-		
 	};
 	
 	view.onReplyPost = function(post) {

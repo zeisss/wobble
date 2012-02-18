@@ -12,7 +12,7 @@
 	require_once dirname(__FILE__).'/classes/SecurityService.class.php';
 	require_once dirname(__FILE__).'/classes/SessionService.class.php';
 	require_once dirname(__FILE__).'/classes/ValidationService.class.php';
-    require_once dirname(__FILE__).'/classes/TopicMessagesRepository.class.php';
+	require_once dirname(__FILE__).'/classes/TopicMessagesRepository.class.php';
 	require_once dirname(__FILE__).'/classes/UserArchivedTopicsRepository.class.php';
 	require_once dirname(__FILE__).'/classes/InputSanitizer.class.php';
 
@@ -33,7 +33,9 @@
 		array('file' => 'api_topic.php', 'method' => 'post_create'),
 		array('file' => 'api_topic.php', 'method' => 'post_edit'),
 		array('file' => 'api_topic.php', 'method' => 'post_delete'),
-		array('file' => 'api_topic.php', 'method' => 'post_read'),
+		array('file' => 'api_topic.php', 'method' => 'post_change_read'),
+		array('file' => 'api_topic.php', 'method' => 'post_change_lock'),
+		array('file' => 'api_topic.php', 'method' => 'post_change_read', 'name' => 'post_read'),
 
 		// User / Session
 		array('file' => 'api_user.php', 'method' => 'user_get'),

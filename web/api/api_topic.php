@@ -19,10 +19,11 @@
 	 *
 	 * The resulting object contains two lists of users: Readers and Writers.
 	 * The readers are the users that currently belong to a topic. Any user can modify this list.
-	 * The writers are all users that have ever written anything into a topic. This is intended as a help for the UI to be able to show the user info for posts of users, that no longer belong to a post.
+	 * The writers are all users that have ever written anything into a topic. This is intended as a help 
+	 * for the UI to be able to show the user info for posts of users, that no longer belong to a post.
 	 *
-	 * input = {'id': TopicId}
-	 * result = {'id':TopicId, 'readers': [User], 'writers': [User], 'posts': [Post]} 
+	 * Input = {'id': TopicId}
+	 * Result = {'id':TopicId, 'readers': [User], 'writers': [User], 'posts': [Post]} 
 	 *
 	 * User = {'id': UserId, 'name': string(), 'online': int(), 
 	 *         'email': string(), 'img': string()}
@@ -66,6 +67,11 @@
 			$posts[$i]['revision_no'] = intval($posts[$i]['revision_no']);
 			$posts[$i]['deleted'] = intval($posts[$i]['deleted']);
 			$posts[$i]['unread'] = intval($posts[$i]['unread']);
+
+			$posts[$i]['locked'] = TopicRepository::getPostLockStatus($topic_id, $posts[$i]['id']);
+			if ($posts[$i]['locked']['user_id'] == $self_user_id) {
+			  $posts[$i]['locked'] = NULL;
+			}
 
 			# Subobject
 			$posts[$i]['users'] = array();
@@ -233,7 +239,9 @@
 
 		if ( _topic_has_access($pdo, $topic_id) ) {
 			TopicRepository::createPost($topic_id, $post_id, $self_user_id, $parent_post_id);
-			
+
+			TopicRepository::setPostLockStatus($topic_id, $post_id, 1, $self_user_id);
+
 			foreach(TopicRepository::getReaders($topic_id) as $reader) {
 				NotificationRepository::push($reader['id'], array(
 					'type' => 'topic_changed',
@@ -244,10 +252,11 @@
 				UserArchivedTopicsRepository::set_archived($user['id'], $topic_id, 0);
 			}
 
+			# Mark unread for author
 			TopicRepository::setPostReadStatus(
 				$self_user_id, $topic_id, $post_id, 1
 			);
-			
+
 			return TRUE;
 		}
 		else {
@@ -284,7 +293,7 @@
 		$pdo = ctx_getpdo();
 		
 		if ( _topic_has_access($pdo, $topic_id) ) {
-			$stmt = $pdo->prepare('SELECT revision_no FROM posts WHERE topic_id = ? AND post_id = ?');
+			$stmt = $pdo->prepare('SELECT revision_no, content FROM posts WHERE topic_id = ? AND post_id = ?');
 			$stmt->execute(array($topic_id, $post_id));
 			$posts = $stmt->fetchAll();
 
@@ -292,32 +301,52 @@
 				# Post has already been deleted. Toooo laggy? No idea...
 				return NULL;
 			}
-			
+
+			# RevisionNo must match (to prevent accidental overwrites)
 			if ($posts[0]['revision_no'] != $revision) {
 				throw new Exception('RevisionNo is not correct. Somebody else changed the post already. (Value: ' . $posts[0]['revision_no'] . ')');
 			}
-			
+
+			# Check if there is a lock
+			$lock = TopicRepository::getPostLockStatus($topic_id, $post_id);
+			if ($lock !== NULL && $lock["user_id"] !== $self_user_id) {
+				throw new Exception("This post is locked. You don't own the lock on this post!");
+			}
+
 			# Sanitize input
 			$content = InputSanitizer::sanitizePostContent($content);
-			
-			
 			
 			$pdo->prepare('UPDATE posts SET content = ?, revision_no = revision_no + 1, last_touch = unix_timestamp() WHERE post_id = ? AND topic_id = ?')->execute(array($content, $post_id, $topic_id));
 			$pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id) VALUES (?,?,?)')->execute(array($topic_id, $post_id, $self_user_id));
 
-			foreach(TopicRepository::getReaders($topic_id) as $user) {
-				NotificationRepository::push($user['id'], array(
+			TopicRepository::setPostLockStatus(
+				$topic_id, $post_id, 0, $self_user_id # Clear the lock
+			);
+
+			if ( $posts[0]['content'] !== $content) {
+				# Mark only as unread, if there were real changes
+				TopicRepository::setPostReadStatus(
+					$self_user_id, $topic_id, $post_id, 1 # Mark post as read for requesting user
+				);
+			}
+
+			foreach(TopicRepository::getReaders($topic_id) as $reader) {
+				# Notify all readers about the edit
+				NotificationRepository::push($reader['id'], array(
 					'type' => 'post_changed',
 					'topic_id' => $topic_id,
 					'post_id' => $post_id
 				));
 
-				TopicRepository::setPostReadStatus(
-					$user['id'], $topic_id, $post_id, 0
-				);
+				# If the content actually changed, mark the post as unread.
+				if ($posts[0]['content'] !== $content) {
+					TopicRepository::setPostReadStatus(
+						$reader['id'], $topic_id, $post_id, 0
+					);
+				}
 
 				# Move topic back to inbox, if changed
-				UserArchivedTopicsRepository::set_archived($user['id'], $topic_id, 0);
+				UserArchivedTopicsRepository::set_archived($reader['id'], $topic_id, 0);
 			}
 
 			TopicRepository::setPostReadStatus(
@@ -347,22 +376,24 @@
 		$self_user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
 		$post_id = $params['post_id'];
-		
+
 		ValidationService::validate_not_empty($self_user_id);
 		ValidationService::validate_not_empty($topic_id);
 		ValidationService::validate_not_empty($post_id);
 		ValidationService::check($post_id != '1', 'Root posts cannot be deleted!');
-		
+
 		$pdo = ctx_getpdo();
-		
+
 		if ( _topic_has_access($pdo, $topic_id) ) {
 			$stmt = $pdo->prepare('DELETE FROM post_editors WHERE topic_id = ? AND post_id = ?');
 			$stmt->execute(array($topic_id, $post_id));
-			
+
 			$pdo->prepare('UPDATE posts SET deleted = 1, content = NULL WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
 
 			$pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
-			
+
+			TopicRepository::setPostLockStatus($topic_id, $post_id, 0, $self_user_id);
+
 			TopicRepository::deletePostsIfNoChilds($topic_id, $post_id); # Traverses upwards and deletes all posts, if no child exist
 
 			foreach(TopicRepository::getReaders($topic_id) as $user) {
@@ -380,7 +411,7 @@
 			throw new Exception('Illegal Access!');
 		}
 	}
-	
+
 	/**
 	 * Sets the (un)read status of a post.
 	 *
@@ -389,7 +420,7 @@
 	 * input = {'topic_id': TopicId, 'post_id': PostId, 'read': 0|1}
 	 * result = true
 	 */
-	function post_read($params) {
+	function post_change_read($params) {
 		$user_id = ctx_getuserid();
 		$topic_id = $params['topic_id'];
 		$post_id = $params['post_id'];
@@ -408,14 +439,53 @@
 		}
 		return TRUE;
 	}
-    
-    /**
-     * Removes the specified message from the given topic.
-     *
-     * input = {'topic_id': TopicId, 'message_id': MessageId}
-     * output = true
-     */
-    function topic_remove_message($params) {
+
+	/**
+	 * Creates or deletes a lock owned by the current user for the given post. Returns true
+	 * if the lock status was changed, false if it remains as before (no change).
+	 *
+	 * Input = {'topic_id': TopicId, 'post_id': PostId, 'user_id': UserId, 'lock': 1|0}
+	 *
+	 * Result = true|false
+   */
+	function post_change_lock($params) {
+		$user_id = ctx_getuserid();
+		$topic_id = $params['topic_id'];
+		$post_id = $params['post_id'];
+		$lock = $params['lock'];
+
+		ValidationService::validate_not_empty($user_id);
+		ValidationService::validate_not_empty($topic_id);
+		ValidationService::validate_not_empty($post_id);
+		ValidationService::validate_not_empty($lock);
+
+		$current_lock = TopicRepository::getPostLockStatus($topic_id, $post_id);
+
+		# Allow the lock to be changed, when there is no lock or the lock is owner by the current user
+		if ($current_lock == NULL || $current_lock['user_id'] === $user_id) {
+			TopicRepository::setPostLockStatus($topic_id, $post_id, $lock, $user_id);
+
+			# Notify other readers, that this post is locked now
+			foreach(TopicRepository::getReaders($topic_id) as $user) {
+				NotificationRepository::push($user['id'], array(
+					'type' => 'post_changed',
+					'topic_id' => $topic_id,
+					'post_id' => $post_id,
+					'source' => 'post_change_lock'
+				));
+			}
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+  /**
+   * Removes the specified message from the given topic.
+   *
+   * input = {'topic_id': TopicId, 'message_id': MessageId}
+   * output = true
+   */
+  function topic_remove_message($params) {
         $user_id = ctx_getuserid();
         $topic_id = $params['topic_id'];
         $message_id = $params['message_id'];
@@ -439,7 +509,7 @@
         }
 
         return false;
-    }
+  }
 
 	/**
 	 * Marks the given topic as archived or not.
@@ -463,4 +533,3 @@
 			'topic_id' => $topic_id
 		));
 	}
-

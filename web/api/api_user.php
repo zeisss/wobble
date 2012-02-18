@@ -5,7 +5,7 @@
  */
 function user_signout($params) {
 	$self_user_id = ctx_getuserid();
-	
+
 	SessionService::signoff(session_id()); # mark offline in database
 	
 	foreach(user_get_contacts() AS $user) {

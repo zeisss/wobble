@@ -61,6 +61,32 @@ class TopicRepository {
 		}
 		$pdo->prepare($sql)->execute(array($topic_id, $post_id, $user_id));
 	}
+	function setPostLockStatus($topic_id, $post_id, $lock_status, $user_id) {
+		$pdo = ctx_getpdo();
+
+		if ($lock_status == 1) { # if read, create entry
+			$sql = 'REPLACE post_locks (topic_id, post_id, user_id, created_at) VALUES (?,?,?, unix_timestamp())';
+			$pdo->prepare($sql)->execute(array($topic_id, $post_id, $user_id));
+		} else {
+			$sql = 'DELETE FROM post_locks WHERE topic_id = ? AND post_id = ?';
+			$pdo->prepare($sql)->execute(array($topic_id, $post_id));
+		}
+	}
+	function getPostLockStatus($topic_id, $post_id) {
+		$pdo = ctx_getpdo();
+		$sql = 'SELECT user_id, created_at FROM post_locks WHERE topic_id = ? AND post_id = ? AND created_at > unix_timestamp() - (5 * 60)';
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute(array($topic_id, $post_id));
+		$result = $stmt->fetchAll();
+
+		if (sizeof($result)) {
+			$result[0]['user_id'] = intval($result[0]['user_id']);
+			return $result[0];
+		} else {
+			return NULL;
+		}
+	}
+
 
 	# Traverses upwards and deletes all posts, if no child exist
 	function deletePostsIfNoChilds($topic_id, $post_id) {

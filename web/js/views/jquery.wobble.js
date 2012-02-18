@@ -3,7 +3,6 @@
  */
 (function($) {
 	"use strict";
-
 	var $window = $(window);
 	function get_size() {
 		return {w: $window.width(), h: $window.height()};
