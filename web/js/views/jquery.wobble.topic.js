@@ -90,6 +90,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 };
 
 jQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
+		this.$messages.empty();
     messages.forEach($.proxy(function(msgObj) {
         var msg = msgObj.message;
 				var message_id = msgObj.message_id;
