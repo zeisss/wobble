@@ -170,7 +170,10 @@ WobbleAPI.prototype.topic_remove_message = function topic_remove_message(topicId
 }
 
 WobbleAPI.prototype.post_change_read = function(topicId, postId, readStatus, callback) {
-	this.doRPC('post_read', {topic_id: topicId, post_id: postId, read: readStatus}, callback);	
+	this.doRPC('post_change_read', {topic_id: topicId, post_id: postId, read: readStatus}, callback);
+};
+WobbleAPI.prototype.post_change_lock = function(topicId, postId, lockStatus, callback) {
+	this.doRPC('post_change_lock', {topic_id: topicId, post_id: postId, lock: lockStatus}, callback);
 };
 WobbleAPI.prototype.post_create = function(topicId, postId, parentPostId, callback) {
 	this.doRPC('post_create', {topic_id: topicId, post_id: postId, parent_post_id: parentPostId}, callback);

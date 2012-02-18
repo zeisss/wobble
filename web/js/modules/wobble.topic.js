@@ -153,11 +153,13 @@ function TopicPresenter(view, model) {
 				BUS.fire('topic.post.changed', model.getTopic().id);
 			}); 
 		}
-	};	
+	};
 	view.onStartPostEdit = function(post) {
-	    // Create the lock
+		// Create the lock
 		API.post_change_lock(model.getTopic().id, post.id, 1, function(err, success) {
-			if ( success ) {
+			if (err || !success) {
+				alert('Failed to create lock for post. Try again later or refresh your browser.');
+			} else {
 				model.addUserToPost(post, API.user());
 				view.renderPost(model.getTopic(), post);
 			}
