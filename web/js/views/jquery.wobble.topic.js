@@ -79,7 +79,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 			this._renderReader(user);
 		}
 		
-		this.renderMessages(topicDetails.messages);
+		this.renderMessages(topicDetails.id, topicDetails.messages);
 		
 		this.onResize();
 
@@ -89,7 +89,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 	}	
 };
 
-jQueryTopicView.prototype.renderMessages = function(messages) {
+jQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
     for (var i = 0; i < messages.length; i++) {
         var msg = messages[i].message;
 				var message_id = messages[i].message_id;
@@ -107,9 +107,14 @@ jQueryTopicView.prototype.renderMessages = function(messages) {
             var con = $('<div></div>');
             $('<div></div>').html(str).appendTo(con);
             $('<button>Remove</button').click(function() {
-                alert('topic_remove_message ' + message_id);
-            });
-            
+                console.log('topic_remove_message ' + message_id);
+								API.topic_remove_message(topic_id, message_id, function(err, result) {
+									if (!err) {
+										con.remove();
+										con = null;
+									}
+								});
+            }).appendTo(con);
             con.appendTo(this.$messages);
         }
     }
