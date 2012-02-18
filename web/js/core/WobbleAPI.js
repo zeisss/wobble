@@ -59,7 +59,7 @@ WobbleAPI.prototype.refreshUser = function(callback) {
 			this._user = user;
 			BUS.fire('api.user', user);
 			if (callback) {
-				callback(user);
+				return callback(user);
 			}
 		}
 	}, this));
@@ -100,7 +100,7 @@ WobbleAPI.prototype.register = function(email, password, callback) {
 			that.apikey.set(result.apikey);
 		}
 		if(callback) 
-			callback(err, result);
+			return callback(err, result);
 	});
 };
 WobbleAPI.prototype.login = function(email, password, callback) {
@@ -110,7 +110,7 @@ WobbleAPI.prototype.login = function(email, password, callback) {
 			that.apikey.set(result.apikey);
 
 		if(callback) 
-			callback(err, result);
+			return callback(err, result);
 	});
 };
 WobbleAPI.prototype.signout = function(callback) {
@@ -118,7 +118,7 @@ WobbleAPI.prototype.signout = function(callback) {
 	this.doRPC('user_signout', function(err, result) {
 		that.apikey.set(undefined);
 		if(callback) 
-			callback(err, result);
+			return callback(err, result);
 	});
 };
 WobbleAPI.prototype.user_change_password = function(newPassword, callback) {
