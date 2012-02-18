@@ -106,6 +106,7 @@ jQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
         
         if (str) {
             var con = $('<div></div>');
+            con.addClass('message');
             $('<div></div>').html(str).appendTo(con);
             $('<button></button').text('Remove').click(function() {
                 console.log('topic_remove_message ' + topic_id + ', ' + message_id);
