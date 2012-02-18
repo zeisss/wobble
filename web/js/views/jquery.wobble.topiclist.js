@@ -106,19 +106,19 @@ jQueryTopicsView.prototype.renderTopicTimestamp = function renderTopicTimestamp(
 		hours = "0" + hours;
 	}
 	var minutes = createdAt.getMinutes();
-	if ( minutes < 10) {
+	if (minutes < 10) {
 		minutes = "0" + minutes;
 	}
 	var time = hours + ":" + minutes;
 
 	var month = createdAt.getMonth() + 1;
-	if ( month < 0 ){
+	if (month < 0){
 		month = "0" + month;
 	}
 	
-	if ( createdAt.getYear() == now.getYear() ) {
-		if ( createdAt.getMonth() == now.getMonth() &&
-		     createdAt.getDate() == now.getDate()) { // This post is from today, only show the time
+	if (createdAt.getYear() == now.getYear()) {
+		if (createdAt.getMonth() == now.getMonth() &&
+			createdAt.getDate() == now.getDate()) { // This post is from today, only show the time
 			return time;
 		} else {
 			// this post is at least from this year, show day + month
