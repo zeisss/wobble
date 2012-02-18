@@ -87,7 +87,6 @@
 			'writers' => $writers,
 			'posts' => $posts,
 			'archived' => intval($archived)
-
 		);
 	}
 	
