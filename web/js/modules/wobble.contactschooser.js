@@ -7,7 +7,7 @@ function ContactsChooserDisplay() {}
 ContactsChooserDisplay.prototype.show = function(title, contacts) {};
 ContactsChooserDisplay.prototype.close = function() {};
 ContactsChooserDisplay.prototype.setPresenter = function(presenter) {
-	this.presenter = presenter;
+  this.presenter = presenter;
 }
 // Callbacks
 ContactsChooserDisplay.prototype.onAddContact = function(contact) {};
@@ -20,25 +20,25 @@ ContactsChooserDisplay.prototype.onClose = function(contact) {};
  * @param model A ContactsModel
  */
 function ContactsChooserPresenter(display, model) {
-	this.display = display;
-	this.model = model;
+  this.display = display;
+  this.model = model;
 
-	this.display.setPresenter(this);
-	
-	BUS.on('contacts.chooser.open', function(config) {
-		var options = _.defaults(config, {
-			'multiple': false,
-			'on_add': function(contact) {},
-			'on_close': function() {},
-			'remove_contacts': []
-		});
-		this.open(options);
-	}, this);
+  this.display.setPresenter(this);
 
-	// Autoclose the display when the topic changes
-	BUS.on('topic.selected', function() {
-		this.display.close();
-	}, this);
+  BUS.on('contacts.chooser.open', function(config) {
+    var options = _.defaults(config, {
+      'multiple': false,
+      'on_add': function(contact) {},
+      'on_close': function() {},
+      'remove_contacts': []
+    });
+    this.open(options);
+  }, this);
+
+  // Autoclose the display when the topic changes
+  BUS.on('topic.selected', function() {
+    this.display.close();
+  }, this);
 };
 /**
  * Starts a loop where the user can add users. For each added user the options.on_add callback is executed.
@@ -50,23 +50,23 @@ function ContactsChooserPresenter(display, model) {
  *  remove_contacts: [user_id]
  * }
  */
-ContactsChooserPresenter.prototype.open = function(options) {	
-	var display = this.display;
-	this.model.getContacts(function(err, contacts) {
-		if ( !err ) {
-			var showableContacts = _.filter(contacts, function(contact) {
-				var shouldBeRemoved = _.contains(options.remove_contacts, contact.id);
-				return !shouldBeRemoved;
-			});
+ContactsChooserPresenter.prototype.open = function(options) {
+  var display = this.display;
+  this.model.getContacts(function(err, contacts) {
+    if ( !err ) {
+      var showableContacts = _.filter(contacts, function(contact) {
+        var shouldBeRemoved = _.contains(options.remove_contacts, contact.id);
+        return !shouldBeRemoved;
+      });
 
-			display.onAddContact = function(contact) {
-				options.on_add(contact);
-				if ( !options.multiple) display.close();
-			};
-			display.onClose = function() {
-				options.on_close();
-			};
-			display.show('Add participant', showableContacts);
-		}
-	});
+      display.onAddContact = function(contact) {
+        options.on_add(contact);
+        if ( !options.multiple) display.close();
+      };
+      display.onClose = function() {
+        options.on_close();
+      };
+      display.show('Add participant', showableContacts);
+    }
+  });
 };

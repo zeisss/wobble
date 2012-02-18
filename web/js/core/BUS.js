@@ -2,41 +2,40 @@
 
 /*
 BUS.on('topic.selected', function(data, eventName) {
-	// Your code here
+  // Your code here
 });
 BUS.fire('topic.selected');
 BUS.fire('topic.selected', {topic_name: 'Hello World!'});
 */
 function EventBUS() {
-	this.listeners = {};
+  this.listeners = {};
 };
 EventBUS.prototype.on = function (eventName, callback, context) {
-	var context = context || window;
-	var list = this.listeners[eventName] || [];
-	list.push([context, callback]);
-	this.listeners[eventName] = list;
+  var context = context || window;
+  var list = this.listeners[eventName] || [];
+  list.push([context, callback]);
+  this.listeners[eventName] = list;
 };
 EventBUS.prototype.fire = function(eventName, data) {
-	if ( console ) {
-		console.log('Event fired', eventName, data);
-	}
-	if ( !(eventName in this.listeners)) {
-		return; // Abort, if no listener exists
-	}
-	for (var i = 0; i < this.listeners[eventName].length; i++) {
-		var callbackEntry = this.listeners[eventName][i];
-		callbackEntry[1].apply(callbackEntry[0], [data, eventName]);
-	}
-
+  if ( console ) {
+    console.log('Event fired', eventName, data);
+  }
+  if ( !(eventName in this.listeners)) {
+    return; // Abort, if no listener exists
+  }
+  for (var i = 0; i < this.listeners[eventName].length; i++) {
+    var callbackEntry = this.listeners[eventName][i];
+    callbackEntry[1].apply(callbackEntry[0], [data, eventName]);
+  }
 }
 EventBUS.prototype.clear = function() {
-	this.listeners = {};
+  this.listeners = {};
 };
 
 // Create the Global BUS
 window.BUS = new EventBUS();
 if (window.addEventListener) {
-	window.addEventListener('unload', function() {
-		BUS.clear();
-	}, false)
+  window.addEventListener('unload', function() {
+    BUS.clear();
+  }, false)
 }
