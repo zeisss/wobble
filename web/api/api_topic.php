@@ -183,32 +183,32 @@
 					'topic_id' => $topic_id
 				));
 
-                if ($self_user_id !== $reader['id']) {
-					TopicMessagesRepository::createMessage(
-                    	$topic_id,
-                    	$reader['id'],
-                    	array(
-                        	'type' => 'user_removed',
-                        	'user_id' => $user_id,
-                        	'user_name' => $topic_user['name']
-                    	)
-                	);
+        # Do not create a message for the acting nor the actual removed user
+        if ($self_user_id !== $reader['id'] && $reader['id'] !== $user_id) {
+          TopicMessagesRepository::createMessage(
+            $topic_id,
+            $reader['id'],
+            array(
+              'type' => 'user_removed',
+              'user_id' => $user_id,
+              'user_name' => $topic_user['name']
+            )
+          );
+        }
+        # Move topic back to inbox, if changed
+        UserArchivedTopicsRepository::set_archived($reader['id'], $topic_id, 0);
+      }
 
-					# Move topic back to inbox, if changed
-					UserArchivedTopicsRepository::set_archived($reader['id'], $topic_id, 0);
-				}
+      # Delete afterwards. The other way around, the deleted user wouldn't get the notification
+      TopicRepository::removeReader($topic_id, $user_id);
 
-			}
-			# Delete afterwards. The other way around, the deleted user wouldn't get the notification
-			TopicRepository::removeReader($topic_id, $user_id);
-			
-			return TRUE;
-		}
-		else {
-			throw new Exception('Illegal Access!');
-		}
-	}
-	
+      return TRUE;
+    }
+    else {
+      throw new Exception('Illegal Access!');
+    }
+  }
+
 	/**
 	 * Creates a new post as a child in the given topic. The post is created for the current 
 	 * user and has an empty content. A notification is sent to all readers of the topic to inform
