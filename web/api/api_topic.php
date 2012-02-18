@@ -423,8 +423,8 @@
         $pdo = ctx_getpdo();
 
         ValidationService::validate_not_empty($user_id);
-    	ValidationService::validate_not_empty($topic_id);
-		ValidationService::validate_not_empty($message_id);
+    	  ValidationService::validate_not_empty($topic_id);
+		    ValidationService::validate_not_empty($message_id);
         
         if (_topic_has_access($pdo, $topic_id)) {
             

@@ -28,7 +28,7 @@ class TopicMessagesRepository {
     
     public static function deleteMessage($topic_id, $user_id, $message_id) {
         $pdo = ctx_getpdo();
-        $stmt = $pdo->prepare('DELETE FROM topic_messages WHERE topic_id = ? AND message_id = ? AND $user_id = ?');
+        $stmt = $pdo->prepare('DELETE FROM topic_messages WHERE topic_id = ? AND message_id = ? AND user_id = ?');
         $stmt->execute(array($topic_id, $message_id, $user_id));
         
         return true;
