@@ -51,11 +51,11 @@
   )
   // Wobble Modules
   files.push(
-    'js/modules/wobble.contacts.js',
-    'js/modules/wobble.contactschooser.js',
-    'js/modules/wobble.contactsdetail.js',
-    'js/modules/wobble.topic.js',
-    'js/modules/wobble.topiclist.js',
+    'js/modules/ContactsPresenter.js',
+    'js/modules/ContactsChooserPresenter.js',
+    'js/modules/ContactsDetailPresenter.js',
+    'js/modules/TopicPresenter.js',
+    'js/modules/TopicListPresenter.js',
 
     // Views
     'js/views/jQueryTopicsView.js',
