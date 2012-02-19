@@ -33,7 +33,8 @@ class TopicRepository {
     $pdo = ctx_getpdo();
 
     // Create empty root post
-    $stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content, parent_post_id, created_at, last_touch, intended_reply)  VALUES (?,?, "",?, ?, unix_timestamp(), unix_timestamp())');
+    $stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content, parent_post_id, intended_post, created_at, last_touch) 
+                                      VALUES (?,        ?,       "",      ?,              ?, unix_timestamp(), unix_timestamp())');
     $stmt->execute(array($topic_id, $post_id, $parent_post_id, $intended_reply));
     
     // Assoc first post with current user
