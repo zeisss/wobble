@@ -53,7 +53,7 @@ function ContactsChooserPresenter(display, model) {
 ContactsChooserPresenter.prototype.open = function(options) {
   var display = this.display;
   this.model.getContacts(function(err, contacts) {
-    if ( !err ) {
+    if (!err) {
       var showableContacts = _.filter(contacts, function(contact) {
         var shouldBeRemoved = _.contains(options.remove_contacts, contact.id);
         return !shouldBeRemoved;
@@ -61,7 +61,7 @@ ContactsChooserPresenter.prototype.open = function(options) {
 
       display.onAddContact = function(contact) {
         options.on_add(contact);
-        if ( !options.multiple) display.close();
+        if (!options.multiple) display.close();
       };
       display.onClose = function() {
         options.on_close();

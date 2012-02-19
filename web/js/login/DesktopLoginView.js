@@ -13,7 +13,7 @@ function DesktopLoginView() {
   this.e.load('js/login/template.html', function() {
     // When the view is loaded, register handlers
     $("#password").keypress(function(event) {
-      if ( event.which == 13 ) {
+      if (event.which == 13) {
         $("#login").focus().click();
       }
     });

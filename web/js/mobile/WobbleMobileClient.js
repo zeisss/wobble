@@ -95,7 +95,7 @@ WobbleMobileClient.prototype.onNavigation = function(targetId) {
   $(">*", this.$widgets).detach(); // Detach() does not destroy the event handlers
 
   window.location.hash = "";
-  if ( targetId == 'navContacts') {
+  if (targetId == 'navContacts') {
     // Show the ContactsList
     this.contactsView.e.appendTo(this.$widgets);
 

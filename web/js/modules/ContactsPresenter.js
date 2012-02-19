@@ -13,7 +13,7 @@ ContactsModel.prototype.findByEmail = function (email) {
   var result = undefined;
   for (var i = 0; i < this.cache.length; i++) {
     var user = this.cache[i];
-    if ( user.email === email ) {
+    if (user.email === email) {
       result = user;
     }
   }
@@ -120,7 +120,7 @@ function ContactsPresenter(display, model) {
     this.display.renderWhoAmI(user);
   }, this);
   BUS.on('api.notification', function(message) {
-    if ( message.type == 'user_signout' || message.type == 'user_online') { // We receive this message only, because we are on his contacts list
+    if (message.type == 'user_signout' || message.type == 'user_online') { // We receive this message only, because we are on his contacts list
       this.refreshContacts();
     }
   }, this);
@@ -140,7 +140,7 @@ ContactsPresenter.prototype.removeUserFromRooster = function(userId) {
 ContactsPresenter.prototype.addUserByEmail = function(email) {
   var that = this;
   this.model.addNewContact(email, function(err, data) {
-    if ( data ) {
+    if (data) {
       that.refreshContacts();
       that.display.showMessage('Contact added!');
     } else {

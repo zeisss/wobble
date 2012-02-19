@@ -55,8 +55,8 @@ function TopicListPresenter (view, cache) {
     this.refreshTopicsList();
   }, this);
   BUS.on('api.notification', function(message) {
-    if ( message.type == 'topic_changed' ||
-       message.type == 'post_changed' /* Unread message counter propably got changed */ ) {
+    if (message.type == 'topic_changed' ||
+       message.type == 'post_changed' /* Unread message counter propably got changed */) {
       this.refreshTopicsList();
     }
   }, this);

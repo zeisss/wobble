@@ -17,10 +17,10 @@ EventBUS.prototype.on = function (eventName, callback, context) {
   this.listeners[eventName] = list;
 };
 EventBUS.prototype.fire = function(eventName, data) {
-  if ( console ) {
+  if (console) {
     console.log('Event fired', eventName, data);
   }
-  if ( !(eventName in this.listeners)) {
+  if (!(eventName in this.listeners)) {
     return; // Abort, if no listener exists
   }
   for (var i = 0; i < this.listeners[eventName].length; i++) {
