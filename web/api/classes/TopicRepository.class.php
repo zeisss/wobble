@@ -28,7 +28,6 @@ class TopicRepository {
   /**
    * Creates a new post with the given $post_id in the given topic.
    * The user $user_id is set as the owner and the post is a child of $parent_post_id.
-   *
    */
   function createPost($topic_id, $post_id, $user_id, $parent_post_id = NULL, $intended_reply = 0) {
     $pdo = ctx_getpdo();

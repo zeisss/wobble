@@ -223,14 +223,13 @@ function TopicPresenter(view, model) {
   };
 
   view.onMoveToArchive = function() {
-    API.topic_set_archived(model.getTopic().id, 1, function() {
-
+    API.topic_set_archived(model.getTopic().id, 1, function(err, result) {
     });
     view.clear();
     model.setTopic(null);
   };
   view.onMoveToInbox = function() {
-    API.topic_set_archived(model.getTopic().id, 0, function() {
+    API.topic_set_archived(model.getTopic().id, 0, function(err, result) {
     });
     view.clear();
     model.setTopic(null);
