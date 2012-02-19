@@ -7,7 +7,7 @@ class InputSanitizer {
     public static function sanitizeEmail($email) {
         return trim($email);    
     }
-    
+
     /** 
      * Sanitizes user input by fixing the following things:
      * - Changes links to open in a new window (target="_new")
@@ -23,7 +23,7 @@ class InputSanitizer {
         $replacement = $keyword . ' target="_new"';
 
         $offset = 0;
-        
+
         while (true) {
             $i = strpos($content, $keyword, $offset);
             if ($i === FALSE) {
@@ -34,12 +34,12 @@ class InputSanitizer {
                 $offset ++;
                 continue;    
             }
-            
+
             $end = strpos($content, '>', $i);
             if ($end === FALSE) {
                 return $content;
             }
-            
+
             $j = strpos($content, 'target', $i);
             if ($j === FALSE) {
                 # no target was found. Just replace the starting tag and be done.
