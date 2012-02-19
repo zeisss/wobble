@@ -175,8 +175,12 @@ WobbleAPI.prototype.post_change_read = function(topicId, postId, readStatus, cal
 WobbleAPI.prototype.post_change_lock = function(topicId, postId, lockStatus, callback) {
   this.doRPC('post_change_lock', {topic_id: topicId, post_id: postId, lock: lockStatus}, callback);
 };
-WobbleAPI.prototype.post_create = function(topicId, postId, parentPostId, callback) {
-  this.doRPC('post_create', {topic_id: topicId, post_id: postId, parent_post_id: parentPostId}, callback);
+WobbleAPI.prototype.post_create = function(topicId, postId, parentPostId, intendedReply, callback) {
+  this.doRPC(
+    'post_create',
+    {topic_id: topicId, post_id: postId, parent_post_id: parentPostId, intended_reply: intendedReply},
+    callback
+  );
 };
 WobbleAPI.prototype.post_edit = function(topicId, postId, content, revision_no, callback) {
   this.doRPC('post_edit', {topic_id: topicId, post_id: postId, revision_no: revision_no, content: content}, callback);

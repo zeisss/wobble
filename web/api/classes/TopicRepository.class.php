@@ -1,4 +1,9 @@
 <?php
+class Topic {
+  const TYPE_INLINE = 0;
+  const TYPE_INTENDED_REPLY = 1;
+}
+
 /**
  * The TopicRepository provides convienience function to access the storage for Topics.
  */
@@ -25,19 +30,19 @@ class TopicRepository {
    * The user $user_id is set as the owner and the post is a child of $parent_post_id.
    *
    */
-  function createPost($topic_id, $post_id, $user_id, $parent_post_id = NULL) {
+  function createPost($topic_id, $post_id, $user_id, $parent_post_id = NULL, $intended_reply = 0) {
     $pdo = ctx_getpdo();
 
     // Create empty root post
-    $stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content, parent_post_id, created_at, last_touch)  VALUES (?,?, "",?, unix_timestamp(), unix_timestamp())');
-    $stmt->execute(array($topic_id, $post_id, $parent_post_id));
+    $stmt = $pdo->prepare('INSERT INTO posts (topic_id, post_id, content, parent_post_id, created_at, last_touch, intended_reply)  VALUES (?,?, "",?, ?, unix_timestamp(), unix_timestamp())');
+    $stmt->execute(array($topic_id, $post_id, $parent_post_id, $intended_reply));
     
     // Assoc first post with current user
     $stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id) VALUES (?,?,?)');
     $stmt->bindValue(1, $topic_id);
     $stmt->bindValue(2, $post_id);
     $stmt->bindValue(3, $user_id);
-    $stmt->execute();   
+    $stmt->execute();
   }
   function addReader($topic_id, $user_id) {
     $pdo = ctx_getpdo();

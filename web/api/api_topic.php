@@ -233,15 +233,17 @@ function post_create($params) {
   $topic_id = $params['topic_id'];
   $post_id = $params['post_id'];
   $parent_post_id = $params['parent_post_id'];
+  $intended_reply = $params['intended_reply'];
 
   ValidationService::validate_not_empty($topic_id);
   ValidationService::validate_not_empty($post_id);
   ValidationService::validate_not_empty($parent_post_id);
+  ValidationService::validate_list($intended_reply, array('0', '1'));
 
   $pdo = ctx_getpdo();
 
   if ( _topic_has_access($pdo, $topic_id) ) {
-    TopicRepository::createPost($topic_id, $post_id, $self_user_id, $parent_post_id);
+    TopicRepository::createPost($topic_id, $post_id, $self_user_id, $parent_post_id, $intended_reply);
 
     TopicRepository::setPostLockStatus($topic_id, $post_id, 1, $self_user_id);
 
