@@ -189,4 +189,5 @@ class TopicRepository {
     }
     return $result;
   }
+
 }

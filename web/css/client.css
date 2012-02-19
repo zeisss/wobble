@@ -410,8 +410,8 @@ Notification Yellow: #FC0
 }
 /* Wrapper around a thread */
 #topic_posts .intended_reply_thread {
-	border-left: 1px black solid;
-	border-bottom: 1px black solid;
+	border-left: 1px gray solid;
+	border-bottom: 1px gray solid;
 	border-bottom-left-radius: 5px;
 	box-shadow: -2px 2px 5px 0px #888;
 }

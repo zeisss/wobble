@@ -85,9 +85,7 @@ function topic_get_details($params) {
   }
 
   // Archived?
-  $stmt = $pdo->prepare('SELECT COUNT(*) cnt FROM user_archived_topics WHERE user_id = ? AND topic_id = ?');
-  $stmt->execute(array($self_user_id, $topic_id));
-  $archived = $stmt->fetchObject()->cnt;
+  $archived = UserArchivedTopicRepository::isArchivedTopic($self_user_id, $topic_id);
 
   return array (
     'id' => $topic_id,
@@ -95,7 +93,7 @@ function topic_get_details($params) {
     'messages' => TopicMessagesRepository::listMessages($topic_id, $self_user_id),
     'writers' => $writers,
     'posts' => $posts,
-    'archived' => intval($archived)
+    'archived' => $archived
   );
 }
 
@@ -530,7 +528,7 @@ function topic_set_archived($params) {
   ValidationService::validate_not_empty($topic_id);
   ValidationService::validate_list($archived_flag, array('1', '0'));
 
-  UserArchivedTopicsRepository::set_archived($user_id, $topic_id, $archived_flag);
+  UserArchivedTopicRepository::setArchived($user_id, $topic_id, $archived_flag);
 
   # Notify ourself only, so we now our topic changed
   NotificationRepository::push($user_id, array(

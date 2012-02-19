@@ -1,7 +1,7 @@
 <?php
 
-class UserArchivedTopicsRepository {
-  public static function set_archived($user_id, $topic_id, $archived) {
+class UserArchivedTopicRepository {
+  public static function setArchived($user_id, $topic_id, $archived) {
     if ($archived) {
       $sql = 'REPLACE user_archived_topics (user_id, topic_id) VALUES (?,?)';
     } else {
@@ -15,5 +15,15 @@ class UserArchivedTopicsRepository {
     $stmt->execute();
 
     return TRUE;
+  }
+
+  public static function isArchivedTopic($user_id, $topic_id) {
+    $pdo = ctx_getpdo();
+
+    $stmt = $pdo->prepare('SELECT COUNT(*) cnt FROM user_archived_topics WHERE user_id = ? AND topic_id = ?');
+    $stmt->execute(array($user_id, $topic_id));
+    $archived = $stmt->fetchObject()->cnt;
+
+    return intval($archived);
   }
 }
