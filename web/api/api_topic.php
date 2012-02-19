@@ -4,7 +4,6 @@
 	 * TopicId, PostId = string()
 	 * UserId = int()
 	 **/
-	
 
 	function _topic_has_access($pdo, $topic_id) {
 		$stmt = $pdo->prepare('SELECT COUNT(*) cnt FROM topic_readers r WHERE r.user_id = ? AND r.topic_id = ?');
@@ -12,7 +11,7 @@
 		$result = $stmt->fetchAll();
 		return $result[0]['cnt'] > 0;
 	}
-	
+
 	/**
 	 * Returns the topic object which is specified by the parameter 'id'. The client must be 
 	 * authenticated and a member of the topic.
@@ -23,11 +22,13 @@
 	 * for the UI to be able to show the user info for posts of users, that no longer belong to a post.
 	 *
 	 * Input = {'id': TopicId}
-	 * Result = {'id':TopicId, 'readers': [User], 'writers': [User], 'posts': [Post]} 
+	 * Result = {'id':TopicId, 'readers': [User], 'messages': [Message], 'writers': [User], 'posts': [Post]} 
 	 *
 	 * User = {'id': UserId, 'name': string(), 'online': int(), 
 	 *         'email': string(), 'img': string()}
 	 * 
+	 * Message = {'message_id': Int, 'data': Object}
+	 *
 	 * Post = {'id': PostId, 'content':string(), 'revision_no': int(), 
 	 *         'parent': PostId, 'timestamp': int(), 'deleted': int(), 
 	 *         'unread': int()}
@@ -89,7 +90,7 @@
 		return array (
 			'id' => $topic_id,
 			'readers' => $readers,
-            'messages' => TopicMessagesRepository::listMessages($topic_id, $self_user_id),
+      'messages' => TopicMessagesRepository::listMessages($topic_id, $self_user_id),
 			'writers' => $writers,
 			'posts' => $posts,
 			'archived' => intval($archived)
