@@ -162,16 +162,20 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
       "   <div class='content'></div>" +
       "   <div class='buttons'></div>" +
       " </div>" +
-      " <div class='post_replies'></div>" +
+      " <div class='post_replies empty'></div>" +
       "</div>").attr('id', elementPostId);
 
     if (post.parent) {
       var parentPostId = '#post-' + post.parent;
       if (post.intended_post == 1) {
         var parentPost = $(parentPostId + ">.post_replies");
-        jPostWrapper.appendTo(parentPost);
+        var thread = $('<div></div>').addClass('intended_reply_thread').appendTo(parentPost).append(jPostWrapper);
+        if (parentPost.hasClass('empty')) {
+          parentPost.removeClass('empty');
+        } else {
+          thread.addClass('thread_spacer');
+        }
       } else {
-        var parentPost = $(parentPostId);
         jPostWrapper.insertAfter(parentPostId);
       }
     } else { // Root post
@@ -294,7 +298,17 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 };
 
 jQueryTopicView.prototype.removePost = function(post) {
-  var jpost = $('#post-' + post.id + ">.post").detach();
+  var jpost = $('#post-' + post.id + ">.post");
+  var parent = jpost.parent(); // postwrapper
+  var container = parent.parent(); // #topic_posts or .intended_reply_thread
+  jpost.detach();
+  if ($('>.post_replies', parent).hasClass('empty')) {
+    parent.detach();
+  }
+  if (container.hasClass('intended_reply_thread') && container.children().size() == 0) {
+    container.detach();
+  }
+  
 };
 
 jQueryTopicView.prototype.openEditor = function(post) {

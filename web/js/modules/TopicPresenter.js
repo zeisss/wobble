@@ -218,8 +218,9 @@ function TopicPresenter(view, model) {
       post.locked = false;
       that.refreshTopic();
     });
-    view.removePost(post);
     model.removePost(post);
+    view.clear();
+    view.renderTopic(model.getTopic());
   };
 
   view.onMoveToArchive = function() {
