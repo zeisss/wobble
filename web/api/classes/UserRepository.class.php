@@ -62,4 +62,19 @@ class UserRepository {
       return NULL;
     }
   }
+
+  function delete($user_id) {
+    $pdo = ctx_getpdo();
+    
+    $pdo->prepare('DELETE FROM users WHERE id = ?')->execute(array($user_id));
+    $pdo->prepare('DELETE FROM notifications WHERE user_id = ?')->execute(array($user_id));
+    $pdo->prepare('DELETE FROM user_archived_topics WHERE user_id = ?')->execute(array($user_id));
+    $pdo->prepare('DELETE FROM users_contacts WHERE user_id = ?')->execute(array($user_id));
+    $pdo->prepare('DELETE FROM topic_readers WHERE user_id = ?')->execute(array($user_id));
+    $pdo->prepare('DELETE FROM topic_messages WHERE user_id = ?')->execute(array($user_id));
+    $pdo->prepare('DELETE FROM sessions WHERE user_id = ?')->execute(array($user_id));
+    $pdo->prepare('DELETE FROM post_users_read WHERE user_id = ?')->execute(array($user_id));
+
+    return true;
+  }
 }
