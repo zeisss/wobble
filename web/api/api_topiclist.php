@@ -46,7 +46,7 @@ function topics_list($params) {
 
     # We count read entries in the database, but we need to return the number of unread entries
     # Also, we cheat a little, since we just add the messages to the unread count
-    $result[$i]['post_count_unread'] = $result[$i]['post_count_total'] - intval($result[$i]['post_count_read']) + intval($results[$i]['topic_messages']);
+    $result[$i]['post_count_unread'] = $result[$i]['post_count_total'] - intval($result[$i]['post_count_read']) + intval($result[$i]['topic_messages']);
     unset($result[$i]['post_count_read']);    
 
     $result[$i]['abstract'] = strip_tags(substr($result[$i]['abstract'], 0, 100));

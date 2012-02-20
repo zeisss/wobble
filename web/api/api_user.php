@@ -90,10 +90,16 @@ function user_register($params) {
   if (defined('WELCOME_TOPIC_ID')) {
     TopicRepository::addReader(WELCOME_TOPIC_ID, $user_id);
 
-    foreach(TopicRepository::getReaders($topic_id) as $user) {
-      NotificationRepository::push($user['id'], array(
+    foreach(TopicRepository::getReaders(WELCOME_TOPIC_ID) as $reader) {
+      NotificationRepository::push($reader['id'], array(
         'type' => 'topic_changed',
         'topic_id' => $topic_id
+      ));
+
+      TopicMessagesRepository::createMessage(WELCOME_TOPIC_ID, $reader['id'], array(
+        'type' => 'user_added',
+        'user_id' => $user_id,
+        'user_name' => $email # current name of that user
       ));
     }
   }
