@@ -136,7 +136,7 @@ function topic_add_user($params) {
         );
 
         # Move topic back to inbox, if changed
-        UserArchivedTopicsRepository::set_archived($reader['id'], $topic_id, 0);
+        UserArchivedTopicRepository::setArchived($reader['id'], $topic_id, 0);
       }
 
     }
@@ -203,7 +203,7 @@ function topic_remove_user($params) {
         );
       }
       # Move topic back to inbox, if changed
-      UserArchivedTopicsRepository::set_archived($reader['id'], $topic_id, 0);
+      UserArchivedTopicRepository::setArchived($reader['id'], $topic_id, 0);
     }
 
     # Delete afterwards. The other way around, the deleted user wouldn't get the notification
@@ -252,7 +252,7 @@ function post_create($params) {
       ));
 
       # Move topic back to inbox, if changed
-      UserArchivedTopicsRepository::set_archived($user['id'], $topic_id, 0);
+      UserArchivedTopicRepository::setArchived($user['id'], $topic_id, 0);
     }
 
     # Mark unread for author
@@ -349,7 +349,7 @@ function post_edit($params) {
       }
 
       # Move topic back to inbox, if changed
-      UserArchivedTopicsRepository::set_archived($reader['id'], $topic_id, 0);
+      UserArchivedTopicRepository::setArchived($reader['id'], $topic_id, 0);
     }
 
     TopicRepository::setPostReadStatus(
@@ -407,7 +407,7 @@ function post_delete($params) {
       ));
 
       # Move topic back to inbox, if changed
-      UserArchivedTopicsRepository::set_archived($user['id'], $topic_id, 0);
+      UserArchivedTopicRepository::setArchived($user['id'], $topic_id, 0);
     }
     return TRUE;
   } else {

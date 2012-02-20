@@ -28,7 +28,7 @@ function ctx_getpdo() {
 	require_once dirname(__FILE__).'/../../web/api/classes/SessionService.class.php';
 	require_once dirname(__FILE__).'/../../web/api/classes/ValidationService.class.php';
 	require_once dirname(__FILE__).'/../../web/api/classes/TopicMessagesRepository.class.php';
-	require_once dirname(__FILE__).'/../../web/api/classes/UserArchivedTopicsRepository.class.php';
+	require_once dirname(__FILE__).'/../../web/api/classes/UserArchivedTopicRepository.class.php';
 	require_once dirname(__FILE__).'/../../web/api/classes/InputSanitizer.class.php';
 	
 	$allTopicIds = TopicRepository::listTopics();
