@@ -3,7 +3,7 @@
 require_once dirname(__FILE__) . '/../web/api/context.php';
 
 if (count($argv) <= 1) {
-  die('Usage: ' . $argv[0] . ' <email>');
+  die('Usage: ' . $argv[0] . ' <email>\n');
 }
 
 $email = $argv[1];
