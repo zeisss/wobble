@@ -59,7 +59,7 @@ class TopicRepository {
   function addReader($topic_id, $user_id) {
     $pdo = ctx_getpdo();
 
-    $pdo->prepare('REPLACE topic_readers (topic_id, user_id) VALUES (?,?)')->execute(array($topic_id, $user_id));
+    $pdo->prepare('REPLACE topic_readers (topic_id, user_id, created_at) VALUES (?,?, unix_timestamp())')->execute(array($topic_id, $user_id));
   }
 
   function removeReader($topic_id, $user_id) {
@@ -151,7 +151,8 @@ class TopicRepository {
     
     $sql = 'SELECT r.user_id id
             FROM topic_readers r 
-           WHERE r.topic_id = ?';
+           WHERE r.topic_id = ?
+           ORDER BY created_at';
     if ($limit) {
       $sql .= ' LIMIT ' . $limit;
     }

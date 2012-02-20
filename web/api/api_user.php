@@ -36,7 +36,7 @@ function user_login($params) {
 
   $password_hashed = SecurityService::hashPassword($password);
   $user = UserRepository::getUserByEmail($email);
-  if ( $user != NULL && $password_hashed === $user['password_hashed']) {
+  if ($user != NULL && $password_hashed === $user['password_hashed']) {
     # Valid login given. We must start a session now (we dont want the cookie)
 
     session_start();
@@ -73,19 +73,21 @@ function user_register($params) {
   ValidationService::validate_not_empty($password);
 
   $user = UserRepository::getUserByEmail($email);
-  if ( $user != NULL ) {
+  if ($user != NULL) {
     throw new Exception('You are already registered!');
   }
 
   $user_id = UserRepository::create($email, $password_hashed, $email);
 
+
+  # Now that the user is registered, we auto-login him in
   session_start();
   $_SESSION['userid'] = $user_id;
 
   # We skip the contact-notifications here, since the user shouldn't have any friends
 
-  # ADd the new user to the welcome topic, if defined
-  if ( defined('WELCOME_TOPIC_ID')) {
+  # Add the new user to the welcome topic, if defined
+  if (defined('WELCOME_TOPIC_ID')) {
     TopicRepository::addReader(WELCOME_TOPIC_ID, $user_id);
 
     foreach(TopicRepository::getReaders($topic_id) as $user) {
@@ -139,7 +141,7 @@ function user_change_password($params) {
 function user_get() {
   $pdo = ctx_getpdo();
   $self_user_id = ctx_getuserid();
-  if ( empty ($self_user_id)) {
+  if (empty ($self_user_id)) {
     return null;
   }
   $user = UserRepository::get($self_user_id);
@@ -201,7 +203,7 @@ function user_add_contact($params) {
 
   $user = UserRepository::getUserByEmail($contact_email);
 
-  if ( $user !== NULL ) {
+  if ($user !== NULL) {
     if ($user['id'] == $self_user_id) {
       return FALSE;
     }
