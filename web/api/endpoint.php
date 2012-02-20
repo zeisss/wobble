@@ -4,6 +4,7 @@ $JSONRPC_CONFIG = array('methods' => array());
 
 require_once 'config.php';
 require_once 'context.php'; # introduces session setup, db connection, utility classes, ...
+require_once 'exports.php'; # Defines which Wobble Funs are exported
 require_once 'jsonrpc_system.php'; # Exports the default system.listMethods and echo APICalls
 
 ##############################################################
