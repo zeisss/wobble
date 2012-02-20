@@ -143,16 +143,16 @@ jQueryTopicView.prototype._renderReader= function(user) {
   });
 };
 jQueryTopicView.prototype.renderPosts = function(topicDetails) {
-  var scrollToPost = null;
+  var $scrollToPost = null;
   for (var i = 0; i < topicDetails.posts.length; i++) {
     var $post = this.renderPost(topicDetails, topicDetails.posts[i]);
-    if (!scrollToPost && topicDetails.posts[i].deleted == 0 && topicDetails.posts[i].unread == 1) {
-      scrollToPost = $post; 
+    if (!$scrollToPost && topicDetails.posts[i].deleted == 0 && topicDetails.posts[i].unread == 1) {
+      $scrollToPost = $post; 
     }
   }
 
-  if (scrollToPost && this.editingPostId == null) {
-    scrollToPost[0].scrollIntoView(false);
+  if ($scrollToPost && this.editingPostId == null) {
+    $(">.post", $scrollToPost)[0].scrollIntoView(false);
   }
 };
 jQueryTopicView.prototype.renderPost = function(topic, post) {
