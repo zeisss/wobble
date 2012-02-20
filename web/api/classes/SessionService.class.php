@@ -28,4 +28,9 @@ class SessionService {
     $r = $pdo->query('SELECT count(distinct user_id) online_users FROM sessions WHERE last_touch > (unix_timestamp() - 5 * 60)')->fetchAll();
     return $r[0]['online_users'];
   }
+  public static function getOnlineSessionCount() {
+    $pdo = ctx_getpdo();
+    $r = $pdo->query('SELECT count(*) online_sessions FROM sessions WHERE last_touch > (unix_timestamp() - 5 * 60)')->fetchAll();
+    return $r[0]['online_sessions'];
+  }
 }
