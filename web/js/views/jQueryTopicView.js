@@ -479,13 +479,13 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 
     if (that.currentTopic) {
       if (that.currentTopic.archived == 1) {
-        var bMoveToInbox = $('<button id="topic_move_to_inbox">Move to inbox</button>').appendTo(this.jTopicActions).click(function() {
+        var bMoveToInbox = $('<button id="topic_move_to_inbox">Inbox</button>').appendTo(this.jTopicActions).click(function() {
           that.onMoveToInbox();
         });
       }
 
       if (that.currentTopic.archived == 0) {
-        var bMoveToArchive = $('<button id="topic_move_to_archive">Move to archive</button>').appendTo(this.jTopicActions).click(function() {
+        var bMoveToArchive = $('<button id="topic_move_to_archive">Archive topic</button>').appendTo(this.jTopicActions).click(function() {
           that.onMoveToArchive();
         });
       }

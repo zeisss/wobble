@@ -54,6 +54,7 @@ WobbleMobileClient.prototype.initApp = function() {
 
   // DataModel
   this.contactsModel = new ContactsModel();
+  this.topicModel = new TopicModel();
 
   // Create the navigator
   this.navigatorView = new MobileNavigation(this);
@@ -63,13 +64,12 @@ WobbleMobileClient.prototype.initApp = function() {
   this.topicListView = new jQueryTopicsView();
   this.topicView = new jQueryTopicView();
 
-
   // Create the presenters
   this.contactsPresenter = new ContactsPresenter(this.contactsView, this.contactsModel);
   this.contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(20, 20), this.contactsModel, 'contact.clicked');
   this.topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(20, 20), this.contactsModel, 'topic.user.clicked');
-  this.topicsPresenter = new TopicListPresenter(this.topicListView, new TopicListModel(window.localcache.getCache()));
-  this.topicPresenter = new TopicPresenter(this.topicView, new TopicModel());
+  this.topicsPresenter = new TopicListPresenter(this.topicListView, window.localcache.getCache());
+  this.topicPresenter = new TopicPresenter(this.topicView, this.topicModel);
   this.contactsChooserPresenter = new ContactsChooserPresenter(
       new ListContactsChooserDisplay(),
       this.contactsModel
