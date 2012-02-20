@@ -58,7 +58,7 @@
     'js/modules/TopicListPresenter.js',
 
     // Views
-    'js/views/jQueryTopicsView.js',
+    'js/views/jQueryTopicListView.js',
     'js/views/jQueryTopicView.js',
     'js/views/JQueryContactsView.js',
     'js/views/jQueryContactsDetailDisplay.js',

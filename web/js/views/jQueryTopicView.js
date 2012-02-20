@@ -153,7 +153,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
 
   var jPostWrapper = $("#" + elementPostId);
   if (jPostWrapper.length == 0) {
-    // Post does not exist yet in the UI
+    // Post does not exist yet in the UI => Create it
     jPostWrapper = $(
       "<div class='post_wrapper'>" +
       " <div class='post'>" +
@@ -162,26 +162,23 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
       "   <div class='content'></div>" +
       "   <div class='buttons'></div>" +
       " </div>" +
+      " <div class='post_replies empty'></div>" +
       "</div>").attr('id', elementPostId);
 
     if (post.parent) {
-      // NOTE: Here is some special logic to NOT intend the first reply we got, so the listings look nicer
-      // This is achieved by putting the first reply in a separate div below the intended replies
       var parentPostId = '#post-' + post.parent;
-      var ePostFirstReply = $(parentPostId + ">.post_first_reply");
-      if (ePostFirstReply.length == 0) {
-        // No first post-element found, so lets create
-        ePostFirstReply = $("<div class='post_first_reply'></div>").appendTo($(parentPostId));
-        jPostWrapper.appendTo(ePostFirstReply);
-      } else {
-        // We found a first-post-element. This means is is also already used. => Create the .post_replies and use that
-        var ePostReplies = $("#post-" + post.parent + ">.post_replies");
-        if (ePostReplies.length == 0) {
-          ePostReplies = $("<div class='post_replies'></div>").insertBefore($(parentPostId + ">.post_first_reply"));
+      if (post.intended_post == 1) {
+        var parentPost = $(parentPostId + ">.post_replies");
+        var thread = $('<div></div>').addClass('intended_reply_thread').appendTo(parentPost).append(jPostWrapper);
+        if (parentPost.hasClass('empty')) {
+          parentPost.removeClass('empty');
+        } else {
+          thread.addClass('thread_spacer');
         }
-        ePostReplies.append(jPostWrapper);
+      } else {
+        jPostWrapper.insertAfter(parentPostId);
       }
-    } else {
+    } else { // Root post
       jPostWrapper.appendTo(this.jTopicPosts);
     }
 
@@ -301,7 +298,17 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 };
 
 jQueryTopicView.prototype.removePost = function(post) {
-  var jpost = $('#post-' + post.id + ">.post").detach();
+  var jpost = $('#post-' + post.id + ">.post");
+  var parent = jpost.parent(); // postwrapper
+  var container = parent.parent(); // #topic_posts or .intended_reply_thread
+  jpost.detach();
+  if ($('>.post_replies', parent).hasClass('empty')) {
+    parent.detach();
+  }
+  if (container.hasClass('intended_reply_thread') && container.children().size() == 0) {
+    container.detach();
+  }
+  
 };
 
 jQueryTopicView.prototype.openEditor = function(post) {
@@ -373,7 +380,12 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
       event.stopPropagation();
       event.preventDefault();
       event.stopImmediatePropagation();
-      that.onReplyPost(post);
+      // If the post-wrapper has a next-sibling, we create an intended-reply
+      if ($(this).closest('.post_wrapper').next('.post_wrapper').size() > 0) {
+        that.onIntendedReplyPost(post);
+      } else {
+        that.onReplyPost(post);
+      }
     }));
     if (post.id != ROOT_ID) { // You cannot delete the root
       $("<button>Delete</button>").appendTo(jbuttons).click(function() {

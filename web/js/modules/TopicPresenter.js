@@ -8,10 +8,19 @@ TopicDisplay.prototype.onEndPostEdit = function(post, content) {};
 TopicDisplay.prototype.onUserClicked = function(user) {};
 TopicDisplay.prototype.onDeletePost = function(post) {};
 TopicDisplay.prototype.onReplyPost = function(post) {};
+TopicDisplay.prototype.onIntendedReplyPost = function(post) {};
 TopicDisplay.prototype.onPostClicked = function(post) {};
 TopicDisplay.prototype.onMoveToInbox = function() {};
 TopicDisplay.prototype.onMoveToArchive = function() {};
 
+TopicDisplay.prototype.clear = function() {};
+TopicDisplay.prototype.setLoadingState = function() {};
+TopicDisplay.prototype.removePost = function(post) {};
+TopicDisplay.prototype.renderPost = function(topic, post) {};
+TopicDisplay.prototype.renderTopic = function(topic) {};
+TopicDisplay.prototype.setEnabled = function(enabled) {};
+
+TopicDisplay.prototype.openEditor = function(post) {};
 
 var ROOT_ID = '1'; // the id of the root post
 
@@ -182,7 +191,7 @@ function TopicPresenter(view, model) {
   view.onReplyPost = function(post) {
     var newPost = model.createReply(post);
     newPost.locked = true;
-    API.post_create(model.getTopic().id, newPost.id, newPost.parent, function(err, data) {
+    API.post_create(model.getTopic().id, newPost.id, newPost.parent, 0, function(err, data) {
       newPost.locked = false;
       view.renderPost(model.getTopic(), newPost);
     });
@@ -190,25 +199,38 @@ function TopicPresenter(view, model) {
     view.renderTopic(model.getTopic());
     view.openEditor(newPost);
   };
+  view.onIntendedReplyPost = function(post) {
+    var newPost = model.createReply(post);
+    newPost.intended_post = 1;
+    newPost.locked = true;
+    API.post_create(model.getTopic().id, newPost.id, newPost.parent, 1, function(err, data) {
+      newPost.locked = false;
+      view.renderPost(model.getTopic(), newPost);
+    });
+    model.addPost(newPost);
+    view.renderTopic(model.getTopic());
+    view.openEditor(newPost);
+  };
+
   view.onDeletePost = function(post) {
     post.locked = true;
     API.post_delete(model.getTopic().id, post.id, function(err, result) {
       post.locked = false;
       that.refreshTopic();
     });
-    view.removePost(post);
     model.removePost(post);
+    view.clear();
+    view.renderTopic(model.getTopic());
   };
 
   view.onMoveToArchive = function() {
-    API.topic_set_archived(model.getTopic().id, 1, function() {
-
+    API.topic_set_archived(model.getTopic().id, 1, function(err, result) {
     });
     view.clear();
     model.setTopic(null);
   };
   view.onMoveToInbox = function() {
-    API.topic_set_archived(model.getTopic().id, 0, function() {
+    API.topic_set_archived(model.getTopic().id, 0, function(err, result) {
     });
     view.clear();
     model.setTopic(null);
