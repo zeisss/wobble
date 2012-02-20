@@ -1,6 +1,6 @@
--- MySQL dump 10.13  Distrib 5.1.41, for debian-linux-gnu (i486)
+-- MySQL dump 10.13  Distrib 5.1.52, for redhat-linux-gnu (x86_64)
 --
--- Host: localhost    Database: wooble
+-- Host: localhost    Database: wobble
 -- ------------------------------------------------------
 -- Server version	5.1.41-3ubuntu12.10-log
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
@@ -40,7 +40,25 @@ CREATE TABLE `post_editors` (
   `post_id` varchar(255) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   UNIQUE KEY `ui_post_editors` (`topic_id`,`post_id`,`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `post_locks`
+--
+
+DROP TABLE IF EXISTS `post_locks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `post_locks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `topic_id` varchar(255) NOT NULL,
+  `post_id` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `created_at` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ui_post_locks` (`topic_id`,`post_id`)
+);
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78,6 +96,8 @@ CREATE TABLE `posts` (
   `deleted` int(11) NOT NULL DEFAULT '0',
   UNIQUE KEY `ui_posts_id` (`topic_id`,`post_id`)
 );
+<<<<<<< HEAD
+=======
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,6 +113,7 @@ CREATE TABLE `sessions` (
   `last_touch` int(11) DEFAULT NULL,
   PRIMARY KEY (`user_id`,`session_id`)
 );
+>>>>>>> master
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

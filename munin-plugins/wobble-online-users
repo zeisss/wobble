@@ -1,0 +1,19 @@
+#!/bin/sh
+
+case $1 in
+   config)
+        cat <<'EOM'
+graph_title Online users
+graph_info Prints the currently logged in users into wobble
+graph_category wobble
+graph_vlabel users online
+users.label users
+sessions.label sessions
+EOM
+        exit 0;;
+esac
+
+echo -n "users.value "
+/opt/wobble_dev/scripts/get-online-users.php
+echo -n "sessions.value "
+/opt/wobble_dev/scripts/get-online-users.php --sessions
