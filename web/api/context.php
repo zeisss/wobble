@@ -1,7 +1,7 @@
 <?php
 ini_set('session.use_cookies', '0');
 
-require_once 'config.php';
+require_once dirname(__FILE__) . '/config.php';
 
 # TODO: Replace with __autoload()
 require_once dirname(__FILE__).'/classes/NotificationRepository.class.php';
