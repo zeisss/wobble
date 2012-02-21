@@ -7,7 +7,7 @@ TopicsListDisplay.prototype.onShowArchived = function() {};
 TopicsListDisplay.prototype.onShowInbox = function() {};
 // Methods --------------------------------------------------------
 TopicsListDisplay.prototype.showLoading = function() {};
-TopicsListDisplay.prototype.setActiveTopic = function(topic) {};
+TopicsListDisplay.prototype.setActiveTopic = function(topicId) {};
 TopicsListDisplay.prototype.renderTopicList = function(topics) {};
 TopicsListDisplay.prototype.clear = function() {};
 
@@ -47,6 +47,12 @@ function TopicListPresenter (view, cache) {
   };
 
   // BUS Events
+  BUS.on('topic.selected', function(topicId) {
+    if (that.selectedTopicId !== topicId) {
+      that.selectedTopicId = topicId;
+      that.view.setActiveTopic(topicId);
+    }
+  })
   BUS.on('topic.changed', function(_data) {
     this.refreshTopicsList();
   }, this);
@@ -76,7 +82,7 @@ TopicListPresenter.prototype.refreshTopicsList = function() {
       for (var i = 0; i < list.length; i++) {
         var data = list[i];
         if (that.selectedTopicId && that.selectedTopicId == data.id) {
-          that.view.setActiveTopic(data);
+          that.view.setActiveTopic(data.id);
         }
       }
     }
@@ -93,8 +99,11 @@ TopicListPresenter.prototype.setShowArchived = function setShowArchived(show_arc
 }
 
 TopicListPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
+  if (topic.id == this.selectedTopicId) {
+    return;
+  }
   this.selectedTopicId = topic.id;
-  this.view.setActiveTopic(topic);
+  this.view.setActiveTopic(this.selectedTopicId);
   if (!noEvent) {
     BUS.fire('topic.selected', topic.id);
   }

@@ -31,9 +31,9 @@ jQueryTopicsView.prototype = new TopicsListDisplay;
 jQueryTopicsView.prototype.constructor = jQueryTopicsView;
 
 // Methods --------------------------------------------------------
-jQueryTopicsView.prototype.setActiveTopic = function(topic) {
+jQueryTopicsView.prototype.setActiveTopic = function(topicId) {
   $(">li.active", this.$topics).removeClass("active");
-  $("#topic-" + topic.id).addClass("active");
+  $("#topic-" + topicId).addClass("active");
 };
 jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
   // Update document title

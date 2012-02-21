@@ -3,7 +3,6 @@ function WobbleMobileClient() {
 
   BUS.on('topic.selected', function(topicId) {
     this.onNavigation('navTopic');
-    window.location.hash = topicId;
   }, this);
 
   // Append the Mobile.css to the html tree

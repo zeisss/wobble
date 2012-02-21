@@ -63,10 +63,6 @@ WobbleDesktopClient.prototype.initApp = function() {
   BUS.on('window.resize', function(data) {
     this.doLayout(data);
   }, this);
-
-  BUS.on('topic.selected', function(topicId) {
-    window.location.hash = topicId; // Note the current topicId in the URL, so its visible for the user and we can work with it on page reloads
-  });
 };
 WobbleDesktopClient.prototype.onRPCError = function(err) {
   var doReload = window.confirm('Whoooops! Something went wrong! We will reload now, ok?');
