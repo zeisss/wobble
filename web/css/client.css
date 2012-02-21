@@ -423,6 +423,15 @@ Notification Yellow: #FC0
 	padding-left:3px;
 }
 
+/* #topic_posts > */ #add_reply {
+  padding: 15px;
+  border-radius: 5px;
+  border: 3px #aaa solid;
+  background: #EFEFEF;
+  margin: 5px;
+  cursor: pointer;
+}
+
 #topic_messages .message {
 	background-color: #FC0;
 	border-bottom: 1px black solid;
