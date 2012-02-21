@@ -278,6 +278,11 @@ TopicPresenter.prototype.refreshTopic = function(callback) {
   var that  = this;
 
   API.load_topic_details(this.model.getTopic().id, function(err, topicDetails) {
+    if (err) { // Just clear the view, when the data could not be loaded.
+      console.log('Failed to load topic. Clearing view.');
+      that.view.clear();
+      return true;
+    }
     var modelTopic = that.model.getTopic();
     if (modelTopic !== null && topicDetails !== undefined && topicDetails.id == modelTopic.id) { // Check that we still want to see this data
       that.setSelectedTopic(topicDetails);
