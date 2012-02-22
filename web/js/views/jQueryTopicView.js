@@ -308,6 +308,9 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 };
 
 jQueryTopicView.prototype.renderAddReply = function() {
+  if ($("#add_reply").size() > 0) {
+    return;
+  }
   var $addReply = $('<div id="add_reply">Click here to add a reply</div>');
   var that = this;
   $addReply.click(function() {
