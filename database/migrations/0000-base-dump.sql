@@ -96,8 +96,7 @@ CREATE TABLE `posts` (
   `deleted` int(11) NOT NULL DEFAULT '0',
   UNIQUE KEY `ui_posts_id` (`topic_id`,`post_id`)
 );
-<<<<<<< HEAD
-=======
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -113,7 +112,6 @@ CREATE TABLE `sessions` (
   `last_touch` int(11) DEFAULT NULL,
   PRIMARY KEY (`user_id`,`session_id`)
 );
->>>>>>> master
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
