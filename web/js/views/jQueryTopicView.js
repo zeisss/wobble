@@ -150,6 +150,7 @@ jQueryTopicView.prototype.renderPosts = function(topicDetails) {
       $scrollToPost = $post; 
     }
   }
+  this.renderAddReply();
 
   if ($scrollToPost && this.editingPostId == null) {
     $(">.post", $scrollToPost)[0].scrollIntoView(false);
@@ -304,6 +305,22 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
   postElement.append($("<span class='names'></span>").text(authorLine));
   if (minHeight) postElement.css('min-height', minHeight);
 
+};
+
+jQueryTopicView.prototype.renderAddReply = function() {
+  if ($("#add_reply").size() > 0) {
+    return;
+  }
+  var $addReply = $('<div id="add_reply">Click here to add a reply</div>');
+  var that = this;
+  $addReply.click(function() {
+    var rootPosts = $('>.post_wrapper', that.jTopicPosts);
+    if (rootPosts.size() > 0) {
+      var lastPost = rootPosts.eq(-1);
+      that.onReplyPost(lastPost.data('post'));
+    }
+  })
+  $addReply.appendTo(that.jTopicPosts);
 };
 
 jQueryTopicView.prototype.removePost = function(post) {
