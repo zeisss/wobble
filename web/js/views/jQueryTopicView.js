@@ -30,7 +30,9 @@ jQueryTopicView.prototype.constructor = jQueryTopicView;
 jQueryTopicView.prototype.onResize = function() {
 
   var viewHeight = this.e.innerHeight();
-  var offsetX = this.jTopicReaders.outerHeight() + this.jTopicActions.outerHeight()
+  var offsetX = this.jTopicReaders.outerHeight() + 
+                this.jTopicActions.outerHeight() +
+                this.$messages.outerHeight();
 
   this.jTopicPosts.css('height', viewHeight - offsetX);
 };
