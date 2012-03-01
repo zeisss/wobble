@@ -1,88 +1,88 @@
 
 #widgets {
-	top:50px;
-	margin:5px;
+  top:50px;
+  margin:5px;
 }
 
 button {
-	height:40px;
-	padding-left:25px;
-	padding-right:25px;
+  height:40px;
+  padding-left:25px;
+  padding-right:25px;
 }
 /* --------------------------------------------------------- */
 #contactschooser {
-	top: 70px;
-	left:10px;
+  top: 70px;
+  left:10px;
 }
 /* --------------------------------------------------------- */
 #mobileloginview {
-	margin:20px;
+  margin:20px;
 }
 #mobileloginview .content {
-	
+
 }
 #mobileloginview .loginform {
-	background:gray;
-	color:white;
-	margin-bottom:30px;
-	width:100%;
+  background:gray;
+  color:white;
+  margin-bottom:30px;
+  width:100%;
 }
 #mobileloginview button {
-	height:40px;
+  height:40px;
 }
 /* --------------------------------------------------------- */
 #navigator {
-	position:absolute;
+  position:absolute;
 
-	top:0px;
-	left:0px;
-	right:0px;
-	height:60px;
+  top:0px;
+  left:0px;
+  right:0px;
+  height:60px;
 
-	background-color:gray;
+  background-color:gray;
 }
 #navigator button {
-	width:30%;
-	height:100%;
+  width:30%;
+  height:100%;
 
-	font-weight:bold;
+  font-weight:bold;
 }
 /* --------------------------------------------------------- */
 #contacts .actions {
-	background:#C9E2FC;
-	height:42px;
-	border-bottom:1px black solid;
+  background:#C9E2FC;
+  height:42px;
+  border-bottom:1px black solid;
 }
 #contacts .contactslist {
-	height:auto;
-	overflow:visible;
+  height:auto;
+  overflow:visible;
 }
 /* --------------------------------------------------------- */
 #topics_wrapper {
-	height:auto;
+  height:auto;
 }
 #topics_wrapper #topics_actions {
-	margin-top:5px;
-	height:42px;
-	background: #C9E2FC;
+  margin-top:5px;
+  height:42px;
+  background: #C9E2FC;
 }
 #topics_wrapper #topics {
-	top:0px;
-	overflow:visible;
-	height:auto;
-	bottom:auto;
+  top:0px;
+  overflow:visible;
+  height:auto;
+  bottom:auto;
 }
 /* --------------------------------------------------------- */
 #topic_wrapper #topic_actions {
-	height:42px;
-	background:#C9E2FC;
+  height:42px;
+  background:#C9E2FC;
 }
 #topic_wrapper #topic_posts {
-	height:auto;
-	overflow:visible;
+  height:auto;
+  overflow:visible;
 }
 
 #topic_wrapper #topic_posts .post {
-	background:white;
+  background:white;
 }
 /* --------------------------------------------------------- */

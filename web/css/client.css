@@ -3,122 +3,122 @@ Darker Blue: #5590d2
 Lighter Blue:  #C9E2FC
 
 Green (Active Item): #789E35
-	+ Border: #CED697;
+  + Border: #CED697;
 Lighter Green: #9b0
 
 Notification Yellow: #FC0
 */
 
 #widgets {
-	position: relative;
+  position: relative;
 }
 
 .widget {
-	display: block;
-	position: absolute;
-	top: 10px;
-	-webkit-transition-duration: 300ms;
-	transition-duration: 300ms;
-	
-	background-color: #C9E2FC;
+  display: block;
+  position: absolute;
+  top: 10px;
+  -webkit-transition-duration: 300ms;
+  transition-duration: 300ms;
 
-	border:1px gray solid; 
-	border-radius: 5px;
+  background-color: #C9E2FC;
 
-	box-shadow: 5px 5px 0px 0px #888;
+  border:1px gray solid; 
+  border-radius: 5px;
+
+  box-shadow: 5px 5px 0px 0px #888;
 }
 .dialog {
-	position:absolute;
-	
-	background-color:white;
-	color:black;
+  position:absolute;
 
-	border:1px #5590d2 solid;
-	box-shadow: 3px 3px 0px 0px #888;
+  background-color:white;
+  color:black;
+
+  border:1px #5590d2 solid;
+  box-shadow: 3px 3px 0px 0px #888;
 }
 
 
 /* ------------------------------------------------------------------------- */
 #contactschooser {
-	top:200px;
-	left:200px;
-	width:300px;
-	height:400px;
+  top:200px;
+  left:200px;
+  width:300px;
+  height:400px;
 }
 #contactschooser_title {
-	position:absolute;
-	top:0px;
-	left:0px;
-	right:0px;
-	height:25px;
+  position:absolute;
+  top:0px;
+  left:0px;
+  right:0px;
+  height:25px;
 
-	background-color:#5590d2;
-	color:white;
-	padding-left:4px;
-	padding-top:3px;
+  background-color:#5590d2;
+  color:white;
+  padding-left:4px;
+  padding-top:3px;
 
-	cursor:pointer;
+  cursor:pointer;
 
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#61A7F2), to(#5590D2));
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#61A7F2), to(#5590D2));
 }
 #contactschooser .buttons {
-	position:absolute;
-	top:0px;
-	right:0px;
+  position:absolute;
+  top:0px;
+  right:0px;
 }
 /*
 #contactschooser .buttons .button_close {
-	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAbElEQVR42mMwSNgvYJCyfwEQ/ycSvwerB+pjMEjeP58EjQgM1McANek/OZiBXI1YNYPAmoNPUcRAfBAgqBmmEGYAOp+gs5E14NKI18+ENFLfZor8TFFo0yuRvKcsbRun7eYHcvpJSuNAjSB9ANoBLKgC6ySIAAAAAElFTkSuQmCC);
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAbElEQVR42mMwSNgvYJCyfwEQ/ycSvwerB+pjMEjeP58EjQgM1McANek/OZiBXI1YNYPAmoNPUcRAfBAgqBmmEGYAOp+gs5E14NKI18+ENFLfZor8TFFo0yuRvKcsbRun7eYHcvpJSuNAjSB9ANoBLKgC6ySIAAAAAElFTkSuQmCC);
 }
 */
 #contactschooser_filter {
-	position:absolute;
-	top:28px;
-	left:0px;
-	right:0px;
-	height:25px;
+  position:absolute;
+  top:28px;
+  left:0px;
+  right:0px;
+  height:25px;
 }
 #contactschooser_filter_text {
-	position:absolute;
-	top:0px;
-	left:0px;
-	right:0px;
-	bottom:0px;	
+  position:absolute;
+  top:0px;
+  left:0px;
+  right:0px;
+  bottom:0px;
 
-	border-radius:3px;
-	border:1px gray solid;
+  border-radius:3px;
+  border:1px gray solid;
 }
 #contactschooser_list {
-	position:absolute;
-	left:0px;
-	right:0px;
-	bottom:0px;
-	top:53px;
+  position:absolute;
+  left:0px;
+  right:0px;
+  bottom:0px;
+  top:53px;
 
-	margin:0px;
-	margin-top:5px;
-	padding-left:7px;
+  margin:0px;
+  margin-top:5px;
+  padding-left:7px;
 
-	background-color:white;
-	list-style-type:none;
-	overflow:auto;
+  background-color:white;
+  list-style-type:none;
+  overflow:auto;
 }
 
 #contactschooser_list .contact {
-	cursor:pointer;
-	padding:3px;
+  cursor:pointer;
+  padding:3px;
 }
 #contactschooser_list .contact .name {
-	margin-left: 5px;
-	vertical-align:top;
+  margin-left: 5px;
+  vertical-align:top;
 }
 #contactschooser_list li.active {
-	background-color: #789E35;
-	color: white;
+  background-color: #789E35;
+  color: white;
 }
 /* ------------------------------------------------------------------------- */
 .contactdetail {
-	padding:10px;
+  padding:10px;
 }
 .contactdetail .usericon {
 }
@@ -131,296 +131,292 @@ Notification Yellow: #FC0
 
 /* ------------------------------------------------------------------------- */
 #contacts {
-	min-width:200px;
-	min-height:400px;
+  min-width:200px;
+  min-height:400px;
 
-	background:white;
+  background:white;
 }
 #contacts .actions {
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
-	padding-left:5px;
-	
-	
-	position:relative;
-	top:0px;
-	left:0px;
-	right:0px;
-	height:24px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
+  padding-left:5px;
+
+  position:relative;
+  top:0px;
+  left:0px;
+  right:0px;
+  height:24px;
 }
 #contacts .contactslist {
-	border-radius:0px 0px 5px 5px;
-	list-style-type:none;
-	
-	padding:0;
-	margin:0;
-	
-	position:relative;
-	top:0px;
-	left:0px;
-	right:0px;
-	bottom:0px;
+  border-radius:0px 0px 5px 5px;
+  list-style-type:none;
 
-	overflow:auto;	
+  padding:0;
+  margin:0;
+
+  position:relative;
+  top:0px;
+  left:0px;
+  right:0px;
+  bottom:0px;
+
+  overflow:auto;  
 }
 #contacts .contact {
-	cursor: pointer;
-	position: relative;
-	height:28px;
-	padding-left:5px;
-	padding-right:5px;
+  cursor: pointer;
+  position: relative;
+  height:28px;
+  padding-left:5px;
+  padding-right:5px;
 }
 #contacts .contact:hover {
-	background: #AFAFAF;
-	color: white;
-	font-weight: bold;
+  background: #AFAFAF;
+  color: white;
+  font-weight: bold;
 }
 #contacts .contact .usericon {
-	display:block;
-	padding-top:3px;
+  display:block;
+  padding-top:3px;
 }
 #contacts .contact .usericon img {
-	display:block;
+  display:block;
 }
 #contacts .contact .name {
-	position:absolute;
-	top:4px;
-	left:34px;
+  position:absolute;
+  top:4px;
+  left:34px;
 }
 #contacts .whoami {
-	padding-left:10px;
-	padding-top:10px;
-	background:#C9E2FC;
-	border-radius:5px 5px 0px 0px;
-	height:44px;
+  padding-left:10px;
+  padding-top:10px;
+  background:#C9E2FC;
+  border-radius:5px 5px 0px 0px;
+  height:44px;
 }
 #contacts .whoami .name {
-	font-weight:bold;
-	vertical-align:top;
+  font-weight:bold;
+  vertical-align:top;
 }
 /* ------------------------------------------------------------------------- */
 #topics_wrapper { 
-	min-height:400px;
-	min-width:300px;
+  min-height:400px;
+  min-width:300px;
 }
 #topics_wrapper #topics_actions {
-	
-	margin-top:54px;
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
-	height:24px;
-	padding-left:5px;
+  margin-top:54px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
+  height:24px;
+  padding-left:5px;
 }
 
 #topics_wrapper #topics {
-	background-color: white;
-	color:black;
-	
-	font-size:13px;
+  background-color: white;
+  color:black;
 
-	border-radius: 0px 0px 5px 5px;
-	
-	overflow: auto;
-	list-style-type: none;
-	
-	margin:0px;
-	padding:0px;
-	position:relative;
-	top:0px;
-	bottom:0px;
-	left:0px;
-	right:0px;
-	
+  font-size:13px;
+
+  border-radius: 0px 0px 5px 5px;
+
+  overflow: auto;
+  list-style-type: none;
+
+  margin:0px;
+  padding:0px;
+  position:relative;
+  top:0px;
+  bottom:0px;
+  left:0px;
+  right:0px;
 }
 #topics li {
-	border-bottom:1px black solid;
-	
-	position: relative;
-	
-	padding:3px;
-	height: 40px;
-	overflow:hidden;
+  border-bottom:1px black solid;
+
+  position: relative;
+
+  padding:3px;
+  height: 40px;
+  overflow:hidden;
 }
 
 #topics li.topic_header {
-	cursor:pointer;
+  cursor:pointer;
 }
 #topics li.topic_header .abstract {
-	position:absolute;
-	left:116px;
-	right:56px;
-	overflow:hidden;
+  position:absolute;
+  left:116px;
+  right:56px;
+  overflow:hidden;
 }
 #topics li.topic_header .messages {
-	display:inline;
+  display:inline;
 
-	position:absolute;
-	right:4px;
-	top:4px;
+  position:absolute;
+  right:4px;
+  top:4px;
 }
 #topics li.topic_header .messages>.unread {
-	background-color: #9b0;
-	color: white;
-	border-radius:10px;
-	display:inline;
-	padding-left:2px;
-	padding-right:2px;
+  background-color: #9b0;
+  color: white;
+  border-radius:10px;
+  display:inline;
+  padding-left:2px;
+  padding-right:2px;
 }
 #topics li.topic_header.active {
-	color:white;
+  color:white;
 }
 
 #topics li.topic_header .time  {
-	position:absolute;
-	right:4px;
-	bottom:4px;
-	color:gray;
-	font-size: small;
+  position:absolute;
+  right:4px;
+  bottom:4px;
+  color:gray;
+  font-size: small;
 }
 #topics li.topic_header .users {
-	position:absolute;
-	top:4px;
-	left:4px;
+  position:absolute;
+  top:4px;
+  left:4px;
 }
 #topics li.topic_header .users img {
-	margin-left:2px;
-	border:1px white solid;
+  margin-left:2px;
+  border:1px white solid;
 }
 
 #topics li:hover {
-	background: #AFAFAF;
-	color: white;
+  background: #AFAFAF;
+  color: white;
 }
 #topics li.active {
-	background-color: #789E35;
+  background-color: #789E35;
 }
 #topics li.active .users img {
-	border:1px white solid;
+  border:1px white solid;
 }
 
 /* ------------------------------------------------------------------------- */
 #topic_wrapper { 
-	min-height:400px;
-	min-width:300px;
-	
-	background:white;
-	
+  min-height:400px;
+  min-width:300px;
+
+  background:white;
 }
 #topic_readers {
-	background:#C9E2FC;
-	border-radius:5px 5px 0 0;
-	right:10px;
-	min-height:44px;
-	padding-top:8px;
-	padding-left:10px;
-	padding-bottom:2px;
+  background:#C9E2FC;
+  border-radius:5px 5px 0 0;
+  right:10px;
+  min-height:44px;
+  padding-top:8px;
+  padding-left:10px;
+  padding-bottom:2px;
 }
 #topic_readers>* {
-	padding-right:4px;
+  padding-right:4px;
 }
 #topic_actions {
-	position:relative;
-	top:0px;
-	left:0px;
-	padding-left:5px;
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
-	height:24px;
-	right:0px;
+  position:relative;
+  top:0px;
+  left:0px;
+  padding-left:5px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
+  height:24px;
+  right:0px;
 }
 #topic_posts {
-	border-radius: 0px 0px 5px 5px;
-	overflow:auto;
+  border-radius: 0px 0px 5px 5px;
+  overflow:auto;
 
-	min-height:100px;
-	
-	position:relative;
-	left:0px;
-	right:0px;
-	top:0px;
-	bottom:0px;
+  min-height:100px;
+
+  position:relative;
+  left:0px;
+  right:0px;
+  top:0px;
+  bottom:0px;
 }
 #topic_posts .loading {
-	margin:10px;
+  margin:10px;
 }
 
 
 #topic_posts .post_wrapper {
 }
 #topic_posts .post {
-	border-radius:5px;
-	border:3px white solid;
-	border-top: 1px black dotted;
-	
-	min-height:80px;
-	padding:5px;
-	position:relative;
+  border-radius:5px;
+  border:3px white solid;
+  border-top: 1px black dotted;
+
+  min-height:80px;
+  padding:5px;
+  position:relative;
 }
 #topic_posts .post.active {
-	border:3px #789E35 solid;
+  border:3px #789E35 solid;
 }
 #topic_posts .post .unread {
-	position:absolute;
-	background-color: #9b0;
-	width:3px;
-	left:2px;
-	top:2px;
-	bottom:2px;
+  position:absolute;
+  background-color: #9b0;
+  width:3px;
+  left:2px;
+  top:2px;
+  bottom:2px;
 }
 #topic_posts .post>.time {
-	position:absolute;
-	right:0px;
-	top:0px;
+  position:absolute;
+  right:0px;
+  top:0px;
 
-	padding:5px;
+  padding:5px;
 
-	color:gray;
-	float:right;
-	font-size:small;
+  color:gray;
+  float:right;
+  font-size:small;
 }
 #topic_posts .post>.users {
-	padding-top:3px;
-	display:block;
-	position:relative;
+  padding-top:3px;
+  display:block;
+  position:relative;
 }
 #topic_posts .post>.users>img {
-	padding-left:3px;
-	padding-right:5px;
+  padding-left:3px;
+  padding-right:5px;
 }
 #topic_posts .post>.users>.names {
-	color:gray;
-	font-weight:bold;
-	font-size:small;
-	clear:both;
+  color:gray;
+  font-weight:bold;
+  font-size:small;
+  clear:both;
 
-	position:absolute;
-	top:3px;
+  position:absolute;
+  top:3px;
 }
 #topic_posts .post>.buttons {
-	text-align:right;
+  text-align:right;
 }
 #topic_posts .post>.content {
-	padding-bottom:22px;
+  padding-bottom:22px;
 }
 
 
 #topic_posts .post_replies {
-	margin-left:15px;
-	margin-bottom: 15px;
+  margin-left:15px;
+  margin-bottom: 15px;
 }
 #topic_posts .post_replies.empty {
-	margin-bottom: 0px;
+  margin-bottom: 0px;
 }
 /* Wrapper around a thread */
 #topic_posts .intended_reply_thread {
-	border-left: 1px gray solid;
-	border-bottom: 1px gray solid;
-	border-bottom-left-radius: 5px;
-	box-shadow: -2px 2px 5px 0px #888;
+  border-left: 1px gray solid;
+  border-bottom: 1px gray solid;
+  border-bottom-left-radius: 5px;
+  box-shadow: -2px 2px 5px 0px #888;
 }
 #topic_posts .thread_spacer {
-	margin-top: 30px;
+  margin-top: 30px;
 }
 /* Posts inside of posts have a left padding */
 #topic_posts .post .post {
-	padding-left:3px;
+  padding-left:3px;
 }
 
 /* #topic_posts > */ #add_reply {
@@ -433,95 +429,95 @@ Notification Yellow: #FC0
 }
 
 #topic_messages .message {
-	background-color: #FC0;
-	border-bottom: 1px black solid;
-	height: 20px;
-	padding: 5px;
-	position:relative;
+  background-color: #FC0;
+  border-bottom: 1px black solid;
+  height: 20px;
+  padding: 5px;
+  position:relative;
 }
 #topic_messages .message button {
-	position: absolute;
-	right: 5px;
-	top: 5px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
 }
 
 /* ------------------------------------------------------------------------- */
 .usericon {
-	display:inline;
-	position:relative;
+  display:inline;
+  position:relative;
 }
 .usericon div {
-	display:inline;
+  display:inline;
 }
 .usericon16 .status {
-	width:11px;
-	height:11px;
-	position:absolute;
-	top:7px;
-	left:9px;
+  width:11px;
+  height:11px;
+  position:absolute;
+  top:7px;
+  left:9px;
 }
 .usericon20 .status {
-	width:11px;
-	height:11px;
-	position:absolute;
-	top:8px;
-	left:13px;
+  width:11px;
+  height:11px;
+  position:absolute;
+  top:8px;
+  left:13px;
 }
 .usericon32 .status {
-	width:11px;
-	height:11px;
-	position:absolute;
-	top:8px;
-	left:26px;
+  width:11px;
+  height:11px;
+  position:absolute;
+  top:8px;
+  left:26px;
 }
 .usericon40  .status {
-	width:11px;
-	height:11px;
-	position:absolute;
-	top:7px;
-	left:33px;
+  width:11px;
+  height:11px;
+  position:absolute;
+  top:7px;
+  left:33px;
 }
 .usericon .online {
-	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAmklEQVR42mNgAIL////rAfF+IP4BxH+A+BsQrwBiSQaoAn0gvrr02qrjyrONH8vP1P8PokF8oPgtINYAKVoNEgBJouOl19aAFM4FKXoBMwEdg8SB8s9Ain5jUwDDQPALpOgDAZOegBQtXn597QlsioDiIDdNAylSA+LHIIXIvgPxgeJnwL6DBoMYEM8G4tfQsPoIxMuAWB4kDwCRrNHJnDC8OAAAAABJRU5ErkJggg==) no-repeat;
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAmklEQVR42mNgAIL////rAfF+IP4BxH+A+BsQrwBiSQaoAn0gvrr02qrjyrONH8vP1P8PokF8oPgtINYAKVoNEgBJouOl19aAFM4FKXoBMwEdg8SB8s9Ain5jUwDDQPALpOgDAZOegBQtXn597QlsioDiIDdNAylSA+LHIIXIvgPxgeJnwL6DBoMYEM8G4tfQsPoIxMuAWB4kDwCRrNHJnDC8OAAAAABJRU5ErkJggg==) no-repeat;
 }
 .usericon .away {
-	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAo0lEQVR42m2QsQrCMBRFM/QbBKdu4lS/xx8TbXEqFKHfII46uGrBtSKCS7sU0cL13iQtVXxwmuTm5NHEGBaAiOzIk7SkIRsyNl6YkRPOyz2SoMSKkUatgQuZSsptoE2h6uZOXCu99x1+JeXATenbBts5+uokd+ilb/XVaYjrdJWUoogPf6Ui1j8tJE1IacXh7bQGjvZ2/hlGJCEP/1Y1yUio/Q9gQvOBIT9JeAAAAABJRU5ErkJggg==) no-repeat;
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAo0lEQVR42m2QsQrCMBRFM/QbBKdu4lS/xx8TbXEqFKHfII46uGrBtSKCS7sU0cL13iQtVXxwmuTm5NHEGBaAiOzIk7SkIRsyNl6YkRPOyz2SoMSKkUatgQuZSsptoE2h6uZOXCu99x1+JeXATenbBts5+uokd+ilb/XVaYjrdJWUoogPf6Ui1j8tJE1IacXh7bQGjvZ2/hlGJCEP/1Y1yUio/Q9gQvOBIT9JeAAAAABJRU5ErkJggg==) no-repeat;
 }
-.usericon .offline {	
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAABFklEQVR42k1RzUqEYBQdepRWQdRztGwb9CptWgShiH+oiKKIMCAirhJJZooR2sTQbqCls+sBdHk750OHuXA4nB+vcL/Vah4RuQEM4AP4Ab6AF+BqdT4wHqdp2nVd12RZNuR5LmRq+sgfThvHcdylaXpAQdbrtRRFoZiaPvItercsGw0mjmPp+14VF1DTf8Og98rydxAExyiK1CYOvlVMTd/3/QHyneU/13UlDENJkkTqulZFMjV95pg9y7+O4xw9z1MBpyxLxdT0bdvm5i3LDrY0lmVJ27YqxG8VU9Nnjt7Tco3ONM2DYRgCVgXyrHmNDXqXy/nuYXxWVdXouj5omiZkai5Cfnf+KBfANfAMMNwDm1mfXvAfXkRYqbEvyOQAAAAASUVORK5CYII=) no-repeat;
+.usericon .offline {  
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAABFklEQVR42k1RzUqEYBQdepRWQdRztGwb9CptWgShiH+oiKKIMCAirhJJZooR2sTQbqCls+sBdHk750OHuXA4nB+vcL/Vah4RuQEM4AP4Ab6AF+BqdT4wHqdp2nVd12RZNuR5LmRq+sgfThvHcdylaXpAQdbrtRRFoZiaPvItercsGw0mjmPp+14VF1DTf8Og98rydxAExyiK1CYOvlVMTd/3/QHyneU/13UlDENJkkTqulZFMjV95pg9y7+O4xw9z1MBpyxLxdT0bdvm5i3LDrY0lmVJ27YqxG8VU9Nnjt7Tco3ONM2DYRgCVgXyrHmNDXqXy/nuYXxWVdXouj5omiZkai5Cfnf+KBfANfAMMNwDm1mfXvAfXkRYqbEvyOQAAAAASUVORK5CYII=) no-repeat;
 }
 
 /* ICONS */
 .icon {
-	cursor:pointer;
-	border:0px;
-	padding-left:10px;
-	padding-right:10px;
+  cursor:pointer;
+  border:0px;
+  padding-left:10px;
+  padding-right:10px;
 
 }
 .borderright {
-	 margin-right:10px; 
-	 padding-right:12px; 
-	 border-right:1px black solid;
+   margin-right:10px; 
+   padding-right:12px; 
+   border-right:1px black solid;
 }
 .urlicon {
-	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAABBUlEQVR42mNgGAWjgLrAbsV/DDGH5Q4MdssP4NcHlAepI8YCEEAXBgo5A/EpfBZsPvr0Okgd6RY4rDIAik+Ayk+A4g9gDJJDsuD0jTf+QPENcHHiLFjuIOC59ixQeAbIILP0XfdB7P5VN//5VR7+B2Qbg8QX7Xxwm89z7R2pwA3ZQLGdYHFiLRD1W3cRHESIoNgJElcM33wXzAaK87iv+SMZuPEqkH8biFNJ8gEWC5zRxRvmX3mon7TjP8gnJMYBcRaAxFftfzyB12PN3yv338fjTqYoGJL8iLUAJK4Vu20mNG4EsdrxHxOcQk6mMD568kUTbwfHDf1zMTUxkcFDERgte4kCABl+tI2JVfmHAAAAAElFTkSuQmCC) no-repeat;
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAABBUlEQVR42mNgGAWjgLrAbsV/DDGH5Q4MdssP4NcHlAepI8YCEEAXBgo5A/EpfBZsPvr0Okgd6RY4rDIAik+Ayk+A4g9gDJJDsuD0jTf+QPENcHHiLFjuIOC59ixQeAbIILP0XfdB7P5VN//5VR7+B2Qbg8QX7Xxwm89z7R2pwA3ZQLGdYHFiLRD1W3cRHESIoNgJElcM33wXzAaK87iv+SMZuPEqkH8biFNJ8gEWC5zRxRvmX3mon7TjP8gnJMYBcRaAxFftfzyB12PN3yv338fjTqYoGJL8iLUAJK4Vu20mNG4EsdrxHxOcQk6mMD568kUTbwfHDf1zMTUxkcFDERgte4kCABl+tI2JVfmHAAAAAElFTkSuQmCC) no-repeat;
 }
 .olisticon {
-	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAATCAYAAACdkl3yAAAARUlEQVR42mNgGAXEgv/UMuQ/CFDFMDSD/pOIMTShmkwCwNBEcRgxUCuAqBlzDEheG2aBTb0ESbXUTa2UjRxrlAU2Jd4BAAwCBAtmEJv9AAAAAElFTkSuQmCC) no-repeat;
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAATCAYAAACdkl3yAAAARUlEQVR42mNgGAXEgv/UMuQ/CFDFMDSD/pOIMTShmkwCwNBEcRgxUCuAqBlzDEheG2aBTb0ESbXUTa2UjRxrlAU2Jd4BAAwCBAtmEJv9AAAAAElFTkSuQmCC) no-repeat;
 }
 .listicon {
-	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAAAP0lEQVR42mNgGAUjDkQC8X8oTRPwH4aBIA5djEhM2AfLli0DWQBX/J9EgN8LQJdD1cWNRvJoJI9G8mgkDxcAABlUBFwoPRjrAAAAAElFTkSuQmCC) no-repeat;
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAAAP0lEQVR42mNgGAUjDkQC8X8oTRPwH4aBIA5djEhM2AfLli0DWQBX/J9EgN8LQJdD1cWNRvJoJI9G8mgkDxcAABlUBFwoPRjrAAAAAElFTkSuQmCC) no-repeat;
 }
 .strikeicon {
-	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAVCAYAAACg/AXsAAABCklEQVR42mNgGAUDAhygWIAczQFA/AGI/8MwDw/PdFIMUABp8vT0nPv///8P79+//5+fnw82KDs7+yCxhjSANEBBAQOEIyAsLPzJ3t4eLkYIgBTBbEcOC4Pbt28/ARpygKAJHz586JgxY8a7hoaG/yDc29v7cvHixSeuX78+A2iAARAr4NL7n0yMZgoU3L9////58+f/IwNQ4Pb39/9vb2//jw5wueoACwsLyO8GSBY0xMTEnIDa9YPogJ0+ffobdMNVVFQe4LMdGQgoKCjcARkkIiLyCKQZmvAuvHr16ghRsQNLF/Pnz79SX1//v6io6MXGjRsvgBIeEINo0rIAUEMAKDyg2GGElBcAcAjaUhWbDDUAAAAASUVORK5CYII=) no-repeat;
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAVCAYAAACg/AXsAAABCklEQVR42mNgGAUDAhygWIAczQFA/AGI/8MwDw/PdFIMUABp8vT0nPv///8P79+//5+fnw82KDs7+yCxhjSANEBBAQOEIyAsLPzJ3t4eLkYIgBTBbEcOC4Pbt28/ARpygKAJHz586JgxY8a7hoaG/yDc29v7cvHixSeuX78+A2iAARAr4NL7n0yMZgoU3L9////58+f/IwNQ4Pb39/9vb2//jw5wueoACwsLyO8GSBY0xMTEnIDa9YPogJ0+ffobdMNVVFQe4LMdGQgoKCjcARkkIiLyCKQZmvAuvHr16ghRsQNLF/Pnz79SX1//v6io6MXGjRsvgBIeEINo0rIAUEMAKDyg2GGElBcAcAjaUhWbDDUAAAAASUVORK5CYII=) no-repeat;
 }
 .underlineicon {
-	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAVCAYAAABPPm7SAAAAU0lEQVR42mNgGAWDE/wH4nos4vVQuVED6GVAPxbxfmINWA/E74FYAElMACq2nhgD9KGKQXgCFMP4+sQmJn2obf+heD0pmilOxsRgPCYQCQZP1gUAz2VTI+TOucwAAAAASUVORK5CYII=) no-repeat;
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAVCAYAAABPPm7SAAAAU0lEQVR42mNgGAWDE/wH4nos4vVQuVED6GVAPxbxfmINWA/E74FYAElMACq2nhgD9KGKQXgCFMP4+sQmJn2obf+heD0pmilOxsRgPCYQCQZP1gUAz2VTI+TOucwAAAAASUVORK5CYII=) no-repeat;
 }
 .italicicon {
-	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAVCAYAAABPPm7SAAAArklEQVR42mNgGAWDHzgA8QYgPgDFIHYBSSbExcXVAqn/vLy8f968eXP2////O4G4jBQz1oMMaGhoAOr7/weIBUjRrADSDMIfPnwAGdBGahjMB2lOSEj4DwUk2Q5S/B5kwIMHD0CaV5Bqez1Is729/T+o7YqkGnAfZMCBAwdAmk+SqjkepFlWVvYP1HYnUhLOBJjfBQQE/ldVVX0lyWqgbc5APAMa57C4bx/NlLgBADbedGj/yDIeAAAAAElFTkSuQmCC) no-repeat;
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAVCAYAAABPPm7SAAAArklEQVR42mNgGAWDHzgA8QYgPgDFIHYBSSbExcXVAqn/vLy8f968eXP2////O4G4jBQz1oMMaGhoAOr7/weIBUjRrADSDMIfPnwAGdBGahjMB2lOSEj4DwUk2Q5S/B5kwIMHD0CaV5Bqez1Is729/T+o7YqkGnAfZMCBAwdAmk+SqjkepFlWVvYP1HYnUhLOBJjfBQQE/ldVVX0lyWqgbc5APAMa57C4bx/NlLgBADbedGj/yDIeAAAAAElFTkSuQmCC) no-repeat;
 }
 .boldicon {
-	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAVCAYAAACZm7S3AAAAUUlEQVR42mNgGAUDB/7jwQ1kazY2Nv4fGhp6gCjNyABNvIEozUSIE+fskJAQZJeQpXk1RX4mWjPV/AyKqvr6evI0QzWewRdVqJ7FBA0jPQsCAP6fsbS3vx6MAAAAAElFTkSuQmCC) no-repeat;
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAVCAYAAACZm7S3AAAAUUlEQVR42mNgGAUDB/7jwQ1kazY2Nv4fGhp6gCjNyABNvIEozUSIE+fskJAQZJeQpXk1RX4mWjPV/AyKqvr6evI0QzWewRdVqJ7FBA0jPQsCAP6fsbS3vx6MAAAAAElFTkSuQmCC) no-repeat;
 }

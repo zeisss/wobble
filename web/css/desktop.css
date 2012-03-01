@@ -1,75 +1,75 @@
 #headline {
-	margin:10px;
-	height:15px;
+  margin:10px;
+  height:15px;
 }
 #headline .navigation{
-	text-align:right;
-	position:relative;
-	top:0px;
-	right:0px;
+  text-align:right;
+  position:relative;
+  top:0px;
+  right:0px;
 
-	font-weight: bold;
-	font-size: 13px;
+  font-weight: bold;
+  font-size: 13px;
 }
 #headline .active {
-	background:url(data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH+GkNyZWF0ZWQgd2l0aCBhamF4bG9hZC5pbmZvACH5BAAKAAAAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQACgABACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkEAAoAAgAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkEAAoAAwAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkEAAoABAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQACgAFACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQACgAGACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAAKAAcALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==) no-repeat;
-	width:  13px;
-	height: 13px;
-	display: inline-block;
+  background:url(data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH+GkNyZWF0ZWQgd2l0aCBhamF4bG9hZC5pbmZvACH5BAAKAAAAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQACgABACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkEAAoAAgAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkEAAoAAwAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkEAAoABAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQACgAFACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQACgAGACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAAKAAcALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==) no-repeat;
+  width:  13px;
+  height: 13px;
+  display: inline-block;
 }
 /* ------------------------------------------------------------------------- */
 
 #desktoploginview {
-	min-height:240px;
-	height:100%;
+  min-height:240px;
+  height:100%;
 }
 #desktoploginview .content {
-	background-color:gray;
-	color:white;	
-	
-	position: relative;
-	
-	top:200px;
-	height:140px;
+  background-color:gray;
+  color:white;  
 
-	left:0px;
-	right:0px;
+  position: relative;
 
-	padding:70px;
+  top:200px;
+  height:140px;
+
+  left:0px;
+  right:0px;
+
+  padding:70px;
 }
 #desktoploginview label {
-	font-weight: bold;
+  font-weight: bold;
 }
 #desktoploginview button {
-	padding:10px;
-	padding-right:25px;
-	padding-left:25px;
+  padding:10px;
+  padding-right:25px;
+  padding-left:25px;
 }
 
 #desktoploginview .element {
-	display:inline;
-	width:30%;
-	float: left;
+  display:inline;
+  width:30%;
+  float: left;
 
 }
 /* --------------------------------------------------------- */
 #contacts .contactslist {
-	overflow:auto;
+  overflow:auto;
 }
 /* --------------------------------------------------------- */
 #topics_wrapper #topics {
-	overflow:auto;
-	
-	position:absolute;
-	top:78px;
-	bottom:0px;
+  overflow:auto;
+
+  position:absolute;
+  top:78px;
+  bottom:0px;
 }
 /* --------------------------------------------------------- */
 #topic_wrapper #topic_readers {
 
 }
 #topic_wrapper #topic_posts {
-	overflow:auto;
+  overflow:auto;
 }
 
 /* --------------------------------------------------------- */
