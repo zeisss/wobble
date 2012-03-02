@@ -37,11 +37,6 @@ function TopicModel() {
   };
 
   // Methods ------------------------------------------
-  that.removePost = function(post) {
-    topic.posts = _.filter(topic.posts, function(post2) {
-      return post.id === post2.id;
-    });
-  };
   that.addPost = function(post) {
     topic.posts.push(post);
   };
@@ -216,10 +211,12 @@ function TopicPresenter(view, model) {
     post.locked = true;
     API.post_delete(model.getTopic().id, post.id, function(err, result) {
       post.locked = false;
-      that.refreshTopic();
+
+      if (!err) {
+        post.deleted = 1;
+        view.renderTopic(model.getTopic());
+      }
     });
-    model.removePost(post);
-    view.clear();
     view.renderTopic(model.getTopic());
   };
 
