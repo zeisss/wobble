@@ -13,7 +13,12 @@ EOM
         exit 0;;
 esac
 
+if [ -z "$WOBBLE_HOME" ]; then
+  echo "ERROR: No WOBBLE_HOME set."
+  exit 1
+fi
+
 echo -n "orphaned_topics.value "
-/opt/wobble_dev/scripts/wobble-warning-sensors.php --orphaned-topics
+$WOBBLE_HOME/scripts/wobble-warning-sensors.php --orphaned-topics
 echo -n "orphaned_posts.value "
-/opt/wobble_dev/scripts/wobble-warning-sensors.php
+$WOBBLE_HOME/scripts/wobble-warning-sensors.php --orphaned-posts

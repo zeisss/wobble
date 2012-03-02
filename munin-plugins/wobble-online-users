@@ -13,7 +13,12 @@ EOM
         exit 0;;
 esac
 
+if [ -z "$WOBBLE_HOME" ]; then
+  echo "ERROR: No WOBBLE_HOME set."
+  exit 1
+fi
+
 echo -n "users.value "
-/opt/wobble_dev/scripts/get-online-users.php
+$WOBBLE_HOME/scripts/get-online-users.php
 echo -n "sessions.value "
-/opt/wobble_dev/scripts/get-online-users.php --sessions
+$WOBBLE_HOME/scripts/get-online-users.php --sessions
