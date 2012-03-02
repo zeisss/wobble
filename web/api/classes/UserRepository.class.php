@@ -25,7 +25,7 @@ class UserRepository {
   /**
    * Returns the user with the given ID including the hashed password.
    */
-  function get($user_id) {
+  function get($user_id, $include_password_hash = false) {
     $pdo = ctx_getpdo();
 
     $stmt = $pdo->prepare('SELECT id, name, password_hashed, email, 
@@ -38,13 +38,18 @@ class UserRepository {
     $result = $stmt->fetchAll();
     if ( count($result) == 1 ) {
       $result[0]['id'] = intval($result[0]['id']);
+
+      if (!$include_password_hash) {
+        unset($result[0]['password_hashed']);
+      }
+
       return $result[0];
     } else {
       return NULL;
     }
   }
 
-  function getUserByEmail($email) {
+  function getUserByEmail($email, $include_password_hash = false) {
     $pdo = ctx_getpdo();
 
     $stmt = $pdo->prepare('SELECT id, name, password_hashed, email, 
@@ -57,6 +62,11 @@ class UserRepository {
     $result = $stmt->fetchAll();
     if ( count($result) == 1 ) {
       $result[0]['id'] = intval($result[0]['id']);
+
+      if (!$include_password_hash) {
+        unset($result[0]['password_hashed']);
+      }
+      
       return $result[0];
     } else {
       return NULL;

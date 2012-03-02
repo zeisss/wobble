@@ -35,7 +35,7 @@ function user_login($params) {
   $email = InputSanitizer::sanitizeEmail($email);
 
   $password_hashed = SecurityService::hashPassword($password);
-  $user = UserRepository::getUserByEmail($email);
+  $user = UserRepository::getUserByEmail($email, true);
   if ($user != NULL && $password_hashed === $user['password_hashed']) {
     # Valid login given. We must start a session now (we dont want the cookie)
 
