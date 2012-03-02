@@ -120,7 +120,7 @@ TopicListPresenter.prototype.createNewTopic = function() {
     if (err) {
       that.refreshTopicsList();
     }
-    if (topic_id !== undefined) {
+    else if (topic_id !== undefined) {
       BUS.fire('topic.topic.created', topicId);
     }
   });

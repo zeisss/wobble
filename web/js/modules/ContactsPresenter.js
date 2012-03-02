@@ -22,7 +22,7 @@ ContactsModel.prototype.findByEmail = function (email) {
 ContactsModel.prototype.getContacts = function (callback) {
   var that = this;
   API.get_contacts(function(err, data) {
-    if (data) {
+    if (!err) {
       for (var i = 0; i < data.length; i++) {
         that.put(data[i]);
       }
