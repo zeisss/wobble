@@ -56,6 +56,7 @@
     'js/modules/ContactsDetailPresenter.js',
     'js/modules/TopicPresenter.js',
     'js/modules/TopicListPresenter.js',
+    'js/modules/UserProfilePresenter.js',
 
     // Views
     'js/views/jQueryTopicListView.js',

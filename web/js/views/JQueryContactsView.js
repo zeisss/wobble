@@ -33,7 +33,7 @@ function JQueryContactsView() {
 
   // UI Event Handlers
   this.$whoami.click($.proxy(function() {
-     this.fireWhoamiClicked();
+     this.onWhoamiClick();
   }, this));
   $("#contacts_add").click($.proxy(function() {
     var contactEmail = window.prompt("Enter the new contact's email address");
@@ -42,8 +42,7 @@ function JQueryContactsView() {
     }
   }, this));
   $("#show_my_profile").click($.proxy(function() {
-     var that = this;
-     that.fireWhoamiClicked();
+     this.onWhoamiClick();
   }, this));
 
   // On a window.resize event wait for the transformations to finish (should be done in 300ms) and recalc height
@@ -66,34 +65,6 @@ JQueryContactsView.prototype.onResize = function() {
   var offsetX = this.$whoami.outerHeight() + this.$actions.outerHeight()
 
   this.$contactsList.css('height', viewHeight - offsetX);
-};
-
-JQueryContactsView.prototype.fireWhoamiClicked = function() {
-  var that = this;
-  BUS.fire('contact.clicked', {
-      'contact': API.user(),
-      'actions': [
-        {title: 'Change my name', callback: function() {
-            var newName = window.prompt("What should your new name be?");
-        if (newName !== null) {
-          that.onNameChange(newName);
-        }
-        }},
-        {title: 'Change password', callback: function() {
-           var p1 = window.prompt('What should your new password be?');
-           if (p1 !== null) {
-             var p2 = window.prompt('And once again to be sure:');
-             if (p2 !== null) {
-               if (p1 === p2) {
-                   that.onPasswordChange(p1);
-               } else {
-                   window.alert('Your two passwords do not match. Try again.');   
-               }
-             }   
-           }
-        }}
-      ]
-   });
 };
 JQueryContactsView.prototype.renderContacts = function (list) {
   this.$contactsList.empty();

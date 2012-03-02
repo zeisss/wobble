@@ -56,6 +56,8 @@ WobbleDesktopClient.prototype.initApp = function() {
 
   this.topicPresenter = new TopicPresenter(new jQueryTopicView(), new TopicModel());
 
+  this.userProfilePresenter = new UserProfilePresenter();
+
   // Ok, all done. Lay it out
   this.doLayout();
 

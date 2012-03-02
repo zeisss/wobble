@@ -74,6 +74,8 @@ WobbleMobileClient.prototype.initApp = function() {
       this.contactsModel
   );
 
+  this.userProfilePresenter = new UserProfilePresenter();
+
   // Now show the contacts list
   this.onNavigation('navOverview');
 
