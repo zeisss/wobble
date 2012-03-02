@@ -8,7 +8,11 @@ graph_info Several sensors
 graph_category wobble
 graph_vlabel warnings
 orphaned_topics.label Orphaned Topics
+orphaned_topics.warning 1
+orphaned_topics.critical 10
 orphaned_posts.label Orphaned Posts
+orphaned_posts.warning 1
+orphaned_posts.critical 10
 EOM
         exit 0;;
 esac
