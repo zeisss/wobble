@@ -21,13 +21,13 @@ function ContactsModel() {
 
     this.refreshContactList();
   },this);
-  
+
   BUS.on('api.notification', function(message) {
     if (message.type == 'user_online' || message.type == 'user_signout') {
       this.refreshContactList();
     }
   }, this)
-  
+
   var that = this;
   that.refreshContactList(); // Initial load
   this.refreshTimer = setInterval(function() {
@@ -90,7 +90,7 @@ ContactsModel.prototype.removeContactFromRooster = function(userId, callback) {
     that.refreshContactList();
 
     // Call the callback
-    if (callback) 
+    if (callback)
       return callback(err, data);
   });
 }
