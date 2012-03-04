@@ -1,13 +1,13 @@
 <?php
 /**
- * 
+ *
  */
 class UserRepository {
   function create($name, $password_hashed, $email) {
     $pdo = ctx_getpdo();
     $stmt = $pdo->prepare('INSERT INTO users (name, password_hashed, email) VALUES (?,?,?)');
     $stmt->execute(array($name, $password_hashed, strtolower(trim($email))));
-    
+
     return $pdo->lastInsertId();
   }
   function updateName($user_id, $name) {
@@ -38,6 +38,7 @@ class UserRepository {
     $result = $stmt->fetchAll();
     if ( count($result) == 1 ) {
       $result[0]['id'] = intval($result[0]['id']);
+      $result[0]['online'] = intval($result[0]['online']);
 
       if (!$include_password_hash) {
         unset($result[0]['password_hashed']);
@@ -62,11 +63,12 @@ class UserRepository {
     $result = $stmt->fetchAll();
     if ( count($result) == 1 ) {
       $result[0]['id'] = intval($result[0]['id']);
+      $result[0]['online'] = intval($result[0]['online']);
 
       if (!$include_password_hash) {
         unset($result[0]['password_hashed']);
       }
-      
+
       return $result[0];
     } else {
       return NULL;
@@ -75,7 +77,7 @@ class UserRepository {
 
   function delete($user_id) {
     $pdo = ctx_getpdo();
-    
+
     $pdo->prepare('DELETE FROM users WHERE id = ?')->execute(array($user_id));
     $pdo->prepare('DELETE FROM notifications WHERE user_id = ?')->execute(array($user_id));
     $pdo->prepare('DELETE FROM user_archived_topics WHERE user_id = ?')->execute(array($user_id));
