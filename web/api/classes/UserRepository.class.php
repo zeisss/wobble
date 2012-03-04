@@ -8,7 +8,8 @@ class UserRepository {
     $stmt = $pdo->prepare('INSERT INTO users (name, password_hashed, email) VALUES (?,?,?)');
     $stmt->execute(array($name, $password_hashed, strtolower(trim($email))));
 
-    return $pdo->lastInsertId();
+    $userid = intval($pdo->lastInsertId());
+    return $userid;
   }
   function updateName($user_id, $name) {
     $pdo = ctx_getpdo();
