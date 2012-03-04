@@ -3,19 +3,15 @@
 function jQueryTopicsView () {
   this.e = $('<div></div>').addClass('widget').attr('id', 'topics_wrapper').appendTo('#widgets');
 
-  this.jTopicsWrapper = this.e.append('<div id="topics_actions"></div>' +
-            '<ul id="topics">' +
-            '  <li>Loading ...</li>' +
-            '</ul>');
-
-  this.$topics = $("#topics");
-
-  this.$topicsAction = $("#topics_actions", this.e);
+  this.$actions = $('<div id="topics_actions"></div>').appendTo(this.e);
+  this.$topics = $('<ul id="topics">' +
+                   '  <li>Loading ...</li>' +
+                   '</ul>').appendTo(this.e)
 
   var that = this;
   $("<button>New</button>").click(function() {
     that.onCreateNewTopic();
-  }).appendTo(this.$topicsAction);
+  }).appendTo(this.$actions);
   $('<button>Show archived</button>').click(function() {
     var button = $(this);
     if (button.text() == 'Show archived') {
@@ -25,7 +21,7 @@ function jQueryTopicsView () {
       that.onShowInbox();
       button.text('Show archived');
     }
-  }).appendTo(this.$topicsAction);
+  }).appendTo(this.$actions);
 };
 jQueryTopicsView.prototype = new TopicsListDisplay;
 jQueryTopicsView.prototype.constructor = jQueryTopicsView;

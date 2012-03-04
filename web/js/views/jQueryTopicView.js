@@ -8,10 +8,10 @@ function jQueryTopicView() {  // The UI handler for the single topic
 
   this.e = $('<div></div>').addClass('widget').attr('id', 'topic_wrapper').appendTo('#widgets');
 
-  this.jTopicReaders = $('<div></div>').attr('id', 'topic_readers').appendTo(this.e);
-  this.jTopicActions = $('<div></div>').attr('id', 'topic_actions').appendTo(this.e);
+  this.$readers = $('<div></div>').attr('id', 'topic_readers').appendTo(this.e);
+  this.$actions = $('<div></div>').attr('id', 'topic_actions').appendTo(this.e);
   this.$messages = $('<div></div>').attr('id', 'topic_messages').appendTo(this.e);
-  this.jTopicPosts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
+  this.$posts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
 
   this._renderTopicActions(false);
 
@@ -30,32 +30,32 @@ jQueryTopicView.prototype.constructor = jQueryTopicView;
 jQueryTopicView.prototype.onResize = function() {
 
   var viewHeight = this.e.innerHeight();
-  var offsetX = this.jTopicReaders.outerHeight() + 
-                this.jTopicActions.outerHeight() +
+  var offsetX = this.$readers.outerHeight() + 
+                this.$actions.outerHeight() +
                 this.$messages.outerHeight();
 
-  this.jTopicPosts.css('height', viewHeight - offsetX);
+  this.$posts.css('height', viewHeight - offsetX);
 };
 jQueryTopicView.prototype.clear = function() {
   this.editingPostId = null;
   this.currentTopic = null;
-  this.jTopicPosts.empty();
-  this.jTopicReaders.empty();
-  this.jTopicActions.empty();
+  this.$posts.empty();
+  this.$readers.empty();
+  this.$actions.empty();
 };
 
 jQueryTopicView.prototype.setEnabled = function(enabled) {
   if (enabled) {
-    $("button", this.jTopicActions).removeAttr('disabled');
+    $("button", this.$actions).removeAttr('disabled');
   } else {
-    $("button", this.jTopicActions).attr('disabled', 'disabled');
+    $("button", this.$actions).attr('disabled', 'disabled');
   }
 };
 
 jQueryTopicView.prototype.setLoadingState = function() {
   this.clear();
   this.setEnabled(false);
-  this.jTopicPosts.append("<div class=loading>Loading ...</div>");
+  this.$posts.append("<div class=loading>Loading ...</div>");
 };
 
 jQueryTopicView.prototype.renderTopic = function(topicDetails) {
@@ -68,7 +68,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
   if (topicDetails) {
     this.setEnabled(true);
 
-    this.jTopicReaders.empty();
+    this.$readers.empty();
     // Only cache the writers
     for (var i = 0; i<  topicDetails.writers.length; ++i) {
       var user = topicDetails.writers[i];
@@ -129,7 +129,7 @@ jQueryTopicView.prototype._renderReader= function(user) {
   var containerId = "topic-reader-" + user.id;
   var container = $('#' + containerId);
   if (container.length == 0) {
-    container = $("<span></span>").attr('id', containerId).appendTo(this.jTopicReaders);
+    container = $("<span></span>").attr('id', containerId).appendTo(this.$readers);
   }
   var template = "<div class='usericon usericon40'>" +
            "<div><img width='40' height='40' src='http://gravatar.com/avatar/{{img}}?s=40' title='{{name}}'/></div>" +
@@ -190,7 +190,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
         jPostWrapper.insertAfter(parentPostId);
       }
     } else { // Root post
-      jPostWrapper.appendTo(this.jTopicPosts);
+      jPostWrapper.appendTo(this.$posts);
     }
 
   }
@@ -316,13 +316,13 @@ jQueryTopicView.prototype.renderAddReply = function() {
   var $addReply = $('<div id="add_reply">Click here to add a reply</div>');
   var that = this;
   $addReply.click(function() {
-    var rootPosts = $('>.post_wrapper', that.jTopicPosts);
+    var rootPosts = $('>.post_wrapper', that.$posts);
     if (rootPosts.size() > 0) {
       var lastPost = rootPosts.eq(-1);
       that.onReplyPost(lastPost.data('post'));
     }
   })
-  $addReply.appendTo(that.jTopicPosts);
+  $addReply.appendTo(that.$posts);
 };
 
 jQueryTopicView.prototype.removePost = function(post) {
@@ -431,89 +431,89 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 };
 
 jQueryTopicView.prototype._renderTopicActions = function(editing) {
-  this.jTopicActions.empty();
+  this.$actions.empty();
 
   if (editing) {
     // See http://www.quirksmode.org/dom/execCommand/
     // for an example of commands
-    $('<button class="icon rightborder">Clear</button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon rightborder">Clear</button>').appendTo(this.$actions).click(function() {
       document.execCommand('RemoveFormat', false, null);
     });
 
-    $('<button class="icon boldicon rightborder"></button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon boldicon rightborder"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('bold', false, null);
     });
-    $('<button class="icon italicicon"></button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon italicicon"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('italic', false, null);
     });
-    $('<button class="icon underlineicon"></button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon underlineicon"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('underline', false, null);
     });
-    $('<button class="icon strikeicon borderright"></button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon strikeicon borderright"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('strikethrough', false, null);
     });
 
-    $('<button class="icon">BG</button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon">BG</button>').appendTo(this.$actions).click(function() {
       var color = window.prompt('Color? (#FF0000 or red)');
       if (color!=null)
         document.execCommand('backcolor', true, color ||'white');
     });
-    $('<button class="icon">FG</button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon">FG</button>').appendTo(this.$actions).click(function() {
       var color = window.prompt('Color? (#FF0000 or red)');
       if (color!=null)
         document.execCommand('forecolor', false, color ||'black');
     });
-    $('<button class="icon">&gt;&gt;</button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon">&gt;&gt;</button>').appendTo(this.$actions).click(function() {
       document.execCommand('indent', false);
     });
-    $('<button class="icon">&lt;&lt;</button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon">&lt;&lt;</button>').appendTo(this.$actions).click(function() {
       document.execCommand('outdent', false);
     });
     /* Not supported by IE8
-    $('<button class="icon borderright">Hi</button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon borderright">Hi</button>').appendTo(this.$actions).click(function() {
       var color = window.prompt('Color? (#FF0000 or red)');
       if (color!=null)
         document.execCommand('hilitecolor', false, color || 'black');
     });
     */
 
-    $('<button class="icon olisticon"></button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon olisticon"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('insertorderedlist', false, null);
     });
-    $('<button class="icon listicon borderright"></button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon listicon borderright"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('insertunorderedlist', false, null);
     });
-    $('<button class="icon imgicon">img</button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon imgicon">img</button>').appendTo(this.$actions).click(function() {
       var url = window.prompt("URL?");
       if (url != null) {
         document.execCommand('insertimage', false, url);
       }
     });
-    $('<button class="icon urlicon"></button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon urlicon"></button>').appendTo(this.$actions).click(function() {
       var url = window.prompt("URL?");
       if (url != null) {
         document.execCommand('createLink', false, url);
       }
     });
 
-    $('<button class="icon"><s>URL</s></button>').appendTo(this.jTopicActions).click(function() {
+    $('<button class="icon"><s>URL</s></button>').appendTo(this.$actions).click(function() {
       document.execCommand('Unlink');
     });
   } else {
     var that = this;
-    $('<button id="topic_invite_user">Invite user</button>').appendTo(this.jTopicActions).click(function() {
+    $('<button id="topic_invite_user">Invite user</button>').appendTo(this.$actions).click(function() {
       that.onInviteUserAction();
     });
 
     if (that.currentTopic) {
       if (that.currentTopic.archived == 1) {
-        var bMoveToInbox = $('<button id="topic_move_to_inbox">Inbox</button>').appendTo(this.jTopicActions).click(function() {
+        var bMoveToInbox = $('<button id="topic_move_to_inbox">Inbox</button>').appendTo(this.$actions).click(function() {
           that.onMoveToInbox();
         });
       }
 
       if (that.currentTopic.archived == 0) {
-        var bMoveToArchive = $('<button id="topic_move_to_archive">Archive topic</button>').appendTo(this.jTopicActions).click(function() {
+        var bMoveToArchive = $('<button id="topic_move_to_archive">Archive topic</button>').appendTo(this.$actions).click(function() {
           that.onMoveToArchive();
         });
       }
