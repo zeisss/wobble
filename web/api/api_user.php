@@ -88,8 +88,6 @@ function user_register($params) {
 
   # Add the new user to the welcome topic, if defined
   if (defined('WELCOME_TOPIC_ID')) {
-    TopicRepository::addReader(WELCOME_TOPIC_ID, $user_id);
-
     foreach(TopicRepository::getReaders(WELCOME_TOPIC_ID) as $reader) {
       NotificationRepository::push($reader['id'], array(
         'type' => 'topic_changed',
@@ -102,6 +100,8 @@ function user_register($params) {
         'user_name' => $email # current name of that user
       ));
     }
+
+    TopicRepository::addReader(WELCOME_TOPIC_ID, $user_id);
   }
 
   return array(
