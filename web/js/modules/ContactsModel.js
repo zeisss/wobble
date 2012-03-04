@@ -98,9 +98,16 @@ ContactsModel.prototype.removeContactFromRooster = function(userId, callback) {
 /**
  * Refresh the contactlist in the background.
  */
-ContactsModel.prototype.refreshContactList = function(callback) {
+ContactsModel.prototype.refreshContactList = function() {
+  // Prevent to many calls
+  if (this.fetchInProgress)
+    return;
+  this.fetchInProgress = true;
+
+  // Now that we are clear, call the API
   var that = this;
   API.get_contacts(function(err, data) {
+    that.fetchInProgress = false;
     if (!err) {
       // Update our local version
       that.contacts = [];
@@ -109,7 +116,5 @@ ContactsModel.prototype.refreshContactList = function(callback) {
       }
       that.fire('update');
     }
-    if (callback) 
-      return callback(err, data);
   });
 }
