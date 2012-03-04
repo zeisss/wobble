@@ -24,9 +24,15 @@ function ContactsDetailPresenter(display, model, eventName) {
       }
     }
     // Also add an 'Add contact' button, if user is not in model and not ourself
-    if (theUser.id !== API.user_id() && model.get(theUser.id) === undefined) {
+    if (theUser.id !== API.user_id() && model.isContact(theUser.id)) {
       display.addAction('Add as contact', function() {
-        BUS.fire('contacts.adduser', theUser.email);
+        model.addNewContact(theUser.email, function(err, data) {
+          if (data) {
+            that.display.showMessage('Contact added!');
+          } else {
+            that.display.showMessage('Contact could not be added.');
+          }
+        });
         display.hide();
       });
     }

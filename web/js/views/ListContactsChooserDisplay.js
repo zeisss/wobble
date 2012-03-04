@@ -20,12 +20,12 @@ function ListContactsChooserDisplay(relativeTo) {
 };
 ListContactsChooserDisplay.prototype = new ContactsChooserDisplay;
 ListContactsChooserDisplay.prototype.constructor = ListContactsChooserDisplay;
-ListContactsChooserDisplay.prototype.show = function(title, contacts) {
+ListContactsChooserDisplay.prototype.show = function(title) {
   this.title = title;
-  this.contacts = contacts;
-  this.render();
+  this.render([]); // Render an empty list
 };
-ListContactsChooserDisplay.prototype.render = function() {
+ListContactsChooserDisplay.prototype.render = function(contacts) {
+  this.contacts = contacts;
   var $filterText, $contactList;
 
   // Generate the content

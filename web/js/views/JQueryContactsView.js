@@ -69,6 +69,10 @@ JQueryContactsView.prototype.onResize = function() {
 JQueryContactsView.prototype.renderContacts = function (list) {
   this.$contactsList.empty();
 
+  if (list.length === 0) {
+    this.$contactsList.append($('<li></li>').text('Sorry, you have no contacts.'));
+  }
+
   jQuery.each(list, $.proxy(function(i, contact) {
     var template = "<li class=contact title='{{email}}'>" +
             "<div class='usericon usericon{{size}}'>" +

@@ -51,6 +51,7 @@
   )
   // Wobble Modules
   files.push(
+    'js/modules/ContactsModel.js',
     'js/modules/ContactsPresenter.js',
     'js/modules/ContactsChooserPresenter.js',
     'js/modules/ContactsDetailPresenter.js',
