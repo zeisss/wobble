@@ -27,9 +27,9 @@ function JQueryContactsView() {
   this.e.css('width', '180px');
 
   this.e.append(template);
-    this.$whoami = $(".whoami", this.e);
-    this.$actions = $(".actions", this.e);
-    this.$contactsList = $(".contactslist", this.e);
+  this.$whoami = $(".whoami", this.e);
+  this.$actions = $(".actions", this.e);
+  this.$contactsList = $(".contactslist", this.e);
 
   // UI Event Handlers
   this.$whoami.click($.proxy(function() {
@@ -69,7 +69,11 @@ JQueryContactsView.prototype.onResize = function() {
 JQueryContactsView.prototype.renderContacts = function (list) {
   this.$contactsList.empty();
 
-  jQuery.each(list, $.proxy(function(i, contact) {
+  if (list.length === 0) {
+    this.$contactsList.append($('<li></li>').text('Sorry, you have no contacts.'));
+  }
+
+  _.each(list, function(contact) {
     var template = "<li class=contact title='{{email}}'>" +
             "<div class='usericon usericon{{size}}'>" +
             "<div><img src='http://gravatar.com/avatar/{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
@@ -86,7 +90,7 @@ JQueryContactsView.prototype.renderContacts = function (list) {
     })).appendTo(this.$contactsList).click($.proxy(function() {
       this.onContactClick(contact);
     }, this));
-  }, this));
+  }, this);
 };
 JQueryContactsView.prototype.renderWhoAmI = function(user) {
   this.$whoami.empty();

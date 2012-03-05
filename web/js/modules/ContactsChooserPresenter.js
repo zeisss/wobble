@@ -4,11 +4,12 @@
  */
 function ContactsChooserDisplay() {}
 // Methods
-ContactsChooserDisplay.prototype.show = function(title, contacts) {};
+ContactsChooserDisplay.prototype.show = function(title) {};
 ContactsChooserDisplay.prototype.close = function() {};
 ContactsChooserDisplay.prototype.setPresenter = function(presenter) {
   this.presenter = presenter;
 }
+ContactsChooserDisplay.prototype.renderContacts = function(contacts) {}
 // Callbacks
 ContactsChooserDisplay.prototype.onAddContact = function(contact) {};
 ContactsChooserDisplay.prototype.onClose = function(contact) {};
@@ -52,6 +53,7 @@ function ContactsChooserPresenter(display, model) {
  */
 ContactsChooserPresenter.prototype.open = function(options) {
   var display = this.display;
+  display.show('Add participant');
   this.model.getContacts(function(err, contacts) {
     if (!err) {
       var showableContacts = _.filter(contacts, function(contact) {
@@ -66,7 +68,7 @@ ContactsChooserPresenter.prototype.open = function(options) {
       display.onClose = function() {
         options.on_close();
       };
-      display.show('Add participant', showableContacts);
+      display.render(showableContacts);
     }
   });
 };

@@ -20,12 +20,12 @@ function ListContactsChooserDisplay(relativeTo) {
 };
 ListContactsChooserDisplay.prototype = new ContactsChooserDisplay;
 ListContactsChooserDisplay.prototype.constructor = ListContactsChooserDisplay;
-ListContactsChooserDisplay.prototype.show = function(title, contacts) {
+ListContactsChooserDisplay.prototype.show = function(title) {
   this.title = title;
-  this.contacts = contacts;
-  this.render();
+  this.render([]); // Render an empty list
 };
-ListContactsChooserDisplay.prototype.render = function() {
+ListContactsChooserDisplay.prototype.render = function(contacts) {
+  this.contacts = contacts;
   var $filterText, $contactList;
 
   // Generate the content
@@ -41,7 +41,7 @@ ListContactsChooserDisplay.prototype.render = function() {
   if (this.contacts.length == 0) {
     $contactList.append('<li>No contacts</li>');
   } else {
-    jQuery.each(this.contacts, $.proxy(function(i, contact) {
+    _.each(this.contacts, function(contact, i) {
       var template = "<li class=contact title='{{email}}'>" +
               "<div class='usericon usericon{{size}}'>" +
               "<div><img src='http://gravatar.com/avatar/{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
@@ -73,7 +73,7 @@ ListContactsChooserDisplay.prototype.render = function() {
         // Autoselect the first element
         this.setSelectedContact(contact);
       }
-    }, this));
+    }, this);
   }
 
   // Install button-listeners

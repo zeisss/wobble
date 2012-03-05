@@ -10,8 +10,12 @@ BUS.fire('topic.selected', {topic_name: 'Hello World!'});
 function EventBUS() {
   this.listeners = {};
 };
+
 EventBUS.prototype.on = function (eventName, callback, context) {
   var context = context || window;
+  if (!this.listeners)
+    this.listeners = {};
+
   var list = this.listeners[eventName] || [];
   list.push([context, callback]);
   this.listeners[eventName] = list;
@@ -20,7 +24,7 @@ EventBUS.prototype.fire = function(eventName, data) {
   if (console) {
     console.log('Event fired', eventName, data);
   }
-  if (!(eventName in this.listeners)) {
+  if (!this.listeners || !(eventName in this.listeners)) {
     return; // Abort, if no listener exists
   }
   for (var i = 0; i < this.listeners[eventName].length; i++) {
