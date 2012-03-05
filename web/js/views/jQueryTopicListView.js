@@ -39,8 +39,8 @@ jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, pr
       return topic.post_count_unread > 0;
     }).length;
     if (Tinycon) {
-      Tinycon.setBubble(unreadTopics);
       document.title = user.name + ' - Wobble';
+      Tinycon.setBubble(unreadTopics);
     }
     else if (unreadTopics == 0) {
       document.title = user.name + " - Wobble";
