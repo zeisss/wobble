@@ -1,7 +1,7 @@
 <?php
 class SessionService {
   /**
-   * Makes sure 
+   *
    */
   public static function signon($session_id, $user_id) {
     SessionService::touch($session_id, $user_id);

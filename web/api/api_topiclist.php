@@ -28,7 +28,7 @@ function topics_list($params) {
       (select max(p.last_touch) from posts p WHERE p.topic_id = t.id) max_last_touch, 
       (select count(*) from posts where topic_id = t.id and deleted = 0) post_count_total, 
       (select count(*) from post_users_read pur, posts p2
-       where pur.topic_id = p.topic_id and pur.topic_id = p2.topic_id 
+       where pur.topic_id = p.topic_id and pur.topic_id = p2.topic_id
          and pur.post_id = p2.post_id and p2.deleted = 0
          and pur.user_id = r.user_id) post_count_read,
       (select count(*) from topic_messages
