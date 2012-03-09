@@ -18,6 +18,8 @@ function get_notifications($params) {
   if ($timestamp != NULL)
   {
     NotificationRepository::deleteNotifications($session_id, $timestamp);
+  } else {
+    NotificationRepository::deleteNotifications($session_id);
   }
   
   // Check 10 times, but sleep after each check, if no notifications where found
@@ -32,5 +34,8 @@ function get_notifications($params) {
     }
     usleep(250 * 1000); /* 250ms */
   }
-  return NULL;
+  return array(
+    'next_timestamp' => time(),
+    'messages' => array()
+  );
 }

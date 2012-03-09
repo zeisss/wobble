@@ -15,14 +15,21 @@ class NotificationRepository {
   }
 
   /**
-   * Delete all notifications for the given session before the given timestamp
+   * Delete all notifications for the given session before the given timestamp. If null
+   * is provided for the timestamp, delete all messages.
    */
-  function deleteNotifications($session_id, $timestamp) {
+  function deleteNotifications($session_id, $timestamp = null) {
     $pdo = ctx_getpdo();
-    $stmt = $pdo->prepare('DELETE FROM notifications WHERE session_id = ? AND time <= ?');
-    $stmt->bindValue(1, $session_id, PDO::PARAM_STR);
-    $stmt->bindValue(2, $timestamp, PDO::PARAM_INT);
-    $stmt->execute();
+    if (is_null($timestamp)) {
+        $stmt = $pdo->prepare('DELETE FROM notifications WHERE session_id = ?');
+        $stmt->bindValue(1, $session_id, PDO::PARAM_STR);
+        $stmt->execute();
+    } else {
+        $stmt = $pdo->prepare('DELETE FROM notifications WHERE session_id = ? AND time <= ?');
+        $stmt->bindValue(1, $session_id, PDO::PARAM_STR);
+        $stmt->bindValue(2, $timestamp, PDO::PARAM_INT);
+        $stmt->execute();
+    }
   }
 
   function getNotifications($session_id, $timestamp) {  
