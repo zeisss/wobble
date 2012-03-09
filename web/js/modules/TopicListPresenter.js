@@ -8,6 +8,7 @@ TopicsListDisplay.prototype.onShowInbox = function() {};
 // Methods --------------------------------------------------------
 TopicsListDisplay.prototype.showLoading = function() {};
 TopicsListDisplay.prototype.setActiveTopic = function(topicId) {};
+TopicsListDisplay.prototype.renderActionButtons = function(showArchived) {};
 TopicsListDisplay.prototype.renderTopicList = function(topics) {};
 TopicsListDisplay.prototype.clear = function() {};
 
@@ -26,13 +27,14 @@ function TopicListPresenter (view, cache) {
   // Prerender the view from the cache
   if (this.model.hasTopics()) {
     this.view.clear();
+    this.view.renderActionButtons(this.model.isShowingArchived());
     this.view.renderTopicList(this.model.getTopics());
   }
 
   var that = this;
   // UI Callbacks
   this.view.onTopicClicked = function(topic) {
-    that.setSelectedTopic(topic);
+    that.setSelectedTopicId(topic.id);
   };
   this.view.onCreateNewTopic = function() {
     that.model.createTopic();
@@ -48,10 +50,10 @@ function TopicListPresenter (view, cache) {
   this.model.on('update', function() {
     var topics = this.model.getTopics();
     this.view.clear();
-    this.view.renderTopicList(this.topics);
+    this.view.renderTopicList(topics);
   }, this);
-  this.model.on('created', function() {
-    this.setSelectedTopic(topicDetails, true);
+  this.model.on('created', function(topicId) {
+    this.setSelectedTopicId(topicId, true);
     BUS.fire('topic.topic.created', topicId);
   }, this);
 
@@ -81,19 +83,19 @@ function TopicListPresenter (view, cache) {
 TopicListPresenter.prototype.setShowArchived = function setShowArchived(show_archived) {
   this.view.showLoading();
 
-  that.model.setShowArchived(show_archived);
+  this.model.setShowArchived(show_archived);
 
   this.selectedTopicId = null;
   this.model.refreshTopicList();
 }
 
-TopicListPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
-  if (topic.id == this.selectedTopicId) {
+TopicListPresenter.prototype.setSelectedTopicId = function(topicId, noEvent) {
+  if (topicId == this.selectedTopicId) {
     return;
   }
-  this.selectedTopicId = topic.id;
+  this.selectedTopicId = topicId;
   this.view.setActiveTopic(this.selectedTopicId);
   if (!noEvent) {
-    BUS.fire('topic.selected', topic.id);
+    BUS.fire('topic.selected', topicId);
   }
 };

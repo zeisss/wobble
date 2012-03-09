@@ -1,8 +1,8 @@
 /**
  * Events:
  *  - update - A fresh list was pulled from the server
- *  - added - A dummy topic was added to the list
- *  - created - An entry was created on the server
+ *  - added(id) - A dummy topic was added to the list
+ *  - created(id) - An entry was created on the server
  */
 function TopicListModel(cache) {
   this.cache = cache
@@ -15,9 +15,12 @@ function TopicListModel(cache) {
 _.extend(TopicListModel.prototype, EventBUS.prototype); // Make the model an eventbus
 
 TopicListModel.prototype.setShowArchived = function (showArchived) {
-  this.cache.set('topicslistpresenter.show_archived', show_archived, this.cacheTimeout);
-  this.showArchived = showArchived;
+  this.cache.set('topicslistpresenter.show_archived', showArchived, this.cacheTimeout);
+  this.show_archived = showArchived;
 }
+TopicListModel.prototype.isShowingArchived = function() {
+  return this.show_archived
+};
 TopicListModel.prototype.hasTopics = function() {
   return this.topics && this.topics.length > 0;
 };
@@ -54,7 +57,7 @@ TopicListModel.prototype.createTopic = function() {
     if (err) {
       that.refreshTopicsList();
     } else {
-      that.fire('created')
+      that.fire('created', topicId)
     }
   });
 
@@ -68,5 +71,5 @@ TopicListModel.prototype.createTopic = function() {
   };
 
   this.topics.splice(0, 0, topicDetails); // Prepend the item to the ViewList
-  this.fire('added');
+  this.fire('added', topicId);
 }

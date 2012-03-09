@@ -12,16 +12,14 @@ function jQueryTopicsView () {
   $("<button>New</button>").click(function() {
     that.onCreateNewTopic();
   }).appendTo(this.$actions);
-  $('<button>Show archived</button>').click(function() {
-    var button = $(this);
-    if (button.text() == 'Show archived') {
-      that.onShowArchived();
-      button.text('Show Inbox');
-    } else {
-      that.onShowInbox();
-      button.text('Show archived');
-    }
-  }).appendTo(this.$actions);
+  this.$bShowInbox = $('<button>').text('Show Inbox').appendTo(this.$actions).click(function() {
+    that.onShowInbox();
+    that.renderActionButtons(false);
+  });
+  this.$bShowArchive = $('<button>').text('Show Archive').appendTo(this.$actions).click(function() {
+    that.onShowArchived();
+    that.renderActionButtons(true);
+  })
 };
 jQueryTopicsView.prototype = new TopicsListDisplay;
 jQueryTopicsView.prototype.constructor = jQueryTopicsView;
@@ -31,6 +29,15 @@ jQueryTopicsView.prototype.setActiveTopic = function(topicId) {
   $(">li.active", this.$topics).removeClass("active");
   $("#topic-" + topicId).addClass("active");
 };
+jQueryTopicsView.prototype.renderActionButtons = function(showArchived) {
+  if (showArchived) {
+    this.$bShowInbox.removeAttr('disabled');
+    this.$bShowArchive.attr('disabled', 'disabled');
+  } else {
+    this.$bShowInbox.attr('disabled', 'disabled');
+    this.$bShowArchive.removeAttr('disabled');
+  }
+}
 jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
   // Update document title
   var user = API.user();
