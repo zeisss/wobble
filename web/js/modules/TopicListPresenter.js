@@ -63,21 +63,6 @@ function TopicListPresenter (view, cache) {
       this.setSelectedTopicId(topicId, true);
     }
   }, this);
-  BUS.on('topic.changed', function(_data) {
-    this.model.refreshTopicList();
-  }, this);
-
-  BUS.on('topic.post.changed', function(_data) {
-    this.model.refreshTopicList();
-  }, this);
-
-  BUS.on('api.notification', function(message) {
-    if (message.type == 'topic_changed' ||
-       message.type == 'post_changed' /* Unread message counter propably got changed */) {
-      this.model.refreshTopicList();
-    }
-  }, this);
-
 };
 
 TopicListPresenter.prototype.setShowArchived = function setShowArchived(show_archived) {

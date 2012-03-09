@@ -11,6 +11,21 @@ function TopicListModel(cache) {
   this.topics = cache.get('topicslistpresenter.topics') || [];
   this.show_archived = cache.get('topicslistpresenter.show_archived') || 0;
   this.requestInProcess = false;
+
+  BUS.on('api.notification', function(message) {
+    if (message.type == 'topic_changed' ||
+       message.type == 'post_changed' /* Unread message counter propably got changed */) {
+      this.refreshTopicList();
+    }
+  }, this);
+
+  BUS.on('topic.changed', function(_data) {
+    this.model.refreshTopicList();
+  }, this);
+
+  BUS.on('topic.post.changed', function(_data) {
+    this.model.refreshTopicList();
+  }, this);
 }
 _.extend(TopicListModel.prototype, EventBUS.prototype); // Make the model an eventbus
 
