@@ -16,9 +16,9 @@ TopicsListDisplay.prototype.clear = function() {};
 /**
  * The Business logic for the topics list-view
  */
-function TopicListPresenter (view, cache) {
+function TopicListPresenter (view, model) {
   this.view = view;
-  this.model = new TopicListModel(cache);
+  this.model = model;
   
   this.selectedTopicId = null;
 
@@ -40,10 +40,10 @@ function TopicListPresenter (view, cache) {
     this.model.createTopic();
   }, this)
   this.view.on('action_show_archive', function() {
-    that.setShowArchived(1);
+    this.setShowArchived(1);
   }, this);
   this.view.on('action_show_inbox', function() {
-    that.setShowArchived(0);
+    this.setShowArchived(0);
   }, this);
 
   // Model
