@@ -20,10 +20,11 @@ class SessionService {
       $timestamp = time();
     }
     $pdo = ctx_getpdo();
-    $stmt = $pdo->prepare('REPLACE sessions (user_id, session_id, last_touch) VALUES(?,?,?)');
+    $stmt = $pdo->prepare('REPLACE sessions (user_id, session_id, user_agent, last_touch) VALUES(?,?,?,?)');
     $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
     $stmt->bindValue(2, $session_id, PDO::PARAM_STR);
-    $stmt->bindValue(3, $timestamp, PDO::PARAM_INT);
+    $stmt->bindValue(3, $_SERVER['HTTP_USER_AGENT'], PDO::PARAM_STR);
+    $stmt->bindValue(4, $timestamp, PDO::PARAM_INT);
     $stmt->execute();
   }
   public static function getOnlineUserCount() {
