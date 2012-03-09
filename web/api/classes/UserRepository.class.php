@@ -37,7 +37,7 @@ class UserRepository {
     $stmt->execute(array($user_id));
 
     $result = $stmt->fetchAll();
-    if ( count($result) == 1 ) {
+    if (count($result) == 1) {
       $result[0]['id'] = intval($result[0]['id']);
       $result[0]['online'] = intval($result[0]['online']);
 
@@ -62,7 +62,7 @@ class UserRepository {
     $stmt->execute(array(strtolower(trim($email))));
 
     $result = $stmt->fetchAll();
-    if ( count($result) == 1 ) {
+    if (count($result) == 1) {
       $result[0]['id'] = intval($result[0]['id']);
       $result[0]['online'] = intval($result[0]['online']);
 

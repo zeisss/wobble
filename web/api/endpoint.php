@@ -24,7 +24,7 @@ if ($request === NULL) {
   return die_json(jsonrpc_error(-32700, "Parse error"));
 }
 
-if ( $requestBody[0] == '[') { # If the first char was a [, this is a batch request
+if ($requestBody[0] == '[') { # If the first char was a [, this is a batch request
   die_json(handle_jsonrpc_batch($request));
 } else {
   die_json(handle_jsonrpc_request($request));
@@ -38,11 +38,11 @@ function jsonrpc_export_functions($exportedMethods) {
     $entry = array();
     $entry['method'] = $m['method'];
 
-    if ( isset($m['file'])) {
+    if (isset($m['file'])) {
       $entry['file'] = $m['file'];
     }
     
-    if ( isset($m['name'])) {
+    if (isset($m['name'])) {
       $entry['name'] = $m['name'];
     } else {
       $entry['name'] = $m['method'];
@@ -64,7 +64,7 @@ function jsonrpc_result($result, $id = FALSE) {
     'jsonrpc' => '2.0',
     'result' => $result
   );
-  if ( $id ) {
+  if ($id) {
     $result['id'] = $id;
   }
   return $result;
@@ -87,7 +87,7 @@ function handle_jsonrpc_batch($requests) {
 
   foreach ($requests as $subrequest) {
     $subresult = handle_jsonrpc_request($subrequest);
-    if ( $subresult !== NULL ) {
+    if ($subresult !== NULL) {
       $result[] = $subresult;
     }
   }
@@ -100,7 +100,7 @@ function handle_jsonrpc_request($request) {
   if ($request === NULL || !is_array($request)) {
     return jsonrpc_error(-32600, "Invalid request");
   }
-  if ( !isset ( $request['method']))  {
+  if (!isset ($request['method']))  {
     return jsonrpc_error(-32602, 'No method given.', $request['id']);
   }
   if (!isset($request['params'])) {
@@ -109,28 +109,28 @@ function handle_jsonrpc_request($request) {
   
   # Iterate over all given methods
   foreach($JSONRPC_CONFIG['methods'] AS $export) {
-    if ( $export['name'] === $request['method']) {
+    if ($export['name'] === $request['method']) {
       
       try {
-        if ( isset($JSONRPC_CONFIG['callback_before'])) {
-          call_user_func( $JSONRPC_CONFIG['callback_before'], 
+        if (isset($JSONRPC_CONFIG['callback_before'])) {
+          call_user_func($JSONRPC_CONFIG['callback_before'], 
                   $request['method'], $request['params']);
         }
-        if ( isset($export['file'])) {
+        if (isset($export['file'])) {
           require_once($export['file']);
         }
-        if ( !function_exists($export['method'])) {
+        if (!function_exists($export['method'])) {
           throw new Exception("Expected that {$export['method']} gets defined in {$export['file']}. Function not found.");
         }
 
         $response = call_user_func($export['method'], $request['params']);
         
-        if ( isset($JSONRPC_CONFIG['callback_after'])) {
+        if (isset($JSONRPC_CONFIG['callback_after'])) {
           call_user_func($JSONRPC_CONFIG['callback_after'], 
                          $request['method'], $request['params'], $response, null);
         }
       } catch(Exception $e) {
-        if ( isset($JSONRPC_CONFIG['callback_after'])) {
+        if (isset($JSONRPC_CONFIG['callback_after'])) {
           call_user_func($JSONRPC_CONFIG['callback_after'], 
                          $request['method'], $request['params'], null, $e);
         }
