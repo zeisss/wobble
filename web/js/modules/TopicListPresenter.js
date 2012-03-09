@@ -1,10 +1,11 @@
 "use strict";
 function TopicsListDisplay() {};
+_.extend(TopicsListDisplay.prototype, EventBUS.prototype); // Make the view an eventbus
 // Event Handlers -------------------------------------------------
-TopicsListDisplay.prototype.onTopicClicked = function(topic) {};
-TopicsListDisplay.prototype.onCreateNewTopic = function() {};
-TopicsListDisplay.prototype.onShowArchived = function() {};
-TopicsListDisplay.prototype.onShowInbox = function() {};
+TopicsListDisplay.prototype.onTopicClicked = function(topic) { this.fire('topic_clicked', topic)};
+TopicsListDisplay.prototype.onCreateNewTopic = function() { this.fire('action_create_topic');};
+TopicsListDisplay.prototype.onShowArchived = function() { this.fire('action_show_archive');};
+TopicsListDisplay.prototype.onShowInbox = function() {this.fire('action_show_inbox');};
 // Methods --------------------------------------------------------
 TopicsListDisplay.prototype.showLoading = function() {};
 TopicsListDisplay.prototype.setActiveTopic = function(topicId) {};
@@ -31,21 +32,20 @@ function TopicListPresenter (view, cache) {
     this.view.renderTopicList(this.model.getTopics());
   }
 
-  var that = this;
   // UI Callbacks
-  this.view.onTopicClicked = function(topic) {
-    that.setSelectedTopicId(topic.id);
-  };
-  this.view.onCreateNewTopic = function() {
-    that.model.createTopic();
-  };
-  this.view.onShowArchived = function() {
+  this.view.on('topic_clicked', function(topic) {
+    this.setSelectedTopicId(topic.id);
+  }, this);
+  this.view.on('action_create_topic', function() {
+    this.model.createTopic();
+  }, this)
+  this.view.on('action_show_archive', function() {
     that.setShowArchived(1);
-  };
-  this.view.onShowInbox = function() {
+  }, this);
+  this.view.on('action_show_inbox', function() {
     that.setShowArchived(0);
-  };
-  
+  }, this);
+
   // Model
   this.model.on('update', function() {
     var topics = this.model.getTopics();
