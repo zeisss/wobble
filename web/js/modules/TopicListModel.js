@@ -41,9 +41,9 @@ TopicListModel.prototype.refreshTopicList = function() {
       that.fire('update');
     }
   });
-}
+};
 
-TopicListModel.prototype.createTopic() {
+TopicListModel.prototype.createTopic = function() {
   // TODO: Check if the user is currently editing something and submit that before going on
   var that = this;
   var topicId = API.generate_id();
