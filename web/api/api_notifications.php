@@ -15,16 +15,16 @@ function get_notifications($params) {
 
   session_write_close(); # we dont need to modify the session after here
 
-  if ( $timestamp != NULL )
+  if ($timestamp != NULL)
   {
     NotificationRepository::deleteNotifications($session_id, $timestamp);
   }
   
   // Check 10 times, but sleep after each check, if no notifications where found
-  for ( $i = 0; $i < 100; $i++ ) {
+  for ($i = 0; $i < 100; $i++) {
     $timestamp = time();
     $messages = NotificationRepository::getNotifications($session_id, $timestamp);
-    if ( count($messages) > 0 ) {
+    if (count($messages) > 0) {
       return array(
         'next_timestamp' => $timestamp,
         'messages' => $messages

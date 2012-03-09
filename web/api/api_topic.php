@@ -114,7 +114,7 @@ function topic_add_user($params) {
   ValidationService::validate_not_empty($user_id);
 
   $pdo = ctx_getpdo();
-  if ( _topic_has_access($pdo, $topic_id) ) {
+  if (_topic_has_access($pdo, $topic_id)) {
     $topic_user = UserRepository::get($user_id);
 
     foreach(TopicRepository::getReaders($topic_id) as $reader) {
@@ -181,7 +181,7 @@ function topic_remove_user($params) {
   ValidationService::validate_not_empty($user_id);
 
   $pdo = ctx_getpdo();
-  if ( _topic_has_access($pdo, $topic_id) ) {
+  if (_topic_has_access($pdo, $topic_id)) {
     $topic_user = UserRepository::get($user_id);
 
     foreach(TopicRepository::getReaders($topic_id) as $reader) {
@@ -240,7 +240,7 @@ function post_create($params) {
 
   $pdo = ctx_getpdo();
 
-  if ( _topic_has_access($pdo, $topic_id) ) {
+  if (_topic_has_access($pdo, $topic_id)) {
     TopicRepository::createPost($topic_id, $post_id, $self_user_id, $parent_post_id, $intended_reply);
 
     TopicRepository::setPostLockStatus($topic_id, $post_id, 1, $self_user_id);
@@ -295,12 +295,12 @@ function post_edit($params) {
 
   $pdo = ctx_getpdo();
 
-  if ( _topic_has_access($pdo, $topic_id) ) {
+  if (_topic_has_access($pdo, $topic_id)) {
     $stmt = $pdo->prepare('SELECT revision_no, content FROM posts WHERE topic_id = ? AND post_id = ?');
     $stmt->execute(array($topic_id, $post_id));
     $posts = $stmt->fetchAll();
 
-    if ( sizeof($posts) === 0 ) {
+    if (sizeof($posts) === 0) {
       # Post has already been deleted. Toooo laggy? No idea...
       return NULL;
     }
@@ -326,7 +326,7 @@ function post_edit($params) {
       $topic_id, $post_id, 0, $self_user_id # Clear the lock
     );
 
-    if ( $posts[0]['content'] !== $content) {
+    if ($posts[0]['content'] !== $content) {
       # Mark only as unread, if there were real changes
       TopicRepository::setPostReadStatus(
         $self_user_id, $topic_id, $post_id, 1 # Mark post as read for requesting user
@@ -358,7 +358,7 @@ function post_edit($params) {
 
     return array (
       'revision_no' => ($revision + 1)
-    );
+   );
   }
   else {
     throw new Exception('Illegal Access!');
@@ -387,7 +387,7 @@ function post_delete($params) {
 
   $pdo = ctx_getpdo();
 
-  if ( _topic_has_access($pdo, $topic_id) ) {
+  if (_topic_has_access($pdo, $topic_id)) {
     $stmt = $pdo->prepare('DELETE FROM post_editors WHERE topic_id = ? AND post_id = ?');
     $stmt->execute(array($topic_id, $post_id));
 
@@ -435,7 +435,7 @@ function post_change_read($params) {
   ValidationService::validate_not_empty($post_id);
   ValidationService::validate_not_empty($read);
 
-  if ( _topic_has_access($pdo, $topic_id) ) {
+  if (_topic_has_access($pdo, $topic_id)) {
     TopicRepository::setPostReadStatus($user_id, $topic_id, $post_id, $read);
   } else {
     throw new Exception('Illegal Access!');

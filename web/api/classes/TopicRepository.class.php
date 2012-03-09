@@ -70,8 +70,8 @@ class TopicRepository {
   }
   function setPostReadStatus($user_id, $topic_id, $post_id, $read_status) {
     $pdo = ctx_getpdo();
-    #var_dump($read_status);
-    if ( $read_status == 1) { # if read, create entry
+
+    if ($read_status == 1) { # if read, create entry
       $sql = 'REPLACE post_users_read (topic_id, post_id, user_id) VALUES (?,?,?)';
     } else {
       $sql = 'DELETE FROM post_users_read WHERE topic_id = ? AND post_id = ? AND user_id = ?';
@@ -119,7 +119,7 @@ class TopicRepository {
     $stmt->execute(array($topic_id, $post_id));
     $post = $stmt->fetchAll();
     
-    if ( $post[0]['deleted'] !== '1') { # Abort is given post is not deleted
+    if ($post[0]['deleted'] !== '1') { # Abort is given post is not deleted
       return;
     }
     
@@ -130,7 +130,7 @@ class TopicRepository {
     $result = $stmt->fetchAll();
 
     # If the post has no children, we can delete it savely.
-    if ( intval($result[0]['child_count']) === 0 ) {
+    if (intval($result[0]['child_count']) === 0) {
       # Delete the post
       $sql = 'DELETE FROM posts WHERE topic_id = ? AND post_id = ? AND deleted = 1';
       $stmt = $pdo->prepare($sql);
