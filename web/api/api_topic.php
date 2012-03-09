@@ -397,7 +397,7 @@ function post_delete($params) {
 
     TopicRepository::setPostLockStatus($topic_id, $post_id, 0, $self_user_id);
 
-    TopicRepository::deletePostsIfNoChilds($topic_id, $post_id); # Traverses upwards and deletes all posts, if no child exist
+    #TopicRepository::deletePostsIfNoChilds($topic_id, $post_id); # Traverses upwards and deletes all posts, if no child exist
 
     foreach(TopicRepository::getReaders($topic_id) as $user) {
       NotificationRepository::push($user['id'], array(
