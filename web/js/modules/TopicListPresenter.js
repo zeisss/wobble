@@ -21,7 +21,7 @@ function TopicListPresenter (view, cache) {
   this.selectedTopicId = null;
 
   // Start fetching an up2date list
-  this.model.refreshTopicsList();
+  this.model.refreshTopicList();
 
   // Prerender the view from the cache
   if (this.model.hasTopics()) {
@@ -62,17 +62,17 @@ function TopicListPresenter (view, cache) {
     }
   }, this);
   BUS.on('topic.changed', function(_data) {
-    this.model.refreshTopicsList();
+    this.model.refreshTopicList();
   }, this);
 
   BUS.on('topic.post.changed', function(_data) {
-    this.model.refreshTopicsList();
+    this.model.refreshTopicList();
   }, this);
 
   BUS.on('api.notification', function(message) {
     if (message.type == 'topic_changed' ||
        message.type == 'post_changed' /* Unread message counter propably got changed */) {
-      this.model.refreshTopicsList();
+      this.model.refreshTopicList();
     }
   }, this);
 
@@ -84,7 +84,7 @@ TopicListPresenter.prototype.setShowArchived = function setShowArchived(show_arc
   that.model.setShowArchived(show_archived);
 
   this.selectedTopicId = null;
-  this.model.refreshTopicsList();
+  this.model.refreshTopicList();
 }
 
 TopicListPresenter.prototype.setSelectedTopic = function(topic, noEvent) {
