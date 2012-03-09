@@ -38,6 +38,69 @@ class TopicRepository {
   }
 
   /**
+   * Get topic.
+   */
+  function getTopic($topic_id, $user_id) {
+    $pdo = ctx_getpdo();
+    
+    $stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no,
+        p.parent_post_id parent, p.created_at created_at, p.last_touch timestamp, p.deleted deleted,
+        p.intended_post intended_post,
+        coalesce((select 0 from post_users_read
+              where topic_id = p.topic_id AND post_id = p.post_id AND user_id = ?), 1) unread
+       FROM posts p
+      WHERE p.topic_id = ?
+      ORDER BY created_at');
+    $stmt->execute(array($user_id, $topic_id));
+    $posts = $stmt->fetchAll();
+    
+    $created_at = null;
+    $stmt = $pdo->prepare('SELECT e.user_id id FROM post_editors e WHERE topic_id = ? AND post_id = ?');
+    foreach($posts AS $i => $post) {
+      if ($post['id'] == '1') {
+          $created_at = intval($post['created_at']);
+      }
+      unset($post['created_at']); # Currently not of interest for public api
+    
+      # Integer formatting for JSON-RPC result
+      $posts[$i]['timestamp'] = intval($posts[$i]['timestamp']);
+      $posts[$i]['revision_no'] = intval($posts[$i]['revision_no']);
+      $posts[$i]['deleted'] = intval($posts[$i]['deleted']);
+      $posts[$i]['unread'] = intval($posts[$i]['unread']);
+      $posts[$i]['intended_post'] = intval($posts[$i]['intended_post']);
+    
+      $posts[$i]['locked'] = TopicRepository::getPostLockStatus($topic_id, $posts[$i]['id']);
+      if ($posts[$i]['locked']['user_id'] == $self_user_id) {
+        $posts[$i]['locked'] = NULL;
+      }
+    
+      # Subobject
+      $posts[$i]['users'] = array();
+      $stmt->execute(array($topic_id, $post['id']));
+      foreach($stmt->fetchAll() AS $post_user) {
+        $posts[$i]['users'][] = intval($post_user['id']);
+      }
+    }
+    
+    $readers = TopicRepository::getReaders($topic_id);
+    $writers = TopicRepository::getWriters($topic_id);
+    $messages = TopicMessagesRepository::listMessages($topic_id, $user_id);
+    
+    // Archived?
+    $archived = UserArchivedTopicRepository::isArchivedTopic($user_id, $topic_id);
+    
+    return array (
+      'id' => $topic_id,
+      'readers' => $readers,
+      'messages' => $messages,
+      'writers' => $writers,
+      'posts' => $posts,
+      'archived' => $archived,
+      'created_at' => $created_at
+    );
+  }
+
+  /**
    * Creates a new post with the given $post_id in the given topic.
    * The user $user_id is set as the owner and the post is a child of $parent_post_id.
    */
