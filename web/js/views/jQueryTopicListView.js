@@ -12,6 +12,8 @@ function jQueryTopicsView () {
   $("<button>New</button>").click(function() {
     that.onCreateNewTopic();
   }).appendTo(this.$actions);
+
+  this.$actions.append($('<span></span>').css('width', '30px').css('display', 'inline-block'));
   this.$bShowInbox = $('<button>').text('Show Inbox').appendTo(this.$actions).click(function() {
     that.onShowInbox();
     that.renderActionButtons(false);
