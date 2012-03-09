@@ -48,53 +48,7 @@ function topic_get_details($params) {
 
   $pdo = ctx_getpdo();
 
-  $readers = TopicRepository::getReaders($topic_id);
-  $writers = TopicRepository::getWriters($topic_id);
-
-  $stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no,
-      p.parent_post_id parent, p.last_touch timestamp, p.deleted deleted,
-      p.intended_post intended_post,
-      coalesce((select 0 from post_users_read
-            where topic_id = p.topic_id AND post_id = p.post_id AND user_id = ?), 1) unread
-     FROM posts p
-    WHERE p.topic_id = ?
-    ORDER BY created_at');
-  $stmt->execute(array($self_user_id, $topic_id));
-  $posts = $stmt->fetchAll();
-
-  $stmt = $pdo->prepare('SELECT e.user_id id FROM post_editors e WHERE topic_id = ? AND post_id = ?');
-  foreach($posts AS $i => $post) {
-    # Integer formatting for JSON-RPC result
-    $posts[$i]['timestamp'] = intval($posts[$i]['timestamp']);
-    $posts[$i]['revision_no'] = intval($posts[$i]['revision_no']);
-    $posts[$i]['deleted'] = intval($posts[$i]['deleted']);
-    $posts[$i]['unread'] = intval($posts[$i]['unread']);
-		$posts[$i]['intended_post'] = intval($posts[$i]['intended_post']);
-
-    $posts[$i]['locked'] = TopicRepository::getPostLockStatus($topic_id, $posts[$i]['id']);
-    if ($posts[$i]['locked']['user_id'] == $self_user_id) {
-      $posts[$i]['locked'] = NULL;
-    }
-
-    # Subobject
-    $posts[$i]['users'] = array();
-    $stmt->execute(array($topic_id, $post['id']));
-    foreach($stmt->fetchAll() AS $post_user) {
-      $posts[$i]['users'][] = intval($post_user['id']);
-    }
-  }
-
-  // Archived?
-  $archived = UserArchivedTopicRepository::isArchivedTopic($self_user_id, $topic_id);
-
-  return array (
-    'id' => $topic_id,
-    'readers' => $readers,
-    'messages' => TopicMessagesRepository::listMessages($topic_id, $self_user_id),
-    'writers' => $writers,
-    'posts' => $posts,
-    'archived' => $archived
-  );
+  return TopicRepository::getTopic($topic_id, $self_user_id);
 }
 
 /**
@@ -116,15 +70,22 @@ function topic_add_user($params) {
   $pdo = ctx_getpdo();
   if (_topic_has_access($pdo, $topic_id)) {
     $topic_user = UserRepository::get($user_id);
+    $topic = TopicRepository::getTopic($topic_id, $self_user_id); # Load the whole topic
+
+    # Check timestamp. If first post is fresh, do not generate a join message
+    $freshTopic = (time() - $topic['created_at'] - 5 * 60 < 0);
 
     foreach(TopicRepository::getReaders($topic_id) as $reader) {
+      # Move topic back to inbox, if changed
+      UserArchivedTopicRepository::setArchived($reader['id'], $topic_id, 0);
+
       NotificationRepository::push($reader['id'], array(
         'type' => 'topic_changed',
         'topic_id' => $topic_id
       ));
 
       # No message for the acting user
-      if ($reader['id'] !== $self_user_id) {
+      if ($reader['id'] !== $self_user_id && !$freshTopic) {
         TopicMessagesRepository::createMessage(
           $topic_id,
           $reader['id'],
@@ -134,11 +95,7 @@ function topic_add_user($params) {
             'user_name' => $topic_user['name']
           )
         );
-
-        # Move topic back to inbox, if changed
-        UserArchivedTopicRepository::setArchived($reader['id'], $topic_id, 0);
       }
-
     }
 
     # Now add the user
@@ -183,15 +140,30 @@ function topic_remove_user($params) {
   $pdo = ctx_getpdo();
   if (_topic_has_access($pdo, $topic_id)) {
     $topic_user = UserRepository::get($user_id);
+    $topic = TopicRepository::getTopic($topic_id, $self_user_id);
+
+    # Check timestamp. If first post is fresh, do not generate a join message
+    $freshTopic = (time() - $topic['created_at'] - 5 * 60 < 0);
+
+    # Delete afterwards. The other way around, the deleted user wouldn't get the notification
+    TopicRepository::removeReader($topic_id, $user_id);
+
+    NotificationRepository::push($user_id, array(
+      'type' => 'topic_changed',
+      'topic_id' => $topic_id
+    ));
 
     foreach(TopicRepository::getReaders($topic_id) as $reader) {
+      # Move topic back to inbox, if changed
+      UserArchivedTopicRepository::setArchived($reader['id'], $topic_id, 0);
+
       NotificationRepository::push($reader['id'], array(
         'type' => 'topic_changed',
         'topic_id' => $topic_id
       ));
 
       # Do not create a message for the acting nor the actual removed user
-      if ($self_user_id !== $reader['id'] && $reader['id'] !== $user_id) {
+      if ($self_user_id !== $reader['id'] && !$freshTopic) {
         TopicMessagesRepository::createMessage(
           $topic_id,
           $reader['id'],
@@ -202,12 +174,7 @@ function topic_remove_user($params) {
           )
         );
       }
-      # Move topic back to inbox, if changed
-      UserArchivedTopicRepository::setArchived($reader['id'], $topic_id, 0);
     }
-
-    # Delete afterwards. The other way around, the deleted user wouldn't get the notification
-    TopicRepository::removeReader($topic_id, $user_id);
 
     return TRUE;
   }
