@@ -1,0 +1,1 @@
+ALTER TABLE  `sessions` ADD  `user_agent` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_bin NULL AFTER  `session_id`
