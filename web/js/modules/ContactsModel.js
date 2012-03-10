@@ -10,8 +10,18 @@
  *  - added - A contact was added
  *  - removed - A contact was removed
  */
-function ContactsModel() {
+function ContactsModel(cache) {
   this.contacts = [];
+  if (cache) {
+    this.cache = cache;
+    this.cacheTimeout = 7 * 24 * 60 * 60;
+    this.contacts = this.cache.get('contactlist.contacts') || [];
+
+    var that = this;
+    setTimeout(function() {
+      that.fire('update');
+    }, 50);
+  }
   this.user = API.user();
 
   BUS.on('api.user', function(user) {
@@ -114,6 +124,8 @@ ContactsModel.prototype.refreshContactList = function() {
       for (var i = 0; i < data.length; i++) {
         that.contacts.push(data[i]);
       }
+      if (that.cache) 
+        that.cache.set('contactlist.contacts', that.contacts, that.cacheTimeout);
       that.fire('update');
     }
   });
