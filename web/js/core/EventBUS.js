@@ -21,7 +21,7 @@ EventBUS.prototype.on = function (eventName, callback, context) {
   this.listeners[eventName] = list;
 };
 EventBUS.prototype.fire = function(eventName, data) {
-  if (console) {
+  if (window.console && window.BUS == this) {
     console.log('Event fired', eventName, data);
   }
   if (!this.listeners || !(eventName in this.listeners)) {

@@ -48,17 +48,15 @@ function ContactsPresenter(display, model) {
   }
 
   // WhoAmI  ---------------------------------------------------
-  if (model.getUser()) {
-    this.display.renderWhoAmI(model.getUser());
-  }
   model.on('user', function(user) {
     this.display.renderWhoAmI(user);
   }, this);
-
-  // ContactList  ---------------------------------------------------
-  this.refreshContacts(); // Render initially
   model.on('update', this.refreshContacts, this);
 
+  // Initial rendering
+  if (model.getUser()) {
+    this.display.renderWhoAmI(model.getUser());
+  }
   return that;
 }
 // Methods ---------------------------------------------------
