@@ -61,23 +61,6 @@ jQueryTopicsView.prototype.renderActionButtons = function(showArchived) {
   }
 }
 jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
-  // Update document title
-  var user = API.user();
-  if (user && topics) {
-    var unreadTopics = jQuery.grep(topics, function(topic) {
-      return topic.post_count_unread > 0;
-    }).length;
-    if (Tinycon) {
-      document.title = user.name + ' - Wobble';
-      Tinycon.setBubble(unreadTopics);
-    }
-    else if (unreadTopics == 0) {
-      document.title = user.name + " - Wobble";
-    } else {
-      document.title = "(" + unreadTopics + ") " + user.name + " - Wobble";
-    }
-  }
-
   // Render to html list
   if (topics.length == 0) {
     this.renderText('No topics here. Try to create one :)');
