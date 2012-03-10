@@ -20,11 +20,11 @@ function TopicListModel(cache) {
   }, this);
 
   BUS.on('topic.changed', function(_data) {
-    this.model.refreshTopicList();
+    this.refreshTopicList();
   }, this);
 
   BUS.on('topic.post.changed', function(_data) {
-    this.model.refreshTopicList();
+    this.refreshTopicList();
   }, this);
 }
 _.extend(TopicListModel.prototype, EventBUS.prototype); // Make the model an eventbus
