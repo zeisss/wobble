@@ -42,30 +42,44 @@ jsonrpc_export_functions(array (
 
 function ctx_before_request($method, $params) {
   session_name('WOBBLEID');
-  if (isset($params['apikey'])) {
-    session_id($params['apikey']);
-    session_set_cookie_params(60 * 60 * 24 * 31); # tell php to keep this session alive 1 month
-    session_start();
+  if (empty($params['apikey'])) {
+    return;
   }
 
-  if (!empty($_SESSION['userid'])) {
-    // Load the current user and check if he was marked offline
-    $userid = $_SESSION['userid'];
-    $user = UserRepository::get($userid);
-    if (!$user['online']) {
-       SessionService::signon(session_id(), $userid);
-       NotificationRepository::deleteNotifications(session_id(), time());
+  session_id($params['apikey']);
+  session_set_cookie_params(60 * 60 * 24 * 31); # tell php to keep this session alive 1 month
+  session_start();
 
-       // Ok, we were offline, so notify everybody that we are back
-       foreach(ContactsRepository::getContacts($userid) AS $contact) {
-         NotificationRepository::push($contact['id'], array (
-              'type' => 'user_online',
-              'user_id' => $userid
-         ));
-      }
+  if (empty($_SESSION['userid'])) {
+    # User was so long offline, that the server php-session was destroy
+    # We still have it in the DB
+    $session = SessionService::getSession(session_id());
+
+    if (empty($session)) {
+      return;
     }
-    SessionService::touch(session_id(), $userid);
+    $_SESSION['userid'] = $session['user_id'];
   }
+
+  // Load the current user and check if he was marked offline
+  $userid = $_SESSION['userid'];
+  $user = UserRepository::get($userid);
+  if (empty($user)) {
+    return;
+  }
+  if (!$user['online']) {
+     SessionService::signon(session_id(), $userid);
+     NotificationRepository::deleteNotifications(session_id(), time());
+
+     // Ok, we were offline, so notify everybody that we are back
+     foreach(ContactsRepository::getContacts($userid) AS $contact) {
+       NotificationRepository::push($contact['id'], array (
+            'type' => 'user_online',
+            'user_id' => $userid
+       ));
+    }
+  }
+  SessionService::touch(session_id(), $userid);
 }
 jsonrpc_export_before('ctx_before_request'); # TODO: Replace this with a closure?
 
