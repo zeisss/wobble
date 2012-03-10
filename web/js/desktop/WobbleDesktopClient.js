@@ -37,8 +37,10 @@ WobbleDesktopClient.prototype.initLogin = function() {
 };
 
 WobbleDesktopClient.prototype.initApp = function() {
+  this.cache = window.localcache.getCache();
+  
   // DataModel
-  this.contactsModel = new ContactsModel();
+  this.contactsModel = new ContactsModel(this.cache);
   this.topicListModel = new TopicListModel(window.localcache.getCache());
   this.topicModel = new TopicModel();
 
