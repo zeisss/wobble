@@ -24,7 +24,13 @@ function ContactsPresenter(display, model) {
 
   // Button Handlers  ---------------------------------------------------
   display.onAddContact = function(contactEmail) {
-    that.addUserByEmail(contactEmail);
+    that.model.addNewContact(contactEmail, function(err, data) {
+      if (data) {
+        that.display.showMessage('Contact added!');
+      } else {
+        that.display.showMessage('Contact could not be added.');
+      }
+    });
   };
   display.onContactClick = function(contact) {
     // Forward to the BUS => Other Module
