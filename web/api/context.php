@@ -14,6 +14,7 @@ require_once dirname(__FILE__).'/classes/ValidationService.class.php';
 require_once dirname(__FILE__).'/classes/TopicMessagesRepository.class.php';
 require_once dirname(__FILE__).'/classes/UserArchivedTopicRepository.class.php';
 require_once dirname(__FILE__).'/classes/InputSanitizer.class.php';
+require_once dirname(__FILE__).'/classes/TopicListService.class.php';
 
 
 
