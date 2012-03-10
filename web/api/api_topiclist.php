@@ -42,7 +42,7 @@ function topics_list($params) {
   $result = $stmt->fetchAll();
 
   foreach($result AS $i => $topic) {
-    $result[$i]['users'] = TopicRepository::getReaders($topic['id'], 3);
+    $result[$i]['users'] = TopicRepository::getReaders($topic['id'], 1);
     $result[$i]['post_count_total'] = intval($result[$i]['post_count_total']);
     $result[$i]['max_last_touch'] = intval($result[$i]['max_last_touch']);
 
