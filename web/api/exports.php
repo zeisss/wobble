@@ -64,6 +64,9 @@ function ctx_before_request($method, $params) {
   // Load the current user and check if he was marked offline
   $userid = $_SESSION['userid'];
   $user = UserRepository::get($userid);
+  if (empty($user)) {
+    return;
+  }
   if (!$user['online']) {
      SessionService::signon(session_id(), $userid);
      NotificationRepository::deleteNotifications(session_id(), time());
