@@ -19,7 +19,7 @@ TopicsListDisplay.prototype.clear = function() {};
 function TopicListPresenter (view, model) {
   this.view = view;
   this.model = model;
-  
+
   this.selectedTopicId = null;
 
   // Start fetching an up2date list

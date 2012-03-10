@@ -51,7 +51,7 @@ TopicListModel.prototype.refreshTopicList = function() {
   var that = this;
   API.list_topics(this.show_archived, function(err, list) {
     that.requestInProcess = false;
-    
+
     if (!err) {
       that.cache.set('topicslistpresenter.topics', list, that.cacheTimeout);
       that.topics = list;

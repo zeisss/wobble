@@ -38,7 +38,6 @@ WobbleDesktopClient.prototype.initLogin = function() {
 
 WobbleDesktopClient.prototype.initApp = function() {
   this.cache = window.localcache.getCache();
-  
   // DataModel
   this.contactsModel = new ContactsModel(this.cache);
   this.topicListModel = new TopicListModel(window.localcache.getCache());
@@ -51,7 +50,7 @@ WobbleDesktopClient.prototype.initApp = function() {
   this.contactsView = new JQueryContactsView();
   this.topicListView = new jQueryTopicsView(true);
   this.topicView = new jQueryTopicView();
-  
+
   // Create the Presenter
   this.contactsChooserPresenter = new ContactsChooserPresenter(
       new ListContactsChooserDisplay('#topic_invite_user'),
