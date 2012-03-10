@@ -24,7 +24,13 @@ function ContactsPresenter(display, model) {
 
   // Button Handlers  ---------------------------------------------------
   display.onAddContact = function(contactEmail) {
-    that.addUserByEmail(contactEmail);
+    that.model.addNewContact(contactEmail, function(err, data) {
+      if (data) {
+        that.display.showMessage('Contact added!');
+      } else {
+        that.display.showMessage('Contact could not be added.');
+      }
+    });
   };
   display.onContactClick = function(contact) {
     // Forward to the BUS => Other Module
@@ -42,17 +48,15 @@ function ContactsPresenter(display, model) {
   }
 
   // WhoAmI  ---------------------------------------------------
-  if (model.getUser()) {
-    this.display.renderWhoAmI(model.getUser());
-  }
   model.on('user', function(user) {
     this.display.renderWhoAmI(user);
   }, this);
-
-  // ContactList  ---------------------------------------------------
-  this.refreshContacts(); // Render initially
   model.on('update', this.refreshContacts, this);
 
+  // Initial rendering
+  if (model.getUser()) {
+    this.display.renderWhoAmI(model.getUser());
+  }
   return that;
 }
 // Methods ---------------------------------------------------

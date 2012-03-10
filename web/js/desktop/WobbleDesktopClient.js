@@ -37,8 +37,10 @@ WobbleDesktopClient.prototype.initLogin = function() {
 };
 
 WobbleDesktopClient.prototype.initApp = function() {
+  this.cache = window.localcache.getCache();
+
   // Models
-  this.contactsModel = new ContactsModel();
+  this.contactsModel = new ContactsModel(this.cache);
 
   // Views
   this.topHeader = new DesktopClientHeader();
@@ -49,7 +51,7 @@ WobbleDesktopClient.prototype.initApp = function() {
       this.contactsModel
   );
   this.contactsPresenter = new ContactsPresenter(new JQueryContactsView(), this.contactsModel);
-  this.topicsPresenter = new TopicListPresenter(new jQueryTopicsView(), window.localcache.getCache());
+  this.topicsPresenter = new TopicListPresenter(new jQueryTopicsView(), this.cache);
 
   this.contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(100, 100), this.contactsModel, 'contact.clicked');
   this.topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(600, 100), this.contactsModel, 'topic.user.clicked');
