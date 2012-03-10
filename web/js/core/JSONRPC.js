@@ -88,8 +88,9 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
       if(that.aborted)
         return;
 
-      BUS.fire('rpc.connectionerror', {text: textStatus, error: errorThrown});
-      callback(errorThrown);
+      var errorObj = {text: textStatus, error: errorThrown};
+      BUS.fire('rpc.connectionerror', errorObj);
+      callback(errorObj);
     };
   }
 

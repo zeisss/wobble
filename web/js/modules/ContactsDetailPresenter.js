@@ -1,6 +1,7 @@
 "use strict";
 function ContactsDetailDisplay() {};
 ContactsDetailDisplay.prototype.show = function(contact) {};
+ContactsDetailDisplay.prototype.showMessage = function(sMessage) {};
 ContactsDetailDisplay.prototype.addAction = function(label, callback) {};
 ContactsDetailDisplay.prototype.onClose = function() {};
 
@@ -24,13 +25,13 @@ function ContactsDetailPresenter(display, model, eventName) {
       }
     }
     // Also add an 'Add contact' button, if user is not in model and not ourself
-    if (theUser.id !== API.user_id() && model.isContact(theUser.id)) {
+    if (theUser.id !== API.user_id() && !model.isContact(theUser.id)) {
       display.addAction('Add as contact', function() {
         model.addNewContact(theUser.email, function(err, data) {
-          if (data) {
-            that.display.showMessage('Contact added!');
+          if (!err && data) {
+            display.showMessage('Contact added!');
           } else {
-            that.display.showMessage('Contact could not be added.');
+            display.showMessage('Contact could not be added.');
           }
         });
         display.hide();

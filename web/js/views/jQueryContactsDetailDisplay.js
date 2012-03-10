@@ -43,3 +43,6 @@ jQueryContactsDetailDisplay.prototype.hide = function() {
 jQueryContactsDetailDisplay.prototype.addAction = function(title, callback) {
   $('<button></button>').text(title).click(callback).appendTo(this.e);
 };
+jQueryContactsDetailDisplay.prototype.showMessage = function(sMessage) {
+  window.alert(sMessage);
+};
