@@ -19,6 +19,9 @@ class TopicListService {
   }
   
   private static function parseHeadline($post_content, &$offset) {
+    if (empty($post_content)) {
+      return "";
+    }
     $post_content = trim($post_content);
     $offset = null;
     if ($post_content[0] !== '<') {
