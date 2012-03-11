@@ -3,6 +3,21 @@
 require_once dirname(__FILE__) . '/../../web/api/context.php';
 
 class TopicListServiceTest extends PHPUnit_Framework_TestCase {
+  function testEmptyHtml() {
+    $expected = array('headline' => '', 'text' => '');
+    $html = '';
+
+    $this->assertEquals($expected, TopicListService::createAbstract($html));
+  }
+
+  # Would be nice, but is to much work to implement :(
+  #function testHeadlineWithParialFormatting() {
+  #  $expected = array('headline' => 'Hallo Welt', 'text' => 'Text');
+  #  $html = '<b>Hallo</b> Welt<div>Text</div>';
+  #
+  #  $this->assertEquals($expected, TopicListService::createAbstract($html));
+  #}
+
   function testParseSimpleHtml() {
     $expected = array('headline' => 'Demo #1', 'text' => 'Hallo Ihr!');
     $html = 'Demo #1<div>Hallo Ihr!</div>';
