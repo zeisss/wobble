@@ -5,7 +5,7 @@
  */
 class InputSanitizer {
     public static function sanitizeEmail($email) {
-        return trim($email);    
+        return trim($email);
     }
 
     /** 
