@@ -1,6 +1,6 @@
 "use strict";
 
-function jQueryTopicsView () {
+function jQueryTopicsView (show_multiple_button) {
   this.e = $('<div></div>').addClass('widget').attr('id', 'topics_wrapper').appendTo('#widgets');
 
   this.$actions = $('<div id="topics_actions"></div>').appendTo(this.e);
@@ -8,20 +8,7 @@ function jQueryTopicsView () {
                    '  <li>Loading ...</li>' +
                    '</ul>').appendTo(this.e)
 
-  var that = this;
-  $("<button>New</button>").click(function() {
-    that.onCreateNewTopic();
-  }).appendTo(this.$actions);
-  $('<button>Show archived</button>').click(function() {
-    var button = $(this);
-    if (button.text() == 'Show archived') {
-      that.onShowArchived();
-      button.text('Show Inbox');
-    } else {
-      that.onShowInbox();
-      button.text('Show archived');
-    }
-  }).appendTo(this.$actions);
+  this.showMultipleButton = show_multiple_button;
 };
 jQueryTopicsView.prototype = new TopicsListDisplay;
 jQueryTopicsView.prototype.constructor = jQueryTopicsView;
@@ -31,24 +18,49 @@ jQueryTopicsView.prototype.setActiveTopic = function(topicId) {
   $(">li.active", this.$topics).removeClass("active");
   $("#topic-" + topicId).addClass("active");
 };
-jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
-  // Update document title
-  var user = API.user();
-  if (user && topics) {
-    var unreadTopics = jQuery.grep(topics, function(topic) {
-      return topic.post_count_unread > 0;
-    }).length;
-    if (Tinycon) {
-      document.title = user.name + ' - Wobble';
-      Tinycon.setBubble(unreadTopics);
-    }
-    else if (unreadTopics == 0) {
-      document.title = user.name + " - Wobble";
+jQueryTopicsView.prototype.renderActionButtons = function(showArchived) {
+  this.$actions.empty();
+
+  var that = this;
+  $("<button>New</button>").click(function() {
+    that.onCreateNewTopic();
+  }).appendTo(this.$actions);
+
+  if (this.showMultipleButton) {
+    this.$actions.append($('<span></span>').css('width', '30px').css('display', 'inline-block'));
+    this.$bShowInbox = $('<button>').text('Show Inbox').appendTo(this.$actions).click(function() {
+      that.onShowInbox();
+      that.renderActionButtons(false);
+    });
+    this.$bShowArchive = $('<button>').text('Show Archive').appendTo(this.$actions).click(function() {
+      that.onShowArchived();
+      that.renderActionButtons(true);
+    })
+
+    if (showArchived) {
+      this.$bShowInbox.removeAttr('disabled');
+      this.$bShowArchive.attr('disabled', 'disabled');
     } else {
-      document.title = "(" + unreadTopics + ") " + user.name + " - Wobble";
+      this.$bShowInbox.attr('disabled', 'disabled');
+      this.$bShowArchive.removeAttr('disabled');
     }
   }
+  else {
+    var texts = ['Show archived', 'Show Inbox'];
 
+    $('<button></button>').text(texts[showArchived ? 1 : 0]).click(function() {
+      var button = $(this);
+      if (button.text() == texts[0]) {
+        that.onShowArchived();
+        button.text(texts[1]);
+      } else {
+        that.onShowInbox();
+        button.text(texts[0]);
+      }
+    }).appendTo(this.$actions);
+  }
+}
+jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
   // Render to html list
   if (topics.length == 0) {
     this.renderText('No topics here. Try to create one :)');

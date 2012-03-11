@@ -58,8 +58,10 @@
     'js/modules/ContactsChooserPresenter.js',
     'js/modules/ContactsDetailPresenter.js',
     'js/modules/TopicPresenter.js',
+    'js/modules/TopicListModel.js',
     'js/modules/TopicListPresenter.js',
     'js/modules/UserProfilePresenter.js',
+    'js/modules/WindowUpdater.js',
 
     // Views
     'js/views/jQueryTopicListView.js',
