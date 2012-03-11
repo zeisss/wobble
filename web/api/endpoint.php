@@ -33,7 +33,7 @@ if ($requestBody[0] == '[') { # If the first char was a [, this is a batch reque
 
 function jsonrpc_export_functions($exportedMethods) {
   global $JSONRPC_CONFIG;
-  
+
   foreach($exportedMethods AS $m) {
     $entry = array();
     $entry['method'] = $m['method'];
@@ -41,7 +41,7 @@ function jsonrpc_export_functions($exportedMethods) {
     if (isset($m['file'])) {
       $entry['file'] = $m['file'];
     }
-    
+
     if (isset($m['name'])) {
       $entry['name'] = $m['name'];
     } else {
@@ -106,11 +106,11 @@ function handle_jsonrpc_request($request) {
   if (!isset($request['params'])) {
     $request['params'] = array();
   }
-  
+
   # Iterate over all given methods
   foreach($JSONRPC_CONFIG['methods'] AS $export) {
     if ($export['name'] === $request['method']) {
-      
+
       try {
         if (isset($JSONRPC_CONFIG['callback_before'])) {
           call_user_func($JSONRPC_CONFIG['callback_before'], 
@@ -124,7 +124,7 @@ function handle_jsonrpc_request($request) {
         }
 
         $response = call_user_func($export['method'], $request['params']);
-        
+
         if (isset($JSONRPC_CONFIG['callback_after'])) {
           call_user_func($JSONRPC_CONFIG['callback_after'], 
                          $request['method'], $request['params'], $response, null);
@@ -136,8 +136,7 @@ function handle_jsonrpc_request($request) {
         }
         return jsonrpc_error(-32603, $e->getMessage(), $request['id']);
       }
-      
-      
+
       if (isset($request['id'])) {
         return jsonrpc_result($response, $request['id']);
       } else {
