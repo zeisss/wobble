@@ -20,6 +20,15 @@ class TopicRepository {
     }
     return $data;
   }
+
+  public static function isReader($topic_id, $user_id) {
+    $pdo = ctx_getpdo();
+    $stmt = $pdo->prepare('SELECT COUNT(*) cnt FROM topic_readers r WHERE r.user_id = ? AND r.topic_id = ?');
+    $stmt->execute(array($user_id, $topic_id));
+    $result = $stmt->fetchAll();
+    return $result[0]['cnt'] > 0;
+  }
+
   /**
    * Creates a new topic with an initial empty post belongign to the given user.
    * This user is also the only reader in the created topic.
@@ -167,9 +176,28 @@ class TopicRepository {
     }
   }
 
+  public static function updatePost($topic_id, $post_id, $rev, $content, $user_id) {
+    $pdo = ctx_getpdo();
+
+    $pdo->prepare('UPDATE posts SET content = ?, revision_no = revision_no + 1, last_touch = unix_timestamp() WHERE post_id = ? AND topic_id = ? AND revision_no = ?')
+        ->execute(array($content, $post_id, $topic_id, $rev));
+    $pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id) VALUES (?,?,?)')
+        ->execute(array($topic_id, $post_id, $user_id));
+  }
+
+  public static function deletePost($topic_id, $post_id) {
+    $pdo = ctx_getpdo();
+
+    $stmt = $pdo->prepare('DELETE FROM post_editors WHERE topic_id = ? AND post_id = ?');
+    $stmt->execute(array($topic_id, $post_id));
+
+    $pdo->prepare('UPDATE posts SET deleted = 1, content = NULL WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
+
+    $pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
+  }
 
   # Traverses upwards and deletes all posts, if no child exist
-  function deletePostsIfNoChilds($topic_id, $post_id) {
+  public static function deletePostsIfNoChilds($topic_id, $post_id) {
     if($post_id === '1') {
       return;
     }
