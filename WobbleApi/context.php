@@ -1,7 +1,6 @@
 <?php
+# Disable session cookies, since we do our own session key management
 ini_set('session.use_cookies', '0');
-
-require_once dirname(__FILE__) . '/config.php';
 
 # TODO: Replace with __autoload()
 require_once WOBBLE_HOME .'/WobbleApi/model/NotificationRepository.class.php';
@@ -15,9 +14,6 @@ require_once WOBBLE_HOME .'/WobbleApi/model/TopicMessagesRepository.class.php';
 require_once WOBBLE_HOME .'/WobbleApi/model/UserArchivedTopicRepository.class.php';
 require_once WOBBLE_HOME .'/WobbleApi/model/InputSanitizer.class.php';
 require_once WOBBLE_HOME .'/WobbleApi/model/TopicListService.class.php';
-
-
-
 
 ###
 # Helper Functions
