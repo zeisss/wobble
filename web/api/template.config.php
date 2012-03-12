@@ -11,3 +11,5 @@ define('PASSWORD_SALT', 'myStaticSalt');
 
 # Define a topic id to which every newly registered user gets added
 # define ('WELCOME_TOPIC_ID', '1-1323269956900');
+
+define('WOBBLE_HOME', dirname(__FILE__) . '/../../');

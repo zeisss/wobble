@@ -4,17 +4,17 @@ ini_set('session.use_cookies', '0');
 require_once dirname(__FILE__) . '/config.php';
 
 # TODO: Replace with __autoload()
-require_once dirname(__FILE__).'/classes/NotificationRepository.class.php';
-require_once dirname(__FILE__).'/classes/TopicRepository.class.php';
-require_once dirname(__FILE__).'/classes/UserRepository.class.php';
-require_once dirname(__FILE__).'/classes/ContactsRepository.class.php';
-require_once dirname(__FILE__).'/classes/SecurityService.class.php';
-require_once dirname(__FILE__).'/classes/SessionService.class.php';
-require_once dirname(__FILE__).'/classes/ValidationService.class.php';
-require_once dirname(__FILE__).'/classes/TopicMessagesRepository.class.php';
-require_once dirname(__FILE__).'/classes/UserArchivedTopicRepository.class.php';
-require_once dirname(__FILE__).'/classes/InputSanitizer.class.php';
-require_once dirname(__FILE__).'/classes/TopicListService.class.php';
+require_once WOBBLE_HOME .'/WobbleApi/model/NotificationRepository.class.php';
+require_once WOBBLE_HOME .'/WobbleApi/model/TopicRepository.class.php';
+require_once WOBBLE_HOME .'/WobbleApi/model/UserRepository.class.php';
+require_once WOBBLE_HOME .'/WobbleApi/model/ContactsRepository.class.php';
+require_once WOBBLE_HOME .'/WobbleApi/model/SecurityService.class.php';
+require_once WOBBLE_HOME .'/WobbleApi/model/SessionService.class.php';
+require_once WOBBLE_HOME .'/WobbleApi/model/ValidationService.class.php';
+require_once WOBBLE_HOME .'/WobbleApi/model/TopicMessagesRepository.class.php';
+require_once WOBBLE_HOME .'/WobbleApi/model/UserArchivedTopicRepository.class.php';
+require_once WOBBLE_HOME .'/WobbleApi/model/InputSanitizer.class.php';
+require_once WOBBLE_HOME .'/WobbleApi/model/TopicListService.class.php';
 
 
 

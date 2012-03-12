@@ -117,7 +117,7 @@ function handle_jsonrpc_request($request) {
                   $request['method'], $request['params']);
         }
         if (isset($export['file'])) {
-          require_once($export['file']);
+          require_once(WOBBLE_HOME . '/WobbleApi/handlers/' . $export['file']);
         }
         if (!function_exists($export['method'])) {
           throw new Exception("Expected that {$export['method']} gets defined in {$export['file']}. Function not found.");
