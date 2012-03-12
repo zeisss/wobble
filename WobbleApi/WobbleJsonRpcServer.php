@@ -1,4 +1,6 @@
 <?php
+require_once WOBBLE_HOME . '/WobbleApi/JsonRpcServer.php'; # Basic RPC Server
+require_once WOBBLE_HOME . '/WobbleApi/context.php'; # introduces session setup, db connection, utility classes, ...
 
 class WobbleJsonRpcServer extends HttpJsonRpcServer {
   public function __construct() {
@@ -44,6 +46,21 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     ));
   }
 
+  /**
+   * If SIMULATE_LAGS is defined, this delays the current request by a random amount of time,
+   * before continuing normally.
+   */
+  public function handleHttpRequest() {
+    if (defined('SIMULATE_LAG') && SIMULATE_LAG) {
+      // Decrease the performance
+      usleep(1000 * rand(100, 3000));
+    }
+    parent::handleHttpRequest();
+  }
+
+  /**
+   * Performs a session validation.
+   */
   public function beforeCall($method, $params) {
     session_name('WOBBLEID');
     if (empty($params['apikey'])) {

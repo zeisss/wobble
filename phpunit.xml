@@ -7,4 +7,9 @@
             <directory suffix="_test.php">tests/handlers</directory>
         </testsuite>
     </testsuites>
+    <php>
+        <!-- Set everything the config.php has to offer -->
+        <const name="WOBBLE_HOME" value="."/>
+        <const name="PASSWORD_SALT" value=""/>
+    </php>
 </phpunit>

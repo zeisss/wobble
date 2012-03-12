@@ -2,6 +2,9 @@
 # Disable session cookies, since we do our own session key management
 ini_set('session.use_cookies', '0');
 
+# Load the configuration file
+require_once WOBBLE_HOME . '/etc/config.php';
+
 # TODO: Replace with __autoload()
 require_once WOBBLE_HOME .'/WobbleApi/model/NotificationRepository.class.php';
 require_once WOBBLE_HOME .'/WobbleApi/model/TopicRepository.class.php';

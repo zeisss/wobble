@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../web/api/context.php';
+require_once dirname(__FILE__) . '/../../WobbleApi/context.php';
 
 class ValidationServiceTest extends PHPUnit_Framework_TestCase {
   public function testValidateTopicId() {
@@ -49,7 +49,7 @@ class ValidationServiceTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testValidateContent() {
-    ValidationService::validate_content('Here is some code to look at: &lt;script>var harmless = true;&lt;script>');w
+    ValidationService::validate_content('Here is some code to look at: &lt;script>var harmless = true;&lt;script>');
     try {
       ValidationService::validate_content('Bla bla. Now secret script Tag!<script>alert("Hacked!");</script> You haven&quot;t seen that!');
       $this->fail('validate_content should raise an exception for a script tag.');

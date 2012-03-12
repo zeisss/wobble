@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../web/api/context.php';
+require_once dirname(__FILE__) . '/../../WobbleApi/context.php';
 
 class TopicListServiceTest extends PHPUnit_Framework_TestCase {
   function testEmptyHtml() {
