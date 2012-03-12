@@ -214,7 +214,7 @@ function post_create($params) {
       ));
 
       # Move topic back to inbox, if changed
-      UserArchivedTopicRepository::setArchived($user['id'], $topic_id, 0);
+      UserArchivedTopicRepository::setArchived($reader['id'], $topic_id, 0);
     }
 
     # Mark unread for author
