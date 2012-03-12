@@ -1,10 +1,5 @@
 <?php
 // JSON RPC Exported Standard functions
-jsonrpc_export_functions(array(
-  # No file, since it always gets included
-  array('name' => 'system.listMethods', 'method' => 'jsonrpc_exported_system_list'),
-  array('name' => 'echo', 'method' => 'jsonrpc_echo')
-));
 
 function jsonrpc_exported_system_list($params) {
   global $JSONRPC_CONFIG;
