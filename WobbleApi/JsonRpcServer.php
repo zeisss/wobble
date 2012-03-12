@@ -19,17 +19,22 @@ class JsonRpcServer {
   }
 
   public function addFunction($method, $file = null, $name = null) {
+    if (is_null($name)) {
+      $name = $method;
+    }
+
     $def = array();
     $def['method'] = $method;
-    if (is_null($name)) {
-      $def['name'] = $method;
-    } else {
-      $def['name'] = $name;
-    }
+    $def['name'] = $name;
+
     if (!is_null($file)) {
       $def['file'] = $file;
     }
-    $this->functions[$method] = $def;
+    $this->functions[$name] = $def;
+  }
+
+  public function getExportedFunctions() {
+    return $this->functions;
   }
 
   public function handleRequest($request) {
@@ -45,7 +50,7 @@ class JsonRpcServer {
     }
   }
 
-  public function processBatch($batch) {
+  protected function processBatch($batch) {
     $result = array();
 
     foreach ($requests as $subrequest) {
@@ -58,7 +63,7 @@ class JsonRpcServer {
     return $result;
   }
 
-  public function processCall($request) {
+  protected function processCall($request) {
     if ($request === NULL || !is_array($request)) {
       return $this->createError(-32600, "Invalid request");
     }
@@ -86,7 +91,7 @@ class JsonRpcServer {
       }
     
       $this->beforeCall($request['method'], $request['params']);
-      $response = call_user_func($export['method'], $request['params']);
+      $response = call_user_func($export['method'], $request['params'], $this);
       $this->afterCall($request['method'], $request['params'], $response, null);
     } catch(Exception $e) {
       $this->afterCall($request['method'], $request['params'], null, $e);

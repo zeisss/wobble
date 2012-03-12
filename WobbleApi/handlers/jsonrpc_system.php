@@ -1,13 +1,9 @@
 <?php
 // JSON RPC Exported Standard functions
 
-function jsonrpc_exported_system_list($params) {
-  global $JSONRPC_CONFIG;
+function jsonrpc_exported_system_list($params, $server) {
   $result = array();
-
-  #var_dump($JSONRPC_CONFIG);
-
-  foreach($JSONRPC_CONFIG['methods'] AS $entry) {
+  foreach($server->getExportedFunctions() AS $entry) {
     $result[] = $entry['name'];
   }
   return $result;

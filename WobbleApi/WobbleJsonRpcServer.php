@@ -43,6 +43,7 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
       array('file' => 'api_user.php', 'method' => 'user_remove_contact')
     ));
   }
+
   public function beforeCall($method, $params) {
     session_name('WOBBLEID');
     if (empty($params['apikey'])) {
