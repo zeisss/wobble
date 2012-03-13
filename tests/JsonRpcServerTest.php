@@ -40,6 +40,23 @@ class JsonRpcServerTest extends PHPUnit_Framework_TestCase {
     ));
   }
 
+  public function testNonExistingMethodCall() {
+    $server = new JsonRpcServer();
+
+    $expected = array(
+      'jsonrpc' => '2.0',
+      'id' => '234',
+      'error' => array('code' => -32602, 'message' => 'Unknown method: non_existing'),
+    );
+    $result = $server->handleRequest(array(
+      'jsonrpc' => '2.0',
+      'id' => '234',
+      'method' => 'non_existing',
+      'params' => array()
+    ));
+    $this->assertEquals($expected, $result);
+  }
+
   public function testBatchJsonProtocolSingle() {
     $server = new JsonRpcServer();
 

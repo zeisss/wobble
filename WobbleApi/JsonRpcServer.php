@@ -124,7 +124,7 @@ class JsonRpcServer {
         'message' => $message
       )
     );
-    if ($id) {
+    if ($requestId) {
       $result['id'] = $requestId;
     }
     return $result;
