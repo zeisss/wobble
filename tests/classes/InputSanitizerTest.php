@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../web/api/context.php';
+require_once dirname(__FILE__) . '/../../WobbleApi/context.php';
 
 class InputSanitizerTest extends PHPUnit_Framework_TestCase {
   function testSanitizeEmail() {
@@ -12,5 +12,19 @@ class InputSanitizerTest extends PHPUnit_Framework_TestCase {
   public function testSanitizeLinks() {
     $this->assertEquals('<a target="_new" href="http://example.com">Click here</a>', 
                         InputSanitizer::sanitizeLinks('<a href="http://example.com">Click here</a>'));
+
+    # Link already added
+    $this->assertEquals('<a target="_new" href="http://example.com">Click here</a>', 
+                        InputSanitizer::sanitizeLinks('<a target="_new" href="http://example.com">Click here</a>'));
+
+  }
+  public function testSanitizeLinkException() {
+    try {
+      $this->assertEquals('<a target="_new" href="http://example.com">Click here</a>', 
+                        InputSanitizer::sanitizeLinks('<a href="http://example.com" target="_new">Click here</a>'));
+      $this->fail('No exception was thrown.');
+    } catch (Exception $e) {
+      return;
+    }
   }
 }
