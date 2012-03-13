@@ -1,29 +1,29 @@
 <?php
 class ValidationService {
-  function validate_topicid($input) {
+  public static function validate_topicid($input) {
     $pattern = '/^[-\w]*$/';
-    ValidationService::check(preg_match($pattern, $input));
+    static::check(preg_match($pattern, $input));
   }
 
-  function validate_email($input) {
-    ValidationService::check(!empty($input) && strpos($input, '@') > 0, 'Valid email adress required: ' . $input);
+  public static function validate_email($input) {
+    static::check(!empty($input) && strpos($input, '@') > 0, 'Valid email adress required: ' . $input);
   }
 
-  function validate_not_empty($input) {
-    ValidationService::check(!empty($input));
+  public static function validate_not_empty($input) {
+    static::check(!empty($input));
   }
 
-  function validate_content($input) {
+  public static function validate_content($input) {
     $pos = strpos($input, '<script');
-    ValidationService::check($pos === FALSE);
+    static::check($pos === FALSE);
   }
 
-  function validate_list($input, $list) {
+  public static function validate_list($input, $list) {
     $in_list = in_array($input, $list);
-    ValidationService::check($in_list !== FALSE);
+    static::check($in_list !== FALSE);
   }
 
-  function check($boolean, $message = 'Invalid Input!') {
+  public static function check($boolean, $message = 'Invalid Input!') {
     if (!$boolean) throw new Exception($message);
   }
 }
