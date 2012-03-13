@@ -9,6 +9,15 @@ class InputSanitizerTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('user@example.com', InputSanitizer::sanitizeEmail("user@example.com\n"));
   }
   
+  public function testSanitizePostContent() {
+    # Currently sanitizePostContent() only cleans the links via sanitizeLinks()
+    # TODO: Refactor to use a mock
+    $input = '<a href="http://example.com">Click me</a>';
+    $expected = '<a target="_new" href="http://example.com">Click me</a>';
+    
+    $this->assertEquals($expected, InputSanitizer::sanitizePostContent($input));
+  }
+  
   public function testSanitizeLinks() {
     $this->assertEquals('<a target="_new" href="http://example.com">Click here</a>', 
                         InputSanitizer::sanitizeLinks('<a href="http://example.com">Click here</a>'));
@@ -26,5 +35,12 @@ class InputSanitizerTest extends PHPUnit_Framework_TestCase {
     } catch (Exception $e) {
       return;
     }
+  }
+  
+  public function testSanitizeLinksWithBadContent() {
+    $input = '<a href="http://example.com">Click me</a><a ';
+    $expected = '<a target="_new" href="http://example.com">Click me</a><a ';
+
+    $this->assertEquals($expected, InputSanitizer::sanitizePostContent($input));
   }
 }
