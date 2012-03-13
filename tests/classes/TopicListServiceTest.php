@@ -94,8 +94,20 @@ class TopicListServiceTest extends PHPUnit_Framework_TestCase {
 EOL;
     $this->assertEquals($expected, TopicListService::createAbstract($html));
   }
+
+  public function testHeadlineInvalidContent() {
+    $expected = array (
+      'headline' => 'Foo',
+      'text' => ''
+    );
+    $input = '<b>Foo</b>';
+    $this->assertEquals($expected, TopicListService::createAbstract($input));
+
+    $expected = array (
+      'headline' => '',
+      'text' => ''
+    );
+    $input = '<b';
+    $this->assertEquals($expected, TopicListService::createAbstract($input));
+  }
 }
-
-
-
-

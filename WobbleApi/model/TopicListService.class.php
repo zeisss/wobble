@@ -2,7 +2,7 @@
 
 class TopicListService {
   public static function createAbstract($post_content, $text_length = 30) {
-    $text = null;
+    $text = '';
     $headline = null;
     $offset = null;
 
@@ -50,13 +50,13 @@ class TopicListService {
       
       $tag = substr($post_content, 1, $tagNameEnd - 1);
       $tagEnd = strpos($post_content, '>');
-      if ($tagEnd === null) {
+      if ($tagEnd === false) {
         # What? No idea Oo
         return $post_content;
       }
 
       $end = strpos($post_content, '</' . $tag . '>', $tagEnd);
-      if ($end === null) {
+      if ($end === false) {
         # Srsly?
         return $post_content;
       }
