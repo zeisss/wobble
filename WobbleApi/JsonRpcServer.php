@@ -53,7 +53,7 @@ class JsonRpcServer {
   protected function processBatch($batch) {
     $result = array();
 
-    foreach ($requests as $subrequest) {
+    foreach ($batch as $subrequest) {
       $subresult = $this->processCall($subrequest);
       if ($subresult !== NULL) {
         $result[] = $subresult;
@@ -116,7 +116,7 @@ class JsonRpcServer {
     return $result;
   }
 
-  protected function createError($errorNo, $message, $id = false) {
+  protected function createError($errorNo, $message, $requestId = false) {
     $result =  array(
       'jsonrpc' => '2.0',
       'error' => array (
@@ -125,7 +125,7 @@ class JsonRpcServer {
       )
     );
     if ($id) {
-      $result['id'] = $id;
+      $result['id'] = $requestId;
     }
     return $result;
   }
