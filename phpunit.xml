@@ -3,9 +3,9 @@
         <testsuite name="Classes">
             <directory suffix="Test.php">tests/classes</directory>
         </testsuite>
-        <testsuite name="Handlers">
+<!--        <testsuite name="Handlers">
             <directory suffix="_test.php">tests/handlers</directory>
-        </testsuite>
+        </testsuite>-->
         <testsuite name="Core">
             <directory>tests/</directory>
         </testsuite>
