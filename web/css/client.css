@@ -506,7 +506,10 @@ Notification Yellow: #FC0
   border:0px;
   padding-left:10px;
   padding-right:10px;
-
+  height:24px;
+  margin:0px;
+  padding-top:0px;
+  padding-bottom:0px;
 }
 .borderright {
    margin-right:10px; 
