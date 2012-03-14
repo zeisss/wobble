@@ -109,5 +109,19 @@ EOL;
     );
     $input = '<b';
     $this->assertEquals($expected, TopicListService::createAbstract($input));
+
+    $expected = array (
+      'headline' => '',
+      'text' => ''
+    );
+    $input = '<a href="http://heise.de"';
+    $this->assertEquals($expected, TopicListService::createAbstract($input));
+
+    $expected = array (
+      'headline' => 'Foo Bar',
+      'text' => ''
+    );
+    $input = '<a href="http://heise.de">Foo Bar';
+    $this->assertEquals($expected, TopicListService::createAbstract($input));
   }
 }
