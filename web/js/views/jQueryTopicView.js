@@ -144,6 +144,7 @@ jQueryTopicView.prototype._renderReader= function(user) {
     that.onUserClicked(user);
   });
 };
+
 jQueryTopicView.prototype.renderPosts = function(topicDetails) {
   var $scrollToPost = null;
   for (var i = 0; i < topicDetails.posts.length; i++) {

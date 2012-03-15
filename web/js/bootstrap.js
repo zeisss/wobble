@@ -70,6 +70,7 @@
     'js/views/jQueryContactsDetailDisplay.js',
     'js/views/ListContactsChooserDisplay.js',
 //    'js/views/SimpleContactsChooserDisplay.js',
+    'js/views/YesNoMaybeComponent.js',
 
     'js/login/LoginModel.js',
     'js/login/AbstractLoginView.js',

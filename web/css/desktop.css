@@ -82,3 +82,36 @@
 }
 
 /* --------------------------------------------------------- */
+
+.yesnomaybe {
+  width:100%;
+  border:1px black solid;
+  background: #EEEEEE;
+  border-radius:5px;
+}
+.yesnomaybe .option {
+  width:33%;
+  min-height:60px;
+  display:inline-block;
+  padding:1px;
+}
+.yesnomaybe .option .header {
+  text-align:center;
+  border:1px black solid;
+  border-radius:3px;
+  cursor:pointer;
+}
+.yesnomaybe .option.no .header {
+  background:red;
+}
+.yesnomaybe .option.yes .header {
+  background: green;
+}
+.yesnomaybe .option.maybe .header {
+  background:yellow;
+}
+.yesnomaybe .option .list {
+  border:1px black solid;
+  border-radius: 3px;
+  min-height:40px;
+}
