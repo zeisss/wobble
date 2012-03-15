@@ -212,7 +212,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
 
     var ePostContent = $(">.post>.content", jPostWrapper);
     if (post.id != this.editingPostId) { // Leave the content untouched, if the user is editing it
-      ePostContent.html(post.content);
+      ePostContent.html(this.renderContent(post.content));
     }
     if (post.unread == 1) {
       $("<div></div>").addClass('unread').appendTo($(">.post", jPostWrapper));
@@ -383,6 +383,7 @@ jQueryTopicView.prototype.closeEditor = function() {
       this._addDefaultButtons($(".buttons", jpost).empty(), post);
 
       var content = $("#post-" + post.id + " .content").html();
+      content = this.unrenderContent(content);
       this.onStopPostEdit(post, content);
     }
   }

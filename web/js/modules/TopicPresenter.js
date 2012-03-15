@@ -22,6 +22,27 @@ TopicDisplay.prototype.setEnabled = function(enabled) {};
 
 TopicDisplay.prototype.openEditor = function(post) {};
 
+TopicDisplay.prototype.addContentRenderer = function(renderer) {
+  var r = this.render || [];
+  r.push(renderer);
+  this.render = r;
+};
+TopicDisplay.prototype.renderContent = function(content) {
+  var r = this.render;
+  for(var i = 0; i < r.length; i++) {
+    content = r[i].add(content);
+  }
+  return content;
+}
+TopicDisplay.prototype.unrenderContent = function(content) {
+  var r = this.render;
+  for(var i = 0; i < r.length; i++) {
+    content = r[i].remove(content);
+  }
+  return content;
+}
+
+
 var ROOT_ID = '1'; // the id of the root post
 
 function TopicModel() {
