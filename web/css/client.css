@@ -16,7 +16,6 @@ Notification Yellow: #FC0
 .widget {
   display: block;
   position: absolute;
-  top: 10px;
   -webkit-transition-duration: 300ms;
   transition-duration: 300ms;
 
