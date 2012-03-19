@@ -54,7 +54,7 @@ DesktopClientHeader.prototype.setRenderUser = function(shouldRender) {
 };
 DesktopClientHeader.prototype.doRenderUser = function(user) {
   if (this.renderExtendedUser) {
-    var template = "<img style='border:1px black solid' width='{{size}}' height='{{size}}' src='http://gravatar.com/avatar/{{img}}?s={{size}}' title='{{name}}'/> {{name}}";
+    var template = "<img width='{{size}}' height='{{size}}' src='http://gravatar.com/avatar/{{img}}?s={{size}}' title='{{name}}'/> {{name}}";
     this.$userinfo.empty().append(Mustache.to_html(template, {
       'img': user.img,
       'name': user.name,
