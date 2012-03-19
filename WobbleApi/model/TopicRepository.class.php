@@ -64,7 +64,7 @@ class TopicRepository {
     $posts = $stmt->fetchAll();
     
     $created_at = null;
-    $stmt = $pdo->prepare('SELECT e.user_id id FROM post_editors e WHERE topic_id = ? AND post_id = ?');
+    $stmt = $pdo->prepare('SELECT e.user_id id FROM post_editors e WHERE topic_id = ? AND post_id = ? ORDER BY timestamp DESC');
     foreach($posts AS $i => $post) {
       if ($post['id'] == '1') {
           $created_at = intval($post['created_at']);
@@ -122,7 +122,7 @@ class TopicRepository {
     $stmt->execute(array($topic_id, $post_id, $parent_post_id, $intended_reply));
     
     // Assoc first post with current user
-    $stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id) VALUES (?,?,?)');
+    $stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id, timestamp) VALUES (?,?,?, unix_timestamp())');
     $stmt->bindValue(1, $topic_id);
     $stmt->bindValue(2, $post_id);
     $stmt->bindValue(3, $user_id);
@@ -181,7 +181,7 @@ class TopicRepository {
 
     $pdo->prepare('UPDATE posts SET content = ?, revision_no = revision_no + 1, last_touch = unix_timestamp() WHERE post_id = ? AND topic_id = ? AND revision_no = ?')
         ->execute(array($content, $post_id, $topic_id, $rev));
-    $pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id) VALUES (?,?,?)')
+    $pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id, timestamp) VALUES (?,?,?, unix_timestamp())')
         ->execute(array($topic_id, $post_id, $user_id));
   }
 
