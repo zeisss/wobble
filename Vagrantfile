@@ -20,7 +20,7 @@ Vagrant::Config.run do |config|
   # to this Vagrantfile), and adding some recipes and/or roles.
   #
   config.vm.provision :chef_solo do |chef|
-     chef.cookbooks_path = "cookbooks"
+     chef.cookbooks_path = "shared/cookbooks"
      chef.add_recipe "apt"
      chef.add_recipe "openssl"
      chef.add_recipe "apache2"
