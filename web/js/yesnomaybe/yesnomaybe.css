@@ -1,0 +1,57 @@
+.yes_no_maybe_widget {
+  min-width: 10em;
+  max-width: 50em;
+}
+
+.yes_no_maybe_widget .footer {
+  clear: both;
+}
+
+.yes_no_maybe_widget .option_box {
+  width: 31%;
+  min-width: 10em;
+  float: left;
+  margin-left:0.4em;
+  margin-top:0.5em;
+  box-shadow: 0 0 0.2em 0.1em gray;
+  cursor:pointer;
+  overflow:hidden;
+}
+
+.yes_no_maybe_widget .option_box:hover {
+  box-shadow: 0 0 0.4em 0.2em gray;
+}
+
+.yes_no_maybe_widget .option_box .head {
+  text-align: center;
+}
+
+.yes_no_maybe_widget > .yes > .head {
+  background-color: green;
+}
+
+.yes_no_maybe_widget > .no > .head {
+  background-color: red;
+}
+
+.yes_no_maybe_widget > .maybe > .head {
+  background-color: yellow;
+}
+
+.yes_no_maybe_widget .option_box .votes {
+  margin: 0px;
+  padding: 0.1em;
+  padding-left: 0.4em;
+  list-style: none;
+}
+
+.yes_no_maybe_widget .option_box .votes > li {
+  border-top-style: solid;
+  border-top-width: 0.1em;
+  border-top-color: #DDD;
+}
+
+.yes_no_maybe_widget .option_box .votes > li:first-child {
+  border-top-style: none;
+  border-top-color: red;
+}
