@@ -101,7 +101,7 @@ WobbleDesktopClient.prototype.doLayout = function(data) {
   var topic = $("#topic_wrapper");
   var contacts = $("#contacts");
 
-  if (data.to.w > 800) {
+  if (data.to.w > 830) {
     contacts.css('display', '');
     contacts.css('width', '200px');
     contacts.css('left', 5);
@@ -110,7 +110,7 @@ WobbleDesktopClient.prototype.doLayout = function(data) {
     contacts.css('width', '0px');
     contacts.css('left', '0px');
   }
-  this.topHeader.setRenderUser(data.to.w <= 800);
+  this.topHeader.setRenderUser(data.to.w <= 830);
 
   var rightPart = data.to.w - (parseFloat(contacts.css('left')) + contacts.width());
 
