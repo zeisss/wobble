@@ -3,9 +3,10 @@
 /**
  * Implements the ContactsDetailDisplay as a dialog which flies over all other elements (thank to css z-index).
  */
-function jQueryContactsDetailDisplay(x,y) {
+function jQueryContactsDetailDisplay(x,y, relativeTo) {
   this.e = $('<div class="dialog contactdetail"></div>').appendTo($('body')).css('display', 'none').css('left', x).css('top', y);
   this.contact = null;
+  this.relativeTo = relativeTo;
 
   var that = this;
   this.e.click(function() {
@@ -33,6 +34,13 @@ jQueryContactsDetailDisplay.prototype.show = function(contact) {
     'size': 100
   });
   this.e.html(html).css('display', '');
+
+  // Position it relative to this.relativeTo
+  if (this.relativeTo) {
+    var relativeElem = $(this.relativeTo);
+    var pos = relativeElem.offset();
+    this.e.css('top', pos.top + relativeElem.height()).css('left', pos.left - (this.e.width() * 0.75));
+  }
 };
 jQueryContactsDetailDisplay.prototype.hide = function() {
   this.e.css('display', 'none');

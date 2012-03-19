@@ -112,7 +112,7 @@ ListContactsChooserDisplay.prototype.render = function(contacts) {
   if (this.relativeTo) {
     var relativeElem = $(this.relativeTo);
     var pos = relativeElem.offset();
-    this.e.css('top', pos.top).css('left', pos.left - (this.e.width() * 0.75));
+    this.e.css('top', pos.top + relativeElem.height()).css('left', pos.left - (this.e.width() * 0.75));
   }
 
   // Finally, show it
