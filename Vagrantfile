@@ -20,22 +20,22 @@ Vagrant::Config.run do |config|
   # to this Vagrantfile), and adding some recipes and/or roles.
   #
   config.vm.provision :chef_solo do |chef|
-     chef.cookbooks_path = "shared/cookbooks"
-     chef.add_recipe "apt"
-     chef.add_recipe "openssl"
-     chef.add_recipe "apache2"
-     chef.add_recipe "mysql::client"
-     chef.add_recipe "mysql::server"
-     chef.add_recipe "php"
-     chef.add_recipe "php::module_mysql"
-     chef.add_recipe "php::module_curl" 
-     chef.add_recipe "apache2::mod_php5"
+    chef.cookbooks_path = "shared/cookbooks"
+    chef.add_recipe "apt"
+    chef.add_recipe "openssl"
+    chef.add_recipe "apache2"
+    chef.add_recipe "mysql::client"
+    chef.add_recipe "mysql::server"
+    chef.add_recipe "php"
+    chef.add_recipe "php::module_mysql"
+    chef.add_recipe "php::module_curl"
+    chef.add_recipe "apache2::mod_php5"
        
-     # You may also specify custom JSON attributes:
-     chef.json = { 
-	:mysql => {
-		:server_root_password => "lamproot" 
-	}
-     }
+    # You may also specify custom JSON attributes:
+    chef.json = {
+      :mysql => {
+        :server_root_password => "lamproot"
+      }
+    }
   end
 end
