@@ -72,7 +72,10 @@ WobbleDesktopClient.prototype.initApp = function() {
 
   // Recalculate the position of the widgets, when window is resized
   BUS.on('window.resize', function(data) {
-    this.doLayout(data);
+    var that = this;
+    setTimeout(function() {
+      that.doLayout(data);
+    }, 50);
   }, this);
 };
 WobbleDesktopClient.prototype.onRPCError = function(err) {
@@ -98,17 +101,26 @@ WobbleDesktopClient.prototype.doLayout = function(data) {
   var topic = $("#topic_wrapper");
   var contacts = $("#contacts");
 
-  contacts.css('left', 5);
+  if (data.to.w > 700) {
+    contacts.css('display', '');
+    contacts.css('width', '200px');
+    contacts.css('left', 5);
+  } else {
+    contacts.css('display', 'none');
+    contacts.css('width', '0px');
+    contacts.css('left', '0px');
+  }
+  this.topHeader.setRenderUser(data.to.w <= 700);
 
   var rightPart = data.to.w - (parseFloat(contacts.css('left')) + contacts.width());
 
   var topicsLeft = contacts.width() + 15;
-  var topicsWidth = Math.max(rightPart * 0.4, minWidth(topics));
+  var topicsWidth = Math.ceil(Math.max(rightPart * 0.4, minWidth(topics)));
   topics.css('left', topicsLeft);
   topics.width(topicsWidth);
 
   var topicLeft = topicsLeft + topicsWidth + 10;
-  var topicWidth = Math.max(data.to.w - topicLeft - 15, minWidth(topics));
+  var topicWidth = Math.ceil(Math.max(data.to.w - topicLeft - 15, minWidth(topics)));
   topic.css('left', topicLeft);
   topic.width(topicWidth);
 
