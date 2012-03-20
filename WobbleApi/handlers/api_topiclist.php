@@ -21,7 +21,11 @@ function topics_list($params) {
   ValidationService::validate_list($show_archived, array(true, false));
 
   $topics = TopicListService::getTopicList($self_user_id, $show_archived);
-  return $topics;
+  $unreadTopics = TopicListService::getUnreadTopicList($self_user_id, false);
+  return array(
+    'topics' => $topics,
+    'inbox_unread_topics' => $unreadTopics
+  );
 }
 
 /**

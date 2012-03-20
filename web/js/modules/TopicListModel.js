@@ -8,6 +8,7 @@ function TopicListModel(cache) {
   this.cache = cache
   this.cacheTimeout = 60 * 60 * 24 * 5;
 
+  this.inboxUnreadTopics = 0;
   this.topics = cache.get('topicslistpresenter.topics') || [];
   this.show_archived = cache.get('topicslistpresenter.show_archived') || 0;
   this.requestInProcess = false;
@@ -42,19 +43,22 @@ TopicListModel.prototype.hasTopics = function() {
 TopicListModel.prototype.getTopics = function() {
   return this.topics;
 };
-
+TopicListModel.prototype.getInboxUnreadTopics = function() {
+  return this.inboxUnreadTopics;
+}
 TopicListModel.prototype.refreshTopicList = function() {
   if (this.requestInProcess)
     return;
   this.requestInProcess = true;
 
   var that = this;
-  API.list_topics(this.show_archived, function(err, list) {
+  API.list_topics(this.show_archived, function(err, result) {
     that.requestInProcess = false;
 
     if (!err) {
-      that.cache.set('topicslistpresenter.topics', list, that.cacheTimeout);
-      that.topics = list;
+      that.cache.set('topicslistpresenter.topics', result.topics, that.cacheTimeout);
+      that.topics = result.topics;
+      that.inboxUnreadTopics = result.inbox_unread_topics;
 
       that.fire('update');
     }

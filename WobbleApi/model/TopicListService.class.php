@@ -1,6 +1,19 @@
 <?php
 
 class TopicListService {
+  /**
+   * Returns the number of topics with unread posts or messages for the given user.
+   */
+  public static function getUnreadTopicList($user_id, $show_archive = false) {
+    $topics = self::getTopicList($user_id, $show_archive);
+    $counter = 0;
+    foreach ($topics as $t) {
+      if ($t['post_count_unread']) {
+        $counter++;
+      }
+    }
+    return $counter;
+  }
   public static function getTopicList($user_id, $show_archive = false) {
     $pdo = ctx_getpdo();
 
