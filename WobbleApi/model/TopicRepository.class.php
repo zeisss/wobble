@@ -86,7 +86,7 @@ class TopicRepository {
       $posts[$i]['unread'] = intval($posts[$i]['unread']);
       $posts[$i]['intended_post'] = intval($posts[$i]['intended_post']);
     
-      $posts[$i]['locked'] = TopicRepository::getPostLockStatus($topic_id, $posts[$i]['id']);
+      $posts[$i]['locked'] = self::getPostLockStatus($topic_id, $posts[$i]['id']);
       if ($posts[$i]['locked']['user_id'] == $user_id) {
         $posts[$i]['locked'] = NULL;
       }

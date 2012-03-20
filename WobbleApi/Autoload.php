@@ -1,7 +1,7 @@
 <?php
 
 if (!defined('WOBBLE_HOME')) {
-  define('WOBBLE_HOME', __DIR__);
+  define('WOBBLE_HOME', dirname(__DIR__));
 }
 
 function wobble_autoload($className) {
@@ -15,3 +15,5 @@ function wobble_autoload($className) {
   }
 }
 spl_autoload_register('wobble_autoload');
+
+require_once WOBBLE_HOME . '/WobbleApi/context.php';
