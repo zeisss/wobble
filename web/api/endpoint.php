@@ -8,9 +8,7 @@
 if (!defined('WOBBLE_HOME')) {
   define('WOBBLE_HOME', dirname(__FILE__) . '/../..');
 }
-
-# Load the files to handle the json rpc request
-require_once WOBBLE_HOME . '/WobbleApi/WobbleJsonRpcServer.php'; # Defines which Wobble Funs are exported
+require_once WOBBLE_HOME . '/WobbleApi/Autoload.php';
 
 # Handle the request
 $request_server = new WobbleJsonRpcServer();
