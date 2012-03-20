@@ -46,7 +46,7 @@ class TopicRepository {
     $pdo = ctx_getpdo();
     
     // Create topic
-    $stmt = $pdo->prepare('INSERT INTO topics VALUES (?)');
+    $stmt = $pdo->prepare('INSERT INTO topics (id, timestamp) VALUES (?, unix_timestamp())');
     $stmt->bindValue(1, $topic_id, PDO::PARAM_STR);
     $stmt->execute();
 

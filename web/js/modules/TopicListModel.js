@@ -70,7 +70,7 @@ TopicListModel.prototype.createTopic = function() {
   var that = this;
   API.topics_create(topicId, function(err, topic_id) {
     if (err) {
-      that.refreshTopicsList();
+      that.refreshTopicList();
     } else {
       that.fire('created', topicId)
     }
