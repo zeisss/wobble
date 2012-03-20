@@ -436,37 +436,37 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
   if (editing) {
     // See http://www.quirksmode.org/dom/execCommand/
     // for an example of commands
-    $('<button class="icon rightborder">Clear</button>').appendTo(this.$actions).click(function() {
+    $('<button title="Clear most formattings. Tip: Use BG with empty value to clear background color." class="icon rightborder">Clear</button>').appendTo(this.$actions).click(function() {
       document.execCommand('RemoveFormat', false, null);
     });
 
-    $('<button class="icon boldicon rightborder"></button>').appendTo(this.$actions).click(function() {
+    $('<button title="Bold" class="icon boldicon rightborder"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('bold', false, null);
     });
-    $('<button class="icon italicicon"></button>').appendTo(this.$actions).click(function() {
+    $('<button title="Italic" class="icon italicicon"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('italic', false, null);
     });
-    $('<button class="icon underlineicon"></button>').appendTo(this.$actions).click(function() {
+    $('<button title="Underline" class="icon underlineicon"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('underline', false, null);
     });
-    $('<button class="icon strikeicon borderright"></button>').appendTo(this.$actions).click(function() {
+    $('<button title="Strike" class="icon strikeicon borderright"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('strikethrough', false, null);
     });
 
-    $('<button class="icon">BG</button>').appendTo(this.$actions).click(function() {
+    $('<button title="Set background color" class="icon">BG</button>').appendTo(this.$actions).click(function() {
       var color = window.prompt('Color? (#FF0000 or red)');
       if (color!=null)
         document.execCommand('backcolor', true, color ||'white');
     });
-    $('<button class="icon">FG</button>').appendTo(this.$actions).click(function() {
+    $('<button title="Set foreground color" class="icon">FG</button>').appendTo(this.$actions).click(function() {
       var color = window.prompt('Color? (#FF0000 or red)');
       if (color!=null)
         document.execCommand('forecolor', false, color ||'black');
     });
-    $('<button class="icon">&gt;&gt;</button>').appendTo(this.$actions).click(function() {
+    $('<button title="Indent text" class="icon">&gt;&gt;</button>').appendTo(this.$actions).click(function() {
       document.execCommand('indent', false);
     });
-    $('<button class="icon">&lt;&lt;</button>').appendTo(this.$actions).click(function() {
+    $('<button title="Outdent text" class="icon">&lt;&lt;</button>').appendTo(this.$actions).click(function() {
       document.execCommand('outdent', false);
     });
     /* Not supported by IE8
@@ -477,43 +477,43 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
     });
     */
 
-    $('<button class="icon olisticon"></button>').appendTo(this.$actions).click(function() {
+    $('<button title="Make numbered list" class="icon olisticon"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('insertorderedlist', false, null);
     });
-    $('<button class="icon listicon borderright"></button>').appendTo(this.$actions).click(function() {
+    $('<button title="Make list" class="icon listicon borderright"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('insertunorderedlist', false, null);
     });
-    $('<button class="icon imgicon">img</button>').appendTo(this.$actions).click(function() {
+    $('<button title="Insert image from url" class="icon imgicon">img</button>').appendTo(this.$actions).click(function() {
       var url = window.prompt("URL?");
       if (url != null) {
         document.execCommand('insertimage', false, url);
       }
     });
-    $('<button class="icon urlicon"></button>').appendTo(this.$actions).click(function() {
+    $('<button title="Make link" class="icon urlicon"></button>').appendTo(this.$actions).click(function() {
       var url = window.prompt("URL?");
       if (url != null) {
         document.execCommand('createLink', false, url);
       }
     });
 
-    $('<button class="icon"><s>URL</s></button>').appendTo(this.$actions).click(function() {
+    $('<button title="Remove link from text" class="icon"><s>URL</s></button>').appendTo(this.$actions).click(function() {
       document.execCommand('Unlink');
     });
   } else {
     var that = this;
-    $('<button id="topic_invite_user">Invite user</button>').appendTo(this.$actions).click(function() {
+    $('<button title="Invite your contacts to this topic!" id="topic_invite_user">Invite user</button>').appendTo(this.$actions).click(function() {
       that.onInviteUserAction();
     });
 
     if (that.currentTopic) {
       if (that.currentTopic.archived == 1) {
-        var bMoveToInbox = $('<button id="topic_move_to_inbox">Inbox</button>').appendTo(this.$actions).click(function() {
+        var bMoveToInbox = $('<button title="Move this topic back to your inbox." id="topic_move_to_inbox">Inbox</button>').appendTo(this.$actions).click(function() {
           that.onMoveToInbox();
         });
       }
 
       if (that.currentTopic.archived == 0) {
-        var bMoveToArchive = $('<button id="topic_move_to_archive">Archive topic</button>').appendTo(this.$actions).click(function() {
+        var bMoveToArchive = $('<button title="Move this topic into the archive." id="topic_move_to_archive">Archive topic</button>').appendTo(this.$actions).click(function() {
           that.onMoveToArchive();
         });
       }

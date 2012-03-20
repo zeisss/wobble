@@ -20,6 +20,23 @@ class TopicRepository {
     }
     return $data;
   }
+
+  /**
+   * Updates the timestamp of the given topic, so it is sorted to the top.
+   */
+  public static function touch($topic_id) {
+    $pdo = ctx_getpdo();
+    $pdo->prepare('UPDATE topics SET timestamp = unix_timestamp() WHERE id = ?')->execute(array($topic_id));
+  }
+
+  public static function isReader($topic_id, $user_id) {
+    $pdo = ctx_getpdo();
+    $stmt = $pdo->prepare('SELECT COUNT(*) cnt FROM topic_readers r WHERE r.user_id = ? AND r.topic_id = ?');
+    $stmt->execute(array($user_id, $topic_id));
+    $result = $stmt->fetchAll();
+    return $result[0]['cnt'] > 0;
+  }
+
   /**
    * Creates a new topic with an initial empty post belongign to the given user.
    * This user is also the only reader in the created topic.
@@ -55,7 +72,7 @@ class TopicRepository {
     $posts = $stmt->fetchAll();
     
     $created_at = null;
-    $stmt = $pdo->prepare('SELECT e.user_id id FROM post_editors e WHERE topic_id = ? AND post_id = ?');
+    $stmt = $pdo->prepare('SELECT e.user_id id FROM post_editors e WHERE topic_id = ? AND post_id = ? ORDER BY timestamp DESC');
     foreach($posts AS $i => $post) {
       if ($post['id'] == '1') {
           $created_at = intval($post['created_at']);
@@ -113,16 +130,18 @@ class TopicRepository {
     $stmt->execute(array($topic_id, $post_id, $parent_post_id, $intended_reply));
     
     // Assoc first post with current user
-    $stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id) VALUES (?,?,?)');
+    $stmt = $pdo->prepare('INSERT INTO post_editors (topic_id, post_id, user_id, timestamp) VALUES (?,?,?, unix_timestamp())');
     $stmt->bindValue(1, $topic_id);
     $stmt->bindValue(2, $post_id);
     $stmt->bindValue(3, $user_id);
     $stmt->execute();
+    self::touch($topic_id);
   }
   function addReader($topic_id, $user_id) {
     $pdo = ctx_getpdo();
 
     $pdo->prepare('REPLACE topic_readers (topic_id, user_id, created_at) VALUES (?,?, unix_timestamp())')->execute(array($topic_id, $user_id));
+    self::touch($topic_id);
   }
 
   function removeReader($topic_id, $user_id) {
@@ -130,6 +149,8 @@ class TopicRepository {
     $pdo->prepare('DELETE FROM topic_readers WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
 
     $pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
+
+    self::touch($topic_id);
   }
   function setPostReadStatus($user_id, $topic_id, $post_id, $read_status) {
     $pdo = ctx_getpdo();
@@ -167,9 +188,30 @@ class TopicRepository {
     }
   }
 
+  public static function updatePost($topic_id, $post_id, $rev, $content, $user_id) {
+    $pdo = ctx_getpdo();
+
+    $pdo->prepare('UPDATE posts SET content = ?, revision_no = revision_no + 1, last_touch = unix_timestamp() WHERE post_id = ? AND topic_id = ? AND revision_no = ?')
+        ->execute(array($content, $post_id, $topic_id, $rev));
+    $pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id, timestamp) VALUES (?,?,?, unix_timestamp())')
+        ->execute(array($topic_id, $post_id, $user_id));
+    self::touch($topic_id);
+  }
+
+  public static function deletePost($topic_id, $post_id) {
+    $pdo = ctx_getpdo();
+
+    $stmt = $pdo->prepare('DELETE FROM post_editors WHERE topic_id = ? AND post_id = ?');
+    $stmt->execute(array($topic_id, $post_id));
+
+    $pdo->prepare('UPDATE posts SET deleted = 1, content = NULL WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
+
+    $pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
+    self::touch($topic_id);
+  }
 
   # Traverses upwards and deletes all posts, if no child exist
-  function deletePostsIfNoChilds($topic_id, $post_id) {
+  public static function deletePostsIfNoChilds($topic_id, $post_id) {
     if($post_id === '1') {
       return;
     }

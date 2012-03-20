@@ -51,6 +51,7 @@ function TopicListPresenter (view, model) {
     var topics = this.model.getTopics();
     this.view.clear();
     this.view.renderTopicList(topics);
+    this.view.setActiveTopic(this.selectedTopicId);
   }, this);
   this.model.on('created', function(topicId) {
     this.setSelectedTopicId(topicId, true);
@@ -78,6 +79,7 @@ TopicListPresenter.prototype.setSelectedTopicId = function(topicId, noEvent) {
   if (topicId == this.selectedTopicId) {
     return;
   }
+
   this.selectedTopicId = topicId;
   this.view.setActiveTopic(this.selectedTopicId);
   if (!noEvent) {

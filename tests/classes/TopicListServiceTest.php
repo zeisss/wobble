@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../web/api/context.php';
+require_once dirname(__FILE__) . '/../../WobbleApi/context.php';
 
 class TopicListServiceTest extends PHPUnit_Framework_TestCase {
   function testEmptyHtml() {
@@ -94,8 +94,34 @@ class TopicListServiceTest extends PHPUnit_Framework_TestCase {
 EOL;
     $this->assertEquals($expected, TopicListService::createAbstract($html));
   }
+
+  public function testHeadlineInvalidContent() {
+    $expected = array (
+      'headline' => 'Foo',
+      'text' => ''
+    );
+    $input = '<b>Foo</b>';
+    $this->assertEquals($expected, TopicListService::createAbstract($input));
+
+    $expected = array (
+      'headline' => '',
+      'text' => ''
+    );
+    $input = '<b';
+    $this->assertEquals($expected, TopicListService::createAbstract($input));
+
+    $expected = array (
+      'headline' => '',
+      'text' => ''
+    );
+    $input = '<a href="http://heise.de"';
+    $this->assertEquals($expected, TopicListService::createAbstract($input));
+
+    $expected = array (
+      'headline' => 'Foo Bar',
+      'text' => ''
+    );
+    $input = '<a href="http://heise.de">Foo Bar';
+    $this->assertEquals($expected, TopicListService::createAbstract($input));
+  }
 }
-
-
-
-
