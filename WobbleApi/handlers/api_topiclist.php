@@ -20,7 +20,7 @@ function topics_list($params) {
   ValidationService::validate_not_empty($self_user_id);
   ValidationService::validate_list($show_archived, array(true, false));
 
-  $topics = TopicListService::getTopicList($self_user_id);
+  $topics = TopicListService::getTopicList($self_user_id, $show_archived);
   return $topics;
 }
 
