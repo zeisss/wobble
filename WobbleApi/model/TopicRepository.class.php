@@ -74,7 +74,7 @@ class TopicRepository {
     $created_at = null;
     $stmt = $pdo->prepare('SELECT e.user_id id FROM post_editors e WHERE topic_id = ? AND post_id = ? ORDER BY timestamp DESC');
     foreach($posts AS $i => $post) {
-      if ($post['id'] == '1') {
+      if ($post['id'] === '1') {
           $created_at = intval($post['created_at']);
       }
       unset($post['created_at']); # Currently not of interest for public api
@@ -211,10 +211,11 @@ class TopicRepository {
   }
 
   # Traverses upwards and deletes all posts, if no child exist
-  public static function deletePostsIfNoChilds($topic_id, $post_id) {
+  public static function deletePostsIfNoChildren($topic_id, $post_id) {
     if($post_id === '1') {
       return;
     }
+    echo " > " . $post_id . PHP_EOL;
 
     $pdo = ctx_getpdo();
     
@@ -242,7 +243,7 @@ class TopicRepository {
       $stmt->execute(array($topic_id, $post_id));
 
       # Check if we can delete its parent
-      TopicRepository::deletePostsIfNoChilds($topic_id, $post[0]['parent_post_id']);
+      TopicRepository::deletePostsIfNoChildren($topic_id, $post[0]['parent_post_id']);
     }
   }
 
