@@ -5,19 +5,6 @@ ini_set('session.use_cookies', '0');
 # Load the configuration file
 require_once WOBBLE_HOME . '/etc/config.php';
 
-# TODO: Replace with __autoload()
-require_once WOBBLE_HOME .'/WobbleApi/model/NotificationRepository.class.php';
-require_once WOBBLE_HOME .'/WobbleApi/model/TopicRepository.class.php';
-require_once WOBBLE_HOME .'/WobbleApi/model/UserRepository.class.php';
-require_once WOBBLE_HOME .'/WobbleApi/model/ContactsRepository.class.php';
-require_once WOBBLE_HOME .'/WobbleApi/model/SecurityService.class.php';
-require_once WOBBLE_HOME .'/WobbleApi/model/SessionService.class.php';
-require_once WOBBLE_HOME .'/WobbleApi/model/ValidationService.class.php';
-require_once WOBBLE_HOME .'/WobbleApi/model/TopicMessagesRepository.class.php';
-require_once WOBBLE_HOME .'/WobbleApi/model/UserArchivedTopicRepository.class.php';
-require_once WOBBLE_HOME .'/WobbleApi/model/InputSanitizer.class.php';
-require_once WOBBLE_HOME .'/WobbleApi/model/TopicListService.class.php';
-
 ###
 # Helper Functions
 #
