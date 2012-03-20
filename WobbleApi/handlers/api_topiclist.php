@@ -37,7 +37,7 @@ function topics_list($params) {
   WHERE r.user_id = ? AND r.topic_id = t.id 
     AND t.id = p.topic_id AND p.post_id = cast(1 as char)
     AND t.id ' . ($show_archived ? '' : 'not') . ' in (select topic_id from user_archived_topics where user_id = r.user_id)
-  ORDER BY max_last_touch DESC');
+  ORDER BY t.timestamp DESC, max_last_touch DESC');
   $stmt->execute(array($self_user_id));
   $result = $stmt->fetchAll();
 

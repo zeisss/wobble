@@ -21,6 +21,14 @@ class TopicRepository {
     return $data;
   }
 
+  /**
+   * Updates the timestamp of the given topic, so it is sorted to the top.
+   */
+  public static function touch($topic_id) {
+    $pdo = ctx_getpdo();
+    $pdo->prepare('UPDATE topics SET timestamp = unix_timestamp() WHERE id = ?')->execute(array($topic_id));
+  }
+
   public static function isReader($topic_id, $user_id) {
     $pdo = ctx_getpdo();
     $stmt = $pdo->prepare('SELECT COUNT(*) cnt FROM topic_readers r WHERE r.user_id = ? AND r.topic_id = ?');
@@ -127,11 +135,13 @@ class TopicRepository {
     $stmt->bindValue(2, $post_id);
     $stmt->bindValue(3, $user_id);
     $stmt->execute();
+    self::touch($topic_id);
   }
   function addReader($topic_id, $user_id) {
     $pdo = ctx_getpdo();
 
     $pdo->prepare('REPLACE topic_readers (topic_id, user_id, created_at) VALUES (?,?, unix_timestamp())')->execute(array($topic_id, $user_id));
+    self::touch($topic_id);
   }
 
   function removeReader($topic_id, $user_id) {
@@ -139,6 +149,8 @@ class TopicRepository {
     $pdo->prepare('DELETE FROM topic_readers WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
 
     $pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
+
+    self::touch($topic_id);
   }
   function setPostReadStatus($user_id, $topic_id, $post_id, $read_status) {
     $pdo = ctx_getpdo();
@@ -183,6 +195,7 @@ class TopicRepository {
         ->execute(array($content, $post_id, $topic_id, $rev));
     $pdo->prepare('REPLACE post_editors (topic_id, post_id, user_id, timestamp) VALUES (?,?,?, unix_timestamp())')
         ->execute(array($topic_id, $post_id, $user_id));
+    self::touch($topic_id);
   }
 
   public static function deletePost($topic_id, $post_id) {
@@ -194,6 +207,7 @@ class TopicRepository {
     $pdo->prepare('UPDATE posts SET deleted = 1, content = NULL WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
 
     $pdo->prepare('DELETE FROM post_users_read WHERE topic_id = ? AND post_id = ?')->execute(array($topic_id, $post_id));
+    self::touch($topic_id);
   }
 
   # Traverses upwards and deletes all posts, if no child exist
