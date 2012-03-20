@@ -2,3 +2,7 @@
 .DS_Store
 etc/config.php
 
+tmp/
+
+# Textmate
+Wobble.tmproj
