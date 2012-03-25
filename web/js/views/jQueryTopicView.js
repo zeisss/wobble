@@ -110,6 +110,7 @@ jQueryTopicView.prototype.onResize = function() {
 jQueryTopicView.prototype.clear = function() {
   this.editingPostId = null;
   this.currentTopic = null;
+  this.readerView.showAllReaders = false;
   this.$posts.empty();
   this.readerView.empty();
   this.$actions.empty();
