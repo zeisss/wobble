@@ -48,8 +48,10 @@ function TopicListPresenter (view, model) {
     this.setShowArchived(0);
   }, this);
   this.view.on('action_search', function(filter) {
-    this.selectedTopicId = null;
-    this.model.search(filter);
+    if (filter && filter.length > 0) {
+      this.selectedTopicId = null;
+      this.model.search(filter);
+    }
   }, this);
 
   // Model
