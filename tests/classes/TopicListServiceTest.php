@@ -3,6 +3,12 @@
 require_once dirname(__FILE__) . '/../../WobbleApi/Autoload.php';
 
 class TopicListServiceTest extends PHPUnit_Framework_TestCase {
+  public function testSearch() {
+    $result = TopicListService::search(7, 'Wobble');
+
+    $this->assertNotNull($result);
+  }
+
   function testEmptyHtml() {
     $expected = array('headline' => '', 'text' => '');
     $html = '';
