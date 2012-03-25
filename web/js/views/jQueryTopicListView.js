@@ -3,22 +3,43 @@
 function jQueryTopicsView (show_multiple_button) {
   this.e = $('<div></div>').addClass('widget').attr('id', 'topics_wrapper').appendTo('#widgets');
 
+  this.$header = $('<div>').attr('id', 'topiclist_header').appendTo(this.e);
   this.$actions = $('<div id="topics_actions"></div>').appendTo(this.e);
   this.$topics = $('<ul id="topics">' +
                    '  <li>Loading ...</li>' +
                    '</ul>').appendTo(this.e)
+  this.$searchFilter = null;
 
   this.showMultipleButton = show_multiple_button;
+
+  this.$header.append(this.createSearchHeader());
 };
 jQueryTopicsView.prototype = new TopicsListDisplay;
 jQueryTopicsView.prototype.constructor = jQueryTopicsView;
 
 // Methods --------------------------------------------------------
+jQueryTopicsView.prototype.createSearchHeader = function() {
+  var that = this;
+  var e = $('<div class="input_search_box"><input id="topiclist_search" type="text"></div>');
+  this.$searchFilter = $('input', e).on('keydown', function(e) {
+    if (e.keyCode != 13)
+    {
+      return;
+    }
+    e.preventDefault();
+    var value = $(this).val();
+    that.onSearch(value);
+  });
+  return e;
+};
+jQueryTopicsView.prototype.setSearchFilter = function(filter) {
+  this.$searchFilter.val(filter);
+};
 jQueryTopicsView.prototype.setActiveTopic = function(topicId) {
   $(">li.active", this.$topics).removeClass("active");
   $("#topic-" + topicId).addClass("active");
 };
-jQueryTopicsView.prototype.renderActionButtons = function(showArchived) {
+jQueryTopicsView.prototype.renderActionButtons = function(enableShowInbox, enableShowArchived) {
   this.$actions.empty();
 
   var that = this;
@@ -37,18 +58,22 @@ jQueryTopicsView.prototype.renderActionButtons = function(showArchived) {
       that.renderActionButtons(true);
     })
 
-    if (showArchived) {
+    if (enableShowInbox) {
       this.$bShowInbox.removeAttr('disabled');
-      this.$bShowArchive.attr('disabled', 'disabled');
     } else {
       this.$bShowInbox.attr('disabled', 'disabled');
+    }
+
+    if (enableShowArchived) {
       this.$bShowArchive.removeAttr('disabled');
+    } else {
+      this.$bShowArchive.attr('disabled', 'disabled');
     }
   }
   else {
     var texts = ['Show archived', 'Show Inbox'];
 
-    $('<button></button>').text(texts[showArchived ? 1 : 0]).click(function() {
+    $('<button></button>').text(texts[enableShowInbox ? 0 : 1]).click(function() {
       var button = $(this);
       if (button.text() == texts[0]) {
         that.onShowArchived();

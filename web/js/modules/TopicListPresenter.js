@@ -6,10 +6,12 @@ TopicsListDisplay.prototype.onTopicClicked = function(topic) { this.fire('topic_
 TopicsListDisplay.prototype.onCreateNewTopic = function() { this.fire('action_create_topic');};
 TopicsListDisplay.prototype.onShowArchived = function() { this.fire('action_show_archive');};
 TopicsListDisplay.prototype.onShowInbox = function() {this.fire('action_show_inbox');};
+TopicsListDisplay.prototype.onSearch = function(search) {this.fire('action_search', search);}
 // Methods --------------------------------------------------------
 TopicsListDisplay.prototype.showLoading = function() {};
 TopicsListDisplay.prototype.setActiveTopic = function(topicId) {};
-TopicsListDisplay.prototype.renderActionButtons = function(showArchived) {};
+TopicsListDisplay.prototype.setSearchFilter = function(filter) {};
+TopicsListDisplay.prototype.renderActionButtons = function(enableShowInbox, enableShowArchived) {};
 TopicsListDisplay.prototype.renderTopicList = function(topics) {};
 TopicsListDisplay.prototype.clear = function() {};
 
@@ -28,7 +30,7 @@ function TopicListPresenter (view, model) {
   // Prerender the view from the cache
   if (this.model.hasTopics()) {
     this.view.clear();
-    this.view.renderActionButtons(this.model.isShowingArchived());
+    this.view.renderActionButtons(/*enableShowInbox:*/this.model.isSearchResult(), this.model.isShowingArchived());
     this.view.renderTopicList(this.model.getTopics());
   }
 
@@ -45,12 +47,20 @@ function TopicListPresenter (view, model) {
   this.view.on('action_show_inbox', function() {
     this.setShowArchived(0);
   }, this);
+  this.view.on('action_search', function(filter) {
+    this.selectedTopicId = null;
+    this.model.search(filter);
+  }, this);
 
   // Model
   this.model.on('update', function() {
     var topics = this.model.getTopics();
     this.view.clear();
     this.view.renderTopicList(topics);
+    this.view.renderActionButtons(
+      /*enableShowInbox:*/  this.model.isSearchResult() || this.model.isShowingArchived(),
+      /*enableShowArchive:*/this.model.isSearchResult() || !this.model.isShowingArchived()
+    );
     this.view.setActiveTopic(this.selectedTopicId);
   }, this);
   this.model.on('created', function(topicId) {
@@ -69,11 +79,12 @@ function TopicListPresenter (view, model) {
 TopicListPresenter.prototype.setShowArchived = function setShowArchived(show_archived) {
   this.view.showLoading();
 
+  this.view.setSearchFilter('');
   this.model.setShowArchived(show_archived);
 
   this.selectedTopicId = null;
   this.model.refreshTopicList();
-}
+};
 
 TopicListPresenter.prototype.setSelectedTopicId = function(topicId, noEvent) {
   if (topicId == this.selectedTopicId) {
