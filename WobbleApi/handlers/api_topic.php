@@ -258,18 +258,16 @@ function post_edit($params) {
   $pdo = ctx_getpdo();
 
   if (TopicRepository::isReader($topic_id, $self_user_id)) {
-    $stmt = $pdo->prepare('SELECT revision_no, content FROM posts WHERE topic_id = ? AND post_id = ?');
-    $stmt->execute(array($topic_id, $post_id));
-    $posts = $stmt->fetchAll();
+    $post = PostRepository::getPost($topic_id, $post_id);
 
-    if (sizeof($posts) === 0) {
+    if (is_null($post)) {
       # Post has already been deleted. Toooo laggy? No idea...
       return NULL;
     }
 
     # RevisionNo must match (to prevent accidental overwrites)
-    if ($posts[0]['revision_no'] != $revision) {
-      throw new Exception('RevisionNo is not correct. Somebody else changed the post already. (Value: ' . $posts[0]['revision_no'] . ')');
+    if ($post['revision_no'] != $revision) {
+      throw new Exception('RevisionNo is not correct. Somebody else changed the post already. (Value: ' . $post['revision_no'] . ')');
     }
 
     # Check if there is a lock
@@ -287,7 +285,7 @@ function post_edit($params) {
       $topic_id, $post_id, 0, $self_user_id # Clear the lock
     );
 
-    if ($posts[0]['content'] !== $content) {
+    if ($post['content'] !== $content) {
       # Mark only as unread, if there were real changes
       TopicRepository::setPostReadStatus(
         $self_user_id, $topic_id, $post_id, 1 # Mark post as read for requesting user
