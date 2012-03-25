@@ -214,6 +214,40 @@ Notification Yellow: #FC0
   min-height:400px;
   min-width:300px;
 }
+
+#topiclist_header {
+  position:absolute;
+  top:0px;
+  left:0px;
+  right:0px;
+  height:39px;
+
+  padding-left:15px;
+  padding-top:15px;
+  padding-right:20px;
+}
+.input_search_box {
+  box-shadow:inset 0px 0px 2px 0px #888;
+  border-radius:10px;
+  border:1px #888 solid;
+  padding-left:5px;
+  padding-right:3px;
+  padding-top:1px;
+  padding-bottom:3px;
+
+  height:1.2em;
+
+  background:white;
+}
+.input_search_box input {
+  border-radius:10px;
+  border:0px;
+  width:100%;
+  height:100%;
+}
+.input_search_box input:focus {
+  outline:none;
+}
 #topics_wrapper #topics_actions {
   margin-top:54px;
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
@@ -536,4 +570,7 @@ Notification Yellow: #FC0
 }
 .boldicon {
   background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAVCAYAAACZm7S3AAAAUUlEQVR42mNgGAUDB/7jwQ1kazY2Nv4fGhp6gCjNyABNvIEozUSIE+fskJAQZJeQpXk1RX4mWjPV/AyKqvr6evI0QzWewRdVqJ7FBA0jPQsCAP6fsbS3vx6MAAAAAElFTkSuQmCC) no-repeat;
+}
+.arrowdown {
+  background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAQCAYAAADwMZRfAAAAJUlEQVR42mNgGAUjFPzHgykzCAbINohcA+AGUWoA3JTRZEIaAABqMivVBZSu5QAAAABJRU5ErkJggg==) no-repeat;
 }

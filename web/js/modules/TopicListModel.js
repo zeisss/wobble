@@ -12,6 +12,7 @@ function TopicListModel(cache) {
   this.topics = cache.get('topicslistpresenter.topics') || [];
   this.show_archived = cache.get('topicslistpresenter.show_archived') || 0;
   this.requestInProcess = false;
+  this.is_search_result = false;
 
   BUS.on('api.notification', function(message) {
     if (message.type == 'topic_changed' ||
@@ -37,6 +38,9 @@ TopicListModel.prototype.setShowArchived = function (showArchived) {
 TopicListModel.prototype.isShowingArchived = function() {
   return this.show_archived
 };
+TopicListModel.prototype.isSearchResult = function() {
+  return this.is_search_result
+}
 TopicListModel.prototype.hasTopics = function() {
   return this.topics && this.topics.length > 0;
 };
@@ -45,7 +49,20 @@ TopicListModel.prototype.getTopics = function() {
 };
 TopicListModel.prototype.getInboxUnreadTopics = function() {
   return this.inboxUnreadTopics;
-}
+};
+
+TopicListModel.prototype.search = function (filter) {
+  var that = this;
+  API.topics_search(filter, function(err, result) {
+    if (!err) {
+      that.topics = result.topics;
+      that.inboxUnreadTopics = result.inbox_unread_topics;
+      that.is_search_result = true;
+
+      that.fire('update');
+    }
+  });
+};
 TopicListModel.prototype.refreshTopicList = function() {
   if (this.requestInProcess)
     return;
@@ -59,6 +76,7 @@ TopicListModel.prototype.refreshTopicList = function() {
       that.cache.set('topicslistpresenter.topics', result.topics, that.cacheTimeout);
       that.topics = result.topics;
       that.inboxUnreadTopics = result.inbox_unread_topics;
+      that.is_search_result = false;
 
       that.fire('update');
     }
