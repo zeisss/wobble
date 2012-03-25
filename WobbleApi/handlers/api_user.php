@@ -145,7 +145,6 @@ function user_change_password($params) {
  * Result = true
  */
 function user_get() {
-  $pdo = ctx_getpdo();
   $self_user_id = ctx_getuserid();
   if (empty ($self_user_id)) {
     return null;

@@ -5,10 +5,6 @@
  * UserId = int()
  **/
 
-function _topic_has_access($pdo, $topic_id) {
-  return TopicRepository::isReader($topic_id, ctx_getuserid());
-}
-
 /**
  * Returns the topic object which is specified by the parameter 'id'. The client must be
  * authenticated and a member of the topic.
@@ -43,8 +39,6 @@ function topic_get_details($params) {
     throw new Exception('Illegal Access!');
   }
 
-  $pdo = ctx_getpdo();
-
   return TopicRepository::getTopic($topic_id, $self_user_id);
 }
 
@@ -64,7 +58,6 @@ function topic_add_user($params) {
   ValidationService::validate_not_empty($topic_id);
   ValidationService::validate_not_empty($user_id);
 
-  $pdo = ctx_getpdo();
   if (TopicRepository::isReader($topic_id, $self_user_id)) {
     $topic_user = UserRepository::get($user_id);
     $topic = TopicRepository::getTopic($topic_id, $self_user_id); # Load the whole topic
@@ -134,7 +127,6 @@ function topic_remove_user($params) {
   ValidationService::validate_not_empty($topic_id);
   ValidationService::validate_not_empty($user_id);
 
-  $pdo = ctx_getpdo();
   if (TopicRepository::isReader($topic_id, $self_user_id)) {
     $topic_user = UserRepository::get($user_id);
     $topic = TopicRepository::getTopic($topic_id, $self_user_id);
@@ -255,8 +247,6 @@ function post_edit($params) {
   ValidationService::validate_not_empty($revision);
   ValidationService::validate_content($content);
 
-  $pdo = ctx_getpdo();
-
   if (TopicRepository::isReader($topic_id, $self_user_id)) {
     $post = PostRepository::getPost($topic_id, $post_id);
 
@@ -344,8 +334,6 @@ function post_delete($params) {
   ValidationService::validate_not_empty($post_id);
   ValidationService::check($post_id != '1', 'Root posts cannot be deleted!');
 
-  $pdo = ctx_getpdo();
-
   if (TopicRepository::isReader($topic_id, $self_user_id)) {
     TopicRepository::deletePost($topic_id, $post_id);
 
@@ -382,7 +370,6 @@ function post_change_read($params) {
   $topic_id = $params['topic_id'];
   $post_id = $params['post_id'];
   $read = $params['read'];
-  $pdo = ctx_getpdo();
 
   ValidationService::validate_not_empty($self_user_id);
   ValidationService::validate_not_empty($topic_id);
@@ -446,7 +433,6 @@ function topic_remove_message($params) {
       $user_id = ctx_getuserid();
       $topic_id = $params['topic_id'];
       $message_id = $params['message_id'];
-      $pdo = ctx_getpdo();
 
       ValidationService::validate_not_empty($user_id);
       ValidationService::validate_not_empty($topic_id);
