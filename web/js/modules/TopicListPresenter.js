@@ -51,6 +51,8 @@ function TopicListPresenter (view, model) {
     if (filter && filter.length > 0) {
       this.selectedTopicId = null;
       this.model.search(filter);
+    } else {
+      this.setShowArchived(0); // Show Inbox
     }
   }, this);
 
