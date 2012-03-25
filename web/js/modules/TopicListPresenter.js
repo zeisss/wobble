@@ -2,7 +2,7 @@
 function TopicsListDisplay() {};
 _.extend(TopicsListDisplay.prototype, EventBUS.prototype); // Make the view an eventbus
 // Event Handlers -------------------------------------------------
-TopicsListDisplay.prototype.onTopicClicked = function(topic) { this.fire('topic_clicked', topic)};
+TopicsListDisplay.prototype.onTopicClicked = function(topicId) { this.fire('topic_clicked', topicId)};
 TopicsListDisplay.prototype.onCreateNewTopic = function() { this.fire('action_create_topic');};
 TopicsListDisplay.prototype.onShowArchived = function() { this.fire('action_show_archive');};
 TopicsListDisplay.prototype.onShowInbox = function() {this.fire('action_show_inbox');};
@@ -35,8 +35,8 @@ function TopicListPresenter (view, model) {
   }
 
   // UI Callbacks
-  this.view.on('topic_clicked', function(topic) {
-    this.setSelectedTopicId(topic.id);
+  this.view.on('topic_clicked', function(topicId) {
+    this.setSelectedTopicId(topicId);
   }, this);
   this.view.on('action_create_topic', function() {
     this.model.createTopic();

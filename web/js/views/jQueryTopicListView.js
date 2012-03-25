@@ -117,7 +117,7 @@ jQueryTopicsView.prototype.renderTopic = function renderTopic(topic, prepend) {
   $li.on('click', function() {
     var topic = $(this).data('topic');
     if (topic) {
-      that.onTopicClicked(topic);
+      that.onTopicClicked(topic.id);
     }
   });
 
