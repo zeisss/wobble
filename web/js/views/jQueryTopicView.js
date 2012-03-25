@@ -1,14 +1,85 @@
 "use strict";
 
 // UI Functions
+
+function jQueryTopicReadersPartial(parent, click_handler) {
+  this.e = $('<div>').attr('id', 'topic_readers').appendTo(parent);
+  this.readerList = $('<div>').addClass('readers').appendTo(this.e);
+  this.moreBox = $('<div>').addClass('more_box').appendTo(this.e);
+  this.showAllReaders = false;
+
+  var that = this;
+  this.moreBox.on('click', function() {
+    that.showAllReaders = !that.showAllReaders;
+    that.checkReaderOverflow();
+  })
+}
+jQueryTopicReadersPartial.prototype.empty = function() {
+  this.readerList.empty();
+};
+jQueryTopicReadersPartial.prototype.render = function(data) {
+  this.readerList.empty();
+  for(var i = 0; i < data.length; i++) {
+    this.renderReader(data[i]);
+  }
+  this.checkReaderOverflow();
+};
+jQueryTopicReadersPartial.prototype.renderReader = function(user) {
+  var containerId = "topic-reader-" + user.id;
+  var container = $('#' + containerId);
+  if (container.length == 0) {
+    container = $("<span></span>").addClass('reader').attr('id', containerId).appendTo(this.readerList);
+  } else {
+    container.css('display', '');
+  }
+  var template = "<div class='usericon usericon40'>" +
+           "<div><img width='40' height='40' src='http://gravatar.com/avatar/{{img}}?s=100' title='{{name}}'/></div>" +
+           "<div class='status {{status}}'></div>" +
+           "</div>";
+
+  container.html(Mustache.to_html(template, {
+    'img': user.img,
+    'name': user.name,
+    'status': user.online == 1 ? 'online':'offline'
+  })).off('click').click(function() {
+    click_handler(user);
+  });
+};
+jQueryTopicReadersPartial.prototype.checkReaderOverflow = function() {
+  var hiddenUsers = 0;
+  this.moreBox.css('display', ''); // Show this initially, so we can take its width into account
+
+  if (this.showAllReaders) {
+    $('.reader', this.readerList).css('display', '');
+  } else {
+    // Try to make the list smaller by hiding the last reader
+    var readers = $('.reader', this.readerList);
+    for (var trie = 0; this.e.outerHeight() > 56 && trie < 1000; trie++) {
+      $(readers[readers.length - trie]).css('display', 'none');
+      hiddenUsers++;
+    }
+  }
+
+  if (this.showAllReaders && hiddenUsers == 0) {
+    this.moreBox.text('Hide');
+  }
+  else if (hiddenUsers > 0) {
+    this.moreBox.text(hiddenUsers + ' more');
+  } else {
+    this.moreBox.css('display', 'none');
+  }
+};
+
+
 var userCache = {}; // id => {id, name, email, img}
 function jQueryTopicView() {  // The UI handler for the single topic
   this.editingPostId = null;
   this.currentTopic = null;
+  this.readersExtended = false;
 
   this.e = $('<div></div>').addClass('widget').attr('id', 'topic_wrapper').appendTo('#widgets');
 
-  this.$readers = $('<div></div>').attr('id', 'topic_readers').appendTo(this.e);
+  this.readerView = new jQueryTopicReadersPartial(this.e, this.onUserClicked);
   this.$actions = $('<div></div>').attr('id', 'topic_actions').appendTo(this.e);
   this.$messages = $('<div></div>').attr('id', 'topic_messages').appendTo(this.e);
   this.$posts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
@@ -30,7 +101,7 @@ jQueryTopicView.prototype.constructor = jQueryTopicView;
 jQueryTopicView.prototype.onResize = function() {
 
   var viewHeight = this.e.innerHeight();
-  var offsetX = this.$readers.outerHeight() + 
+  var offsetX = this.readerView.e.outerHeight() +
                 this.$actions.outerHeight() +
                 this.$messages.outerHeight();
 
@@ -40,7 +111,7 @@ jQueryTopicView.prototype.clear = function() {
   this.editingPostId = null;
   this.currentTopic = null;
   this.$posts.empty();
-  this.$readers.empty();
+  this.readerView.empty();
   this.$actions.empty();
 };
 
@@ -68,7 +139,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
   if (topicDetails) {
     this.setEnabled(true);
 
-    this.$readers.empty();
+    this.readerView.empty();
     // Only cache the writers
     for (var i = 0; i<  topicDetails.writers.length; ++i) {
       var user = topicDetails.writers[i];
@@ -78,8 +149,8 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
     for (var i = 0; i < topicDetails.readers.length; ++i) {
       var user = topicDetails.readers[i];
       userCache[user.id] = user; // Cache user object (user later to show the user post images)
-      this._renderReader(user);
     }
+    this.readerView.render(topicDetails.readers);
 
     this.renderMessages(topicDetails.id, topicDetails.messages);
 
@@ -124,26 +195,6 @@ jQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
     }, this);
 };
 
-jQueryTopicView.prototype._renderReader= function(user) {
-  var that = this;
-  var containerId = "topic-reader-" + user.id;
-  var container = $('#' + containerId);
-  if (container.length == 0) {
-    container = $("<span></span>").attr('id', containerId).appendTo(this.$readers);
-  }
-  var template = "<div class='usericon usericon40'>" +
-           "<div><img width='40' height='40' src='http://gravatar.com/avatar/{{img}}?s=40' title='{{name}}'/></div>" +
-           "<div class='status {{status}}'></div>" +
-           "</div>";
-
-  container.html(Mustache.to_html(template, {
-    'img': user.img,
-    'name': user.name,
-    'status': user.online == 1 ? 'online':'offline'
-  })).off('click').click(function() {
-    that.onUserClicked(user);
-  });
-};
 jQueryTopicView.prototype.renderPosts = function(topicDetails) {
   var $scrollToPost = null;
   for (var i = 0; i < topicDetails.posts.length; i++) {
@@ -158,6 +209,7 @@ jQueryTopicView.prototype.renderPosts = function(topicDetails) {
     $(">.post", $scrollToPost)[0].scrollIntoView(false);
   }
 };
+
 jQueryTopicView.prototype.renderPost = function(topic, post) {
   var elementPostId = 'post-' + post.id;
   var that = this;
