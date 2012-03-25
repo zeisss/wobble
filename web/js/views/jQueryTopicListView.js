@@ -96,7 +96,7 @@ jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, pr
 };
 jQueryTopicsView.prototype.renderTopic = function renderTopic(topic, prepend) {
   var template = '<li id="{{id}}" class="topic_header">' +
-           ' <div class="abstract"></div>' +
+           ' <div class="abstract">{{{abstract}}}</div>' +
            (topic.post_count_unread == 0 ?
               ' <div class="messages">{{total}} msgs</div>' :
               ' <div class="messages"><div class=unread>{{unread}}</div> of {{total}}</div>')
@@ -110,7 +110,8 @@ jQueryTopicsView.prototype.renderTopic = function renderTopic(topic, prepend) {
     'users': topic.users.slice(0,3) /* Make sure we only have 3 users */,
     'unread': topic.post_count_unread,
     'total': topic.post_count_total,
-    'time': this.renderTopicTimestamp(topic.max_last_touch)
+    'time': this.renderTopicTimestamp(topic.max_last_touch),
+    'abstract': (topic.archived ? '<i>[Archive]</i> ' : '') + topic.abstract
   })).data('topic', topic);
 
   $li.on('click', function() {
@@ -120,10 +121,9 @@ jQueryTopicsView.prototype.renderTopic = function renderTopic(topic, prepend) {
     }
   });
 
-  var abstract = $(".abstract", $li).html(topic.abstract);
-
   if (topic.post_count_unread > 0) {
-    abstract.css('font-weight', 'bold');
+    var $abstract = $(".abstract", $li);
+    $abstract.css('font-weight', 'bold');
   }
 
   if (prepend) {
