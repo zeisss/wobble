@@ -1,6 +1,25 @@
 <?php
-  /** 
- * Return a list of topics the user can see. 
+
+/**
+ * Performs a search through all topics the user can see.
+ */
+function topics_search($params) {
+  $self_user_id = ctx_getuserid();
+  $search_filter = $params['filter'];
+
+  ValidationService::validate_not_empty($self_user_id);
+  ValidationService::validate_not_empty($search_filter);
+
+  $topics = TopicListService::search($self_user_id, $search_filter);
+  $unreadTopics = TopicListService::getUnreadTopicList($self_user_id, false);
+  return array(
+    'topics' => $topics,
+    'inbox_unread_topics' => $unreadTopics
+  );
+}
+
+/**
+ * Return a list of topics the user can see.
  *
  * The client must be authenticated.
  *
