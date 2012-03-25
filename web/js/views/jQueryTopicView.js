@@ -7,6 +7,7 @@ function jQueryTopicReadersPartial(parent, click_handler) {
   this.readerList = $('<div>').addClass('readers').appendTo(this.e);
   this.moreBox = $('<div>').addClass('more_box').appendTo(this.e);
   this.showAllReaders = false;
+  this.onUserClicked = click_handler;
 
   var that = this;
   this.moreBox.on('click', function() {
@@ -37,12 +38,13 @@ jQueryTopicReadersPartial.prototype.renderReader = function(user) {
            "<div class='status {{status}}'></div>" +
            "</div>";
 
+  var that = this;
   container.html(Mustache.to_html(template, {
     'img': user.img,
     'name': user.name,
     'status': user.online == 1 ? 'online':'offline'
   })).off('click').click(function() {
-    click_handler(user);
+    that.onUserClicked(user);
   });
 };
 jQueryTopicReadersPartial.prototype.checkReaderOverflow = function() {
@@ -73,13 +75,15 @@ jQueryTopicReadersPartial.prototype.checkReaderOverflow = function() {
 
 var userCache = {}; // id => {id, name, email, img}
 function jQueryTopicView() {  // The UI handler for the single topic
+  var that = this;
+
   this.editingPostId = null;
   this.currentTopic = null;
   this.readersExtended = false;
 
   this.e = $('<div></div>').addClass('widget').attr('id', 'topic_wrapper').appendTo('#widgets');
 
-  this.readerView = new jQueryTopicReadersPartial(this.e, this.onUserClicked);
+  this.readerView = new jQueryTopicReadersPartial(this.e, function(user) {that.onUserClicked(user)});
   this.$actions = $('<div></div>').attr('id', 'topic_actions').appendTo(this.e);
   this.$messages = $('<div></div>').attr('id', 'topic_messages').appendTo(this.e);
   this.$posts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
@@ -110,6 +114,7 @@ jQueryTopicView.prototype.onResize = function() {
 jQueryTopicView.prototype.clear = function() {
   this.editingPostId = null;
   this.currentTopic = null;
+  this.readerView.showAllReaders = false;
   this.$posts.empty();
   this.readerView.empty();
   this.$actions.empty();
