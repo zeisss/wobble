@@ -63,7 +63,7 @@ WobbleMobileClient.prototype.initApp = function() {
 
   // Create the views
   this.contactsView = new JQueryContactsView();
-  this.topicListView = new jQueryTopicsView();
+  this.topicListView = new jQueryTopicsView(false, false);
   this.topicView = new jQueryTopicView();
 
   // Create the presenters
