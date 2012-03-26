@@ -72,6 +72,9 @@ button {
   height:auto;
   bottom:auto;
 }
+#topiclist_header {
+  display:none;
+}
 /* --------------------------------------------------------- */
 #topic_wrapper #topic_actions {
   height:42px;
