@@ -1,6 +1,9 @@
 "use strict";
 
-function jQueryTopicsView (show_multiple_button) {
+function jQueryTopicsView (show_multiple_button, show_search_bar) {
+  this.showMultipleButton = show_multiple_button;
+  this.showSearchBar = show_search_bar;
+
   this.e = $('<div></div>').addClass('widget').attr('id', 'topics_wrapper').appendTo('#widgets');
 
   this.$header = $('<div>').attr('id', 'topiclist_header').appendTo(this.e);
@@ -8,11 +11,11 @@ function jQueryTopicsView (show_multiple_button) {
   this.$topics = $('<ul id="topics">' +
                    '  <li>Loading ...</li>' +
                    '</ul>').appendTo(this.e)
+
   this.$searchFilter = null;
-
-  this.showMultipleButton = show_multiple_button;
-
-  this.$header.append(this.createSearchHeader());
+  if (this.showSearchBar) {
+    this.$header.append(this.createSearchHeader());
+  }
 };
 jQueryTopicsView.prototype = new TopicsListDisplay;
 jQueryTopicsView.prototype.constructor = jQueryTopicsView;
@@ -33,7 +36,9 @@ jQueryTopicsView.prototype.createSearchHeader = function() {
   return e;
 };
 jQueryTopicsView.prototype.setSearchFilter = function(filter) {
-  this.$searchFilter.val(filter);
+  if (this.$searchFilter) {
+    this.$searchFilter.val(filter);
+  }
 };
 jQueryTopicsView.prototype.setActiveTopic = function(topicId) {
   $(">li.active", this.$topics).removeClass("active");
@@ -51,11 +56,11 @@ jQueryTopicsView.prototype.renderActionButtons = function(enableShowInbox, enabl
     this.$actions.append($('<span></span>').css('width', '30px').css('display', 'inline-block'));
     this.$bShowInbox = $('<button>').text('Show Inbox').appendTo(this.$actions).click(function() {
       that.onShowInbox();
-      that.renderActionButtons(false);
+      that.renderActionButtons(false, true);
     });
     this.$bShowArchive = $('<button>').text('Show Archive').appendTo(this.$actions).click(function() {
       that.onShowArchived();
-      that.renderActionButtons(true);
+      that.renderActionButtons(true, false);
     })
 
     if (enableShowInbox) {
@@ -73,7 +78,7 @@ jQueryTopicsView.prototype.renderActionButtons = function(enableShowInbox, enabl
   else {
     var texts = ['Show archived', 'Show Inbox'];
 
-    $('<button></button>').text(texts[enableShowInbox ? 0 : 1]).click(function() {
+    $('<button></button>').text(texts[enableShowInbox ? 1 : 0]).click(function() {
       var button = $(this);
       if (button.text() == texts[0]) {
         that.onShowArchived();
