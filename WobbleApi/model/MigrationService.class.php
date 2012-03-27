@@ -34,6 +34,7 @@
           $result[] = $file;
       }
       closedir($fp);
+      sort($result);
       return $result;
     }
 
@@ -50,6 +51,7 @@
       foreach($stmt->fetchAll() as $row) {
         $result[] = $row['filename'];
       }
+      sort($result);
       return $result;
     }
 
