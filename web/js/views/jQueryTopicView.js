@@ -2,6 +2,8 @@
 
 // UI Functions
 
+var ROOT_ID = '1';
+
 function jQueryTopicReadersPartial(parent, click_handler) {
   this.e = $('<div>').attr('id', 'topic_readers').appendTo(parent);
   this.readerList = $('<div>').addClass('readers').appendTo(this.e);

@@ -22,8 +22,6 @@ TopicDisplay.prototype.setEnabled = function(enabled) {};
 
 TopicDisplay.prototype.openEditor = function(post) {};
 
-var ROOT_ID = '1'; // the id of the root post
-
 function TopicModel() {
   var that = this;
   var topic = null;
