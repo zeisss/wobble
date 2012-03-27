@@ -55,6 +55,7 @@ WobbleMobileClient.prototype.initApp = function() {
 
   // DataModel
   this.contactsModel = new ContactsModel(this.cache);
+  this.topicListModel = new TopicListModel(this.cache);
   this.topicModel = new TopicModel();
 
   // Create the navigator
@@ -62,25 +63,29 @@ WobbleMobileClient.prototype.initApp = function() {
 
   // Create the views
   this.contactsView = new JQueryContactsView();
-  this.topicListView = new jQueryTopicsView();
+  this.topicListView = new jQueryTopicsView(false, false);
   this.topicView = new jQueryTopicView();
 
   // Create the presenters
   this.contactsPresenter = new ContactsPresenter(this.contactsView, this.contactsModel);
   this.contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(20, 20), this.contactsModel, 'contact.clicked');
   this.topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(20, 20), this.contactsModel, 'topic.user.clicked');
-  this.topicsPresenter = new TopicListPresenter(this.topicListView, this.cache);
+  this.topicListPresenter = new TopicListPresenter(this.topicListView, this.topicListModel);
   this.topicPresenter = new TopicPresenter(this.topicView, this.topicModel);
+
   this.contactsChooserPresenter = new ContactsChooserPresenter(
       new ListContactsChooserDisplay(),
       this.contactsModel
   );
+
+  this.windowUpdater = new WindowUpdater(this.topicListModel);
 
   this.userProfilePresenter = new UserProfilePresenter();
 
   // Now show the contacts list
   this.onNavigation('navOverview');
 
+  // Ok, all done. Lay it out
   this.doLayout();
 
   BUS.on('topic.topic.created', function(topicId) {

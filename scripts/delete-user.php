@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-require_once dirname(__FILE__) . '/../web/api/context.php';
+require_once dirname(__FILE__) . '/../WobbleApi/Autoload.php';
 
 if (count($argv) <= 1) {
   die('Usage: ' . $argv[0] . ' <email>\n');

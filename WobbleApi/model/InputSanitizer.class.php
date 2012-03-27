@@ -5,7 +5,7 @@
  */
 class InputSanitizer {
     public static function sanitizeEmail($email) {
-        return trim($email);    
+        return trim($email);
     }
 
     /** 
@@ -27,7 +27,7 @@ class InputSanitizer {
         while (true) {
             $i = strpos($content, $keyword, $offset);
             if ($i === FALSE) {
-                return $content;
+                break;
             }
             if (substr($content, $i, strlen($replacement)) === $replacement) {
                 # We already sanitized this once, skip this link
@@ -37,7 +37,7 @@ class InputSanitizer {
 
             $end = strpos($content, '>', $i);
             if ($end === FALSE) {
-                return $content;
+                break;
             }
 
             $j = strpos($content, 'target', $i);
@@ -55,5 +55,6 @@ class InputSanitizer {
                 throw new Exception('Invalid content. Do not use target attribute in links(a): SAN-001');
             }
         }
+        return $content;
     }
 }

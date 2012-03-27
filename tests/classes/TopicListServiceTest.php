@@ -1,8 +1,29 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../web/api/context.php';
+require_once dirname(__FILE__) . '/../../WobbleApi/Autoload.php';
 
 class TopicListServiceTest extends PHPUnit_Framework_TestCase {
+  public function testSearch() {
+    $result = TopicListService::search(7, 'Wobble');
+
+    $this->assertNotNull($result);
+  }
+
+  function testEmptyHtml() {
+    $expected = array('headline' => '', 'text' => '');
+    $html = '';
+
+    $this->assertEquals($expected, TopicListService::createAbstract($html));
+  }
+
+  # Would be nice, but is to much work to implement :(
+  #function testHeadlineWithParialFormatting() {
+  #  $expected = array('headline' => 'Hallo Welt', 'text' => 'Text');
+  #  $html = '<b>Hallo</b> Welt<div>Text</div>';
+  #
+  #  $this->assertEquals($expected, TopicListService::createAbstract($html));
+  #}
+
   function testParseSimpleHtml() {
     $expected = array('headline' => 'Demo #1', 'text' => 'Hallo Ihr!');
     $html = 'Demo #1<div>Hallo Ihr!</div>';
@@ -79,8 +100,34 @@ class TopicListServiceTest extends PHPUnit_Framework_TestCase {
 EOL;
     $this->assertEquals($expected, TopicListService::createAbstract($html));
   }
+
+  public function testHeadlineInvalidContent() {
+    $expected = array (
+      'headline' => 'Foo',
+      'text' => ''
+    );
+    $input = '<b>Foo</b>';
+    $this->assertEquals($expected, TopicListService::createAbstract($input));
+
+    $expected = array (
+      'headline' => '',
+      'text' => ''
+    );
+    $input = '<b';
+    $this->assertEquals($expected, TopicListService::createAbstract($input));
+
+    $expected = array (
+      'headline' => '',
+      'text' => ''
+    );
+    $input = '<a href="http://heise.de"';
+    $this->assertEquals($expected, TopicListService::createAbstract($input));
+
+    $expected = array (
+      'headline' => 'Foo Bar',
+      'text' => ''
+    );
+    $input = '<a href="http://heise.de">Foo Bar';
+    $this->assertEquals($expected, TopicListService::createAbstract($input));
+  }
 }
-
-
-
-

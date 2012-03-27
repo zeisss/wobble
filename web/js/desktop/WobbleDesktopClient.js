@@ -38,25 +38,32 @@ WobbleDesktopClient.prototype.initLogin = function() {
 
 WobbleDesktopClient.prototype.initApp = function() {
   this.cache = window.localcache.getCache();
-
-  // Models
+  // DataModel
   this.contactsModel = new ContactsModel(this.cache);
+  this.topicListModel = new TopicListModel(window.localcache.getCache());
+  this.topicModel = new TopicModel();
 
-  // Views
+  // Create the navigator
   this.topHeader = new DesktopClientHeader();
 
-  // Presenter
+  // Create the Views
+  this.contactsView = new JQueryContactsView();
+  this.topicListView = new jQueryTopicsView(true, true);
+  this.topicView = new jQueryTopicView();
+
+  // Create the Presenter
   this.contactsChooserPresenter = new ContactsChooserPresenter(
       new ListContactsChooserDisplay('#topic_invite_user'),
       this.contactsModel
   );
-  this.contactsPresenter = new ContactsPresenter(new JQueryContactsView(), this.contactsModel);
-  this.topicsPresenter = new TopicListPresenter(new jQueryTopicsView(), this.cache);
 
+  this.contactsPresenter = new ContactsPresenter(this.contactsView, this.contactsModel);
   this.contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(100, 100), this.contactsModel, 'contact.clicked');
   this.topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(600, 100), this.contactsModel, 'topic.user.clicked');
+  this.topicListPresenter = new TopicListPresenter(this.topicListView, this.topicListModel);
+  this.windowUpdater = new WindowUpdater(this.topicListModel);
 
-  this.topicPresenter = new TopicPresenter(new jQueryTopicView(), new TopicModel());
+  this.topicPresenter = new TopicPresenter(this.topicView, this.topicModel);
 
   this.userProfilePresenter = new UserProfilePresenter();
 

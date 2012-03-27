@@ -140,6 +140,10 @@ WobbleAPI.prototype.load_topic_details = function(topicId, callback) {
   this.doRPC('topic_get_details', {id: topicId}, callback);
 };
 
+WobbleAPI.prototype.topics_search = function (search_filter, callback) {
+  this.doRPC('topics_search', {'filter': search_filter}, callback);
+};
+
 WobbleAPI.prototype.list_topics = function (show_archived, callback) {
   this.doRPC('topics_list', {'archived': show_archived}, callback);
 };
