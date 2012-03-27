@@ -9,6 +9,7 @@ Things, that a Component should be able to do:
  * Replace text-snippets when they are written, e.g. smilies or common typos
  * Insert a custom graphical element with special action handlers into the post
  * Add further action buttons in editing mode
+ * Add extra elements to a post (e.g. to __like__ a post. See ticket #21)
 
 NOTE: All of this is intended to run on the client side. Each post has a revision no, which you have to send a long when saving a post.
 
