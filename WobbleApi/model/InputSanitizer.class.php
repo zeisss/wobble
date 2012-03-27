@@ -52,7 +52,7 @@ class InputSanitizer {
                 # Parsing html is hard. Actually too hard for this little project to do it right here.
                 # The UI only provides a simple without a way to provide a link target. Thus we just
                 # abort here.
-                throw new Exception('Invalid content. Do not use target attribute in links(a): SAN-001');
+                throw new SanitizeException('Invalid content. Do not use target attribute in links(a): SAN-001');
             }
         }
         return $content;

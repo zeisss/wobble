@@ -29,15 +29,15 @@ class InputSanitizerTest extends PHPUnit_Framework_TestCase {
   }
   public function testSanitizeLinkException() {
     try {
-      $this->assertEquals('<a target="_new" href="http://example.com">Click here</a>', 
-                        InputSanitizer::sanitizeLinks('<a href="http://example.com" target="_new">Click here</a>'));
+      $value = InputSanitizer::sanitizeLinks('<a href="http://example.com" target="_new">Click here</a>');
       $this->fail('No exception was thrown.');
-    } catch (Exception $e) {
-      return;
+    } catch (SanitizeException $e) {
+      $this->assertEquals('Invalid content. Do not use target attribute in links(a): SAN-001',
+                          $e->getMessage());
     }
   }
   
-  public function testSanitizeLinksWithBadContent() {
+  public function testSanitizeLinksWithInvalidHtml() {
     $input = '<a href="http://example.com">Click me</a><a ';
     $expected = '<a target="_new" href="http://example.com">Click me</a><a ';
 
