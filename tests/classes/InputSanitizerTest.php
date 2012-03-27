@@ -41,6 +41,18 @@ class InputSanitizerTest extends PHPUnit_Framework_TestCase {
     $input = '<a href="http://example.com">Click me</a><a ';
     $expected = '<a target="_new" href="http://example.com">Click me</a><a ';
 
-    $this->assertEquals($expected, InputSanitizer::sanitizePostContent($input));
+    $this->assertEquals($expected, InputSanitizer::sanitizeLinks($input));
+  }
+
+  public function testSanitizeLinksWithLinkInContent() {
+    $input = 'bla <a href="http://www.woki.de/index.php">http://www.woki.de/index.php</a> blubb';
+    $expected = 'bla <a target="_new" href="http://www.woki.de/index.php">http://www.woki.de/index.php</a> blubb';
+    $this->assertEquals($expected, InputSanitizer::sanitizeLinks($input));
+  }
+
+  public function testSanitizeLinksWithTargetInLink() {
+    $input = 'bla <a href="http://www.woki.de/index.php?target=detail&idf=12583">aaa</a> blubb';
+    $expected = 'bla <a target="_new" href="http://www.woki.de/index.php?target=detail&idf=12583">aaa</a> blubb';
+    $this->assertEquals($expected, InputSanitizer::sanitizeLinks($input));
   }
 }
