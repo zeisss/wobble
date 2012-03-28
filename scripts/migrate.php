@@ -19,7 +19,7 @@
       $missing = array_diff($availableMigrations, $currentMigrations);
       # NOTE: we just try to apply them blindly here.
       if (count($missing) === 0) {
-          echo "No migrations for you. Good one!";
+          echo "No migrations for you. Good one!" . PHP_EOL;
       }
       foreach($missing as $file) {
           echo PHP_EOL;

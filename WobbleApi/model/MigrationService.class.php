@@ -40,7 +40,7 @@
 
     public function getActiveMigrations() {
       if (!$this->has_migrations_table) {
-        echo "ERROR: No schema_migrations table found.";
+        echo "INFO: No schema_migrations table found." . PHP_EOL;
         return array();
       }
 
@@ -61,8 +61,15 @@
       }
 
       $filecontent = file_get_contents($this->path . '/' . $filename);
+      $statements = split(';', $filecontent);
 
-      $this->pdo->exec($filecontent);
+      foreach($statements as $sql) {
+        $sql = trim($sql);
+        if (empty($sql))
+          continue;
+        var_dump($sql);
+        $this->pdo->exec($sql);
+      }
 
       $sql = 'INSERT INTO `schema_migrations` (filename, timestamp) VALUE (?, unix_timestamp())';
       $stmt = $this->pdo->prepare($sql);
