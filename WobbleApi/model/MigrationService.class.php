@@ -99,7 +99,7 @@
         throw new Exception('The migrationfile ' . $filename . ' does not support down-migration.');
       }
       $filecontent = file_get_contents($this->path . '/' . $filename);
-      $statements = split(';', $filecontent);
+      $statements = explode(';', $filecontent);
 
       foreach($statements as $sql) {
         $this->executeSql($sql);
