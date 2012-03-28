@@ -30,7 +30,12 @@
       $result = array();
       
       while (false !== ($file = readdir($fp))) {
-        if (strlen($file) > 4 && substr($file, strlen($file) - 4) == '.sql')
+        if (strlen($file) < 4) 
+          continue;
+
+        $ending = substr($file, strrpos($file, '.'));
+        if ($ending == '.sql' || 
+            $ending == '.json')
           $result[] = $file;
       }
       closedir($fp);
@@ -60,22 +65,53 @@
         $this->createMigrationsTable();
       }
 
-      $filecontent = file_get_contents($this->path . '/' . $filename);
-      $statements = split(';', $filecontent);
-
-      foreach($statements as $sql) {
-        $sql = trim($sql);
-        if (empty($sql))
-          continue;
-        var_dump($sql);
-        $this->pdo->exec($sql);
-      }
+      $ending = substr($filename, strrpos($filename, '.'));
+      if ($ending == '.sql')
+        $this->executeSqlMigration($filename);
+      else if($ending == '.json')
+        $this->executeJsonMigration($filename);
+      else
+        throw new Exception('Unknown migration type.');
 
       $sql = 'INSERT INTO `schema_migrations` (filename, timestamp) VALUE (?, unix_timestamp())';
       $stmt = $this->pdo->prepare($sql);
       $stmt->execute(array($filename));
 
       return true;
+    }
+    protected function executeJsonMigration($filename, $upgrade = true) {
+      $key = $upgrade ? 'up' : 'down';
+      $filecontent = file_get_contents($this->path . '/' . $filename);
+      $migration = json_decode($filecontent, TRUE);
+
+      if (!is_array($migration))
+        throw new Exception('File ' . $filename . ' is not a proper json migration. Expected object at root.');
+      $queries = $migration[$key];
+      if (!is_array($queries)) 
+        throw new Exception('Expected an array in migration-file ' . $filename . ' for key ' . $key);
+      
+      foreach($queries as $sql) {
+        $this->executeSql($sql);
+      }
+    }
+    protected function executeSqlMigration($filename, $upgrade = true) {
+      if (!$upgrade) {
+        throw new Exception('The migrationfile ' . $filename . ' does not support down-migration.');
+      }
+      $filecontent = file_get_contents($this->path . '/' . $filename);
+      $statements = split(';', $filecontent);
+
+      foreach($statements as $sql) {
+        $this->executeSql($sql);
+      }
+    }
+    
+    protected function executeSql($sql) {
+      $sql = trim($sql);
+      if (empty($sql))
+        return;
+      echo $sql . PHP_EOL;
+      $this->pdo->exec($sql);
     }
     
     public function downgrade($number) {
