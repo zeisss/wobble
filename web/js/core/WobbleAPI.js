@@ -36,13 +36,12 @@ WobbleAPI.prototype.destroy = function() {};
  * @see this.rpc
  */
 WobbleAPI.prototype.doRPC = function(name, params, callback) {
+  if(typeof(params) == "function") {
+      callback = params
+      params = undefined
+  }
   if(this.apikey.get()) {
-    if(typeof(params) == "function") {
-      callback = params;
-      params = {
-        'apikey': this.apikey.get()
-      };
-    } else if(params == undefined) {
+    if(params == undefined) {
       params = {
         'apikey': this.apikey.get()
       };
