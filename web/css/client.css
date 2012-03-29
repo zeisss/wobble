@@ -173,12 +173,15 @@ Notification Yellow: #FC0
 
   overflow:auto;  
 }
+#contacts .contactslist li {
+  padding-left:5px;
+  padding-right:5px;
+}
 #contacts .contact {
   cursor: pointer;
   position: relative;
   height:28px;
-  padding-left:5px;
-  padding-right:5px;
+  
 }
 #contacts .contact:hover {
   background: #AFAFAF;

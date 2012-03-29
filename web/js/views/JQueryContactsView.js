@@ -70,7 +70,7 @@ JQueryContactsView.prototype.renderContacts = function (list) {
   this.$contactsList.empty();
 
   if (list.length === 0) {
-    this.$contactsList.append($('<li></li>').text('Sorry, you have no contacts.'));
+    $('<li></li>').html('Sorry, you have no contacts.').css('font-size', 'small').appendTo(this.$contactsList);
   }
 
   _.each(list, function(contact) {
