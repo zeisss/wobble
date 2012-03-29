@@ -7,4 +7,4 @@ before_script:
   - cp .travis_wobble_config.php etc/config.php
   - mysql -e 'create database wobble;'
   - ./scripts/migrate.php
-script: phpunit tests
+script: phpunit
