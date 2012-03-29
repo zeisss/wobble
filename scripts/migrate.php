@@ -5,6 +5,9 @@
   $upgrade = true;
 
   foreach($argv as $arg) {
+    if ($arg == '-h' || $arg == '--help') {
+        die('Usage: migrate.php [up|down]')
+    }
     if ($arg == 'down') {
       $upgrade = false;
     }
