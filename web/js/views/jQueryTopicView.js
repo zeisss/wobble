@@ -148,7 +148,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 
     this.readerView.empty();
     // Only cache the writers
-    for (var i = 0; i<  topicDetails.writers.length; ++i) {
+    for (var i = 0; i < topicDetails.writers.length; ++i) {
       var user = topicDetails.writers[i];
       userCache[user.id] = user;
     }
