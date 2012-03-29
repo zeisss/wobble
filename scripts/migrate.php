@@ -6,7 +6,7 @@
 
   foreach($argv as $arg) {
     if ($arg == '-h' || $arg == '--help') {
-        die('Usage: migrate.php [up|down]');
+        die('Usage: migrate.php [up|down]' . PHP_EOL);
     }
     if ($arg == 'down') {
       $upgrade = false;
