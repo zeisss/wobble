@@ -15,7 +15,7 @@
       $stmt = $this->pdo->prepare($sql);
       $stmt->execute();
       $result = $stmt->fetch();
-      
+
       $this->has_migrations_table = !empty($result);
     }
 
@@ -28,13 +28,13 @@
     public function getAvailableMigrations() {
       $fp = opendir($this->path);
       $result = array();
-      
+
       while (false !== ($file = readdir($fp))) {
-        if (strlen($file) < 4) 
+        if (strlen($file) < 4)
           continue;
 
         $ending = substr($file, strrpos($file, '.'));
-        if ($ending == '.sql' || 
+        if ($ending == '.sql' ||
             $ending == '.json')
           $result[] = $file;
       }
@@ -87,9 +87,9 @@
       if (!is_array($migration))
         throw new Exception('File ' . $filename . ' is not a proper json migration. Expected object at root.');
       $queries = $migration[$key];
-      if (!is_array($queries)) 
+      if (!is_array($queries))
         throw new Exception('Expected an array in migration-file ' . $filename . ' for key ' . $key);
-      
+
       foreach($queries as $sql) {
         $this->executeSql($sql);
       }
@@ -105,7 +105,7 @@
         $this->executeSql($sql);
       }
     }
-    
+
     protected function executeSql($sql) {
       $sql = trim($sql);
       if (empty($sql))
@@ -113,7 +113,7 @@
       echo $sql . PHP_EOL;
       $this->pdo->exec($sql);
     }
-    
+
     public function downgrade($number) {
       die('NOT IMPLEMENTED');
     }

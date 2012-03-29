@@ -6,7 +6,7 @@ These munin plugin exports several maybe interesting data to munin.
 
 1. Link the plugins you want to activate to your `/etc/munin/plugins/` folder.
 2. Add the following to your `/etc/munin/plugin-conf.d/munin-node` file:
- 
+
        [wobble*]
        env.WOBBLE_HOME /opt/wobble
 
