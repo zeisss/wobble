@@ -241,6 +241,9 @@ function TopicPresenter(view, model) {
     if (model.getTopic() != null && model.getTopic().id == topicId) {
       return;
     }
+    if (view.isEditing()) {
+        view.closeEditor();
+    }
     model.setTopic({id: topicId});
     view.setLoadingState();
     that.refreshTopic();

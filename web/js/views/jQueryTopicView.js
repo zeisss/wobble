@@ -104,6 +104,9 @@ jQueryTopicView.prototype = new TopicDisplay;
 jQueryTopicView.prototype.constructor = jQueryTopicView;
 
 // Methods --------------------------------------------------------
+jQueryTopicView.prototype.isEditing = function() {
+    return this.editingPostId != null;
+};
 jQueryTopicView.prototype.onResize = function() {
 
   var viewHeight = this.e.innerHeight();
