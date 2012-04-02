@@ -291,7 +291,7 @@ function post_edit($params) {
       ));
 
       # If the content actually changed, mark the post as unread.
-      if ($posts[0]['content'] !== $content) {
+      if ($post['content'] !== $content) {
         TopicRepository::setPostReadStatus(
           $reader['id'], $topic_id, $post_id, 0
         );
