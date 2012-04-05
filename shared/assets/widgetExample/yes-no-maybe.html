@@ -21,7 +21,9 @@
 			margin-top:0.5em;
 			box-shadow: 0 0 0.2em 0.1em gray;
 			cursor:pointer;
-			overflow:hidden;
+			overflow-y:hidden;
+
+			height: 100%;
 		}
 
 		.yes_no_maybe_widget .option_box:hover {
@@ -51,6 +53,16 @@
 			list-style: none;
 		}
 
+		.yes_no_maybe_widget .option_box .votes .avatar {
+			float: left;
+			margin-right:2px;
+			margin-bottom:2px;
+		}
+
+		.yes_no_maybe_widget .option_box .votes .status {
+			color: grey;
+		}
+
 		.yes_no_maybe_widget .option_box .votes > li {
 			border-top-style: solid;
 			border-top-width: 0.1em;
@@ -72,9 +84,14 @@
 		<div id="yes_no_maybe_widget_yes_button" class="option_box yes">
 			<div class="head">Yes</div>
 			<ul class="votes">
-				<li>Stephan</li>
-				<li>Imke</li>
-				<li>Mela</li>
+				<li><img class="avatar" src="https://secure.gravatar.com/avatar/1ad9e5c98d81c6815a65dab5b6e1f669?s=32"> <span class="name">Stephan</span> <br><span class="status">erst ab 18:00</span></li>
+
+				<li><img class="avatar" src="https://secure.gravatar.com/avatar/4f293e41d789d759831dc43550b7a9ff?s=32"> <span class="name">Imke</span> <br><span class="status">total super</span></li>
+
+				<li><img class="avatar" src="https://secure.gravatar.com/avatar/8f0c9789bd69a98b3103bcefa878f1bb?s=32"> <span class="name">Anna</span> <br><span class="status">ab 14:00</span></li>
+				
+				<li><img class="avatar" src="https://secure.gravatar.com/avatar/99ab7c018336a3263f8f78bedc2d6500?s=32"> <span class="name">Johnas</span> <br><span class="status">ab 14:00</span></li>
+				
 			</ul>
 		</div>
 
