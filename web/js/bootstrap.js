@@ -30,14 +30,16 @@
       'js/ext/tinycon.js',
       'js/ext/underscore.js',
       'js/ext/jquery-1.7.1.js',
-      'js/ext/mustache.js'
+      'js/ext/mustache.js',
+      'js/ext/async.js'
     );
   } else {
     files.push(
       'js/ext/tinycon.min.js',
       'js/ext/underscore-min.js',
       'js/ext/jquery.min.js',
-      'js/ext/mustache.min.js'
+      'js/ext/mustache.min.js',
+      'js/ext/async.min.js'
     );
   }
 

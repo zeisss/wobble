@@ -374,7 +374,7 @@ function post_change_read($params) {
   ValidationService::validate_not_empty($self_user_id);
   ValidationService::validate_not_empty($topic_id);
   ValidationService::validate_not_empty($post_id);
-  ValidationService::validate_not_empty($read);
+  ValidationService::validate_boolean($read);
 
   if (TopicRepository::isReader($topic_id, $self_user_id)) {
     TopicRepository::setPostReadStatus($self_user_id, $topic_id, $post_id, $read);
