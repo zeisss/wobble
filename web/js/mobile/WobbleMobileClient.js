@@ -1,6 +1,7 @@
+/*global BUS BasicClient MobileLoginView LoginModel LoginPresenter API ContactsModel TopicListModel TopicModel MobileNavigation JQueryContactsView jQueryTopicView jQueryTopicsView ContactsPresenter ContactsDetailPresenter jQueryContactsDetailDisplay ContactsDetailPresenter jQueryContactsDetailDisplay TopicListPresenter TopicPresenter ContactsChooserPresenter ListContactsChooserDisplay WindowUpdater UserProfilePresenter */
+"use strict";
 
 function WobbleMobileClient() {
-
   BUS.on('topic.selected', function(topicId) {
     this.onNavigation('navTopic');
   }, this);
@@ -19,7 +20,7 @@ function WobbleMobileClient() {
 
   $('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />').appendTo('head');
 }
-WobbleMobileClient.prototype = new BasicClient;
+WobbleMobileClient.prototype = new BasicClient();
 
 WobbleMobileClient.prototype.init = function(user) {
   if (user !== null) {
@@ -63,13 +64,13 @@ WobbleMobileClient.prototype.initApp = function() {
 
   // Create the views
   this.contactsView = new JQueryContactsView();
-  this.topicListView = new jQueryTopicsView(false, false);
-  this.topicView = new jQueryTopicView();
+  this.topicListView = new JQueryTopicListView(false, false);
+  this.topicView = new JQueryTopicView();
 
   // Create the presenters
   this.contactsPresenter = new ContactsPresenter(this.contactsView, this.contactsModel);
-  this.contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(20, 20), this.contactsModel, 'contact.clicked');
-  this.topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(20, 20), this.contactsModel, 'topic.user.clicked');
+  this.contactsDetailPresenter = new ContactsDetailPresenter(new JQueryContactsDetailDisplay(20, 20), this.contactsModel, 'contact.clicked');
+  this.topicUserDetailPresenter = new ContactsDetailPresenter(new JQueryContactsDetailDisplay(20, 20), this.contactsModel, 'topic.user.clicked');
   this.topicListPresenter = new TopicListPresenter(this.topicListView, this.topicListModel);
   this.topicPresenter = new TopicPresenter(this.topicView, this.topicModel);
 

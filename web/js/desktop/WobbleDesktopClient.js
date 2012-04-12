@@ -8,7 +8,7 @@ function WobbleDesktopClient() {
     'href': 'css/desktop.css'
   });
 }
-WobbleDesktopClient.prototype = new BasicClient;
+WobbleDesktopClient.prototype = new BasicClient();
 WobbleDesktopClient.prototype.init = function(user) {
   if (user !== null) {
     this.initApp();
@@ -48,8 +48,8 @@ WobbleDesktopClient.prototype.initApp = function() {
 
   // Create the Views
   this.contactsView = new JQueryContactsView();
-  this.topicListView = new jQueryTopicsView(true, true);
-  this.topicView = new jQueryTopicView();
+  this.topicListView = new JQueryTopicListView(true, true);
+  this.topicView = new JQueryTopicView();
 
   // Create the Presenter
   this.contactsChooserPresenter = new ContactsChooserPresenter(
@@ -58,8 +58,8 @@ WobbleDesktopClient.prototype.initApp = function() {
   );
 
   this.contactsPresenter = new ContactsPresenter(this.contactsView, this.contactsModel);
-  this.contactsDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(100, 100), this.contactsModel, 'contact.clicked');
-  this.topicUserDetailPresenter = new ContactsDetailPresenter(new jQueryContactsDetailDisplay(600, 100), this.contactsModel, 'topic.user.clicked');
+  this.contactsDetailPresenter = new ContactsDetailPresenter(new JQueryContactsDetailDisplay(100, 100), this.contactsModel, 'contact.clicked');
+  this.topicUserDetailPresenter = new ContactsDetailPresenter(new JQueryContactsDetailDisplay(600, 100), this.contactsModel, 'topic.user.clicked');
   this.topicListPresenter = new TopicListPresenter(this.topicListView, this.topicListModel);
   this.windowUpdater = new WindowUpdater(this.topicListModel);
 

@@ -1,3 +1,4 @@
+/*global BUS EventBUS */
 "use strict";
 
 function TopicsListDisplay() {}

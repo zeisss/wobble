@@ -1,3 +1,4 @@
+/*global RPC BUS */
 "use strict";
 
 // RPC Wrapper (JSON-RPC 2.0 - http://json-this.RPC.org/wiki/specification)
@@ -97,7 +98,6 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
     };
   }
 
-  var that = this;
   var req = $.ajax(this.url, ajaxSettings).always(function() {
     that.stateWaiting = jQuery.grep(that.stateWaiting, function(areq, i) {
       return areq !== req;

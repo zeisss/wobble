@@ -1,3 +1,4 @@
+/*global API */
 
 function DesktopClientHeader() {
   this.e = $('<div></div>').attr('id', 'headline').prependTo('body');

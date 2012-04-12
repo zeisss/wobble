@@ -1,3 +1,4 @@
+/*global EventBUS */
 "use strict";
 function AbstractLoginView() {}
 AbstractLoginView.prototype = new EventBUS();

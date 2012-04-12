@@ -1,3 +1,4 @@
+/*global AbstractLoginView */
 "use strict";
 
 /**

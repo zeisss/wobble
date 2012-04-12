@@ -1,3 +1,5 @@
+/*global BUS */
+
 /**
  * Fires a 'window.resize' BUS event, when the window gets resized.
  */

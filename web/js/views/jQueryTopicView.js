@@ -1,3 +1,4 @@
+/*global BUS  API TopicDisplay */
 "use strict";
 
 // UI Functions
@@ -75,10 +76,11 @@ JQueryTopicReadersPartial.prototype.checkReaderOverflow = function() {
 };
 
 
-var userCache = {}; // id => {id, name, email, img}
-function jQueryTopicView() {  // The UI handler for the single topic
+
+function JQueryTopicView() {  // The UI handler for the single topic
   var that = this;
 
+  this.userCache = {}; // id => {id, name, email, img}
   this.editingPostId = null;
   this.currentTopic = null;
   this.readersExtended = false;
@@ -100,11 +102,11 @@ function jQueryTopicView() {  // The UI handler for the single topic
     }, 350);
   }, this);
 }
-jQueryTopicView.prototype = new TopicDisplay();
-jQueryTopicView.prototype.constructor = jQueryTopicView;
+JQueryTopicView.prototype = new TopicDisplay();
+JQueryTopicView.prototype.constructor = JQueryTopicView;
 
 // Methods --------------------------------------------------------
-jQueryTopicView.prototype.onResize = function() {
+JQueryTopicView.prototype.onResize = function() {
 
   var viewHeight = this.e.innerHeight();
   var offsetX = this.readerView.e.outerHeight() +
@@ -113,7 +115,7 @@ jQueryTopicView.prototype.onResize = function() {
 
   this.$posts.css('height', viewHeight - offsetX);
 };
-jQueryTopicView.prototype.clear = function() {
+JQueryTopicView.prototype.clear = function() {
   this.editingPostId = null;
   this.currentTopic = null;
   this.readerView.showAllReaders = false;
@@ -122,7 +124,7 @@ jQueryTopicView.prototype.clear = function() {
   this.$actions.empty();
 };
 
-jQueryTopicView.prototype.setEnabled = function(enabled) {
+JQueryTopicView.prototype.setEnabled = function(enabled) {
   if (enabled) {
     $("button", this.$actions).removeAttr('disabled');
   } else {
@@ -130,13 +132,13 @@ jQueryTopicView.prototype.setEnabled = function(enabled) {
   }
 };
 
-jQueryTopicView.prototype.setLoadingState = function() {
+JQueryTopicView.prototype.setLoadingState = function() {
   this.clear();
   this.setEnabled(false);
   this.$posts.append("<div class=loading>Loading ...</div>");
 };
 
-jQueryTopicView.prototype.renderTopic = function(topicDetails) {
+JQueryTopicView.prototype.renderTopic = function(topicDetails) {
   var i, user;
 
   $("#topic_posts .loading").detach();
@@ -152,12 +154,12 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
     // Only cache the writers
     for (i = 0; i < topicDetails.writers.length; ++i) {
       user = topicDetails.writers[i];
-      userCache[user.id] = user;
+      this.userCache[user.id] = user;
     }
     // Cache & render the readers
     for (i = 0; i < topicDetails.readers.length; ++i) {
       user = topicDetails.readers[i];
-      userCache[user.id] = user; // Cache user object (user later to show the user post images)
+      this.userCache[user.id] = user; // Cache user object (user later to show the user post images)
     }
     this.readerView.render(topicDetails.readers);
 
@@ -171,7 +173,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
   }
 };
 
-jQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
+JQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
     this.$messages.empty();
     _.each(messages, function(msgObj) {
         var msg = msgObj.message;
@@ -204,7 +206,7 @@ jQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
     }, this);
 };
 
-jQueryTopicView.prototype.renderPosts = function(topicDetails) {
+JQueryTopicView.prototype.renderPosts = function(topicDetails) {
   var $scrollToPost = null;
   for (var i = 0; i < topicDetails.posts.length; i++) {
     var $post = this.renderPost(topicDetails, topicDetails.posts[i]);
@@ -219,7 +221,7 @@ jQueryTopicView.prototype.renderPosts = function(topicDetails) {
   }
 };
 
-jQueryTopicView.prototype.renderPost = function(topic, post) {
+JQueryTopicView.prototype.renderPost = function(topic, post) {
   var elementPostId = 'post-' + post.id;
   var that = this;
 
@@ -294,7 +296,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
   return jPostWrapper;
 };
 
-jQueryTopicView.prototype._renderTime = function(timestamp) {
+JQueryTopicView.prototype._renderTime = function(timestamp) {
   if (!timestamp) {
     return "";
   }
@@ -324,7 +326,9 @@ jQueryTopicView.prototype._renderTime = function(timestamp) {
   }
 };
 
-jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
+JQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
+  var that = this;
+
   if (postElement === null) {
     postElement = $("#post-" + post.id + ">.post>.users");
   }
@@ -337,8 +341,8 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
       var postUserId = post.users[i];
       var template = "<img width='{{size}}' height='{{size}}' src='http://gravatar.com/avatar/{{img}}?s={{size}}' title='{{name}}'/>";
       postElement.append(Mustache.to_html(template, {
-        'img': userCache[postUserId].img,
-        'name': userCache[postUserId].name,
+        'img': this.userCache[postUserId].img,
+        'name': this.userCache[postUserId].name,
         'size': size
       }));
     }
@@ -347,12 +351,13 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 
   // Part 2: Render the author names
   function name(index) {
-    if (userCache[post.users[index]].id == API.user_id()) {
+    if (that.userCache[post.users[index]].id == API.user_id()) {
       return "Me";
     } else {
-      return userCache[post.users[index]].name;
+      return that.userCache[post.users[index]].name;
     }
   }
+
   var apiUserId = API.user_id();
   var authorLine = null;
   if (post.users.length == 1 && (post.id != ROOT_ID || post.users[0] != apiUserId) /* no authorline for ourself */) {
@@ -372,7 +377,7 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 
 };
 
-jQueryTopicView.prototype.renderAddReply = function() {
+JQueryTopicView.prototype.renderAddReply = function() {
   if ($("#add_reply").size() > 0) {
     return;
   }
@@ -388,7 +393,7 @@ jQueryTopicView.prototype.renderAddReply = function() {
   $addReply.appendTo(that.$posts);
 };
 
-jQueryTopicView.prototype.removePost = function(post) {
+JQueryTopicView.prototype.removePost = function(post) {
   var jpost = $('#post-' + post.id + ">.post");
   var parent = jpost.parent(); // postwrapper
   var container = parent.parent(); // #topic_posts or .intended_reply_thread
@@ -402,7 +407,7 @@ jQueryTopicView.prototype.removePost = function(post) {
   
 };
 
-jQueryTopicView.prototype.openEditor = function(post) {
+JQueryTopicView.prototype.openEditor = function(post) {
   this.closeEditor(); // Close any open editor there is
 
   var that = this;
@@ -432,7 +437,7 @@ jQueryTopicView.prototype.openEditor = function(post) {
   this._renderTopicActions(true);
 };
 
-jQueryTopicView.prototype.closeEditor = function() {
+JQueryTopicView.prototype.closeEditor = function() {
   var jediting = $(".editing");
   this.editingPostId = null;
 
@@ -451,7 +456,7 @@ jQueryTopicView.prototype.closeEditor = function() {
   }
 };
 
-jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
+JQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
   var that = this;
 
   if (this.editingPostId == post.id) {
@@ -493,7 +498,7 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
   return jbuttons;
 };
 
-jQueryTopicView.prototype._renderTopicActions = function(editing) {
+JQueryTopicView.prototype._renderTopicActions = function(editing) {
   this.$actions.empty();
 
   if (editing) {

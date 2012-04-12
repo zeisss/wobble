@@ -1,3 +1,6 @@
+/*global API */
+"use strict";
+
 function WindowUpdater(model) {
   this.model = model;
 

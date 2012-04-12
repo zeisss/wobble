@@ -1,3 +1,6 @@
+/*global BUS EventBUS API */
+"use strict";
+
 /**
  * Events:
  *  - update - A fresh list was pulled from the server
@@ -103,7 +106,6 @@ TopicListModel.prototype.createTopic = function() {
   var topicId = API.generate_id();
 
   // Create a topic on the server and notify the TopicView (async)
-  var that = this;
   API.topics_create(topicId, function(err, topic_id) {
     if (err) {
       that.refreshTopicList();

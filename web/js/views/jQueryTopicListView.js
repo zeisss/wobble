@@ -1,6 +1,7 @@
+/*global TopicsListDisplay */
 "use strict";
 
-function jQueryTopicsView (show_multiple_button, show_search_bar) {
+function JQueryTopicListView (show_multiple_button, show_search_bar) {
   this.showMultipleButton = show_multiple_button;
   this.showSearchBar = show_search_bar;
 
@@ -17,11 +18,11 @@ function jQueryTopicsView (show_multiple_button, show_search_bar) {
     this.$header.append(this.createSearchHeader());
   }
 }
-jQueryTopicsView.prototype = new TopicsListDisplay();
-jQueryTopicsView.prototype.constructor = jQueryTopicsView;
+JQueryTopicListView.prototype = new TopicsListDisplay();
+JQueryTopicListView.prototype.constructor = JQueryTopicListView;
 
 // Methods --------------------------------------------------------
-jQueryTopicsView.prototype.createSearchHeader = function() {
+JQueryTopicListView.prototype.createSearchHeader = function() {
   var that = this;
   var e = $('<div class="input_search_box"><input id="topiclist_search" type="text"></div>');
   this.$searchFilter = $('input', e).on('keydown', function(e) {
@@ -35,16 +36,16 @@ jQueryTopicsView.prototype.createSearchHeader = function() {
   });
   return e;
 };
-jQueryTopicsView.prototype.setSearchFilter = function(filter) {
+JQueryTopicListView.prototype.setSearchFilter = function(filter) {
   if (this.$searchFilter) {
     this.$searchFilter.val(filter);
   }
 };
-jQueryTopicsView.prototype.setActiveTopic = function(topicId) {
+JQueryTopicListView.prototype.setActiveTopic = function(topicId) {
   $(">li.active", this.$topics).removeClass("active");
   $("#topic-" + topicId).addClass("active");
 };
-jQueryTopicsView.prototype.renderActionButtons = function(enableShowInbox, enableShowArchived) {
+JQueryTopicListView.prototype.renderActionButtons = function(enableShowInbox, enableShowArchived) {
   this.$actions.empty();
 
   var that = this;
@@ -90,7 +91,7 @@ jQueryTopicsView.prototype.renderActionButtons = function(enableShowInbox, enabl
     }).appendTo(this.$actions);
   }
 };
-jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
+JQueryTopicListView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
   // Render to html list
   if (topics.length === 0) {
     this.renderText('No topics here. Try to create one :)');
@@ -99,7 +100,7 @@ jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, pr
     this.renderTopic(topics[i], prepend);
   }
 };
-jQueryTopicsView.prototype.renderTopic = function renderTopic(topic, prepend) {
+JQueryTopicListView.prototype.renderTopic = function renderTopic(topic, prepend) {
   var template = '<li id="{{id}}" class="topic_header">' +
            ' <div class="abstract">{{{abstract}}}</div>' +
            (topic.post_count_unread === 0 ?
@@ -136,7 +137,7 @@ jQueryTopicsView.prototype.renderTopic = function renderTopic(topic, prepend) {
     $li.appendTo(this.$topics);
   }
 };
-jQueryTopicsView.prototype.renderTopicTimestamp = function renderTopicTimestamp(timestamp) {
+JQueryTopicListView.prototype.renderTopicTimestamp = function renderTopicTimestamp(timestamp) {
   if (!timestamp) {
     return "";
   }
@@ -169,12 +170,12 @@ jQueryTopicsView.prototype.renderTopicTimestamp = function renderTopicTimestamp(
     return createdAt.getDate() + "." + month + "."+ (1900 + createdAt.getYear());
   }
 };
-jQueryTopicsView.prototype.clear = function clear() {
+JQueryTopicListView.prototype.clear = function clear() {
   this.$topics.empty();
 };
-jQueryTopicsView.prototype.showLoading = function showLoading() {
+JQueryTopicListView.prototype.showLoading = function showLoading() {
   this.renderText('Loading ...');
 };
-jQueryTopicsView.prototype.renderText = function renderText(text) {
+JQueryTopicListView.prototype.renderText = function renderText(text) {
   this.$topics.html('<li>' + text + '</li>');
 };

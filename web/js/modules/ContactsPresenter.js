@@ -1,3 +1,4 @@
+/*global BUS*/
 "use strict";
 
 

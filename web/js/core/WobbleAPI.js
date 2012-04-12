@@ -1,3 +1,4 @@
+/*global BUS */
 "use strict";
 
 function WobbleAPI(rpc, callback) {
@@ -31,8 +32,6 @@ function WobbleAPI(rpc, callback) {
     }
   }
 }
-
-exports.WobbleAPI = WobbleAPI;
 
 WobbleAPI.prototype.destroy = function() {};
 

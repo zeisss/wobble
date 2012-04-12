@@ -1,3 +1,4 @@
+/*global BUS API EventBUS */
 "use strict";
 
 /**
@@ -11,13 +12,14 @@
  *  - removed - A contact was removed
  */
 function ContactsModel(cache) {
+  var that = this;
+
   this.contacts = [];
   if (cache) {
     this.cache = cache;
     this.cacheTimeout = 7 * 24 * 60 * 60;
     this.contacts = this.cache.get('contactlist.contacts') || [];
 
-    var that = this;
     setTimeout(function() {
       that.fire('update');
     }, 50);
@@ -38,7 +40,6 @@ function ContactsModel(cache) {
     }
   }, this);
 
-  var that = this;
   that.refreshContactList(); // Initial load
   this.refreshTimer = setInterval(function() {
     that.refreshContactList();

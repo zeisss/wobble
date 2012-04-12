@@ -67,10 +67,10 @@
     'js/modules/WindowUpdater.js',
 
     // Views
-    'js/views/jQueryTopicListView.js',
-    'js/views/jQueryTopicView.js',
+    'js/views/JQueryTopicListView.js',
+    'js/views/JQueryTopicView.js',
     'js/views/JQueryContactsView.js',
-    'js/views/jQueryContactsDetailDisplay.js',
+    'js/views/JQueryContactsDetailDisplay.js',
     'js/views/ListContactsChooserDisplay.js',
 //    'js/views/SimpleContactsChooserDisplay.js',
 

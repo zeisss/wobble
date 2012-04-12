@@ -1,3 +1,4 @@
+/*global AbstractLoginView */
 "use strict";
 function MobileLoginView() {
   this.e = $("<div></div>").attr('id', 'mobileloginview').appendTo('body');

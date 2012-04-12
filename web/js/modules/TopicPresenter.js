@@ -1,3 +1,4 @@
+/*global API BUS */
 "use strict";
 
 // Callbacks

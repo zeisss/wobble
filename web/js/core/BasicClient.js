@@ -1,3 +1,4 @@
+/*global BUS JSONRPC WobbleAPI NotificationHandler */
 "use strict";
 
 function BasicClient() {}

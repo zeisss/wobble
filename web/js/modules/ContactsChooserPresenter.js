@@ -1,4 +1,6 @@
+/*global BUS */
 "use strict";
+
 /**
  * The display for the ContactsChooserPresenter
  */

@@ -1,12 +1,17 @@
+/*global BUS */
 "use strict";
 
-/*
-BUS.on('topic.selected', function(data, eventName) {
-  // Your code here
-});
-BUS.fire('topic.selected');
-BUS.fire('topic.selected', {topic_name: 'Hello World!'});
-*/
+/**
+ * An EventBUS where anyone can listen to emitted events.
+ *
+ * Example:
+ *   BUS.on('topic.selected', function(data, eventName) {
+ *     // Your code here
+ *   }, context);
+ *
+ *   BUS.fire('topic.selected');
+ *   BUS.fire('topic.selected', {topic_name: 'Hello World!'});
+ */
 function EventBUS() {
   this.listeners = {};
 }
