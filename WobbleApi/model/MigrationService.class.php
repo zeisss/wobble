@@ -50,7 +50,7 @@
       }
 
       $result = array();
-      $sql = 'SELECT filename FROM schema_migrations';
+      $sql = 'SELECT filename FROM schema_migrations ORDER BY timestamp';
       $stmt = $this->pdo->prepare($sql);
       $stmt->execute();
       foreach($stmt->fetchAll() as $row) {
@@ -60,22 +60,28 @@
       return $result;
     }
 
-    public function executeMigration($filename) {
+    public function executeMigration($filename, $upgrade = true) {
       if (!$this->has_migrations_table) {
         $this->createMigrationsTable();
       }
 
       $ending = substr($filename, strrpos($filename, '.'));
       if ($ending == '.sql')
-        $this->executeSqlMigration($filename);
+        $this->executeSqlMigration($filename, $upgrade);
       else if($ending == '.json')
-        $this->executeJsonMigration($filename);
+        $this->executeJsonMigration($filename, $upgrade);
       else
         throw new Exception('Unknown migration type.');
 
-      $sql = 'INSERT INTO `schema_migrations` (filename, timestamp) VALUE (?, unix_timestamp())';
-      $stmt = $this->pdo->prepare($sql);
-      $stmt->execute(array($filename));
+      if ($upgrade) {
+        $sql = 'INSERT INTO `schema_migrations` (filename, timestamp) VALUE (?, unix_timestamp())';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(array($filename));
+      } else {
+        $sql = 'DELETE FROM `schema_migrations` WHERE filename = ?';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(array($filename));
+      }
 
       return true;
     }
@@ -112,9 +118,5 @@
         return;
       echo $sql . PHP_EOL;
       $this->pdo->exec($sql);
-    }
-
-    public function downgrade($number) {
-      die('NOT IMPLEMENTED');
     }
   }

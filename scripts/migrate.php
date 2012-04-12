@@ -6,7 +6,7 @@
 
   foreach($argv as $arg) {
     if ($arg == '-h' || $arg == '--help') {
-        die('Usage: migrate.php [up|down]')
+        die('Usage: migrate.php [up|down]' . PHP_EOL);
     }
     if ($arg == 'down') {
       $upgrade = false;
@@ -26,11 +26,20 @@
       }
       foreach($missing as $file) {
           echo PHP_EOL;
-          echo "Executing migration $file" . PHP_EOL;
+          echo "## Executing migration $file" . PHP_EOL;
           echo PHP_EOL;
-          $service->executeMigration($file);
+          $service->executeMigration($file, true);
           echo PHP_EOL;
       }
   } else {
-      echo "ERROR: downgrading is not supported at the moment." . PHP_EOL;
+      $currentMigrations = array_reverse($currentMigrations); # 0 is now the newest activated migration
+      $number = 1;
+
+      for ($i = 0; $i < $number; $i++) {
+        echo PHP_EOL;
+        echo "## Migrating down {$currentMigrations[$i]}" . PHP_EOL;
+        echo PHP_EOL;
+        $service->executeMigration($currentMigrations[$i], false);
+        echo PHP_EOL;
+      }
   }

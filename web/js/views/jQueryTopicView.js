@@ -2,6 +2,8 @@
 
 // UI Functions
 
+var ROOT_ID = '1';
+
 function jQueryTopicReadersPartial(parent, click_handler) {
   this.e = $('<div>').attr('id', 'topic_readers').appendTo(parent);
   this.readerList = $('<div>').addClass('readers').appendTo(this.e);
@@ -146,7 +148,7 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 
     this.readerView.empty();
     // Only cache the writers
-    for (var i = 0; i<  topicDetails.writers.length; ++i) {
+    for (var i = 0; i < topicDetails.writers.length; ++i) {
       var user = topicDetails.writers[i];
       userCache[user.id] = user;
     }
@@ -577,5 +579,8 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
         });
       }
     }
+
+    $('<button>').text('Read all').attr('title', 'Mark all posts as read').appendTo(this.$actions).on('click', that.onReadAll);
+    $('<button>').text('Unread all').attr('title', 'Marks all posts as unread').appendTo(this.$actions).on('click', that.onUnreadAll);
   }
 };

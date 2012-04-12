@@ -23,6 +23,10 @@ class ValidationService {
     static::check($in_list !== FALSE);
   }
 
+  public static function validate_boolean($input) {
+      static::validate_list($input, array(0, 1));
+  }
+
   public static function check($boolean, $message = 'Invalid Input!') {
     if (!$boolean) throw new Exception($message);
   }

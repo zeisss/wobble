@@ -12,6 +12,7 @@ function TopicListModel(cache) {
   this.topics = cache.get('topicslistpresenter.topics') || [];
   this.show_archived = cache.get('topicslistpresenter.show_archived') || 0;
   this.requestInProcess = false;
+  this.reloadAgainAfterRequest = false;
   this.is_search_result = false;
 
   BUS.on('api.notification', function(message) {
@@ -65,8 +66,10 @@ TopicListModel.prototype.search = function (filter) {
   });
 };
 TopicListModel.prototype.refreshTopicList = function() {
-  if (this.requestInProcess)
+  if (this.requestInProcess) {
+    this.reloadAgainAfterRequest = true;
     return;
+  }
   this.requestInProcess = true;
 
   var that = this;
@@ -80,6 +83,10 @@ TopicListModel.prototype.refreshTopicList = function() {
       that.is_search_result = false;
 
       that.fire('update');
+    }
+    if (that.reloadAgainAfterRequest) {
+        that.reloadAgainAfterRequest = false;
+        that.refreshTopicList();
     }
   });
 };

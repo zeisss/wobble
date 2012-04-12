@@ -57,12 +57,10 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
     success: function(data, textStatus, jqXHR) {
       if(that.aborted)
         return;
-      if (!callback)
-        return;
 
       if (data == undefined) {
         var error = {'message': 'Empty response'};
-        var errorHandled = callback(error);
+        var errorHandled = callback ? callback(error) : false;
         if (!errorHandled) {
           BUS.fire('rpc.error', {
             request: body,
@@ -71,7 +69,7 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
         }
       }
       else if (data.error) {
-        var errorHandled = callback(data.error);
+        var errorHandled = callback ? callback(data.error) : false;
         if (!errorHandled) {
           BUS.fire('rpc.error', {
             request: body,
@@ -79,7 +77,9 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
           });
         }
       } else {
-        callback(undefined, data.result);
+        if (callback) {
+          callback(undefined, data.result);
+        }
       }
     }
   };

@@ -1,213 +1,247 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
                     "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-	<head>
-  		<script src="js/ext/jquery.min.js"></script>
-  		<link rel="stylesheet" href="css/ext/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="js/ext/qunit.js"></script>
+  <head>
+    <script src="js/ext/jquery.min.js"></script>
+    <script type="text/javascript" src="js/ext/underscore.js"></script>
+    <script type="text/javascript" src="js/ext/mustache.js"></script>
 
-		<script src="js/core/BUS.js"></script>
-		<script src="js/core/JSONRPC.js"></script>
-		<script src="js/core/WobbleAPI.js"></script>
-		
+    <link rel="stylesheet" href="css/ext/qunit.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="js/ext/qunit.js"></script>
 
-  		<script>
-  		  window.RPC = new JSONRPC('./api/endpoint.php');
-  		  window.API = new WobbleAPI(window.RPC); 
 
-		  $(document).ready(function(){
-			module("BUS");  
-			test("BUS available", function() {
-			  ok( window.BUS !== undefined, "BUS is available" );
-			  ok( window.BUS.on !== undefined, "BUS.on is available" );
-			  ok( window.BUS.fire !== undefined, "BUS.fire is available" );
-			});
+    <script src="js/core/EventBUS.js"></script>
+    <script src="js/core/JSONRPC.js"></script>
+    <script src="js/core/WobbleAPI.js"></script>
+    <script src="js/modules/TopicPresenter.js"></script>
+    <script src="js/views/jQueryTopicView.js"></script>
 
-			test("BUS fire simple", function() {
-				expect(3);
-				stop();
-				BUS.on('test', function(data) {
-					equal('Hello World!', data, '"Hello World" message received!');
-				});
-				BUS.on('test', function(data) {
-					equal('Hello World!', data, '"Hello World" message received!');
-					equal('Stephan', this.name, 'BUS.on supports context')
-				}, {name: 'Stephan'});
-				BUS.fire('test', 'Hello World!');
-				start();
-			});
+    <script>
+    window.BUS = new EventBUS();
+    window.RPC = new JSONRPC('./api/endpoint.php');
+    window.API = new WobbleAPI(window.RPC); 
+    window.API.signout();
 
-			module("RPC");
-			test("RPC object available", 1, function() {
-			  ok( window.RPC !== undefined, "RPC is available" );
-			});
-			asyncTest('System Functions', 2, function() {
-				RPC.doRPC('system.listMethods', {}, function(err, result) {
-					equal(err, undefined, 'No error');
-					ok(result.length > 0, 'Positive length');
-					start();
-				});
-			});
-			asyncTest('Echo Test', 5, function() {
-				RPC.doRPC('echo', ['ABCDEFG', '12345'], function(err, result) {
-					strictEqual(err, undefined, 'No error');
-					ok(result != null, 'Result received');
-					equal(result && result.length, 2, 'Length = 2');
-					equal('ABCDEFG', result[0], 'First echo parameter');
-					equal('12345', result[1], 'Second echo parameter');
-					start();
-				});
-			});
+    $(document).ready(function(){
+      module("BUS");  
+      test("BUS available", function() {
+        ok( window.BUS !== undefined, "BUS is available" );
+        ok( window.BUS.on !== undefined, "BUS.on is available" );
+        ok( window.BUS.fire !== undefined, "BUS.fire is available" );
+      });
 
-			module ("API");
-			test("API available", 1, function() {
-			  ok( window.API !== undefined, "API is available" );
-			});
-			test('generate_id()', 1, function() {
-				ok(API.generate_id(), 'Not null/undefined ID');
-			});
-			
-			asyncTest("simple login+whoami+logout", 7, function() {
-			  API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
-			  	equal(err, undefined, "No error retrieved");
-			  	equal(result, true, "TRUE received");
-			  	
-			  	API.user_get(function(err, result) {
-			  		equal(err, undefined, "No error retrieved");
-			  		ok(result != null, "TRUE received");
-			  		equals("stephan.zeissler@moinz.de", result.email, "Email is stephan.zeissler@moinz.de");
+      test("BUS fire simple", function() {
+        expect(3);
+        stop();
+        BUS.on('test', function(data) {
+          equal('Hello World!', data, '"Hello World" message received!');
+        });
+        BUS.on('test', function(data) {
+          equal('Hello World!', data, '"Hello World" message received!');
+          equal('Stephan', this.name, 'BUS.on supports context')
+        }, {name: 'Stephan'});
+        BUS.fire('test', 'Hello World!');
+        start();
+      });
 
-			  		API.signout(function(err, result) {
-			  			equal(err, undefined, "No error retrieved");
-			  			equal(result, true, "TRUE received");
-					  	start();		
-			  		});
-			  		
-			  	});
-			  	
-			  });
-			});
+      module("RPC");
+      test("RPC object available", 1, function() {
+        ok( window.RPC !== undefined, "RPC is available" );
+      });
+      asyncTest('System Functions', 2, function() {
+        RPC.doRPC('system.listMethods', {}, function(err, result) {
+          equal(err, undefined, 'No error');
+          ok(result.length > 0, 'Positive length');
+          start();
+        });
+        
+      });
+      asyncTest('System Functions with no args', 2, function() {
+        RPC.doRPC('system.listMethods', function(err, result) {
+          equal(err, undefined, 'No error');
+          ok(result.length > 0, 'Positive length');
+          start();
+        });
+      });
+      asyncTest('Echo Test', 5, function() {
+        RPC.doRPC('echo', ['ABCDEFG', '12345'], function(err, result) {
+          strictEqual(err, undefined, 'No error');
+          ok(result != null, 'Result received');
+          equal(result && result.length, 2, 'Length = 2');
+          equal('ABCDEFG', result[0], 'First echo parameter');
+          equal('12345', result[1], 'Second echo parameter');
+          start();
+        });
+      });
 
-			module('Wobble');
-			test('Test wobble-api-version', function() {
-				expect(2);
-				stop();
-				API.wobble_api_version(function(err, result) {
-					equal(err, undefined, 'No error received');
-					equal(result, '0.0.1', 'Version is 0.0.1');
-					start();
-				});
-			});
+      module ("API");
+      test("API available", 1, function() {
+        ok(window.API !== undefined, "API is available" );
+      });
+      test('basic: generate_id()', 1, function() {
+        ok(API.generate_id(), 'Not null/undefined ID');
+      });
 
-			module('Contacts');
-			asyncTest('Prevent user adding himself', 2, function() {
-				API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
-					API.add_contact('stephan.zeissler@moinz.de', function(err, result) {
-						equal(err, undefined);
-						equal(result, false, 'Contact should not be added.');
-						start();
-					});	
-				});
-			})
-			
-			module('Topics');
-			test('Invalid topic-id', 10, function() {
-				stop();
-				API.login('stephan.zeissler@moinz.de', 'stephan99', function(err, result) {
-					equal(err, undefined);
-					equal(result, true);
+      asyncTest("Auth: simple login+whoami+logout", 10, function() {
+        equal(API.apikey.get(), undefined, "No previous apikey available.");
+        API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
+          equal(err, undefined, "No error retrieved");
+          
+          ok(typeof(result) == "object");
+          var apikey = result.apikey;
+          ok(apikey != null, "Apikey received");
+          equal(API.apikey.get(), apikey, "Apikey available in API");
 
-					// The . in the id should be invalid
-					stop();
-					API.topics_create("Qunit." + API.generate_id(), function(err, result) {
-						equal(result, undefined);
-						deepEqual(err, {
-							code: -32603,
-							message: 'Invalid Input!'
-						});
+          API.user_get(function(err, result) {
+            equal(err, undefined, "No error retrieved");
+            ok(result != null, "TRUE received");
+            equals("stephan.zeissler@moinz.de", result.email, "Email is stephan.zeissler@moinz.de");
 
-						start();
-					});
+            API.signout(function(err, result) {
+              equal(err, undefined, "No error retrieved");
+              equal(result, true, "TRUE received");
+              start();
+            });
 
-					// The + in the id should be invalid
-					stop();
-					API.topics_create("Qunit+" + API.generate_id(), function(err, result) {
-						equal(result, undefined);
-						deepEqual(err, {
-							code: -32603,
-							message: 'Invalid Input!'
-						});
+          });
 
-						start();
-					});
+        });
+      });
 
-					// The % in the id should be invalid
-					stop();
-					API.topics_create("Qunit%" + API.generate_id(), function(err, result) {
-						equal(result, undefined);
-						deepEqual(err, {
-							code: -32603,
-							message: 'Invalid Input!'
-						});
+      module('Wobble');
+      asyncTest('Test wobble-api-version', 2, function() {
+        API.wobble_api_version(function(err, result) {
+          equal(err, undefined, 'No error received');
+          equal(result, '0.0.1', 'Version is 0.0.1');
+          start();
+        });
+      });
 
-						start();
-					});
+      module('Contacts');
+      asyncTest('Prevent user adding himself', 2, function() {
+        API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
+          API.add_contact('stephan.zeissler@moinz.de', function(err, result) {
+            equal(err, undefined);
+            equal(result, false, 'Contact should not be added.');
+            start();
+          });  
+        });
+      })
 
-					// The # in the id should be invalid
-					stop();
-					API.topics_create("Qunit#" + API.generate_id(), function(err, result) {
-						equal(result, undefined);
-						deepEqual(err, {
-							code: -32603,
-							message: 'Invalid Input!'
-						});
+      module('Topics');
+      test('Invalid topic-id', 10, function() {
+        stop();
+        API.login('stephan.zeissler@moinz.de', 'stephan99', function(err, result) {
+          equal(err, undefined);
+          ok(typeof(result) == "object");
 
-						start();
-					});
+          // The . in the id should be invalid
+          stop();
+          API.topics_create("Qunit." + API.generate_id(), function(err, result) {
+            equal(result, undefined);
+            deepEqual(err, {
+              code: -32603,
+              message: 'Invalid Input!'
+            });
 
-					start();
-				});
-			});
-			asyncTest('Topic: Invalid script content', 7, function() {
-				API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
-					equal(err, undefined);
-					equal(result, true);
+            start();
+          });
 
-					var topicId = "QUnit-" + (new Date().getTime());
-					var postId = '1';
-					var content = 'Bla bla<s' + 'cript>alert("hi");</s' + 'cript> Blubb';
-					var revision_no = 1; // Always starts with 1
+          // The + in the id should be invalid
+          stop();
+          API.topics_create("Qunit+" + API.generate_id(), function(err, result) {
+            equal(result, undefined);
+            deepEqual(err, {
+              code: -32603,
+              message: 'Invalid Input!'
+            });
 
-					ok(topicId != null, 'Generated topicId is not null: ' + topicId);
+            start();
+          });
 
-					API.topics_create(topicId, function(err, result) {
-						equal(err, undefined);
-						equal(result, topicId);
+          // The % in the id should be invalid
+          stop();
+          API.topics_create("Qunit%" + API.generate_id(), function(err, result) {
+            equal(result, undefined);
+            deepEqual(err, {
+              code: -32603,
+              message: 'Invalid Input!'
+            });
 
-						// We can fire off an edit here, because topics_create created an initial
-						// post with ID='1' for us.
-						API.post_edit(topicId, postId, content, revision_no, function(err, result) {
-							deepEqual(err, {
-							  "code": -32603,
-							  "message": "Invalid Input!"
-							} );
-							equal(result, undefined);
+            start();
+          });
 
-							start();
-						});
-					});
-				});
-			});
-		});
-  		</script>
-  
-	</head>
+          // The # in the id should be invalid
+          stop();
+          API.topics_create("Qunit#" + API.generate_id(), function(err, result) {
+            equal(result, undefined);
+            deepEqual(err, {
+              code: -32603,
+              message: 'Invalid Input!'
+            });
+
+            start();
+          });
+
+          start();
+        });
+      });
+      asyncTest('Topic: Invalid script content', 7, function() {
+        API.login("stephan.zeissler@moinz.de", "stephan99", function(err, result) {
+          equal(err, undefined);
+          ok(typeof(result) == "object");
+
+          var topicId = "QUnit-" + (new Date().getTime());
+          var postId = '1';
+          var content = 'Bla bla<s' + 'cript>alert("hi");</s' + 'cript> Blubb';
+          var revision_no = 1; // Always starts with 1
+
+          ok(topicId != null, 'Generated topicId is not null: ' + topicId);
+
+          API.topics_create(topicId, function(err, result) {
+            equal(err, undefined);
+            equal(result, topicId);
+
+            // We can fire off an edit here, because topics_create created an initial
+            // post with ID='1' for us.
+            API.post_edit(topicId, postId, content, revision_no, function(err, result) {
+              deepEqual(err, {
+                "code": -32603,
+                "message": "Invalid Input!"
+              } );
+              equal(result, undefined);
+
+              start();
+            });
+          });
+        });
+      });
+
+      test('TopicView: Links get a target attribute set', function() {
+        var topic = {
+          readers: [],
+          writers: [],
+          posts: [
+            {users:[], deleted:0, id:"no-id", content: "<a id='testlink' href='http://example.org' target='top'>Click me!</a>"}
+          ]
+        };
+        var view = new jQueryTopicView();
+        view.renderTopic(topic);
+
+        equal($("#testlink").attr('target'), '_new', 'Target attribute was fixed.');
+      })
+    });
+      </script>
+
+  </head>
 <body>
   <h1 id="qunit-header">Wobble API Tests</h1>
- <h2 id="qunit-banner"></h2>
- <div id="qunit-testrunner-toolbar"></div>
- <h2 id="qunit-userAgent"></h2>
- <ol id="qunit-tests"></ol>
- <div id="qunit-fixture">test markup, will be hidden</div>
+  <h2 id="qunit-banner"></h2>
+  <div id="qunit-testrunner-toolbar"></div>
+  <h2 id="qunit-userAgent"></h2>
+  <ol id="qunit-tests"></ol>
+  <div id="qunit-fixture">test markup, will be hidden</div>
+
+  <div id="widgets"></div>
 </body>
 </html>
