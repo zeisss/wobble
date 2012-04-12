@@ -1,3 +1,8 @@
+/*global API BUS BasicClient DesktopLoginView LoginModel LoginPresenter ContactsModel TopicListModel TopicModel DesktopClientHeader
+         JQueryContactsView JQueryTopicListView JQueryTopicView JQueryContactsDetailDisplay
+         WindowUpdater TopicPresenter UserProfilePresenter TopicListPresenter
+         ContactsChooserPresenter ListContactsChooserDisplay ContactsPresenter ContactsDetailPresenter */
+"use strict";
 
 function WobbleDesktopClient() {
   // Load the client.css

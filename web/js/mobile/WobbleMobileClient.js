@@ -1,4 +1,8 @@
-/*global BUS BasicClient MobileLoginView LoginModel LoginPresenter API ContactsModel TopicListModel TopicModel MobileNavigation JQueryContactsView jQueryTopicView jQueryTopicsView ContactsPresenter ContactsDetailPresenter jQueryContactsDetailDisplay ContactsDetailPresenter jQueryContactsDetailDisplay TopicListPresenter TopicPresenter ContactsChooserPresenter ListContactsChooserDisplay WindowUpdater UserProfilePresenter */
+/*global BUS BasicClient MobileLoginView LoginModel LoginPresenter API ContactsModel TopicListModel TopicModel MobileNavigation 
+         ContactsDetailPresenter ContactsPresenter ContactsDetailPresenter
+         JQueryContactsView JQueryContactsDetailDisplay JQueryContactsDetailDisplay JQueryTopicView JQueryTopicListView
+         TopicListPresenter TopicPresenter
+         ContactsChooserPresenter ListContactsChooserDisplay WindowUpdater UserProfilePresenter */
 "use strict";
 
 function WobbleMobileClient() {
