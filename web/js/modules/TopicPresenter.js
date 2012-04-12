@@ -12,6 +12,8 @@ TopicDisplay.prototype.onIntendedReplyPost = function(post) {};
 TopicDisplay.prototype.onPostClicked = function(post) {};
 TopicDisplay.prototype.onMoveToInbox = function() {};
 TopicDisplay.prototype.onMoveToArchive = function() {};
+TopicDisplay.prototype.onReadAll = function() {};
+TopicDisplay.prototype.onUnreadAll = function() {};
 
 TopicDisplay.prototype.clear = function() {};
 TopicDisplay.prototype.setLoadingState = function() {};
@@ -103,6 +105,26 @@ function TopicPresenter(view, model) {
 
   //// ---- View Event Callbacks ------------------------------------------------------
   var that = this;
+  view.onReadAll = function() {
+    var topic = that.model.getTopic();
+    if (topic) {
+      async.forEach(topic.posts, function(post, cb) {
+        API.post_change_read(topic.id, post.id, 1, cb);
+      }, function(err, results) {
+        that.refreshTopic();
+      });
+    }
+  }
+  view.onUnreadAll = function() {
+    var topic = that.model.getTopic();
+    if (topic) {
+      async.forEach(topic.posts, function(post, cb) {
+        API.post_change_read(topic.id, post.id, 0, cb);
+      }, function(err, results) {
+        that.refreshTopic();
+      });
+    }
+  };
   view.onInviteUserAction = function() {
     BUS.fire('contacts.chooser.open', {
       'multiple': true,

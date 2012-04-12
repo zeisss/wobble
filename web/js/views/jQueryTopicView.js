@@ -579,5 +579,8 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
         });
       }
     }
+
+    $('<button>').text('Read all').attr('title', 'Mark all posts as read').appendTo(this.$actions).on('click', that.onReadAll);
+    $('<button>').text('Unread all').attr('title', 'Marks all posts as unread').appendTo(this.$actions).on('click', that.onUnreadAll);
   }
 };
