@@ -108,20 +108,22 @@ function TopicPresenter(view, model) {
   view.onReadAll = function() {
     var topic = that.model.getTopic();
     if (topic) {
-      async.forEach(topic.posts, function(post, cb) {
-        API.post_change_read(topic.id, post.id, 1, cb);
+      async.forEach(topic.posts, function(post, done) {
+        API.post_change_read(topic.id, post.id, 1, done);
       }, function(err, results) {
         that.refreshTopic();
+        BUS.fire('topic.post.changed', model.getTopic().id);
       });
     }
   }
   view.onUnreadAll = function() {
     var topic = that.model.getTopic();
     if (topic) {
-      async.forEach(topic.posts, function(post, cb) {
-        API.post_change_read(topic.id, post.id, 0, cb);
+      async.forEach(topic.posts, function(post, done) {
+        API.post_change_read(topic.id, post.id, 0, done);
       }, function(err, results) {
         that.refreshTopic();
+        BUS.fire('topic.post.changed', model.getTopic().id);
       });
     }
   };
