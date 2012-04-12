@@ -45,7 +45,7 @@ function ContactsPresenter(display, model) {
   };
   display.onWhoamiClick = function() {
     BUS.fire('ui.profile.show');
-  }
+  };
 
   // WhoAmI  ---------------------------------------------------
   model.on('user', function(user) {
@@ -65,7 +65,8 @@ ContactsPresenter.prototype.removeContactFromRooster = function(userId) {
   this.model.removeContactFromRooster(userId, function(err) {
     that.refreshContacts();
   });
-}
+};
+
 ContactsPresenter.prototype.refreshContacts = function () {
   var display = this.display;
   this.model.getContacts(function(err, data) {

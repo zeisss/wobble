@@ -6,7 +6,7 @@
   var $window = $(window);
   function get_size() {
     return {w: $window.width(), h: $window.height()};
-  };
+  }
 
   $(document).ready(function() {
     // Fire initial event to setup UI

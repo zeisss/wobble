@@ -4,7 +4,7 @@
 
 var ROOT_ID = '1';
 
-function jQueryTopicReadersPartial(parent, click_handler) {
+function JQueryTopicReadersPartial(parent, click_handler) {
   this.e = $('<div>').attr('id', 'topic_readers').appendTo(parent);
   this.readerList = $('<div>').addClass('readers').appendTo(this.e);
   this.moreBox = $('<div>').addClass('more_box').appendTo(this.e);
@@ -15,22 +15,22 @@ function jQueryTopicReadersPartial(parent, click_handler) {
   this.moreBox.on('click', function() {
     that.showAllReaders = !that.showAllReaders;
     that.checkReaderOverflow();
-  })
+  });
 }
-jQueryTopicReadersPartial.prototype.empty = function() {
+JQueryTopicReadersPartial.prototype.empty = function() {
   this.readerList.empty();
 };
-jQueryTopicReadersPartial.prototype.render = function(data) {
+JQueryTopicReadersPartial.prototype.render = function(data) {
   this.readerList.empty();
   for(var i = 0; i < data.length; i++) {
     this.renderReader(data[i]);
   }
   this.checkReaderOverflow();
 };
-jQueryTopicReadersPartial.prototype.renderReader = function(user) {
+JQueryTopicReadersPartial.prototype.renderReader = function(user) {
   var containerId = "topic-reader-" + user.id;
   var container = $('#' + containerId);
-  if (container.length == 0) {
+  if (container.length === 0) {
     container = $("<span></span>").addClass('reader').attr('id', containerId).appendTo(this.readerList);
   } else {
     container.css('display', '');
@@ -49,7 +49,7 @@ jQueryTopicReadersPartial.prototype.renderReader = function(user) {
     that.onUserClicked(user);
   });
 };
-jQueryTopicReadersPartial.prototype.checkReaderOverflow = function() {
+JQueryTopicReadersPartial.prototype.checkReaderOverflow = function() {
   var hiddenUsers = 0;
   this.moreBox.css('display', ''); // Show this initially, so we can take its width into account
 
@@ -64,7 +64,7 @@ jQueryTopicReadersPartial.prototype.checkReaderOverflow = function() {
     }
   }
 
-  if (this.showAllReaders && hiddenUsers == 0) {
+  if (this.showAllReaders && hiddenUsers === 0) {
     this.moreBox.text('Hide');
   }
   else if (hiddenUsers > 0) {
@@ -85,7 +85,7 @@ function jQueryTopicView() {  // The UI handler for the single topic
 
   this.e = $('<div></div>').addClass('widget').attr('id', 'topic_wrapper').appendTo('#widgets');
 
-  this.readerView = new jQueryTopicReadersPartial(this.e, function(user) {that.onUserClicked(user)});
+  this.readerView = new JQueryTopicReadersPartial(this.e, function (user) {that.onUserClicked(user);});
   this.$actions = $('<div></div>').attr('id', 'topic_actions').appendTo(this.e);
   this.$messages = $('<div></div>').attr('id', 'topic_messages').appendTo(this.e);
   this.$posts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
@@ -99,8 +99,8 @@ function jQueryTopicView() {  // The UI handler for the single topic
       t.onResize();
     }, 350);
   }, this);
-};
-jQueryTopicView.prototype = new TopicDisplay;
+}
+jQueryTopicView.prototype = new TopicDisplay();
 jQueryTopicView.prototype.constructor = jQueryTopicView;
 
 // Methods --------------------------------------------------------
@@ -137,6 +137,8 @@ jQueryTopicView.prototype.setLoadingState = function() {
 };
 
 jQueryTopicView.prototype.renderTopic = function(topicDetails) {
+  var i, user;
+
   $("#topic_posts .loading").detach();
 
   this.currentTopic = topicDetails;
@@ -148,13 +150,13 @@ jQueryTopicView.prototype.renderTopic = function(topicDetails) {
 
     this.readerView.empty();
     // Only cache the writers
-    for (var i = 0; i < topicDetails.writers.length; ++i) {
-      var user = topicDetails.writers[i];
+    for (i = 0; i < topicDetails.writers.length; ++i) {
+      user = topicDetails.writers[i];
       userCache[user.id] = user;
     }
     // Cache & render the readers
-    for (var i = 0; i < topicDetails.readers.length; ++i) {
-      var user = topicDetails.readers[i];
+    for (i = 0; i < topicDetails.readers.length; ++i) {
+      user = topicDetails.readers[i];
       userCache[user.id] = user; // Cache user object (user later to show the user post images)
     }
     this.readerView.render(topicDetails.readers);
@@ -206,13 +208,13 @@ jQueryTopicView.prototype.renderPosts = function(topicDetails) {
   var $scrollToPost = null;
   for (var i = 0; i < topicDetails.posts.length; i++) {
     var $post = this.renderPost(topicDetails, topicDetails.posts[i]);
-    if (!$scrollToPost && topicDetails.posts[i].deleted == 0 && topicDetails.posts[i].unread == 1) {
+    if (!$scrollToPost && topicDetails.posts[i].deleted === 0 && topicDetails.posts[i].unread === 1) {
       $scrollToPost = $post; 
     }
   }
   this.renderAddReply();
 
-  if ($scrollToPost && this.editingPostId == null) {
+  if ($scrollToPost && this.editingPostId === null) {
     $(">.post", $scrollToPost)[0].scrollIntoView(false);
   }
 };
@@ -222,7 +224,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
   var that = this;
 
   var jPostWrapper = $("#" + elementPostId);
-  if (jPostWrapper.length == 0) {
+  if (jPostWrapper.length === 0) {
     // Post does not exist yet in the UI => Create it
     jPostWrapper = $(
       "<div class='post_wrapper'>" +
@@ -237,7 +239,7 @@ jQueryTopicView.prototype.renderPost = function(topic, post) {
 
     if (post.parent) {
       var parentPostId = '#post-' + post.parent;
-      if (post.intended_post == 1) {
+      if (post.intended_post === 1) {
         var parentPost = $(parentPostId + ">.post_replies");
         var thread = $('<div></div>').addClass('intended_reply_thread').appendTo(parentPost).append(jPostWrapper);
         if (parentPost.hasClass('empty')) {
@@ -323,13 +325,13 @@ jQueryTopicView.prototype._renderTime = function(timestamp) {
 };
 
 jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
-  if (postElement == null) {
+  if (postElement === null) {
     postElement = $("#post-" + post.id + ">.post>.users");
   }
   postElement.empty();
 
   var minHeight = 16;
-  if (post.id != ROOT_ID) { // No user icons for the root
+  if (post.id !== ROOT_ID) { // No user icons for the root
     var size = post.users.length == 1 ? 25 : 21;
     for (var i = 0; i < post.users.length; i++) {
       var postUserId = post.users[i];
@@ -350,7 +352,7 @@ jQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
     } else {
       return userCache[post.users[index]].name;
     }
-  };
+  }
   var apiUserId = API.user_id();
   var authorLine = null;
   if (post.users.length == 1 && (post.id != ROOT_ID || post.users[0] != apiUserId) /* no authorline for ourself */) {
@@ -382,7 +384,7 @@ jQueryTopicView.prototype.renderAddReply = function() {
       var lastPost = rootPosts.eq(-1);
       that.onReplyPost(lastPost.data('post'));
     }
-  })
+  });
   $addReply.appendTo(that.$posts);
 };
 
@@ -394,7 +396,7 @@ jQueryTopicView.prototype.removePost = function(post) {
   if ($('>.post_replies', parent).hasClass('empty')) {
     parent.detach();
   }
-  if (container.hasClass('intended_reply_thread') && container.children().size() == 0) {
+  if (container.hasClass('intended_reply_thread') && container.children().size() === 0) {
     container.detach();
   }
   
@@ -476,7 +478,7 @@ jQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
         that.onReplyPost(post);
       }
     }));
-    if (post.id != ROOT_ID) { // You cannot delete the root
+    if (post.id !== ROOT_ID) { // You cannot delete the root
       $("<button>Delete</button>").appendTo(jbuttons).click(function() {
         if (window.confirm('Are you sure to delete this post?')) {
           that.onDeletePost(post);
@@ -516,12 +518,12 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
 
     $('<button title="Set background color" class="icon">BG</button>').appendTo(this.$actions).click(function() {
       var color = window.prompt('Color? (#FF0000 or red)');
-      if (color!=null)
+      if (color !== null)
         document.execCommand('backcolor', true, color ||'white');
     });
     $('<button title="Set foreground color" class="icon">FG</button>').appendTo(this.$actions).click(function() {
       var color = window.prompt('Color? (#FF0000 or red)');
-      if (color!=null)
+      if (color !== null)
         document.execCommand('forecolor', false, color ||'black');
     });
     $('<button title="Indent text" class="icon">&gt;&gt;</button>').appendTo(this.$actions).click(function() {
@@ -546,13 +548,13 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
     });
     $('<button title="Insert image from url" class="icon imgicon">img</button>').appendTo(this.$actions).click(function() {
       var url = window.prompt("URL?");
-      if (url != null) {
+      if (url !== null) {
         document.execCommand('insertimage', false, url);
       }
     });
     $('<button title="Make link" class="icon urlicon"></button>').appendTo(this.$actions).click(function() {
       var url = window.prompt("URL?");
-      if (url != null) {
+      if (url !== null) {
         document.execCommand('createLink', false, url);
       }
     });
@@ -567,13 +569,13 @@ jQueryTopicView.prototype._renderTopicActions = function(editing) {
     });
 
     if (that.currentTopic) {
-      if (that.currentTopic.archived == 1) {
+      if (that.currentTopic.archived === 1) {
         var bMoveToInbox = $('<button title="Move this topic back to your inbox." id="topic_move_to_inbox">Inbox</button>').appendTo(this.$actions).click(function() {
           that.onMoveToInbox();
         });
       }
 
-      if (that.currentTopic.archived == 0) {
+      if (that.currentTopic.archived === 0) {
         var bMoveToArchive = $('<button title="Move this topic into the archive." id="topic_move_to_archive">Archive topic</button>').appendTo(this.$actions).click(function() {
           that.onMoveToArchive();
         });

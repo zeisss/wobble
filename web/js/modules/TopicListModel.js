@@ -5,7 +5,7 @@
  *  - created(id) - An entry was created on the server
  */
 function TopicListModel(cache) {
-  this.cache = cache
+  this.cache = cache;
   this.cacheTimeout = 60 * 60 * 24 * 5;
 
   this.inboxUnreadTopics = 0;
@@ -36,19 +36,24 @@ _.extend(TopicListModel.prototype, EventBUS.prototype); // Make the model an eve
 TopicListModel.prototype.setShowArchived = function (showArchived) {
   this.cache.set('topicslistpresenter.show_archived', showArchived, this.cacheTimeout);
   this.show_archived = showArchived;
-}
-TopicListModel.prototype.isShowingArchived = function() {
-  return this.show_archived
 };
+
+TopicListModel.prototype.isShowingArchived = function() {
+  return this.show_archived;
+};
+
 TopicListModel.prototype.isSearchResult = function() {
-  return this.is_search_result
-}
+  return this.is_search_result;
+};
+
 TopicListModel.prototype.hasTopics = function() {
   return this.topics && this.topics.length > 0;
 };
+
 TopicListModel.prototype.getTopics = function() {
   return this.topics;
 };
+
 TopicListModel.prototype.getInboxUnreadTopics = function() {
   return this.inboxUnreadTopics;
 };
@@ -65,6 +70,7 @@ TopicListModel.prototype.search = function (filter) {
     }
   });
 };
+
 TopicListModel.prototype.refreshTopicList = function() {
   if (this.requestInProcess) {
     this.reloadAgainAfterRequest = true;
@@ -102,7 +108,7 @@ TopicListModel.prototype.createTopic = function() {
     if (err) {
       that.refreshTopicList();
     } else {
-      that.fire('created', topicId)
+      that.fire('created', topicId);
     }
   });
 
@@ -117,4 +123,4 @@ TopicListModel.prototype.createTopic = function() {
 
   this.topics.splice(0, 0, topicDetails); // Prepend the item to the ViewList
   this.fire('added', topicId);
-}
+};

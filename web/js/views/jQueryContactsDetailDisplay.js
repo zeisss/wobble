@@ -11,7 +11,7 @@ function jQueryContactsDetailDisplay(x,y) {
   this.e.click(function() {
     that.hide();
   });
-};
+}
 jQueryContactsDetailDisplay.prototype = new ContactsDetailDisplay;
 jQueryContactsDetailDisplay.prototype.constructor = jQueryContactsDetailDisplay;
 

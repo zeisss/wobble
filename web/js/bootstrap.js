@@ -52,7 +52,8 @@
     'js/core/WobbleAPI.js',
     'js/core/NotificationHandler.js',
     'js/core/BasicClient.js'
-  )
+  );
+
   // Wobble Modules
   files.push(
     'js/modules/ContactsModel.js',
@@ -99,7 +100,7 @@
 
   // Wait until all scripts are loaded
   window.onload = function() {
-    window.WobbleApp = new window[wobbleAppName];
+    window.WobbleApp = new window[wobbleAppName]();
     window.WobbleApp.bootstrap();
   };
 })();

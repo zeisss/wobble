@@ -10,14 +10,14 @@ function jQueryTopicsView (show_multiple_button, show_search_bar) {
   this.$actions = $('<div id="topics_actions"></div>').appendTo(this.e);
   this.$topics = $('<ul id="topics">' +
                    '  <li>Loading ...</li>' +
-                   '</ul>').appendTo(this.e)
+                   '</ul>').appendTo(this.e);
 
   this.$searchFilter = null;
   if (this.showSearchBar) {
     this.$header.append(this.createSearchHeader());
   }
-};
-jQueryTopicsView.prototype = new TopicsListDisplay;
+}
+jQueryTopicsView.prototype = new TopicsListDisplay();
 jQueryTopicsView.prototype.constructor = jQueryTopicsView;
 
 // Methods --------------------------------------------------------
@@ -61,7 +61,7 @@ jQueryTopicsView.prototype.renderActionButtons = function(enableShowInbox, enabl
     this.$bShowArchive = $('<button>').text('Show Archive').appendTo(this.$actions).click(function() {
       that.onShowArchived();
       that.renderActionButtons(true, false);
-    })
+    });
 
     if (enableShowInbox) {
       this.$bShowInbox.removeAttr('disabled');
@@ -89,10 +89,10 @@ jQueryTopicsView.prototype.renderActionButtons = function(enableShowInbox, enabl
       }
     }).appendTo(this.$actions);
   }
-}
+};
 jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
   // Render to html list
-  if (topics.length == 0) {
+  if (topics.length === 0) {
     this.renderText('No topics here. Try to create one :)');
   }
   for (var i = 0; i < topics.length; ++i) {
@@ -102,10 +102,9 @@ jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, pr
 jQueryTopicsView.prototype.renderTopic = function renderTopic(topic, prepend) {
   var template = '<li id="{{id}}" class="topic_header">' +
            ' <div class="abstract">{{{abstract}}}</div>' +
-           (topic.post_count_unread == 0 ?
+           (topic.post_count_unread === 0 ?
               ' <div class="messages">{{total}} msgs</div>' :
-              ' <div class="messages"><div class=unread>{{unread}}</div> of {{total}}</div>')
-            +
+              ' <div class="messages"><div class=unread>{{unread}}</div> of {{total}}</div>') +
            ' <div class="time">{{time}}</div>' +
            ' <div class="users">{{#users}}<img title="{{name}}" src="http://gravatar.com/avatar/{{img}}?s=32" width="32" height="32">{{/users}}</div>' +
            '</li>';
@@ -134,7 +133,7 @@ jQueryTopicsView.prototype.renderTopic = function renderTopic(topic, prepend) {
   if (prepend) {
     $li.prependTo(this.$topics);
   } else {
-    $li.appendTo(this.$topics)
+    $li.appendTo(this.$topics);
   }
 };
 jQueryTopicsView.prototype.renderTopicTimestamp = function renderTopicTimestamp(timestamp) {
@@ -158,9 +157,9 @@ jQueryTopicsView.prototype.renderTopicTimestamp = function renderTopicTimestamp(
     month = "0" + month;
   }
 
-  if (createdAt.getYear() == now.getYear()) {
-    if (createdAt.getMonth() == now.getMonth() &&
-      createdAt.getDate() == now.getDate()) { // This post is from today, only show the time
+  if (createdAt.getYear() === now.getYear()) {
+    if (createdAt.getMonth() === now.getMonth() &&
+      createdAt.getDate() === now.getDate()) { // This post is from today, only show the time
       return time;
     } else {
       // this post is at least from this year, show day + month

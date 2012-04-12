@@ -7,10 +7,10 @@ function WobbleDesktopClient() {
     'type': 'text/css',
     'href': 'css/desktop.css'
   });
-};
+}
 WobbleDesktopClient.prototype = new BasicClient;
 WobbleDesktopClient.prototype.init = function(user) {
-  if (user != null) {
+  if (user !== null) {
     this.initApp();
   } else {
     this.initLogin();

@@ -1,5 +1,5 @@
 "use strict";
-function AbstractLoginView() {};
+function AbstractLoginView() {}
 AbstractLoginView.prototype = new EventBUS();
 
 AbstractLoginView.prototype.show = function() {

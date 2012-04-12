@@ -19,5 +19,5 @@ function MobileLoginView() {
       that.fireRegister($("#email").val(), $("#password").val());
     });
   });
-};
+}
 MobileLoginView.prototype = new AbstractLoginView();

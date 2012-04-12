@@ -55,14 +55,14 @@ function JQueryContactsView() {
   BUS.on('window.resize', on_window_resize, this);
   on_window_resize.call(this); // Fire it once initially (with a delay)
 
-};
+}
 JQueryContactsView.prototype = new ContactsDisplay();
 JQueryContactsView.prototype.constructor = JQueryContactsView;
 
 // Methods 
 JQueryContactsView.prototype.onResize = function() {
   var viewHeight = this.e.innerHeight();
-  var offsetX = this.$whoami.outerHeight() + this.$actions.outerHeight()
+  var offsetX = this.$whoami.outerHeight() + this.$actions.outerHeight();
 
   this.$contactsList.css('height', viewHeight - offsetX);
 };

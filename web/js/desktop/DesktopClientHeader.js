@@ -43,4 +43,5 @@ function DesktopClientHeader() {
       }
     }
   }, this);
-};
+}
+

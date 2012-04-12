@@ -9,10 +9,10 @@ BUS.fire('topic.selected', {topic_name: 'Hello World!'});
 */
 function EventBUS() {
   this.listeners = {};
-};
+}
 
 EventBUS.prototype.on = function (eventName, callback, context) {
-  var context = context || window;
+  context = context || window;
   if (!this.listeners)
     this.listeners = {};
 
@@ -31,7 +31,8 @@ EventBUS.prototype.fire = function(eventName, data) {
     var callbackEntry = this.listeners[eventName][i];
     callbackEntry[1].apply(callbackEntry[0], [data, eventName]);
   }
-}
+};
+
 EventBUS.prototype.clear = function() {
   this.listeners = {};
 };
@@ -42,6 +43,6 @@ if (!window.BUS) {
   if (window.addEventListener) {
     window.addEventListener('unload', function() {
       BUS.clear();
-    }, false)
+    }, false);
   }
 }

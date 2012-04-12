@@ -26,5 +26,5 @@ function DesktopLoginView() {
       that.fireRegister($("#email").val(), $("#password").val());
     });
   });
-};
+}
 DesktopLoginView.prototype = new AbstractLoginView();

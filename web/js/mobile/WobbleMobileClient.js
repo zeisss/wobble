@@ -22,7 +22,7 @@ function WobbleMobileClient() {
 WobbleMobileClient.prototype = new BasicClient;
 
 WobbleMobileClient.prototype.init = function(user) {
-  if (user != null) {
+  if (user !== null) {
     this.initApp();
   } else {
     this.initLogin();
