@@ -156,7 +156,10 @@ function TopicPresenter(view, model) {
 
     }
 
-    BUS.fire('topic.user.clicked', {
+    var pos = that.view.e.offset();
+    pos.top += 60;
+    BUS.fire('contact.clicked', {
+      'position': pos,
       'user': user,
       'actions': actions
     });

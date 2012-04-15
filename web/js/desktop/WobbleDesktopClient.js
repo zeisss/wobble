@@ -64,7 +64,6 @@ WobbleDesktopClient.prototype.initApp = function() {
 
   this.contactsPresenter = new ContactsPresenter(this.contactsView, this.contactsModel);
   this.contactsDetailPresenter = new ContactsDetailPresenter(new JQueryContactsDetailDisplay(100, 100), this.contactsModel, 'contact.clicked');
-  this.topicUserDetailPresenter = new ContactsDetailPresenter(new JQueryContactsDetailDisplay(600, 100), this.contactsModel, 'topic.user.clicked');
   this.topicListPresenter = new TopicListPresenter(this.topicListView, this.topicListModel);
   this.windowUpdater = new WindowUpdater(this.topicListModel);
 
