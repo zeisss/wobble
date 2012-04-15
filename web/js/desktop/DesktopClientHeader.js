@@ -5,10 +5,11 @@ function DesktopClientHeader() {
 
   this.e.append('<div class="navigation">' +
       '<span class="rpc_queue_state"></span> ' +
-      '<span class="userinfo">Moinz.de Wobble</span> | ' +
-      '<a href="http://github.com/zeisss/wobble" target="_new">Source</a> | ' +
-      '<a href="#" id="signout">Sign Out</a>' +
-      '</div>');
+      '<span class="action userinfo">Moinz.de Wobble</span> ' +
+      '<a class="action" href="http://github.com/zeisss/wobble" target="_new">Source</a> ' +
+      '<a class="action" href="#" id="signout">Logout</a>' +
+      '</div>'
+      );
 
     // 
   $("#signout").click(function() {
@@ -27,8 +28,9 @@ function DesktopClientHeader() {
 
   // Welcome the user
   BUS.on('api.user', function() {
-     $(".navigation .userinfo").text("Hello " + API.user().name);
+     $(".navigation .userinfo").text(API.user().name);
   }, this);
+  $(".navigation .userinfo").text(API.user().name);
 
   // Show a queue status
   var $rpcQueueState = $(".rpc_queue_state", this.e);
