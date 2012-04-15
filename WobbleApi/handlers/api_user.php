@@ -91,7 +91,7 @@ function user_register($params) {
     foreach(TopicRepository::getReaders(WELCOME_TOPIC_ID) as $reader) {
       NotificationRepository::push($reader['id'], array(
         'type' => 'topic_changed',
-        'topic_id' => $topic_id
+        'topic_id' => WELCOME_TOPIC_ID
       ));
 
       TopicMessagesRepository::createMessage(WELCOME_TOPIC_ID, $reader['id'], array(
@@ -145,7 +145,6 @@ function user_change_password($params) {
  * Result = true
  */
 function user_get() {
-  $pdo = ctx_getpdo();
   $self_user_id = ctx_getuserid();
   if (empty ($self_user_id)) {
     return null;

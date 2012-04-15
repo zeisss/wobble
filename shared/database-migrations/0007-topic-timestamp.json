@@ -1,0 +1,8 @@
+{
+    "up": [
+        "ALTER TABLE  `topics` ADD  `timestamp` INT NULL DEFAULT NULL"
+    ],
+    "down": [
+        "ALTER TABLE topics DROP `timestamp`"
+    ]
+}

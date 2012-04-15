@@ -1,18 +1,23 @@
+/*global BUS */
 "use strict";
 
-/*
-BUS.on('topic.selected', function(data, eventName) {
-  // Your code here
-});
-BUS.fire('topic.selected');
-BUS.fire('topic.selected', {topic_name: 'Hello World!'});
-*/
+/**
+ * An EventBUS where anyone can listen to emitted events.
+ *
+ * Example:
+ *   BUS.on('topic.selected', function(data, eventName) {
+ *     // Your code here
+ *   }, context);
+ *
+ *   BUS.fire('topic.selected');
+ *   BUS.fire('topic.selected', {topic_name: 'Hello World!'});
+ */
 function EventBUS() {
   this.listeners = {};
-};
+}
 
 EventBUS.prototype.on = function (eventName, callback, context) {
-  var context = context || window;
+  context = context || window;
   if (!this.listeners)
     this.listeners = {};
 
@@ -31,7 +36,8 @@ EventBUS.prototype.fire = function(eventName, data) {
     var callbackEntry = this.listeners[eventName][i];
     callbackEntry[1].apply(callbackEntry[0], [data, eventName]);
   }
-}
+};
+
 EventBUS.prototype.clear = function() {
   this.listeners = {};
 };
@@ -42,6 +48,6 @@ if (!window.BUS) {
   if (window.addEventListener) {
     window.addEventListener('unload', function() {
       BUS.clear();
-    }, false)
+    }, false);
   }
 }

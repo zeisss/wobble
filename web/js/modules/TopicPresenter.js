@@ -1,3 +1,4 @@
+/*global API BUS */
 "use strict";
 
 // Callbacks
@@ -12,6 +13,8 @@ TopicDisplay.prototype.onIntendedReplyPost = function(post) {};
 TopicDisplay.prototype.onPostClicked = function(post) {};
 TopicDisplay.prototype.onMoveToInbox = function() {};
 TopicDisplay.prototype.onMoveToArchive = function() {};
+TopicDisplay.prototype.onReadAll = function() {};
+TopicDisplay.prototype.onUnreadAll = function() {};
 
 TopicDisplay.prototype.clear = function() {};
 TopicDisplay.prototype.setLoadingState = function() {};
@@ -42,9 +45,6 @@ TopicDisplay.prototype.unrenderContent = function(content) {
   return content;
 }
 
-
-var ROOT_ID = '1'; // the id of the root post
-
 function TopicModel() {
   var that = this;
   var topic = null;
@@ -61,8 +61,8 @@ function TopicModel() {
   that.addPost = function(post) {
     topic.posts.push(post);
   };
+}
 
-};
 TopicModel.prototype.createReply = function(post) {
   return {
     id: API.generate_id(),
@@ -126,6 +126,29 @@ function TopicPresenter(view, model) {
 
   //// ---- View Event Callbacks ------------------------------------------------------
   var that = this;
+  view.onReadAll = function() {
+    var topic = that.model.getTopic();
+    if (topic) {
+      async.forEach(topic.posts, function(post, done) {
+        API.post_change_read(topic.id, post.id, 1, done);
+      }, function(err, results) {
+        that.refreshTopic();
+        BUS.fire('topic.post.changed', model.getTopic().id);
+      });
+    }
+  };
+
+  view.onUnreadAll = function() {
+    var topic = that.model.getTopic();
+    if (topic) {
+      async.forEach(topic.posts, function(post, done) {
+        API.post_change_read(topic.id, post.id, 0, done);
+      }, function(err, results) {
+        that.refreshTopic();
+        BUS.fire('topic.post.changed', model.getTopic().id);
+      });
+    }
+  };
   view.onInviteUserAction = function() {
     BUS.fire('contacts.chooser.open', {
       'multiple': true,
@@ -261,7 +284,7 @@ function TopicPresenter(view, model) {
 
   // Fired by TopicsPresenter
   BUS.on('topic.selected', function(topicId) {
-    if (model.getTopic() != null && model.getTopic().id == topicId) {
+    if (model.getTopic() !== null && model.getTopic().id == topicId) {
       return;
     }
     model.setTopic({id: topicId});
@@ -280,7 +303,7 @@ function TopicPresenter(view, model) {
 
   BUS.on('api.notification', function(data) {
     // Somebody else changed our topic
-    if (model.getTopic() != null && (
+    if (model.getTopic() !== null && (
       data.type == 'topic_changed' && data.topic_id == model.getTopic().id ||
       data.type == 'post_deleted' && data.topic_id == model.getTopic().id ||
       data.type == 'post_changed' && data.topic_id == model.getTopic().id))
@@ -288,9 +311,10 @@ function TopicPresenter(view, model) {
       that.refreshTopic();
     }
   });
-};
+}
+
 TopicPresenter.prototype.refreshTopic = function(callback) {
-  if (this.model.getTopic() == null)
+  if (this.model.getTopic() === null)
     return;
 
   var that  = this;

@@ -1,11 +1,13 @@
+/*global RPC BUS */
 "use strict";
 
 // RPC Wrapper (JSON-RPC 2.0 - http://json-this.RPC.org/wiki/specification)
-var JSONRPC = function(url) {
+function JSONRPC(url) {
   this.url = url;
   this.idSequence = 1;
   this.stateWaiting = [];
 }
+
 /**
  * Mark this RPC object as aborted, so any result that comes in is not propagated further.
  * This means no callbacks will be called anymore.
@@ -38,7 +40,7 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
 
   var body = {
     jsonrpc: "2.0",
-    method: name,
+    method: name
   };
   if (args) {
     body.params = args;
@@ -55,14 +57,14 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
     processData: false,
     contentType: 'application/json; charset=utf-8',
     success: function(data, textStatus, jqXHR) {
+      var errorHandled, error;
+
       if(that.aborted)
         return;
-      if (!callback)
-        return;
 
-      if (data == undefined) {
-        var error = {'message': 'Empty response'};
-        var errorHandled = callback(error);
+      if (data === undefined) {
+        error = {'message': 'Empty response'};
+        errorHandled = callback ? callback(error) : false;
         if (!errorHandled) {
           BUS.fire('rpc.error', {
             request: body,
@@ -71,7 +73,7 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
         }
       }
       else if (data.error) {
-        var errorHandled = callback(data.error);
+        errorHandled = callback ? callback(data.error) : false;
         if (!errorHandled) {
           BUS.fire('rpc.error', {
             request: body,
@@ -79,7 +81,9 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
           });
         }
       } else {
-        callback(undefined, data.result);
+        if (callback) {
+          callback(undefined, data.result);
+        }
       }
     }
   };
@@ -94,7 +98,6 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
     };
   }
 
-  var that = this;
   var req = $.ajax(this.url, ajaxSettings).always(function() {
     that.stateWaiting = jQuery.grep(that.stateWaiting, function(areq, i) {
       return areq !== req;

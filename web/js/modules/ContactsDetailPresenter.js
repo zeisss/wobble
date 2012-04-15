@@ -1,5 +1,7 @@
+/*global BUS API */
 "use strict";
-function ContactsDetailDisplay() {};
+
+function ContactsDetailDisplay() {}
 ContactsDetailDisplay.prototype.show = function(contact) {};
 ContactsDetailDisplay.prototype.showMessage = function(sMessage) {};
 ContactsDetailDisplay.prototype.addAction = function(label, callback) {};

@@ -1,3 +1,4 @@
+/*global BUS API */
 "use strict";
 
 function UserProfilePresenter() {

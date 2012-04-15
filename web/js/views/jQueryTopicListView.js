@@ -1,24 +1,51 @@
+/*global TopicsListDisplay */
 "use strict";
 
-function jQueryTopicsView (show_multiple_button) {
+function JQueryTopicListView (show_multiple_button, show_search_bar) {
+  this.showMultipleButton = show_multiple_button;
+  this.showSearchBar = show_search_bar;
+
   this.e = $('<div></div>').addClass('widget').attr('id', 'topics_wrapper').appendTo('#widgets');
 
+  this.$header = $('<div>').attr('id', 'topiclist_header').appendTo(this.e);
   this.$actions = $('<div id="topics_actions"></div>').appendTo(this.e);
   this.$topics = $('<ul id="topics">' +
                    '  <li>Loading ...</li>' +
-                   '</ul>').appendTo(this.e)
+                   '</ul>').appendTo(this.e);
 
-  this.showMultipleButton = show_multiple_button;
-};
-jQueryTopicsView.prototype = new TopicsListDisplay;
-jQueryTopicsView.prototype.constructor = jQueryTopicsView;
+  this.$searchFilter = null;
+  if (this.showSearchBar) {
+    this.$header.append(this.createSearchHeader());
+  }
+}
+JQueryTopicListView.prototype = new TopicsListDisplay();
+JQueryTopicListView.prototype.constructor = JQueryTopicListView;
 
 // Methods --------------------------------------------------------
-jQueryTopicsView.prototype.setActiveTopic = function(topicId) {
+JQueryTopicListView.prototype.createSearchHeader = function() {
+  var that = this;
+  var e = $('<div class="input_search_box"><input id="topiclist_search" type="text"></div>');
+  this.$searchFilter = $('input', e).on('keydown', function(e) {
+    if (e.keyCode != 13)
+    {
+      return;
+    }
+    e.preventDefault();
+    var value = $(this).val();
+    that.onSearch(value);
+  });
+  return e;
+};
+JQueryTopicListView.prototype.setSearchFilter = function(filter) {
+  if (this.$searchFilter) {
+    this.$searchFilter.val(filter);
+  }
+};
+JQueryTopicListView.prototype.setActiveTopic = function(topicId) {
   $(">li.active", this.$topics).removeClass("active");
   $("#topic-" + topicId).addClass("active");
 };
-jQueryTopicsView.prototype.renderActionButtons = function(showArchived) {
+JQueryTopicListView.prototype.renderActionButtons = function(enableShowInbox, enableShowArchived) {
   this.$actions.empty();
 
   var that = this;
@@ -30,25 +57,29 @@ jQueryTopicsView.prototype.renderActionButtons = function(showArchived) {
     this.$actions.append($('<span></span>').css('width', '30px').css('display', 'inline-block'));
     this.$bShowInbox = $('<button>').text('Show Inbox').appendTo(this.$actions).click(function() {
       that.onShowInbox();
-      that.renderActionButtons(false);
+      that.renderActionButtons(false, true);
     });
     this.$bShowArchive = $('<button>').text('Show Archive').appendTo(this.$actions).click(function() {
       that.onShowArchived();
-      that.renderActionButtons(true);
-    })
+      that.renderActionButtons(true, false);
+    });
 
-    if (showArchived) {
+    if (enableShowInbox) {
       this.$bShowInbox.removeAttr('disabled');
-      this.$bShowArchive.attr('disabled', 'disabled');
     } else {
       this.$bShowInbox.attr('disabled', 'disabled');
+    }
+
+    if (enableShowArchived) {
       this.$bShowArchive.removeAttr('disabled');
+    } else {
+      this.$bShowArchive.attr('disabled', 'disabled');
     }
   }
   else {
     var texts = ['Show archived', 'Show Inbox'];
 
-    $('<button></button>').text(texts[showArchived ? 1 : 0]).click(function() {
+    $('<button></button>').text(texts[enableShowInbox ? 1 : 0]).click(function() {
       var button = $(this);
       if (button.text() == texts[0]) {
         that.onShowArchived();
@@ -59,23 +90,22 @@ jQueryTopicsView.prototype.renderActionButtons = function(showArchived) {
       }
     }).appendTo(this.$actions);
   }
-}
-jQueryTopicsView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
+};
+JQueryTopicListView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
   // Render to html list
-  if (topics.length == 0) {
+  if (topics.length === 0) {
     this.renderText('No topics here. Try to create one :)');
   }
   for (var i = 0; i < topics.length; ++i) {
     this.renderTopic(topics[i], prepend);
   }
 };
-jQueryTopicsView.prototype.renderTopic = function renderTopic(topic, prepend) {
+JQueryTopicListView.prototype.renderTopic = function renderTopic(topic, prepend) {
   var template = '<li id="{{id}}" class="topic_header">' +
-           ' <div class="abstract"></div>' +
-           (topic.post_count_unread == 0 ?
+           ' <div class="abstract">{{{abstract}}}</div>' +
+           (topic.post_count_unread === 0 ?
               ' <div class="messages">{{total}} msgs</div>' :
-              ' <div class="messages"><div class=unread>{{unread}}</div> of {{total}}</div>')
-            +
+              ' <div class="messages"><div class=unread>{{unread}}</div> of {{total}}</div>') +
            ' <div class="time">{{time}}</div>' +
            ' <div class="users">{{#users}}<img title="{{name}}" src="http://gravatar.com/avatar/{{img}}?s=32" width="32" height="32">{{/users}}</div>' +
            '</li>';
@@ -85,29 +115,29 @@ jQueryTopicsView.prototype.renderTopic = function renderTopic(topic, prepend) {
     'users': topic.users.slice(0,3) /* Make sure we only have 3 users */,
     'unread': topic.post_count_unread,
     'total': topic.post_count_total,
-    'time': this.renderTopicTimestamp(topic.max_last_touch)
+    'time': this.renderTopicTimestamp(topic.max_last_touch),
+    'abstract': (topic.archived ? '<i>[Archive]</i> ' : '') + topic.abstract
   })).data('topic', topic);
 
   $li.on('click', function() {
     var topic = $(this).data('topic');
     if (topic) {
-      that.onTopicClicked(topic);
+      that.onTopicClicked(topic.id);
     }
   });
 
-  var abstract = $(".abstract", $li).html(topic.abstract);
-
   if (topic.post_count_unread > 0) {
-    abstract.css('font-weight', 'bold');
+    var $abstract = $(".abstract", $li);
+    $abstract.css('font-weight', 'bold');
   }
 
   if (prepend) {
     $li.prependTo(this.$topics);
   } else {
-    $li.appendTo(this.$topics)
+    $li.appendTo(this.$topics);
   }
 };
-jQueryTopicsView.prototype.renderTopicTimestamp = function renderTopicTimestamp(timestamp) {
+JQueryTopicListView.prototype.renderTopicTimestamp = function renderTopicTimestamp(timestamp) {
   if (!timestamp) {
     return "";
   }
@@ -128,9 +158,9 @@ jQueryTopicsView.prototype.renderTopicTimestamp = function renderTopicTimestamp(
     month = "0" + month;
   }
 
-  if (createdAt.getYear() == now.getYear()) {
-    if (createdAt.getMonth() == now.getMonth() &&
-      createdAt.getDate() == now.getDate()) { // This post is from today, only show the time
+  if (createdAt.getYear() === now.getYear()) {
+    if (createdAt.getMonth() === now.getMonth() &&
+      createdAt.getDate() === now.getDate()) { // This post is from today, only show the time
       return time;
     } else {
       // this post is at least from this year, show day + month
@@ -140,12 +170,12 @@ jQueryTopicsView.prototype.renderTopicTimestamp = function renderTopicTimestamp(
     return createdAt.getDate() + "." + month + "."+ (1900 + createdAt.getYear());
   }
 };
-jQueryTopicsView.prototype.clear = function clear() {
+JQueryTopicListView.prototype.clear = function clear() {
   this.$topics.empty();
 };
-jQueryTopicsView.prototype.showLoading = function showLoading() {
+JQueryTopicListView.prototype.showLoading = function showLoading() {
   this.renderText('Loading ...');
 };
-jQueryTopicsView.prototype.renderText = function renderText(text) {
+JQueryTopicListView.prototype.renderText = function renderText(text) {
   this.$topics.html('<li>' + text + '</li>');
 };

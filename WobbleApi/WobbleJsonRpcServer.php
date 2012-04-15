@@ -1,6 +1,4 @@
 <?php
-require_once WOBBLE_HOME . '/WobbleApi/JsonRpcServer.php'; # Basic RPC Server
-require_once WOBBLE_HOME . '/WobbleApi/context.php'; # introduces session setup, db connection, utility classes, ...
 
 class WobbleJsonRpcServer extends HttpJsonRpcServer {
   public function __construct() {
@@ -12,6 +10,7 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
 
       // Topics
       array('file' => 'api_topiclist.php', 'method' => 'topics_list'),
+      array('file' => 'api_topiclist.php', 'method' => 'topics_search'),
       array('file' => 'api_topiclist.php', 'method' => 'topics_create'),
 
       // Topic

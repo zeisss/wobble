@@ -1,3 +1,4 @@
+/*global BUS API EventBUS */
 "use strict";
 
 /**
@@ -11,13 +12,14 @@
  *  - removed - A contact was removed
  */
 function ContactsModel(cache) {
+  var that = this;
+
   this.contacts = [];
   if (cache) {
     this.cache = cache;
     this.cacheTimeout = 7 * 24 * 60 * 60;
     this.contacts = this.cache.get('contactlist.contacts') || [];
 
-    var that = this;
     setTimeout(function() {
       that.fire('update');
     }, 50);
@@ -36,21 +38,20 @@ function ContactsModel(cache) {
     if (message.type == 'user_online' || message.type == 'user_signout') {
       this.refreshContactList();
     }
-  }, this)
+  }, this);
 
-  var that = this;
   that.refreshContactList(); // Initial load
   this.refreshTimer = setInterval(function() {
     that.refreshContactList();
   }, 1 * 60 * 1000);
-};
+}
 _.extend(ContactsModel.prototype, EventBUS.prototype); // Make the model an eventbus
 
 ContactsModel.prototype.findByEmail = function (email) {
   for (var i = 0; i < this.contacts.length; i++) {
     var user = this.contacts[i];
     if (user.email === email) {
-      return user
+      return user;
     }
   }
   return null;
@@ -60,7 +61,7 @@ ContactsModel.prototype.getContacts = function (callback) {
   var result = this.contacts;
   _.defer(function() { // Fake the async behavior
     callback(undefined, result);
-  })
+  });
 };
 
 ContactsModel.prototype.getUser = function() {
@@ -83,9 +84,10 @@ ContactsModel.prototype.addNewContact = function(contactEmail, callback) {
 ContactsModel.prototype.isContact = function(contactId) {
   var list = _.filter(this.contacts, function(contact) {
     return contact.id == contactId;
-  })
+  });
+
   return (list.length > 0);
-}
+};
 
 ContactsModel.prototype.removeContactFromRooster = function(userId, callback) {
   var that = this;
@@ -103,7 +105,7 @@ ContactsModel.prototype.removeContactFromRooster = function(userId, callback) {
     if (callback)
       return callback(err, data);
   });
-}
+};
 
 /**
  * Refresh the contactlist in the background.
@@ -129,4 +131,4 @@ ContactsModel.prototype.refreshContactList = function() {
       that.fire('update');
     }
   });
-}
+};

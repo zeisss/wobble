@@ -1,3 +1,4 @@
+/*global API BUS */
 "use strict";
 
 /*
@@ -11,14 +12,14 @@
  */
 function NotificationHandler() {
   // Start fetching, when user is available
-  if (window.API && window.API.user() != null) {
+  if (window.API && window.API.user() !== null) {
     this.fetch_notifications();
   } else {
     BUS.on('api.user', function() {
       this.fetch_notifications();
     }, this);
   }
-};
+}
 
 NotificationHandler.prototype.fetch_notifications = function (next_timestamp) {
   var that = this;
@@ -33,7 +34,7 @@ NotificationHandler.prototype.fetch_notifications = function (next_timestamp) {
       that.fetch_notifications(notifications ? notifications.next_timestamp : null);
     }, 500);  // Check in 0.5secs
   });
-}
+};
 
 NotificationHandler.prototype.destroy = function() {
   if (this.timeoutId) {

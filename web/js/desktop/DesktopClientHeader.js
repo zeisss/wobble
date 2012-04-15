@@ -1,3 +1,4 @@
+/*global API BUS */
 
 function DesktopClientHeader() {
   this.e = $('<div></div>').attr('id', 'headline').prependTo('body');
@@ -43,4 +44,5 @@ function DesktopClientHeader() {
       }
     }
   }, this);
-};
+}
+

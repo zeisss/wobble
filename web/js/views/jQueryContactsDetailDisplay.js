@@ -1,9 +1,10 @@
+/*global ContactsDetailDisplay */
 "use strict";
 
 /**
  * Implements the ContactsDetailDisplay as a dialog which flies over all other elements (thank to css z-index).
  */
-function jQueryContactsDetailDisplay(x,y) {
+function JQueryContactsDetailDisplay(x,y) {
   this.e = $('<div class="dialog contactdetail"></div>').appendTo($('body')).css('display', 'none').css('left', x).css('top', y);
   this.contact = null;
 
@@ -11,11 +12,12 @@ function jQueryContactsDetailDisplay(x,y) {
   this.e.click(function() {
     that.hide();
   });
-};
-jQueryContactsDetailDisplay.prototype = new ContactsDetailDisplay;
-jQueryContactsDetailDisplay.prototype.constructor = jQueryContactsDetailDisplay;
+}
 
-jQueryContactsDetailDisplay.prototype.show = function(contact) {
+JQueryContactsDetailDisplay.prototype = new ContactsDetailDisplay();
+JQueryContactsDetailDisplay.prototype.constructor = JQueryContactsDetailDisplay;
+
+JQueryContactsDetailDisplay.prototype.show = function(contact) {
   this.contact = contact;
 
   var template =  ' <div class="usericon usericon{{size}}">' +
@@ -34,15 +36,15 @@ jQueryContactsDetailDisplay.prototype.show = function(contact) {
   });
   this.e.html(html).css('display', '');
 };
-jQueryContactsDetailDisplay.prototype.hide = function() {
+JQueryContactsDetailDisplay.prototype.hide = function() {
   this.e.css('display', 'none');
   this.onClose();
   this.contact = null;
 };
 
-jQueryContactsDetailDisplay.prototype.addAction = function(title, callback) {
+JQueryContactsDetailDisplay.prototype.addAction = function(title, callback) {
   $('<button></button>').text(title).click(callback).appendTo(this.e);
 };
-jQueryContactsDetailDisplay.prototype.showMessage = function(sMessage) {
+JQueryContactsDetailDisplay.prototype.showMessage = function(sMessage) {
   window.alert(sMessage);
 };
