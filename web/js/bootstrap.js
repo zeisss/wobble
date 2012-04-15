@@ -1,7 +1,7 @@
 (function() {
   var isDev = localStorage && localStorage.getItem('WOBBLE_DEV');
   var files = [];
-  var WobbleAppName = (function() {
+  var wobbleAppName = (function() {
     if (localStorage) {
       // An enforced app has priority over the UA detection
       var appName = localStorage.getItem('WOBBLE_ENFORCE_APP');
@@ -79,7 +79,7 @@
   );
 
   // Load classes based selected App
-  if (WobbleAppName.match(/mobile/i)) {
+  if (wobbleAppName.match(/mobile/i)) {
     files.push(
       'js/mobile/MobileNavigator.js',
       'js/mobile/WobbleMobileClient.js'
@@ -97,7 +97,7 @@
 
   // Wait until all scripts are loaded
   window.onload = function() {
-    window.WobbleApp = new window[WobbleAppName];
+    window.WobbleApp = new window[wobbleAppName];
     window.WobbleApp.bootstrap();
   };
 })();

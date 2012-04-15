@@ -97,36 +97,44 @@ WobbleDesktopClient.prototype.doLayout = function(data) {
     return parseFloat(sW);
   }
   var headline = $("#headline");
-  var topics = $("#topics_wrapper");
+  var topicList = $("#topics_wrapper");
   var topic = $("#topic_wrapper");
   var contacts = $("#contacts");
+  var contactsLeft, contactsWidth,
+      topicListLeft, topicListWidth,
+      topicLeft, topicWidth;
 
   if (data.to.w > 830) {
     contacts.css('display', '');
     contacts.css('width', '200px');
     contacts.css('left', 5);
+    contactsLeft = 5;
+    contactsWidth = 200;
   } else {
     contacts.css('display', 'none');
     contacts.css('width', '0px');
     contacts.css('left', '0px');
+    contactsLeft = 0;
+    contactsWidth = 0;
   }
+
   this.topHeader.setRenderUser(data.to.w <= 830);
 
-  var rightPart = data.to.w - (parseFloat(contacts.css('left')) + contacts.width());
+  var rightPart = data.to.w - (contactsLeft + contactsWidth);
 
-  var topicsLeft = contacts.width() + 15;
-  var topicsWidth = Math.ceil(Math.max(rightPart * 0.4, minWidth(topics)));
-  topics.css('left', topicsLeft);
-  topics.width(topicsWidth);
+  topicListLeft = contactsLeft + contactsWidth + 10;
+  topicListWidth = Math.ceil(Math.max(rightPart * 0.4, minWidth(topicList)));
+  topicList.css('left', topicListLeft);
+  topicList.css('width', topicListWidth);
 
-  var topicLeft = topicsLeft + topicsWidth + 10;
-  var topicWidth = Math.ceil(Math.max(data.to.w - topicLeft - 15, minWidth(topics)));
+  topicLeft = topicListLeft + topicListWidth + 10;
+  topicWidth = Math.ceil(Math.max(data.to.w - topicLeft - 15, minWidth(topicList)));
   topic.css('left', topicLeft);
-  topic.width(topicWidth);
+  topic.css('width', topicWidth);
 
   var borderBottom = 35;
   contacts.height(data.to.h - headline.height() - borderBottom);
-  topics.height(data.to.h - headline.height() - borderBottom);
+  topicList.height(data.to.h - headline.height() - borderBottom);
   topic.height(data.to.h - headline.height() - borderBottom);
 };
 
