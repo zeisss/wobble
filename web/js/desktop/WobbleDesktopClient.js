@@ -53,9 +53,10 @@ WobbleDesktopClient.prototype.initApp = function() {
 
   // Create the Views
   this.contactsView = new JQueryContactsView();
+  this.topicView = new JQueryTopicView();
   this.topicView.addContentRenderer(new YesNoMaybeComponent());
   this.topicListView = new JQueryTopicListView(true, true);
-  this.topicView = new JQueryTopicView();
+
 
   // Create the Presenter
   this.contactsChooserPresenter = new ContactsChooserPresenter(

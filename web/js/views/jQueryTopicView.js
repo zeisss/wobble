@@ -206,8 +206,7 @@ JQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
     }, this);
 };
 
-<<<<<<< HEAD
-jQueryTopicView.prototype._renderReader= function(user) {
+JQueryTopicView.prototype._renderReader= function(user) {
   var that = this;
   var containerId = "topic-reader-" + user.id;
   var container = $('#' + containerId);
@@ -228,10 +227,7 @@ jQueryTopicView.prototype._renderReader= function(user) {
   });
 };
 
-jQueryTopicView.prototype.renderPosts = function(topicDetails) {
-=======
 JQueryTopicView.prototype.renderPosts = function(topicDetails) {
->>>>>>> develop
   var $scrollToPost = null;
   for (var i = 0; i < topicDetails.posts.length; i++) {
     var $post = this.renderPost(topicDetails, topicDetails.posts[i]);
