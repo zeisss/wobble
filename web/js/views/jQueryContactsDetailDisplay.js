@@ -17,7 +17,7 @@ function JQueryContactsDetailDisplay(x,y) {
 JQueryContactsDetailDisplay.prototype = new ContactsDetailDisplay();
 JQueryContactsDetailDisplay.prototype.constructor = JQueryContactsDetailDisplay;
 
-JQueryContactsDetailDisplay.prototype.show = function(contact) {
+JQueryContactsDetailDisplay.prototype.show = function(contact, relativeTo) {
   this.contact = contact;
 
   var template =  ' <div class="usericon usericon{{size}}">' +
@@ -35,6 +35,11 @@ JQueryContactsDetailDisplay.prototype.show = function(contact) {
     'size': 100
   });
   this.e.html(html).css('display', '');
+
+  if (relativeTo) {
+    this.e.css('left', relativeTo.left);
+    this.e.css('top', relativeTo.top);
+  }
 };
 JQueryContactsDetailDisplay.prototype.hide = function() {
   this.e.css('display', 'none');

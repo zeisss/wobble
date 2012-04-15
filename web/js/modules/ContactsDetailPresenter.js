@@ -15,7 +15,7 @@ function ContactsDetailPresenter(display, model, eventName) {
 
   BUS.on(eventName, function(data) {
     var theUser = data.user || data.contact;
-    display.show(theUser);
+    display.show(theUser, data.position);
 
     // Add action buttons from provided params
     if (data.actions) {

@@ -45,7 +45,10 @@ function ContactsPresenter(display, model) {
     });
   };
   display.onWhoamiClick = function() {
-    BUS.fire('ui.profile.show');
+    var pos = that.display.$whoami.offset();
+    pos.top += that.display.$whoami.outerHeight() + 5;
+    pos.left += 5;
+    BUS.fire('ui.profile.show', pos);
   };
 
   // WhoAmI  ---------------------------------------------------

@@ -23,7 +23,10 @@ function DesktopClientHeader() {
   });
 
   $(".userinfo", this.e).on('click', function() {
-    BUS.fire('ui.profile.show');
+    var pos = $(this).offset();
+    pos.top += $(this).outerHeight() * 1.2;
+    pos.left -= 50;
+    BUS.fire('ui.profile.show', pos);
   });
 
   // Welcome the user
