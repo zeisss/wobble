@@ -1,3 +1,4 @@
+/*global ContactsChooserDisplay */
 "use strict";
 
 /**
@@ -17,8 +18,8 @@ function ListContactsChooserDisplay(relativeTo) {
 
   this.contacts = [];
   this.selectedContact = null;
-};
-ListContactsChooserDisplay.prototype = new ContactsChooserDisplay;
+}
+ListContactsChooserDisplay.prototype = new ContactsChooserDisplay();
 ListContactsChooserDisplay.prototype.constructor = ListContactsChooserDisplay;
 ListContactsChooserDisplay.prototype.show = function(title) {
   this.title = title;
@@ -32,13 +33,13 @@ ListContactsChooserDisplay.prototype.render = function(contacts) {
   var template =  '<div id="contactschooser_title">{{title}}</div>' +
           '<div class="buttons"><button class=button_close>x</button></div>' +
           '<div id="contactschooser_filter"><input type=text id="contactschooser_filter_text"></div>' +
-          '<ul id="contactschooser_list">'
+          '<ul id="contactschooser_list">' +
           '</ul>';
   this.e.empty().append(Mustache.to_html(template, {
     'title': this.title
   }));
   $contactList = $('#contactschooser_list', this.e);
-  if (this.contacts.length == 0) {
+  if (this.contacts.length === 0) {
     $contactList.append('<li>No contacts</li>');
   } else {
     _.each(this.contacts, function(contact, i) {
@@ -69,7 +70,7 @@ ListContactsChooserDisplay.prototype.render = function(contacts) {
         $filterText.focus(); // Refocus the text input, where we capture the keyboard events
       }, this));
 
-      if (i == 0) {
+      if (i === 0) {
         // Autoselect the first element
         this.setSelectedContact(contact);
       }
@@ -127,7 +128,7 @@ ListContactsChooserDisplay.prototype.close = function() {
 };
 ListContactsChooserDisplay.prototype.setSelectedContact = function(contact) {
   $('.active', this.e).removeClass('active');
-  if (contact != null) {
+  if (contact !== null) {
     $('#contactchooser-contact-' + contact.id, this.e).addClass('active');
   }
 
@@ -177,13 +178,13 @@ ListContactsChooserDisplay.prototype.refreshFilteredContactList = function(filte
         this.setSelectedContact(null);
       }
     } else {
-      if (firstContact == null) {
+      if (firstContact === null) {
         firstContact = contact;
       }
     }
-  };
+  }
 
-  if (this.selectedContact == null && firstContact != null) {
+  if (this.selectedContact === null && firstContact !== null) {
     // No contact selected, mark the first visible one
     this.setSelectedContact(firstContact);
   }

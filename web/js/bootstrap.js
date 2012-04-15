@@ -1,7 +1,7 @@
 (function() {
   var isDev = localStorage && localStorage.getItem('WOBBLE_DEV');
   var files = [];
-  var WobbleAppName = (function() {
+  var wobbleAppName = (function() {
     if (localStorage) {
       // An enforced app has priority over the UA detection
       var appName = localStorage.getItem('WOBBLE_ENFORCE_APP');
@@ -52,7 +52,8 @@
     'js/core/WobbleAPI.js',
     'js/core/NotificationHandler.js',
     'js/core/BasicClient.js'
-  )
+  );
+
   // Wobble Modules
   files.push(
     'js/modules/ContactsModel.js',
@@ -66,10 +67,10 @@
     'js/modules/WindowUpdater.js',
 
     // Views
-    'js/views/jQueryTopicListView.js',
-    'js/views/jQueryTopicView.js',
+    'js/views/JQueryTopicListView.js',
+    'js/views/JQueryTopicView.js',
     'js/views/JQueryContactsView.js',
-    'js/views/jQueryContactsDetailDisplay.js',
+    'js/views/JQueryContactsDetailDisplay.js',
     'js/views/ListContactsChooserDisplay.js',
 //    'js/views/SimpleContactsChooserDisplay.js',
 
@@ -81,7 +82,7 @@
   );
 
   // Load classes based selected App
-  if (WobbleAppName.match(/mobile/i)) {
+  if (wobbleAppName.match(/mobile/i)) {
     files.push(
       'js/mobile/MobileNavigator.js',
       'js/mobile/WobbleMobileClient.js'
@@ -99,7 +100,7 @@
 
   // Wait until all scripts are loaded
   window.onload = function() {
-    window.WobbleApp = new window[WobbleAppName];
+    window.WobbleApp = new window[wobbleAppName]();
     window.WobbleApp.bootstrap();
   };
 })();

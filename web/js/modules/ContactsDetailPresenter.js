@@ -1,5 +1,7 @@
+/*global BUS API */
 "use strict";
-function ContactsDetailDisplay() {};
+
+function ContactsDetailDisplay() {}
 ContactsDetailDisplay.prototype.show = function(contact) {};
 ContactsDetailDisplay.prototype.showMessage = function(sMessage) {};
 ContactsDetailDisplay.prototype.addAction = function(label, callback) {};
@@ -13,7 +15,7 @@ function ContactsDetailPresenter(display, model, eventName) {
 
   BUS.on(eventName, function(data) {
     var theUser = data.user || data.contact;
-    display.show(theUser);
+    display.show(theUser, data.position);
 
     // Add action buttons from provided params
     if (data.actions) {

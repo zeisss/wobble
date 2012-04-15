@@ -1,15 +1,16 @@
+/*global BUS API */
 "use strict";
 
 function UserProfilePresenter() {
   var that = this;
-  BUS.on('ui.profile.show', function() {
-    that.openProfilePopup();
+  BUS.on('ui.profile.show', function(position) {
+    that.openProfilePopup(position);
   });  
 }
 
-UserProfilePresenter.prototype.openProfilePopup = function() {
+UserProfilePresenter.prototype.openProfilePopup = function(position) {
   var that = this;
-  BUS.fire('contact.clicked', {
+  var data = {
       'contact': API.user(),
       'actions': [
         {title: 'Change my name', callback: function() {
@@ -32,7 +33,11 @@ UserProfilePresenter.prototype.openProfilePopup = function() {
            }
         }}
       ]
-   });
+  };
+  if (position) {
+    data.position = position;
+  }
+  BUS.fire('contact.clicked', data);
 };
 
 UserProfilePresenter.prototype.onNameChange = function(newName) {

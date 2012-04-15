@@ -1,3 +1,4 @@
+/*global API BUS */
 "use strict";
 
 // Callbacks
@@ -40,8 +41,8 @@ function TopicModel() {
   that.addPost = function(post) {
     topic.posts.push(post);
   };
+}
 
-};
 TopicModel.prototype.createReply = function(post) {
   return {
     id: API.generate_id(),
@@ -115,7 +116,8 @@ function TopicPresenter(view, model) {
         BUS.fire('topic.post.changed', model.getTopic().id);
       });
     }
-  }
+  };
+
   view.onUnreadAll = function() {
     var topic = that.model.getTopic();
     if (topic) {
@@ -154,7 +156,10 @@ function TopicPresenter(view, model) {
 
     }
 
-    BUS.fire('topic.user.clicked', {
+    var pos = that.view.e.offset();
+    pos.top += 60;
+    BUS.fire('contact.clicked', {
+      'position': pos,
       'user': user,
       'actions': actions
     });
@@ -262,7 +267,7 @@ function TopicPresenter(view, model) {
 
   // Fired by TopicsPresenter
   BUS.on('topic.selected', function(topicId) {
-    if (model.getTopic() != null && model.getTopic().id == topicId) {
+    if (model.getTopic() !== null && model.getTopic().id == topicId) {
       return;
     }
     model.setTopic({id: topicId});
@@ -281,7 +286,7 @@ function TopicPresenter(view, model) {
 
   BUS.on('api.notification', function(data) {
     // Somebody else changed our topic
-    if (model.getTopic() != null && (
+    if (model.getTopic() !== null && (
       data.type == 'topic_changed' && data.topic_id == model.getTopic().id ||
       data.type == 'post_deleted' && data.topic_id == model.getTopic().id ||
       data.type == 'post_changed' && data.topic_id == model.getTopic().id))
@@ -289,9 +294,10 @@ function TopicPresenter(view, model) {
       that.refreshTopic();
     }
   });
-};
+}
+
 TopicPresenter.prototype.refreshTopic = function(callback) {
-  if (this.model.getTopic() == null)
+  if (this.model.getTopic() === null)
     return;
 
   var that  = this;

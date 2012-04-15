@@ -1,6 +1,7 @@
+/*global BUS JSONRPC WobbleAPI NotificationHandler */
 "use strict";
 
-function BasicClient() {};
+function BasicClient() {}
 
 /**
  * Called when all dependencies are loaded. Initializes the basic objects 
@@ -23,10 +24,10 @@ BasicClient.prototype.bootstrap = function() {
   }, this);
 
   var that = this;
-  $(window).bind('beforeunload', function() {
+  $(window).bind('beforeunload', function () {
     // We ignore 1 operation, because there is always a notification fetcher working
     if (rpcOperations > 1) {
-      return 'There are operations pending. Are you sure you want to close now?'
+      return 'There are operations pending. Are you sure you want to close now?';
     }
     that.unload();
   });
@@ -39,17 +40,17 @@ BasicClient.prototype.bootstrap = function() {
       that.preinit(user);
     }
   );
-}
-BasicClient.prototype.preinit = function(user) {
+};
+
+BasicClient.prototype.preinit = function (user) {
   this.notificationFetcher = new NotificationHandler();
 
   $('body').empty().append('<div id=widgets></div>');
 
-
   var appStateSelectedTopicId = window.location.hash ? window.location.hash.substring(1) : null;
   // Fire a select event, when the hash changes, e.g. by the user clicking on something or
   // Using the back button ...
-  $(window).on('hashchange', function() {
+  $(window).on('hashchange', function () {
     var s = window.location.hash;
     if (s.length > 0) {
       s = s.substring(1);
@@ -60,7 +61,7 @@ BasicClient.prototype.preinit = function(user) {
     }
   });
 
-  BUS.on('topic.selected', function(topicId) {
+  BUS.on('topic.selected', function (topicId) {
     if (window.location.hash !== "#" + topicId) {
       appStateSelectedTopicId = topicId;
       window.location.hash = topicId; // Note the current topicId in the URL, so its visible for the user and we can work with it on page reloads
@@ -74,9 +75,11 @@ BasicClient.prototype.preinit = function(user) {
     BUS.fire('topic.selected', appStateSelectedTopicId);
   }
 };
+
 BasicClient.prototype.init = function(user) {
   // Overwrite in Implementation
 };
+
 BasicClient.prototype.unload = function(user) {
   console.log('Unload detected. Marking backend object as destroyed.');
   // Overwrite in Implementation

@@ -1,3 +1,6 @@
+/*global API */
+"use strict";
+
 function WindowUpdater(model) {
   this.model = model;
 
@@ -5,7 +8,7 @@ function WindowUpdater(model) {
     var unreadTopics = this.model.getInboxUnreadTopics();
     this.updateTitle(unreadTopics);
   }, this);
-};
+}
 
 WindowUpdater.prototype.updateTitle = function(unreadTopics) {
   var user = API.user();
@@ -15,7 +18,7 @@ WindowUpdater.prototype.updateTitle = function(unreadTopics) {
       document.title = user.name + ' - Wobble';
       Tinycon.setBubble(unreadTopics);
     }
-    else if (unreadTopics == 0) {
+    else if (unreadTopics === 0) {
       document.title = user.name + " - Wobble";
     } else {
       document.title = "(" + unreadTopics + ") " + user.name + " - Wobble";

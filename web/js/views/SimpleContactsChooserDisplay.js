@@ -1,3 +1,4 @@
+/*global ContactsChooserDisplay */
 "use strict";
 
 /**
@@ -5,13 +6,13 @@
  * javascript window.prompt() function. 
  */
 function SimpleContactsChooserDisplay() {}
-SimpleContactsChooserDisplay.prototype = new ContactsChooserDisplay;
+SimpleContactsChooserDisplay.prototype = new ContactsChooserDisplay();
 SimpleContactsChooserDisplay.prototype.constructor = SimpleContactsChooserDisplay;
 SimpleContactsChooserDisplay.prototype.show = function(title, contacts) {
   var that = this;
   window.setTimeout(function() { // Do this async
     var contactNameOrEmail = window.prompt(title);
-    if (contactNameOrEmail != null) {
+    if (contactNameOrEmail !== null) {
       var matchingContacts = jQuery.grep(contacts, function(contact, index) {
         return contact.name == contactNameOrEmail || contact.email == contactNameOrEmail;
       });
