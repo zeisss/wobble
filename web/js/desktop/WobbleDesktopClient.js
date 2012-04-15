@@ -104,7 +104,7 @@ WobbleDesktopClient.prototype.doLayout = function(data) {
       topicListLeft, topicListWidth,
       topicLeft, topicWidth;
 
-  if (data.to.w > 830) {
+  if (data.to.w > 1015) {
     contacts.css('display', '');
     contacts.css('width', '200px');
     contacts.css('left', 5);
@@ -118,7 +118,7 @@ WobbleDesktopClient.prototype.doLayout = function(data) {
     contactsWidth = 0;
   }
 
-  this.topHeader.setRenderUser(data.to.w <= 830);
+  this.topHeader.setRenderUser(data.to.w <= 1015);
 
   var rightPart = data.to.w - (contactsLeft + contactsWidth);
 
