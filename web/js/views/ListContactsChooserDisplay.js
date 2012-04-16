@@ -142,7 +142,7 @@ ListContactsChooserDisplay.prototype.navigateNextContact = function() {
     element = element.next();
   } while (element.css('display') == 'none');
 
-  if (element) {
+  if (element && element.length > 0) {
     this.setSelectedContact(element.data('contact'));
   }
 };
@@ -154,7 +154,7 @@ ListContactsChooserDisplay.prototype.navigatePreviousContact = function() {
     element = element.prev();
   } while (element.css('display') == 'none');
 
-  if (element) {
+  if (element && element.length > 0) {
     this.setSelectedContact(element.data('contact'));
   }
 };
