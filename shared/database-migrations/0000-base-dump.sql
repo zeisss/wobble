@@ -36,8 +36,8 @@ DROP TABLE IF EXISTS `post_editors`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `post_editors` (
-  `topic_id` varchar(255) DEFAULT NULL,
-  `post_id` varchar(255) NOT NULL,
+  `topic_id` varchar(100) DEFAULT NULL,
+  `post_id` varchar(100) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   UNIQUE KEY `ui_post_editors` (`topic_id`,`post_id`,`user_id`)
 );
@@ -52,8 +52,8 @@ DROP TABLE IF EXISTS `post_locks`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `post_locks` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `topic_id` varchar(255) NOT NULL,
-  `post_id` varchar(255) NOT NULL,
+  `topic_id` varchar(100) NOT NULL,
+  `post_id` varchar(100) NOT NULL,
   `user_id` int(11) NOT NULL,
   `created_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -71,8 +71,8 @@ DROP TABLE IF EXISTS `post_users_read`;
 CREATE TABLE `post_users_read` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
-  `topic_id` varchar(255) NOT NULL,
-  `post_id` varchar(255) NOT NULL,
+  `topic_id` varchar(100) NOT NULL,
+  `post_id` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ui_post_users_read` (`topic_id`,`post_id`,`user_id`)
 );
@@ -86,8 +86,8 @@ DROP TABLE IF EXISTS `posts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `posts` (
-  `topic_id` varchar(255) NOT NULL,
-  `post_id` varchar(255) NOT NULL,
+  `topic_id` varchar(100) NOT NULL,
+  `post_id` varchar(100) NOT NULL,
   `content` text,
   `parent_post_id` varchar(255) DEFAULT NULL,
   `revision_no` int(11) NOT NULL DEFAULT '1',
@@ -123,7 +123,7 @@ DROP TABLE IF EXISTS `topic_readers`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `topic_readers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `topic_id` varchar(255) NOT NULL,
+  `topic_id` varchar(100) NOT NULL,
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ui_topic_readers` (`topic_id`,`user_id`)
@@ -138,7 +138,7 @@ DROP TABLE IF EXISTS `topics`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `topics` (
-  `id` varchar(255) NOT NULL,
+  `id` varchar(100) NOT NULL,
   UNIQUE KEY `topics_id_ui` (`id`)
 );
 /*!40101 SET character_set_client = @saved_cs_client */;

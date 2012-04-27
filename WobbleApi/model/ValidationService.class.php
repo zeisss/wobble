@@ -1,7 +1,7 @@
 <?php
 class ValidationService {
   public static function validate_topicid($input) {
-    $pattern = '/^[-\w]*$/';
+    $pattern = '/^[-\w]{1,100}$/';
     static::check(preg_match($pattern, $input));
   }
 

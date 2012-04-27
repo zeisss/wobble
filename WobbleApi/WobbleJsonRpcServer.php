@@ -54,13 +54,20 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
       // Decrease the performance
       usleep(1000 * rand(100, 3000));
     }
+    $startRequest = microtime(true);
     parent::handleHttpRequest();
+    $endRequest = microtime(true);
+
+    Stats::incr('requests.counter');
+    Stats::incr('requests.time', floor($endRequest - $startRequest));
   }
 
   /**
    * Performs a session validation.
    */
   public function beforeCall($method, $params) {
+    Stats::incr('jsonrpc.api.' . $method . '.invokes');
+
     session_name('WOBBLEID');
     if (empty($params['apikey'])) {
       return;
@@ -100,5 +107,14 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
       }
     }
     SessionService::touch(session_id(), $userid);
+  }
+
+  public function afterCall($method, $params, $result, $error) {
+    if (!is_null($error)) {
+      Stats::incr('jsonrpc.errors');
+    }
+    if (!is_null($result)) {
+      Stats::incr('jsonrpc.success');
+    }
   }
 }
