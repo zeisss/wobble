@@ -12,7 +12,7 @@ class HttpJsonRpcServer extends JsonRpcServer {
    */
   protected function setResponseBody($response) {
     header('Content-Type: application/json');
-    die($response);
+    echo $response;
   }
 
   public function handleHttpRequest() {
