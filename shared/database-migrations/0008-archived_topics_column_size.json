@@ -1,0 +1,8 @@
+{
+    "up": [
+        "ALTER TABLE  `user_archived_topics` CHANGE  `topic_id`  `topic_id` VARCHAR(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL",
+    ],
+    "down": [
+        "ALTER TABLE  `user_archived_topics` CHANGE  `topic_id`  `topic_id` VARCHAR(32) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL"
+    ]
+}
