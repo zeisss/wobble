@@ -13,6 +13,12 @@ requests.label Number of Requests
 requests.min 0
 requests.type DERIVE
 requests.
+success.label Successfull calls
+success.min 0
+success.type DERIVCE
+errors.label Failed calls
+errors.min 0
+errors.type DERIVE
 
 EOM
         exit 0;;
@@ -25,3 +31,7 @@ fi
 
 printf "requests.value "
 $WOBBLE_HOME/scripts/get-stats.php "requests.counter"
+printf "success.value "
+$WOBBLE_HOME/scripts/get-stats.php "jsonrpc.success"
+printf "errors.value "
+$WOBBLE_HOME/scripts/get-stats.php "jsonrpc.errors"
