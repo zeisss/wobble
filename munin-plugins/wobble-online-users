@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 case $1 in
    config)
         cat <<'EOM'
@@ -14,11 +16,11 @@ EOM
 esac
 
 if [ -z "$WOBBLE_HOME" ]; then
-  echo "ERROR: No WOBBLE_HOME set."
+  printf "ERROR: No WOBBLE_HOME set.\n"
   exit 1
 fi
 
-echo -n "users.value "
+printf "users.value "
 $WOBBLE_HOME/scripts/get-online-users.php
-echo -n "sessions.value "
+printf "sessions.value "
 $WOBBLE_HOME/scripts/get-online-users.php --sessions

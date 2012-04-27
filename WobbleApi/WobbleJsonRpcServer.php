@@ -112,9 +112,11 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
   public function afterCall($method, $params, $result, $error) {
     if (!is_null($error)) {
       Stats::incr('jsonrpc.errors');
+      Stats::incr('jsonrpc.api.' . $method . '.errors');
     }
     if (!is_null($result)) {
       Stats::incr('jsonrpc.success');
+      Stats::incr('jsonrpc.api.' . $method . '.success');
     }
   }
 }

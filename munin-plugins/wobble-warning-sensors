@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 case $1 in
    config)
         cat <<'EOM'
@@ -18,11 +20,11 @@ EOM
 esac
 
 if [ -z "$WOBBLE_HOME" ]; then
-  echo "ERROR: No WOBBLE_HOME set."
+  printf "ERROR: No WOBBLE_HOME set.\n"
   exit 1
 fi
 
-echo -n "orphaned_topics.value "
+printf "orphaned_topics.value "
 $WOBBLE_HOME/scripts/wobble-warning-sensors.php --orphaned-topics
-echo -n "orphaned_posts.value "
+printf "orphaned_posts.value "
 $WOBBLE_HOME/scripts/wobble-warning-sensors.php --orphaned-posts
