@@ -39,7 +39,13 @@ $args = array_values($argv);
 
 $actions = array();
 
-if($requestedAction == "all") {
+if ($requestedAction == '-h' || $requestedAction == '--help') {
+  die('Usage: garbage-collector.php all' . PHP_EOL .
+      '       garbage-collector.php posts [topics]' . PHP_EOL .
+      '       garbage-collector.php stats' . PHP_EOL .
+      PHP_EOL);
+}
+else if ($requestedAction == "all") {
   $actions[] = 'cleanupPosts';
   $actions[] = 'cleanupStats';
   $args = array();
