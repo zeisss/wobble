@@ -5,12 +5,14 @@ set -e
 case $1 in
    config)
         cat <<'EOM'
-graph_title Statistics
+graph_title Requests Total 
 graph_info Prints a bunch of statistical information
 graph_category wobble
+graph_period minute
 requests.label Number of Requests
 requests.min 0
 requests.type DERIVE
+requests.
 
 EOM
         exit 0;;

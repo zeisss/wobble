@@ -5,16 +5,17 @@ set -e
 case $1 in
    config)
         cat <<'EOM'
-graph_title Statistics
-graph_info Prints a bunch of statistical information
+graph_title Request Time
+graph_info Whats the average time of the current requests
 graph_category wobble
+graph_period minute
 requests_time.label Request Time
 requests_time.type DERIVE
 requests_time.graph no
 requests.label Number of Requests
 requests.type DERIVE
 requests.graph no
-avg_time.label Average Time
+avg_time.label Average Time (Current)
 avg_time.cdef requests_time,requests,/
 EOM
         exit 0;;
@@ -29,5 +30,5 @@ printf "requests.value "
 $WOBBLE_HOME/scripts/get-stats.php "requests.counter"
 printf "requests_time.value "
 $WOBBLE_HOME/scripts/get-stats.php "requests.time"
-printf "avg_time.value 0"
+printf "avg_time.value 0\n"
 exit 0
