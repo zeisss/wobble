@@ -7,7 +7,7 @@ class Stats {
       $sql = 'INSERT DELAYED INTO `statistics` (`name`, `value`, `last_update`) VALUES (?,?, unix_timestamp()) ON DUPLICATE KEY UPDATE `value` = `value` + ?';
       $pdo->prepare($sql)->execute(array($key, $amount, $amount));
     }
-    
+
     public static function clear($key) {
       $pdo = ctx_getpdo();
 

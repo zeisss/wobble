@@ -12,7 +12,7 @@ class ValidationServiceTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testInvalidTopicIds() {
-    // Length of zero 
+    // Length of zero
     try {
       ValidationService::validate_topicid('');
       $this->fail('No exception raised for invalid topicid.');
