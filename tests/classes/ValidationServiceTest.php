@@ -7,14 +7,28 @@ class ValidationServiceTest extends PHPUnit_Framework_TestCase {
     ValidationService::validate_topicid('1241-124123-1241231221234567899');
     ValidationService::validate_topicid('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
     ValidationService::validate_topicid('-----');
+    ValidationService::validate_topicid('a');
+    ValidationService::validate_topicid(str_pad('', 100, 'a'));
   }
 
   public function testInvalidTopicIds() {
+    // Length of zero 
+    try {
+      ValidationService::validate_topicid('');
+      $this->fail('No exception raised for invalid topicid.');
+    } catch (Exception $e) {}
+
+    // Length > 100
+    try {
+      ValidationService::validate_topicid(str_pad('', 101, 'a'));
+      $this->fail('No exception raised for invalid topicid.');
+    } catch (Exception $e) {}
+
     try {
       ValidationService::validate_topicid('$3214%!');
       $this->fail('No exception raised for invalid topicid.');
     } catch (Exception $e) {}
-      
+
     try {
       ValidationService::validate_topicid('1241-124123-1241231221234567899');
       $this->fail('No exception raised for invalid topicid.');
