@@ -1,0 +1,18 @@
+{
+  "up": [
+    "ALTER TABLE notifications CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "ALTER TABLE posts CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "ALTER TABLE post_editors CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "ALTER TABLE post_locks CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "ALTER TABLE post_users_read CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "ALTER TABLE schema_migrations CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "ALTER TABLE sessions CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "ALTER TABLE topics CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "ALTER TABLE topic_messages CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "ALTER TABLE topic_readers CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "ALTER TABLE users CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "ALTER TABLE users_contacts CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "ALTER TABLE user_archived_topics CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci"
+  ],
+  "down": []
+}
