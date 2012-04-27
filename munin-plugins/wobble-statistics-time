@@ -8,8 +8,10 @@ case $1 in
 graph_title Statistics
 graph_info Prints a bunch of statistical information
 graph_category wobble
+requests_time.label Request Time
 requests_time.type DERIVE
 requests_time.graph no
+requests.label Number of Requests
 requests.type DERIVE
 requests.graph no
 avg_time.label Average Time
@@ -27,3 +29,5 @@ printf "requests.value "
 $WOBBLE_HOME/scripts/get-stats.php "requests.counter"
 printf "requests_time.value "
 $WOBBLE_HOME/scripts/get-stats.php "requests.time"
+printf "avg_time.value 0"
+exit 0
