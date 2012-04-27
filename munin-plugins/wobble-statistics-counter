@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+
+case $1 in
+   config)
+        cat <<'EOM'
+graph_title Statistics
+graph_info Prints a bunch of statistical information
+graph_category wobble
+requests.label Number of Requests
+requests.min 0
+requests.type DERIVE
+
+EOM
+        exit 0;;
+esac
+
+if [ -z "$WOBBLE_HOME" ]; then
+  printf "ERROR: No WOBBLE_HOME set.\n"
+  exit 1
+fi
+
+printf "requests.value "
+$WOBBLE_HOME/scripts/get-stats.php "requests.counter"
