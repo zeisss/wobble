@@ -1,5 +1,5 @@
 // 37 left, 38 up, 39 right, 40 down
-var LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40;
+var LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, ENTER = 13;
 function uiClickPost(post_id) {
   var $post = $('#post-' + post_id + '>.post').click();
   console.log(post_id, $post.parent());
@@ -77,6 +77,8 @@ describe("how the topicview works", function() {
           
           {"id":"3-1-1","parent":"root-3","content":"3.1-1","revision_no":1,"timestamp":1335711808,"deleted":1,"intended_post":1,"unread":0,"users":[1]},
           {"id":"3-1-1-1-1","parent":"3-1-1","content":"3.1-1.1-1","revision_no":1,"timestamp":2,"deleted":0,"intended_post":1,"unread":0,"users":[1]},
+          
+          {"id":"root-4", "parent":"root-3", "content": "4", revision_no:1, timestamp: 1, deleted: 0, intended_post:0,unread:0,users:[1]},
         ],
         "archived":0,
         "created_at":1335554899
@@ -143,9 +145,9 @@ describe("how the topicview works", function() {
       });
 
       it('should keep the focus, if there is no following post', function keepFocusOnEnd() {
-        uiClickPost('root-3');
+        uiClickPost('root-4');
         uiKeyDown(DOWN);
-        expect('root-3').toBeFocused();
+        expect('root-4').toBeFocused();
       });
 
       it('should focus the first post in the next reply_thread, if exists', function focusPrevReplyThread() {
@@ -180,6 +182,27 @@ describe("how the topicview works", function() {
         uiKeyDown(RIGHT);
         // 1-1-1 has a deleted post in the first reply_thread, so use the 2.
         expect('1-1-1-2-1');
+      });
+    });
+
+    describe('using the ENTER key', function () {
+      beforeEach(function () {
+        spyOn(view, 'onReplyPost');
+        spyOn(view, 'onIntendedReplyPost');
+      });
+
+      it('should call onIntendedReplyPost, if a non-intended reply exists', function () {
+        uiClickPost('1');
+        uiKeyDown(ENTER);
+        expect(view.onIntendedReplyPost).toHaveBeenCalled();
+        expect(view.onReplyPost).not.toHaveBeenCalled();
+      });
+
+      it('should call onReplyPost, if no non-intended reply exists', function () {
+        uiClickPost('root-4');
+        uiKeyDown(ENTER);
+        expect(view.onReplyPost).toHaveBeenCalled();
+        expect(view.onIntendedReplyPost).not.toHaveBeenCalled();
       });
     });
   });
