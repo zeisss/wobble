@@ -93,6 +93,80 @@ function JQueryTopicView() {  // The UI handler for the single topic
   this.$messages = $('<div></div>').attr('id', 'topic_messages').appendTo(this.e);
   this.$posts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
 
+  $('body').on('keydown', function (e) {
+    // We ignore events that may come from an input element
+    if (e.srcElement.localName != 'body') {
+      return;
+    }
+    var handled = false;
+    // 37 left, 38 up, 39 right, 40 down
+    // 13 enter
+    // 69 'e'
+    if (e.altKey == false && e.shiftKey == false && e.ctrlKey == false && e.keyCode >= 37 && e.keyCode <= 40) {
+      var $post = $('.active', that.$posts);
+      if ($post.size() > 0) {
+        var $post_wrapper = $post.parent();
+        var $new_post_wrapper = undefined;
+        var $new_post;
+        console.log($post_wrapper);
+        if (e.keyCode == 40 /* Down */) {
+          $new_post_wrapper = $post_wrapper.next('.post_wrapper');
+          if ($new_post_wrapper.size() == 0) { // No down element. Maybe there is another thread?
+            $new_post_wrapper = $post_wrapper.parents('.intended_reply_thread').next('.intended_reply_thread').children().filter('.post_wrapper').first();
+          }
+          if ($new_post_wrapper.size() == 0) {// No down element. Maybe we have a parent which has a next?
+            $new_post_wrapper = $post_wrapper.parents('.post_wrapper').next('.post_wrapper');
+          }
+        }
+        else if (e.keyCode == 38 /* Up */) {
+          $new_post_wrapper = $post_wrapper.prev('.post_wrapper');
+          if ($new_post_wrapper.size() == 0) { // No up element. Maybe there is another thread?
+            $new_post_wrapper = $post_wrapper.parents('.intended_reply_thread').prev('.intended_reply_thread').children().filter('.post_wrapper').first();
+          }
+          if ($new_post_wrapper.size() == 0) {// No up element. Maybe we have a parent?
+            $new_post_wrapper = $post_wrapper.parents('.post_wrapper');
+          }
+        }
+        else if (e.keyCode == 37 /* Left */) {
+          $new_post_wrapper = $post_wrapper.parents('.post_wrapper:first');
+        }
+        else if (e.keyCode == 39 /* Right */) {
+          // Check if our current post has a intended_reply thread. If yes, focus the first the post
+          $new_post_wrapper = $('>.post_replies>.intended_reply_thread>.post_wrapper:first', $post_wrapper);
+        }
+        if ($new_post_wrapper && $new_post_wrapper.size() > 0) {
+          var $new_post = $('>.post', $new_post_wrapper);
+          $new_post.click();
+          $new_post[0].scrollIntoView(false);
+          handled = true;
+        }
+      }
+    }
+    else if (e.keyCode == 69 /* E */) {
+      var $post = $('.active', that.$posts);
+      if ($post.size() > 0) {
+        var post = $post.parent().data('post');
+        if (post) {
+          that.openEditor(post);
+          handled = true;
+        }
+      }
+    } else if (e.keyCode == 13 /* Enter */ && e.altKey == false && e.shiftKey == false && e.ctrlKey == false) {
+      var $post = $('.active', that.$posts);
+      if ($post.size() > 0) {
+        that.createReply($post);
+        handled = true;
+      }
+    } else {
+      console.log('unhandled: ', e);
+    }
+    if (handled) {
+      e.stopPropagation();
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  })
+
   this._renderTopicActions(false);
 
   // On a window.resize event wait for the transformations to finish (should be done in 300ms) and recalc height
@@ -260,12 +334,13 @@ JQueryTopicView.prototype.renderPost = function(topic, post) {
   jPostWrapper.data('post', post); // Refresh the bound post
 
   $(">.post", jPostWrapper).off('click').click(function() {
-      // Add the nice green border to any clicked post
-      $("#topic_wrapper .active").removeClass('active');
-      $(this).addClass('active');
+    console.log('Clicked on', post);
+    // Add the nice green border to any clicked post
+    $("#topic_wrapper .active").removeClass('active');
+    $(this).addClass('active');
 
-      that.onPostClicked(post);
-    });
+    that.onPostClicked(post);
+  });
 
   if (post.deleted != 1) {
     // Render children
@@ -404,7 +479,6 @@ JQueryTopicView.prototype.removePost = function(post) {
   if (container.hasClass('intended_reply_thread') && container.children().size() === 0) {
     container.detach();
   }
-  
 };
 
 JQueryTopicView.prototype.openEditor = function(post) {
@@ -469,19 +543,14 @@ JQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 
     });
   } else {
-    jbuttons.append($("<button>Edit</button>").click(function(event) {
+    jbuttons.append($("<button>").text('Edit').attr('title', 'Click E').click(function(event) {
       that.openEditor(post);
     }));
     jbuttons.append($("<button>Reply</button>").click(function(event) {
       event.stopPropagation();
       event.preventDefault();
       event.stopImmediatePropagation();
-      // If the post-wrapper has a next-sibling, we create an intended-reply
-      if ($(this).closest('.post_wrapper').next('.post_wrapper').size() > 0) {
-        that.onIntendedReplyPost(post);
-      } else {
-        that.onReplyPost(post);
-      }
+      that.createReply($(this));
     }));
     if (post.id !== ROOT_ID) { // You cannot delete the root
       $("<button>Delete</button>").appendTo(jbuttons).click(function() {
@@ -497,7 +566,20 @@ JQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
   }
   return jbuttons;
 };
+JQueryTopicView.prototype.createReply = function createReply($e) {
+  var $post_wrapper = $e.closest('.post_wrapper');
+  var post = $post_wrapper.data('post');
+  if ($post_wrapper.size() == 0 || !post) {
+    return;
+  }
 
+  // If the post-wrapper has a next-sibling, we create an intended-reply
+  if ($post_wrapper.next('.post_wrapper').size() > 0) {
+    this.onIntendedReplyPost(post);
+  } else {
+    this.onReplyPost(post);
+  }
+}
 JQueryTopicView.prototype._renderTopicActions = function(editing) {
   this.$actions.empty();
 
