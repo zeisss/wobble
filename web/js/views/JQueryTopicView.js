@@ -258,6 +258,7 @@ JQueryTopicView.prototype.renderTopic = function(topicDetails) {
 JQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
   this.$messages.empty();
   _.each(messages, function(msgObj) {
+    var that = this;
     var msg = msgObj.message;
     var message_id = msgObj.message_id;
     var str;
@@ -275,12 +276,9 @@ JQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
       con.addClass('message');
       $('<div></div>').html(str).appendTo(con);
       $('<button></button').text('x').click(function() {
-        API.topic_remove_message(topic_id, message_id, function(err, result) {
-          if (!err) {
-            con.remove();
-            con = null;
-          }
-        });
+        that.onMessageDismissed(message_id);
+        con.remove();
+        con = null;
       }).appendTo(con);
       con.appendTo(this.$messages);
     }

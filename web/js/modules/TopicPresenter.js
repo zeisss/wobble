@@ -15,6 +15,7 @@ TopicDisplay.prototype.onMoveToInbox = function() {};
 TopicDisplay.prototype.onMoveToArchive = function() {};
 TopicDisplay.prototype.onReadAll = function() {};
 TopicDisplay.prototype.onUnreadAll = function() {};
+TopicDisplay.prototype.onMessageDismissed = function() {};
 
 TopicDisplay.prototype.clear = function() {};
 TopicDisplay.prototype.setLoadingState = function() {};
@@ -170,6 +171,9 @@ function TopicPresenter(view, model) {
       'actions': actions
     });
   };
+  view.onMessageDismissed = function (message_id) {
+    API.topic_remove_message(topic_id, message_id);
+  }
   view.onPostClicked = function(post) {
     // remove unread class on click + mark read on server side
     if (post.unread == 1) {
