@@ -93,9 +93,9 @@ function JQueryTopicView() {  // The UI handler for the single topic
   this.$messages = $('<div></div>').attr('id', 'topic_messages').appendTo(this.e);
   this.$posts = $('<div></div>').attr('id', 'topic_posts').appendTo(this.e);
 
-  $('body').on('keydown', function (e) {
+  $('body').on('keydown', this.globalKeyHandler = function (e) {
     // We ignore events that may come from an input element
-    if (e.srcElement.localName != 'body') {
+    if (e.target.localName != 'body') {
       return;
     }
     var handled = false;
@@ -108,32 +108,35 @@ function JQueryTopicView() {  // The UI handler for the single topic
         var $post_wrapper = $post.parent();
         var $new_post_wrapper = undefined;
         var $new_post;
-        console.log($post_wrapper);
+
         if (e.keyCode == 40 /* Down */) {
-          $new_post_wrapper = $post_wrapper.next('.post_wrapper');
-          if ($new_post_wrapper.size() == 0) { // No down element. Maybe there is another thread?
-            $new_post_wrapper = $post_wrapper.parents('.intended_reply_thread').next('.intended_reply_thread').children().filter('.post_wrapper').first();
+          $new_post_wrapper = $('>.post', $post_wrapper.nextAll('.post_wrapper')).parent().first();
+
+          if ($new_post_wrapper.size() == 0) { // No down element. Maybe there is another reply_thread?
+            $new_post_wrapper = $post_wrapper.parents('.intended_reply_thread').next('.intended_reply_thread:has(.post_wrapper)').children().filter('.post_wrapper:has(.post)').first();
           }
           if ($new_post_wrapper.size() == 0) {// No down element. Maybe we have a parent which has a next?
-            $new_post_wrapper = $post_wrapper.parents('.post_wrapper').next('.post_wrapper');
+            $new_post_wrapper = $post_wrapper.parents('.post_wrapper').next('.post_wrapper:has(.post)');
           }
         }
         else if (e.keyCode == 38 /* Up */) {
-          $new_post_wrapper = $post_wrapper.prev('.post_wrapper');
-          if ($new_post_wrapper.size() == 0) { // No up element. Maybe there is another thread?
-            $new_post_wrapper = $post_wrapper.parents('.intended_reply_thread').prev('.intended_reply_thread').children().filter('.post_wrapper').first();
+          // Check, if there is a previous post in the current reply_thread
+          $new_post_wrapper = $('>.post', $post_wrapper.prevAll('.post_wrapper')).parent().last();
+          if ($new_post_wrapper.size() == 0) { // Maybe there is another thread?
+            $new_post_wrapper = $post_wrapper.parents('.intended_reply_thread').prev('.intended_reply_thread:has(.post_wrapper)').children().filter('.post_wrapper:has(.post)').first();
           }
-          if ($new_post_wrapper.size() == 0) {// No up element. Maybe we have a parent?
-            $new_post_wrapper = $post_wrapper.parents('.post_wrapper');
+          if ($new_post_wrapper.size() == 0) { // Maybe we have a parent?
+            $new_post_wrapper = $post_wrapper.parents('.post_wrapper:has(.post)').first();;
           }
         }
         else if (e.keyCode == 37 /* Left */) {
-          $new_post_wrapper = $post_wrapper.parents('.post_wrapper:first');
+          $new_post_wrapper = $('>.post', $post_wrapper.parents('.post_wrapper')).parents().first();
         }
         else if (e.keyCode == 39 /* Right */) {
           // Check if our current post has a intended_reply thread. If yes, focus the first the post
-          $new_post_wrapper = $('>.post_replies>.intended_reply_thread>.post_wrapper:first', $post_wrapper);
+          $new_post_wrapper = $('>.post_replies>.intended_reply_thread>.post_wrapper:has(.post)', $post_wrapper).first();
         }
+
         if ($new_post_wrapper && $new_post_wrapper.size() > 0) {
           var $new_post = $('>.post', $new_post_wrapper);
           $new_post.click();
@@ -157,9 +160,8 @@ function JQueryTopicView() {  // The UI handler for the single topic
         that.createReply($post);
         handled = true;
       }
-    } else {
-      console.log('unhandled: ', e);
     }
+
     if (handled) {
       e.stopPropagation();
       e.preventDefault();
@@ -181,6 +183,11 @@ JQueryTopicView.prototype = new TopicDisplay();
 JQueryTopicView.prototype.constructor = JQueryTopicView;
 
 // Methods --------------------------------------------------------
+JQueryTopicView.prototype.destroy = function destroy() {
+  $('body').off('keydown', this.globalKeyHandler);
+  this.e.remove();
+  this.e = null;
+};
 JQueryTopicView.prototype.onResize = function() {
 
   var viewHeight = this.e.innerHeight();
@@ -315,6 +322,9 @@ JQueryTopicView.prototype.renderPost = function(topic, post) {
 
     if (post.parent) {
       var parentPostId = '#post-' + post.parent;
+      if ($(parentPostId).size() === 0) {
+        console.warning('no post with id ' + post.parent + ' found.');
+      }
       if (post.intended_post === 1) {
         var parentPost = $(parentPostId + ">.post_replies");
         var thread = $('<div></div>').addClass('intended_reply_thread').appendTo(parentPost).append(jPostWrapper);
@@ -403,6 +413,7 @@ JQueryTopicView.prototype._renderTime = function(timestamp) {
 
 JQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
   var that = this;
+  var apiUserId = API.user_id();
 
   if (postElement === null) {
     postElement = $("#post-" + post.id + ">.post>.users");
@@ -426,14 +437,14 @@ JQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 
   // Part 2: Render the author names
   function name(index) {
-    if (that.userCache[post.users[index]].id == API.user_id()) {
+    if (that.userCache[post.users[index]].id == apiUserId) {
       return "Me";
     } else {
       return that.userCache[post.users[index]].name;
     }
   }
 
-  var apiUserId = API.user_id();
+
   var authorLine = null;
   if (post.users.length == 1 && (post.id != ROOT_ID || post.users[0] != apiUserId) /* no authorline for ourself */) {
     authorLine = name(0);
