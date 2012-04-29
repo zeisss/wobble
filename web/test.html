@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="exit/qunit/qunit.css" type="text/css" media="screen" />
     <script type="text/javascript" src="ext/qunit/qunit.js"></script>
 
-
     <script src="js/core/EventBUS.js"></script>
     <script src="js/core/JSONRPC.js"></script>
     <script src="js/core/WobbleAPI.js"></script>
@@ -23,27 +22,6 @@
     window.API.signout();
 
     $(document).ready(function(){
-      module("BUS");  
-      test("BUS available", function() {
-        ok( window.BUS !== undefined, "BUS is available" );
-        ok( window.BUS.on !== undefined, "BUS.on is available" );
-        ok( window.BUS.fire !== undefined, "BUS.fire is available" );
-      });
-
-      test("BUS fire simple", function() {
-        expect(3);
-        stop();
-        BUS.on('test', function(data) {
-          equal('Hello World!', data, '"Hello World" message received!');
-        });
-        BUS.on('test', function(data) {
-          equal('Hello World!', data, '"Hello World" message received!');
-          equal('Stephan', this.name, 'BUS.on supports context')
-        }, {name: 'Stephan'});
-        BUS.fire('test', 'Hello World!');
-        start();
-      });
-
       module("RPC");
       test("RPC object available", 1, function() {
         ok( window.RPC !== undefined, "RPC is available" );

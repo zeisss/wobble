@@ -40,7 +40,12 @@ describe("how the topicview works", function() {
         return $('>.post', $e).hasClass('active');
       }
     });
-    
+  });
+
+  afterEach(function () {
+    window.BUS.clear();
+    window.BUS = null;
+    window.API = null;
   });
 
   describe('with keyboard navigation', function() {
