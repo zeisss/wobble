@@ -21,7 +21,7 @@ function cleanupPosts($argv) {
 
     }
   }
-  echo "Checked " . count($topicIds) . " for deleted posts.";
+  echo "Checked " . count($topicIds) . " for deleted posts." . PHP_EOL;
 }
 
 /**
@@ -40,7 +40,7 @@ function cleanupStats($args) {
   echo "Cleared $num stats." . PHP_EOL;
 }
 
-$requestedAction = isset($argv[1]) ? $argv[1] : 'all';
+$requestedAction = isset($argv[1]) ? $argv[1] : 'default';
 unset($argv[0]);
 unset($argv[1]);
 $args = array_values($argv);
@@ -49,11 +49,19 @@ $args = array_values($argv);
 $actions = array();
 
 if ($requestedAction == '-h' || $requestedAction == '--help') {
-  die('Usage: garbage-collector.php all' . PHP_EOL .
+  die('Usage: garbage-collector.php [default]' . PHP_EOL .
+      '       garbage-collector.php all' . PHP_EOL .
+      PHP_EOL .
       '       garbage-collector.php posts [topics]' . PHP_EOL .
       '       garbage-collector.php stats' . PHP_EOL .
       '       garbage-collector.php sessions' . PHP_EOL .
       PHP_EOL);
+}
+else if ($requestedAction == "default") {
+  $actions[] = 'cleanupPosts';
+  # $actions[] = 'cleanupStats';
+  $actions[] = 'cleanupSessions';
+  $args = array();
 }
 else if ($requestedAction == "all") {
   $actions[] = 'cleanupPosts';
