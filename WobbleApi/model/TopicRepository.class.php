@@ -81,6 +81,7 @@ class TopicRepository {
     
       # Integer formatting for JSON-RPC result
       $posts[$i]['timestamp'] = intval($posts[$i]['timestamp']);
+      $posts[$i]['created_at'] = intval($posts[$i]['created_at']);
       $posts[$i]['revision_no'] = intval($posts[$i]['revision_no']);
       $posts[$i]['deleted'] = intval($posts[$i]['deleted']);
       $posts[$i]['unread'] = intval($posts[$i]['unread']);
