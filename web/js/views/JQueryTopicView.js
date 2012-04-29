@@ -175,36 +175,35 @@ JQueryTopicView.prototype.renderTopic = function(topicDetails) {
 };
 
 JQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
-    this.$messages.empty();
-    _.each(messages, function(msgObj) {
-        var msg = msgObj.message;
-        var message_id = msgObj.message_id;
-        var str;
+  this.$messages.empty();
+  _.each(messages, function(msgObj) {
+    var msg = msgObj.message;
+    var message_id = msgObj.message_id;
+    var str;
 
-        if (msg.type == 'user_added') {
-            str = msg.user_name + ' was added.';
-        } else if (msg.type == 'user_removed') {
-            str = msg.user_name + ' was removed';
-        } else {
-          console.log('Unknown message type: ' + msg.type);
-        }
+    if (msg.type == 'user_added') {
+      str = msg.user_name + ' was added.';
+    } else if (msg.type == 'user_removed') {
+      str = msg.user_name + ' was removed';
+    } else {
+      console.log('Unknown message type: ' + msg.type);
+    }
 
-        if (str) {
-            var con = $('<div></div>');
-            con.addClass('message');
-            $('<div></div>').html(str).appendTo(con);
-            $('<button></button').text('x').click(function() {
-                console.log('topic_remove_message ' + topic_id + ', ' + message_id);
-                API.topic_remove_message(topic_id, message_id, function(err, result) {
-                  if (!err) {
-                    con.remove();
-                    con = null;
-                  }
-                });
-            }).appendTo(con);
-            con.appendTo(this.$messages);
-        }
-    }, this);
+    if (str) {
+      var con = $('<div></div>');
+      con.addClass('message');
+      $('<div></div>').html(str).appendTo(con);
+      $('<button></button').text('x').click(function() {
+        API.topic_remove_message(topic_id, message_id, function(err, result) {
+          if (!err) {
+            con.remove();
+            con = null;
+          }
+        });
+      }).appendTo(con);
+      con.appendTo(this.$messages);
+    }
+  }, this);
 };
 
 JQueryTopicView.prototype.renderPosts = function(topicDetails) {
