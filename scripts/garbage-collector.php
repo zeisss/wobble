@@ -15,12 +15,13 @@ function cleanupPosts($argv) {
 
     foreach($topic['posts'] as $post) {
       if ($post['deleted']) {
-        echo " - " . $post['id'] . PHP_EOL;
+        # echo " - " . $post['id'] . PHP_EOL;
         TopicRepository::deletePostsIfNoChildren($topic_id, $post['id']);
       }
 
     }
   }
+  echo "Checked " . count($topicIds) . " for deleted posts.";
 }
 
 /**
