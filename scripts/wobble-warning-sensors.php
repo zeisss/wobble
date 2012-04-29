@@ -8,7 +8,11 @@ if (count($argv) != 2) {
 
 if ($argv[1] == "--orphaned-topics") {
   # Topics which do not have any members
-  $sql = 'select count(*) cnt from (select t.id, count(r.user_id) from topics t, topic_readers r where t.id = r.topic_id group by t.id having count(r.user_id) < 1) t';
+  $sql = 'SELECT count(*) cnt ' . 
+         'FROM topics t ' . 
+         'WHERE t.id NOT IN ( ' .
+         'SELECT DISTINCT topic_id FROM topic_readers' . 
+         ')';
 } else if($argv[1] == "--orphaned-posts") {
   # Posts whose parent does not exist
   $sql = 'select count(*) cnt from posts ' . 
