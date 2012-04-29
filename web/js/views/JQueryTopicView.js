@@ -20,6 +20,7 @@ function JQueryTopicReadersPartial(parent, click_handler) {
 }
 JQueryTopicReadersPartial.prototype.empty = function() {
   this.readerList.empty();
+  this.moreBox.empty();
 };
 JQueryTopicReadersPartial.prototype.render = function(data) {
   this.readerList.empty();
