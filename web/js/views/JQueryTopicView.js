@@ -133,8 +133,7 @@ function JQueryTopicView() {  // The UI handler for the single topic
           $new_post_wrapper = $('>.post', $post_wrapper.parents('.post_wrapper')).parents().first();
         }
         else if (e.keyCode == 39 /* Right */) {
-          // Check if our current post has a intended_reply thread. If yes, focus the first the post
-          $new_post_wrapper = $('>.post_replies>.intended_reply_thread>.post_wrapper:has(.post)', $post_wrapper).first();
+          $new_post_wrapper = $('.post_wrapper:has(>.post)', $post_wrapper).first();
         }
 
         if ($new_post_wrapper && $new_post_wrapper.size() > 0) {

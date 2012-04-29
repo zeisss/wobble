@@ -182,12 +182,19 @@ describe("how the topicview works", function() {
         uiKeyDown(RIGHT);
         expect('1-1-1').toBeFocused();
       });
+
       it('should focus the first valid post in any reply_thread', function () {
         uiClickPost('1-1-1');
         uiKeyDown(RIGHT);
         // 1-1-1 has a deleted post in the first reply_thread, so use the 2.
         expect('1-1-1-2-1');
       });
+
+      it('should focus the child of the first reply, if the first reply is deleted', function () {
+        uiClickPost('root-3');
+        uiKeyDown(RIGHT);
+        expect('3-1-1-1-1').toBeFocused();
+      })
     });
 
     describe('using the ENTER key', function () {
