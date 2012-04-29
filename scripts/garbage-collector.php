@@ -23,6 +23,14 @@ function cleanupPosts($argv) {
   }
 }
 
+/**
+ * Deletes all sessions that are older than 30 days.
+ */
+function cleanupSessions($args) {
+  $num = SessionService::gc();
+  echo "Cleared $num sessions." . PHP_EOL;
+}
+
 function cleanupStats($args) {
   $pdo = ctx_getpdo();
   # delete all stats that were not updated in the last 7 days
@@ -43,13 +51,18 @@ if ($requestedAction == '-h' || $requestedAction == '--help') {
   die('Usage: garbage-collector.php all' . PHP_EOL .
       '       garbage-collector.php posts [topics]' . PHP_EOL .
       '       garbage-collector.php stats' . PHP_EOL .
+      '       garbage-collector.php sessions' . PHP_EOL .
       PHP_EOL);
 }
 else if ($requestedAction == "all") {
   $actions[] = 'cleanupPosts';
   $actions[] = 'cleanupStats';
+  $actions[] = 'cleanupSessions';
   $args = array();
 } 
+else if($requestedAction == 'sessions') {
+  $actions[] = 'cleanupSessions';
+}
 else if($requestedAction == 'posts') {
   $actions[] = 'cleanupPosts';
 }
