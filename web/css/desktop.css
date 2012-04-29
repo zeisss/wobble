@@ -1,3 +1,9 @@
+body {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+/* --------------------------------------------------------- */
 #headline {
   margin-left:10px;
   margin-right:10px;
@@ -101,6 +107,14 @@
 }
 #topic_wrapper #topic_posts {
   overflow:auto;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
 }
-
+/* --------------------------------------------------------- */
+.dialog {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+}
 /* --------------------------------------------------------- */
