@@ -47,7 +47,9 @@ if (!window.BUS) {
   window.BUS = new EventBUS();
   if (window.addEventListener) {
     window.addEventListener('unload', function() {
-      BUS.clear();
+      if (window.BUS) {
+        BUS.clear();
+      }
     }, false);
   }
 }
