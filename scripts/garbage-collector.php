@@ -69,7 +69,8 @@ else if($requestedAction == 'posts') {
 else if($requestedAction == 'stats') {
   $actions[] = 'cleanupStats';
 } else {
-  die('Unknown parameter ' . $requestedAction);
+  echo 'Unknown parameter ' . $requestedAction . PHP_EOL;
+  exit(1);
 }
 
 foreach($actions AS $n) {
