@@ -146,15 +146,21 @@ function TopicPresenter(view, model) {
   };
   view.onUserClicked = function(user) {
     var actions = [];
- 
-    if (user.id != API.user_id()) {
-      actions.push({title: 'Remove from Topic', callback: function() {
+
+    actions.push({
+      title: 'Remove from Topic',
+      callback: function() {
+        if (user.id === API.user_id()) {
+          var q = window.confirm('Are you sure to remove YOURSELF?');
+          if (!q) {
+            return;
+          }
+        }
         that.model.removeUser(user, function(err, result) {
           view.renderTopic(model.getTopic());
         });
-      }});
-
-    }
+      }
+    });
 
     var pos = that.view.e.offset();
     pos.top += 60;
