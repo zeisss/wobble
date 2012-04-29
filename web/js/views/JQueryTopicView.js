@@ -339,7 +339,7 @@ JQueryTopicView.prototype.renderPost = function(topic, post) {
     $("#topic_wrapper .active").removeClass('active');
     $(this).addClass('active');
 
-    that.onPostClicked(post);
+    that.onPostFocused(post);
   });
 
   if (post.deleted != 1) {
