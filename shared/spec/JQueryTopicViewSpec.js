@@ -211,4 +211,39 @@ describe("how the topicview works", function() {
       });
     });
   });
+
+  describe('Content Editing', function () {
+    var view;
+    beforeEach(function () {
+      view = new JQueryTopicView();
+    });
+    afterEach(function () {
+      view.destroy();
+      view = null;
+    });
+
+    it('should rewrite the target attribute of links', function () {
+      var topic = {
+        readers: [],
+        writers: [],
+        posts: [
+          {users:[], deleted:0, id:"no-id", content: "<a id='testlink' href='http://example.org'>Click me!</a>"}
+        ]
+      };
+      view.renderTopic(topic);
+      expect($("#testlink").attr('target')).toBe('_new', 'Target attribute was fixed.');
+    });
+
+    it('should rewrite the target attribute of links', function () {
+      var topic = {
+        readers: [],
+        writers: [],
+        posts: [
+          {users:[], deleted:0, id:"no-id", content: "<a id='testlink' href='http://example.org' target='top'>Click me!</a>"}
+        ]
+      };
+      view.renderTopic(topic);
+      expect($("#testlink").attr('target')).toBe('_new', 'Target attribute was fixed.');
+    });
+  });
 });

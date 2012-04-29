@@ -194,20 +194,6 @@
           });
         });
       });
-
-      test('TopicView: Links get a target attribute set', function() {
-        var topic = {
-          readers: [],
-          writers: [],
-          posts: [
-            {users:[], deleted:0, id:"no-id", content: "<a id='testlink' href='http://example.org' target='top'>Click me!</a>"}
-          ]
-        };
-        var view = new jQueryTopicView();
-        view.renderTopic(topic);
-
-        equal($("#testlink").attr('target'), '_new', 'Target attribute was fixed.');
-      })
     });
       </script>
 
