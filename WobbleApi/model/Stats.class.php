@@ -17,7 +17,8 @@ class Stats {
   public static function incr($key, $amount = 1) {
     $pdo = ctx_getpdo();
 
-    $sql = 'INSERT DELAYED INTO `statistics` (`name`, `value`, `last_update`) VALUES (?,?, unix_timestamp()) ON DUPLICATE KEY UPDATE `value` = `value` + ?';
+    $sql = 'INSERT DELAYED INTO `statistics` (`name`, `value`, `last_update`) VALUES (?,?, unix_timestamp()) ' . 
+		       'ON DUPLICATE KEY UPDATE `value` = `value` + ?, `last_update` = unix_timestamp()';
     $pdo->prepare($sql)->execute(array($key, $amount, $amount));
   }
 

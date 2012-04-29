@@ -1,5 +1,18 @@
 <?php
 class SessionService {
+  public static function gc() {
+    $pdo = ctx_getpdo();
+    $sql = 'SELECT session_id FROM  `sessions` ' .
+           'WHERE last_touch < ( UNIX_TIMESTAMP( ) - ( 31 *24 *60 *60 ) )';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->fetchAll();
+
+    foreach($result as $session) {
+      static::signoff($session['session_id']);
+    }
+    return count($result);
+  }
   /**
    *
    */
