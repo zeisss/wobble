@@ -10,6 +10,9 @@
 
 
   function LocalStorageCache() {}
+  /**
+   * Returns the seconds til 1.1.1970.
+   */
   LocalStorageCache.prototype._now = function _now() {
     return Math.ceil(new Date().getTime() / 1000);
   };
@@ -25,7 +28,7 @@
     var value = window.localStorage.getItem(key);
     if (value) {
       var object = JSON.parse(value);
-      if (object && object.timestamp && this._now() < object.timestamp) {
+      if (object && (null === object.timestamp || object.timestamp > 0 && this._now() < object.timestamp)) {
         return object.value;
       }
     }
