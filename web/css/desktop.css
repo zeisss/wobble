@@ -88,13 +88,6 @@
 #contacts .contactslist {
   overflow:auto;
 }
-#contacts_add:before {
-  content:"";
-  background:url(../icons/glyph_ui_icons/male.png) no-repeat;
-  padding-left: 18px;
-  background-position:1px 1px;
-  background-size: 14px 14px;
-}
 /* --------------------------------------------------------- */
 #topics_wrapper #topics {
   overflow:auto;
@@ -103,35 +96,6 @@
   top:78px;
   bottom:0px;
 }
-#topics_wrapper #topics_actions .icon_show_inbox:before {
-  content:"";
-  background:url(../icons/glyph_ui_icons/Home.png) no-repeat;
-  padding-left: 18px;
-  background-position:1px 1px;
-  background-size: 14px 14px;
-}
-#topics_wrapper #topics_actions .icon_show_archive:before {
-  background:url(../icons/glyph_ui_icons/Files%20Full.png) no-repeat;
-  content: "";
-  padding-left: 18px;
-  background-position:1px 1px;
-  background-size: 14px 14px;
-}
-#topics_wrapper #topics_actions .icon_new:before {
-  background:url(../icons/glyph_ui_icons/Paper%20folded.png) no-repeat;
-  content: "";
-  padding-left: 18px;
-  background-position:1px 1px;
-  background-size: 14px 14px;
-}
-#topics_wrapper .input_search_box:after {
-  position:relative;
-  background:url(../icons/glyph_ui_icons/Search.png) no-repeat;
-  content: "";
-  padding-right: 18px;
-  background-position:1px 1px;
-  background-size: 14px 14px;
-}
 /* --------------------------------------------------------- */
 #topic_wrapper #topic_readers {
 
@@ -139,11 +103,5 @@
 #topic_wrapper #topic_posts {
   overflow:auto;
 }
-#topic_read_all:before {
-  background:url(../icons/glyph_ui_icons/Views.png) no-repeat;
-  content: "";
-  padding-left: 18px;
-  background-position:1px 1px;
-  background-size: 14px 14px;
 }
 /* --------------------------------------------------------- */
