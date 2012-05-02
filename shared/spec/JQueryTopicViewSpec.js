@@ -2,7 +2,6 @@
 var LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, ENTER = 13;
 function uiClickPost(post_id) {
   var $post = $('#post-' + post_id + '>.post').click();
-  console.log(post_id, $post.parent());
   expect($post.size()).toBe(1);
 }
 function uiKeyDown(key) {
