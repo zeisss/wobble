@@ -30,10 +30,18 @@ function DesktopClientHeader() {
   });
 
   // Welcome the user
+  function ui_username() {
+    var user = API.user();
+    if (user) {
+      return user.name;
+    } else {
+      return "";
+    }
+  }
   BUS.on('api.user', function() {
-     $(".navigation .userinfo").text(API.user().name);
+     $(".navigation .userinfo").text(ui_username());
   }, this);
-  $(".navigation .userinfo").text(API.user().name);
+  $(".navigation .userinfo").text(ui_username());
 
   // Show a queue status
   var $rpcQueueState = $(".rpc_queue_state", this.e);
