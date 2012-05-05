@@ -141,7 +141,10 @@ function TopicPresenter(view, model) {
         });
       },
       'on_close': function() {
-        BUS.fire('topic.changed', model.getTopic().id);
+        var topic = model.getTopic();
+        if (topic) {
+          BUS.fire('topic.changed', topic.id);
+        }
       }
     });
   };
