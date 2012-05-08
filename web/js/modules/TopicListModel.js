@@ -21,7 +21,8 @@ function TopicListModel(cache) {
   BUS.on('api.notification', function(message) {
     if (message.type == 'topic_changed' ||
        message.type == 'post_changed' || /* Unread message counter propably got changed */
-       message.type == 'post_deleted') {
+       message.type == 'post_deleted' ||
+       message.type == 'notifications_timeout') {
       this.refreshTopicList();
     }
   }, this);

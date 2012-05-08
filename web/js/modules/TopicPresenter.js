@@ -302,6 +302,7 @@ function TopicPresenter(view, model) {
     if (model.getTopic() !== null && (
       data.type == 'topic_changed' && data.topic_id == model.getTopic().id ||
       data.type == 'post_deleted' && data.topic_id == model.getTopic().id ||
+      data.type == 'notifications_timeout' ||
       data.type == 'post_changed' && data.topic_id == model.getTopic().id))
     {
       that.refreshTopic();
