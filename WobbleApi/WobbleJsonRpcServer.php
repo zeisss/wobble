@@ -101,13 +101,19 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
       SessionService::signon(session_id(), $userid);
       NotificationRepository::deleteNotifications(session_id(), time());
 
-       // Ok, we were offline, so notify everybody that we are back
+      # Ok, we were offline, so notify everybody that we are back
       foreach(ContactsRepository::getContacts($userid) AS $contact) {
         NotificationRepository::push($contact['id'], array (
           'type' => 'user_online',
           'user_id' => $userid
         ));
       }
+
+      # Notify the client, that he needs to reload his data, since we cleared the notifications
+      NotificationRepository::pushSession(
+        session_id(),
+        array('type' => 'notifications_timeout')
+      );
     }
     SessionService::touch(session_id(), $userid);
   }

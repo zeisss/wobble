@@ -5,7 +5,7 @@
 class NotificationRepository {
   function push($user_id, $message) {
     $json = json_encode($message);
-    
+
     $pdo = ctx_getpdo();
     # This creates a notification only, if there is currently a session for that user. otherwise
     # we don't create any rows in the DB.
@@ -16,6 +16,17 @@ class NotificationRepository {
         AND last_touch > (UNIX_TIMESTAMP() - 300)
     ');
     $stmt->execute(array($json, $user_id));
+  }
+
+  function pushSession($session_id, $message) {
+    $json = json_encode($message);
+
+    $pdo = ctx_getpdo();
+    # This creates a notification only, if there is currently a session for that user. otherwise
+    # we don't create any rows in the DB.
+    $stmt = $pdo->prepare('INSERT INTO notifications (session_id, user_id, data, time)
+      SELECT session_id, user_id, ?, UNIX_TIMESTAMP() FROM sessions WHERE session_id = ?');
+    $stmt->execute(array($json, $session_id));
   }
 
   /**
