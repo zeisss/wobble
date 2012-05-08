@@ -10,7 +10,11 @@ class NotificationRepository {
     # This creates a notification only, if there is currently a session for that user. otherwise
     # we don't create any rows in the DB.
     $stmt = $pdo->prepare('INSERT INTO notifications (session_id, user_id, data, time) 
-      SELECT session_id, user_id, ?, UNIX_TIMESTAMP() FROM sessions WHERE user_id = ?');
+      SELECT session_id, user_id, ?, UNIX_TIMESTAMP()
+      FROM sessions
+      WHERE user_id = ?
+        AND last_touch > (UNIX_TIMESTAMP() - 300)
+    ');
     $stmt->execute(array($json, $user_id));
   }
 
