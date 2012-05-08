@@ -87,16 +87,17 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
       }
     }
   };
-  if (callback) {
-    ajaxSettings.error = function(jqXHR, textStatus, errorThrown) {
-      if(that.aborted)
-        return;
 
-      var errorObj = {text: textStatus, error: errorThrown};
-      BUS.fire('rpc.connectionerror', errorObj);
+  ajaxSettings.error = function(jqXHR, textStatus, errorThrown) {
+    if (that.aborted)
+      return;
+
+    var errorObj = {type: 'connectionerror', text: textStatus, error: errorThrown};
+    BUS.fire('rpc.connectionerror', errorObj);
+    if (callback) {
       callback(errorObj);
-    };
-  }
+    }
+  };
 
   var req = $.ajax(this.url, ajaxSettings).always(function() {
     that.stateWaiting = jQuery.grep(that.stateWaiting, function(areq, i) {
