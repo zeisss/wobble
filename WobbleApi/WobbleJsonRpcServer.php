@@ -62,22 +62,15 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     Stats::incr('requests.time', floor($endRequest - $startRequest));
   }
 
-  protected function beforeCallStats($method, $params) {
-    Stats::incr('jsonrpc.api.' . $method . '.invokes');
-
-    $key = 'jsonrpc.api.detailed:';
-    $key .= $method;
-    if (isset($params['topic_id'])) $key .= ';t=' . $params['topic_id'];
-    if (isset($params['post_id'])) $key .= ';p=' . $params['post_id'];
-    $user_id = ctx_getuserid();
-    if (!is_null($user_id)) $key .= ';u=' . $user_id;
-    Stats::incr($key);
-  }
-
   /**
    * Performs a session validation.
    */
   public function beforeCall($method, $params) {
+    self::beforeCallInitSession($method, $params);
+    self::beforeCallStats($method, $params);
+  }
+
+  protected function beforeCallInitSession($method, $params) {
     session_name('WOBBLEID');
     if (empty($params['apikey'])) {
       return;
@@ -117,8 +110,18 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
       }
     }
     SessionService::touch(session_id(), $userid);
+  }
 
-    self::beforeCallStats($method, $params);
+  protected function beforeCallStats($method, $params) {
+    Stats::incr('jsonrpc.api.' . $method . '.invokes');
+
+    $key = 'jsonrpc.api.detailed:';
+    $key .= $method;
+    if (isset($params['topic_id'])) $key .= ';t=' . $params['topic_id'];
+    if (isset($params['post_id'])) $key .= ';p=' . $params['post_id'];
+    $user_id = ctx_getuserid();
+    if (!is_null($user_id)) $key .= ';u=' . $user_id;
+    Stats::incr($key);
   }
 
   public function afterCall($method, $params, $result, $error) {
