@@ -75,10 +75,9 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     if (empty($params['apikey'])) {
       return;
     }
-
     session_id($params['apikey']);
     session_set_cookie_params(60 * 60 * 24 * 31); # tell php to keep this session alive 1 month
-    session_start();
+    session_start(); # Try to find a PHP Session
 
     if (empty($_SESSION['userid'])) {
       # User was so long offline, that the server php-session was destroy
@@ -97,16 +96,17 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     if (empty($user)) {
       return;
     }
+
     if (!$user['online']) {
-       SessionService::signon(session_id(), $userid);
-       NotificationRepository::deleteNotifications(session_id(), time());
+      SessionService::signon(session_id(), $userid);
+      NotificationRepository::deleteNotifications(session_id(), time());
 
        // Ok, we were offline, so notify everybody that we are back
-       foreach(ContactsRepository::getContacts($userid) AS $contact) {
-         NotificationRepository::push($contact['id'], array (
-              'type' => 'user_online',
-              'user_id' => $userid
-         ));
+      foreach(ContactsRepository::getContacts($userid) AS $contact) {
+        NotificationRepository::push($contact['id'], array (
+          'type' => 'user_online',
+          'user_id' => $userid
+        ));
       }
     }
     SessionService::touch(session_id(), $userid);
