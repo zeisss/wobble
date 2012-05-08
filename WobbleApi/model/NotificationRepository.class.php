@@ -55,7 +55,7 @@ class NotificationRepository {
     $result = array();
     $data = $stmt->fetchAll();
     foreach ($data AS $i => $row) {
-      $result[] = json_decode($row['data']);
+      $result[] = json_decode($row['data'], true);
     }
     return $result;
   }
