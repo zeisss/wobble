@@ -104,7 +104,11 @@ function JQueryTopicView() {  // The UI handler for the single topic
     // 69 'e'
     if (e.altKey == false && e.shiftKey == false && e.ctrlKey == false && e.keyCode >= 37 && e.keyCode <= 40) {
       var $post = $('.active', that.$posts);
-      if ($post.size() > 0) {
+
+      if ($post.size() === 0 && e.keyCode === 40) {
+        $("#post-1>.post").click();
+      }
+      else if ($post.size() > 0) {
         var $post_wrapper = $post.parent();
         var $new_post_wrapper = undefined;
         var $new_post;
@@ -420,7 +424,7 @@ JQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
   postElement.empty();
 
   var minHeight = 16;
-  if (post.id !=== ROOT_ID) { // No user icons for the root
+  if (post.id !== ROOT_ID) { // No user icons for the root
     var size = post.users.length === 1 ? 25 : 21;
     for (var i = 0; i < post.users.length; i++) {
       var postUserId = post.users[i];
@@ -451,7 +455,7 @@ JQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
     authorLine = name(0) + " and " + name(1);
   } else if (post.users.length === 3) {
     authorLine = name(0) + ", " + name(1) + " and " + name(2);
-  } else if (post.users.length >== 4) {
+  } else if (post.users.length >= 4) {
     authorLine = name(0) + ", " + name(1) + " and " + (post.users.length-2) + " more";
   } else {
     // NO authorlines (also no icons) => No min height
