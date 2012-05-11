@@ -347,7 +347,6 @@ JQueryTopicView.prototype.renderPost = function(topic, post) {
   jPostWrapper.data('post', post); // Refresh the bound post
 
   $(">.post", jPostWrapper).off('click').click(function() {
-    console.log('Clicked on', post);
     // Add the nice green border to any clicked post
     $("#topic_wrapper .active").removeClass('active');
     $(this).addClass('active');
