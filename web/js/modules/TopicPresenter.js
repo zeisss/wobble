@@ -1,3 +1,4 @@
+/*global API BUS */
 "use strict";
 
 // Callbacks
@@ -9,9 +10,12 @@ TopicDisplay.prototype.onUserClicked = function(user) {};
 TopicDisplay.prototype.onDeletePost = function(post) {};
 TopicDisplay.prototype.onReplyPost = function(post) {};
 TopicDisplay.prototype.onIntendedReplyPost = function(post) {};
-TopicDisplay.prototype.onPostClicked = function(post) {};
+TopicDisplay.prototype.onPostFocused = function(post) {};
 TopicDisplay.prototype.onMoveToInbox = function() {};
 TopicDisplay.prototype.onMoveToArchive = function() {};
+TopicDisplay.prototype.onReadAll = function() {};
+TopicDisplay.prototype.onUnreadAll = function() {};
+TopicDisplay.prototype.onMessageDismissed = function() {};
 
 TopicDisplay.prototype.clear = function() {};
 TopicDisplay.prototype.setLoadingState = function() {};
@@ -38,8 +42,8 @@ function TopicModel() {
   that.addPost = function(post) {
     topic.posts.push(post);
   };
+}
 
-};
 TopicModel.prototype.createReply = function(post) {
   return {
     id: API.generate_id(),
@@ -103,6 +107,29 @@ function TopicPresenter(view, model) {
 
   //// ---- View Event Callbacks ------------------------------------------------------
   var that = this;
+  view.onReadAll = function() {
+    var topic = that.model.getTopic();
+    if (topic) {
+      async.forEach(topic.posts, function(post, done) {
+        API.post_change_read(topic.id, post.id, 1, done);
+      }, function(err, results) {
+        that.refreshTopic();
+        BUS.fire('topic.post.changed', model.getTopic().id);
+      });
+    }
+  };
+
+  view.onUnreadAll = function() {
+    var topic = that.model.getTopic();
+    if (topic) {
+      async.forEach(topic.posts, function(post, done) {
+        API.post_change_read(topic.id, post.id, 0, done);
+      }, function(err, results) {
+        that.refreshTopic();
+        BUS.fire('topic.post.changed', model.getTopic().id);
+      });
+    }
+  };
   view.onInviteUserAction = function() {
     BUS.fire('contacts.chooser.open', {
       'multiple': true,
@@ -114,28 +141,43 @@ function TopicPresenter(view, model) {
         });
       },
       'on_close': function() {
-        BUS.fire('topic.changed', model.getTopic().id);
+        var topic = model.getTopic();
+        if (topic) {
+          BUS.fire('topic.changed', topic.id);
+        }
       }
     });
   };
   view.onUserClicked = function(user) {
     var actions = [];
- 
-    if (user.id != API.user_id()) {
-      actions.push({title: 'Remove from Topic', callback: function() {
+
+    actions.push({
+      title: 'Remove from Topic',
+      callback: function() {
+        if (user.id === API.user_id()) {
+          var q = window.confirm('Are you sure to remove YOURSELF?');
+          if (!q) {
+            return;
+          }
+        }
         that.model.removeUser(user, function(err, result) {
           view.renderTopic(model.getTopic());
         });
-      }});
+      }
+    });
 
-    }
-
-    BUS.fire('topic.user.clicked', {
+    var pos = that.view.e.offset();
+    pos.top += 60;
+    BUS.fire('contact.clicked', {
+      'position': pos,
       'user': user,
       'actions': actions
     });
   };
-  view.onPostClicked = function(post) {
+  view.onMessageDismissed = function (message_id) {
+    API.topic_remove_message(that.model.getTopic().id, message_id);
+  }
+  view.onPostFocused = function(post) {
     // remove unread class on click + mark read on server side
     if (post.unread == 1) {
       var topic = model.getTopic();
@@ -238,7 +280,7 @@ function TopicPresenter(view, model) {
 
   // Fired by TopicsPresenter
   BUS.on('topic.selected', function(topicId) {
-    if (model.getTopic() != null && model.getTopic().id == topicId) {
+    if (model.getTopic() !== null && model.getTopic().id == topicId) {
       return;
     }
     if (view.isEditing()) {
@@ -260,17 +302,19 @@ function TopicPresenter(view, model) {
 
   BUS.on('api.notification', function(data) {
     // Somebody else changed our topic
-    if (model.getTopic() != null && (
+    if (model.getTopic() !== null && (
       data.type == 'topic_changed' && data.topic_id == model.getTopic().id ||
       data.type == 'post_deleted' && data.topic_id == model.getTopic().id ||
+      data.type == 'notifications_timeout' ||
       data.type == 'post_changed' && data.topic_id == model.getTopic().id))
     {
       that.refreshTopic();
     }
   });
-};
+}
+
 TopicPresenter.prototype.refreshTopic = function(callback) {
-  if (this.model.getTopic() == null)
+  if (this.model.getTopic() === null)
     return;
 
   var that  = this;

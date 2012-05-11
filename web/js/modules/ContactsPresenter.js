@@ -1,3 +1,4 @@
+/*global BUS*/
 "use strict";
 
 
@@ -44,8 +45,11 @@ function ContactsPresenter(display, model) {
     });
   };
   display.onWhoamiClick = function() {
-    BUS.fire('ui.profile.show');
-  }
+    var pos = that.display.$whoami.offset();
+    pos.top += that.display.$whoami.outerHeight() + 5;
+    pos.left += 5;
+    BUS.fire('ui.profile.show', pos);
+  };
 
   // WhoAmI  ---------------------------------------------------
   model.on('user', function(user) {
@@ -65,7 +69,8 @@ ContactsPresenter.prototype.removeContactFromRooster = function(userId) {
   this.model.removeContactFromRooster(userId, function(err) {
     that.refreshContacts();
   });
-}
+};
+
 ContactsPresenter.prototype.refreshContacts = function () {
   var display = this.display;
   this.model.getContacts(function(err, data) {

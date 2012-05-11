@@ -1,3 +1,4 @@
+/*global BUS ContactsDisplay */
 "use strict";
 
 /**
@@ -19,7 +20,8 @@ function JQueryContactsView() {
     ' <button id="contacts_add">Add</button>' +
     ' <button id="show_my_profile">Show my profile</button>' +
     '</div>' +
-    '<ul class="contactslist"></ul>';
+    '<ul class="contactslist"></ul>',
+    that = this;
   this.e = $('<div></div>').addClass('widget').attr('id', 'contacts').appendTo('#widgets');
 
   // NOTE: Makes sure that thie contactsList does not start with a 100% width
@@ -47,22 +49,21 @@ function JQueryContactsView() {
 
   // On a window.resize event wait for the transformations to finish (should be done in 300ms) and recalc height
   function on_window_resize() {
-    var t = this;
     window.setTimeout(function() {
-      t.onResize();
+      that.onResize();
     }, 350);
   }
-  BUS.on('window.resize', on_window_resize, this);
-  on_window_resize.call(this); // Fire it once initially (with a delay)
+  BUS.on('window.resize', on_window_resize);
+  on_window_resize(); // Fire it once initially (with a delay)
 
-};
+}
 JQueryContactsView.prototype = new ContactsDisplay();
 JQueryContactsView.prototype.constructor = JQueryContactsView;
 
 // Methods 
 JQueryContactsView.prototype.onResize = function() {
   var viewHeight = this.e.innerHeight();
-  var offsetX = this.$whoami.outerHeight() + this.$actions.outerHeight()
+  var offsetX = this.$whoami.outerHeight() + this.$actions.outerHeight();
 
   this.$contactsList.css('height', viewHeight - offsetX);
 };

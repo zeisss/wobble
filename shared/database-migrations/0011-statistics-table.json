@@ -1,0 +1,10 @@
+{
+  "up": [
+    "CREATE TABLE `statistics` (`name` varchar(50) CHARACTER SET ascii NOT NULL,`value` int(13) NOT NULL,`last_update` int(11) NOT NULL,PRIMARY KEY (`name`)) ENGINE=MyISAM DEFAULT CHARSET=utf8",
+    "INSERT INTO `statistics` (name, value, last_update) VALUES ('requests.total', 0, unix_timestamp())",
+    "INSERT INTO `statistics` (name, value, last_update) VALUES ('requests.time', 0, unix_timestamp())"
+  ],
+  "down": [
+    "DROP TABLE `statistics`"
+  ]
+}

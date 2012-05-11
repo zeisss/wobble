@@ -1,8 +1,7 @@
+/*global BUS */
 "use strict";
 
-
-// API Wrapper functions
-var WobbleAPI = function(rpc, callback) {
+function WobbleAPI(rpc, callback) {
   if (!rpc) {
     throw new Error('RPC object is required for WobbleAPI object');
   }
@@ -26,22 +25,29 @@ var WobbleAPI = function(rpc, callback) {
   if (this.apikey.get()) {
     this.refreshUser(callback);
   } else {
-    if(callback) callback(null);
+    if(callback) {
+      setTimeout(function() {
+        callback(null);
+      }, 0);
+    }
   }
-};
+}
+
 WobbleAPI.prototype.destroy = function() {};
+
 /**
  * Adds the apikey to the parameters and call the doRPC method of the rpc object.
  *
  * @see this.rpc
  */
 WobbleAPI.prototype.doRPC = function(name, params, callback) {
-  if(typeof(params) == "function") {
-      callback = params
-      params = undefined
+  if (typeof(params) == "function") {
+      callback = params;
+      params = undefined;
   }
-  if(this.apikey.get()) {
-    if(params == undefined) {
+
+  if (this.apikey.get()) {
+    if (params === undefined) {
       params = {
         'apikey': this.apikey.get()
       };
@@ -53,15 +59,16 @@ WobbleAPI.prototype.doRPC = function(name, params, callback) {
 };
 
 WobbleAPI.prototype.refreshUser = function(callback) {
-  this.user_get($.proxy(function(err, user) {
+  var that = this;
+  this.user_get(function(err, user) {
     if (!err) {
-      this._user = user;
+      that._user = user;
       BUS.fire('api.user', user);
       if (callback) {
         return callback(user);
       }
     }
-  }, this));
+  });
 };
 
 // Directly returning functions
@@ -70,18 +77,21 @@ WobbleAPI.prototype.generate_id = function() {
   var id = this.user_id() + "-" + (new Date().getTime()) + "-" + Math.ceil(Math.random() * 100000);
   return id;
 };
+
 WobbleAPI.prototype.user_id = function() {
   return this._user ? this._user.id : null;
 };
+
 WobbleAPI.prototype.user = function() {
   return this._user;
-},
+};
 
 // Async stuff
 /* Core / Basic Stuff */
 WobbleAPI.prototype.wobble_api_version = function(callback) {
   this.doRPC('wobble.api_version', callback);
 };
+
 WobbleAPI.prototype.systemListMethods = function(callback) {
   this.doRPC('system.listMethods', callback); 
 };
@@ -102,6 +112,7 @@ WobbleAPI.prototype.register = function(email, password, callback) {
       return callback(err, result);
   });
 };
+
 WobbleAPI.prototype.login = function(email, password, callback) {
   var that = this;
   this.doRPC('user_login', {'email': email, 'password': password}, function(err, result) {
@@ -112,6 +123,7 @@ WobbleAPI.prototype.login = function(email, password, callback) {
       return callback(err, result);
   });
 };
+
 WobbleAPI.prototype.signout = function(callback) {
   var that = this;
   this.doRPC('user_signout', function(err, result) {
@@ -170,7 +182,7 @@ WobbleAPI.prototype.topic_set_archived = function topic_set_archived(topicId, ar
 };
 WobbleAPI.prototype.topic_remove_message = function topic_remove_message(topicId, messageId, callback) {
   this.doRPC('topic_remove_message', {topic_id: topicId, message_id: messageId}, callback);
-}
+};
 
 WobbleAPI.prototype.post_change_read = function(topicId, postId, readStatus, callback) {
   this.doRPC('post_change_read', {topic_id: topicId, post_id: postId, read: readStatus}, callback);
@@ -191,4 +203,3 @@ WobbleAPI.prototype.post_edit = function(topicId, postId, content, revision_no, 
 WobbleAPI.prototype.post_delete = function(topicId, postId, callback) {
   this.doRPC('post_delete', {topic_id: topicId, post_id: postId}, callback);
 };
-

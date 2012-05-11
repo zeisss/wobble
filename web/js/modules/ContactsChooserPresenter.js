@@ -1,4 +1,6 @@
+/*global BUS */
 "use strict";
+
 /**
  * The display for the ContactsChooserPresenter
  */
@@ -8,8 +10,8 @@ ContactsChooserDisplay.prototype.show = function(title) {};
 ContactsChooserDisplay.prototype.close = function() {};
 ContactsChooserDisplay.prototype.setPresenter = function(presenter) {
   this.presenter = presenter;
-}
-ContactsChooserDisplay.prototype.renderContacts = function(contacts) {}
+};
+ContactsChooserDisplay.prototype.renderContacts = function(contacts) {};
 // Callbacks
 ContactsChooserDisplay.prototype.onAddContact = function(contact) {};
 ContactsChooserDisplay.prototype.onClose = function(contact) {};
@@ -40,7 +42,8 @@ function ContactsChooserPresenter(display, model) {
   BUS.on('topic.selected', function() {
     this.display.close();
   }, this);
-};
+}
+
 /**
  * Starts a loop where the user can add users. For each added user the options.on_add callback is executed.
  * 

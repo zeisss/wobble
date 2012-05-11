@@ -1,12 +1,14 @@
+/*global BUS EventBUS */
 "use strict";
-function TopicsListDisplay() {};
+
+function TopicsListDisplay() {}
 _.extend(TopicsListDisplay.prototype, EventBUS.prototype); // Make the view an eventbus
 // Event Handlers -------------------------------------------------
-TopicsListDisplay.prototype.onTopicClicked = function(topicId) { this.fire('topic_clicked', topicId)};
+TopicsListDisplay.prototype.onTopicClicked = function(topicId) { this.fire('topic_clicked', topicId);};
 TopicsListDisplay.prototype.onCreateNewTopic = function() { this.fire('action_create_topic');};
 TopicsListDisplay.prototype.onShowArchived = function() { this.fire('action_show_archive');};
 TopicsListDisplay.prototype.onShowInbox = function() {this.fire('action_show_inbox');};
-TopicsListDisplay.prototype.onSearch = function(search) {this.fire('action_search', search);}
+TopicsListDisplay.prototype.onSearch = function(search) {this.fire('action_search', search);};
 // Methods --------------------------------------------------------
 TopicsListDisplay.prototype.showLoading = function() {};
 TopicsListDisplay.prototype.setActiveTopic = function(topicId) {};
@@ -40,7 +42,7 @@ function TopicListPresenter (view, model) {
   }, this);
   this.view.on('action_create_topic', function() {
     this.model.createTopic();
-  }, this)
+  }, this);
   this.view.on('action_show_archive', function() {
     this.setShowArchived(1);
   }, this);
@@ -78,7 +80,7 @@ function TopicListPresenter (view, model) {
       this.setSelectedTopicId(topicId, true);
     }
   }, this);
-};
+}
 
 TopicListPresenter.prototype.setShowArchived = function setShowArchived(show_archived) {
   this.view.showLoading();

@@ -1,7 +1,7 @@
 <?php
 class ValidationService {
   public static function validate_topicid($input) {
-    $pattern = '/^[-\w]*$/';
+    $pattern = '/^[-\w]{1,100}$/';
     static::check(preg_match($pattern, $input));
   }
 
@@ -21,6 +21,10 @@ class ValidationService {
   public static function validate_list($input, $list) {
     $in_list = in_array($input, $list);
     static::check($in_list !== FALSE);
+  }
+
+  public static function validate_boolean($input) {
+      static::validate_list($input, array(0, 1));
   }
 
   public static function check($boolean, $message = 'Invalid Input!') {

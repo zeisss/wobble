@@ -1,7 +1,7 @@
 (function() {
   var isDev = localStorage && localStorage.getItem('WOBBLE_DEV');
   var files = [];
-  var WobbleAppName = (function() {
+  var wobbleAppName = (function() {
     if (localStorage) {
       // An enforced app has priority over the UA detection
       var appName = localStorage.getItem('WOBBLE_ENFORCE_APP');
@@ -27,17 +27,19 @@
   // External Libraries
   if (isDev) {
     files.push(
-      'js/ext/tinycon.js',
-      'js/ext/underscore.js',
-      'js/ext/jquery-1.7.1.js',
-      'js/ext/mustache.js'
+      'ext/tinycon.js',
+      'ext/underscore.js',
+      'ext/jquery-1.7.1.js',
+      'ext/mustache.js',
+      'ext/async.js'
     );
   } else {
     files.push(
-      'js/ext/tinycon.min.js',
-      'js/ext/underscore-min.js',
-      'js/ext/jquery.min.js',
-      'js/ext/mustache.min.js'
+      'ext/tinycon.min.js',
+      'ext/underscore-min.js',
+      'ext/jquery.min.js',
+      'ext/mustache.min.js',
+      'ext/async.min.js'
     );
   }
 
@@ -50,7 +52,8 @@
     'js/core/WobbleAPI.js',
     'js/core/NotificationHandler.js',
     'js/core/BasicClient.js'
-  )
+  );
+
   // Wobble Modules
   files.push(
     'js/modules/ContactsModel.js',
@@ -64,10 +67,10 @@
     'js/modules/WindowUpdater.js',
 
     // Views
-    'js/views/jQueryTopicListView.js',
-    'js/views/jQueryTopicView.js',
+    'js/views/JQueryTopicListView.js',
+    'js/views/JQueryTopicView.js',
     'js/views/JQueryContactsView.js',
-    'js/views/jQueryContactsDetailDisplay.js',
+    'js/views/JQueryContactsDetailDisplay.js',
     'js/views/ListContactsChooserDisplay.js',
 //    'js/views/SimpleContactsChooserDisplay.js',
 
@@ -79,7 +82,7 @@
   );
 
   // Load classes based selected App
-  if (WobbleAppName.match(/mobile/i)) {
+  if (wobbleAppName.match(/mobile/i)) {
     files.push(
       'js/mobile/MobileNavigator.js',
       'js/mobile/WobbleMobileClient.js'
@@ -97,7 +100,7 @@
 
   // Wait until all scripts are loaded
   window.onload = function() {
-    window.WobbleApp = new window[WobbleAppName];
+    window.WobbleApp = new window[wobbleAppName]();
     window.WobbleApp.bootstrap();
   };
 })();

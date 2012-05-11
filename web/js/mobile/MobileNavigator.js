@@ -5,7 +5,7 @@ function MobileNavigation(app) {
 
   var template = '<button id="navOverview">Overview</button>' +
            '<button id="navContacts">Contacts</button>' +
-           '<button id="navLogout">Logout</button>'
+           '<button id="navLogout">Logout</button>';
   this.e.append(template);
 
   $('button', this.e).click(function() {

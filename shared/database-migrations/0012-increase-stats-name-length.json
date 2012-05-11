@@ -1,0 +1,8 @@
+{
+  "up": [
+    "ALTER TABLE  `statistics` CHANGE  `name`  `name` VARCHAR(255) CHARACTER SET ascii NOT NULL"
+  ],
+  "down": [
+    "ALTER TABLE  `statistics` CHANGE  `name`  `name` VARCHAR(50) CHARACTER SET ascii NOT NULL"
+  ]
+}

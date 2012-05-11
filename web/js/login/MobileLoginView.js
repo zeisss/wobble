@@ -1,3 +1,4 @@
+/*global AbstractLoginView */
 "use strict";
 function MobileLoginView() {
   this.e = $("<div></div>").attr('id', 'mobileloginview').appendTo('body');
@@ -19,5 +20,5 @@ function MobileLoginView() {
       that.fireRegister($("#email").val(), $("#password").val());
     });
   });
-};
+}
 MobileLoginView.prototype = new AbstractLoginView();
