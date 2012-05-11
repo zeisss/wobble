@@ -209,17 +209,22 @@ function TopicPresenter(view, model) {
     });
   };
   view.onStopPostEdit = function(post, content) {
+    var topic = model.getTopic();
     post.locked = true; // Lock post until saved
     post.content = content;
-    view.renderPost(model.getTopic(), post);
-    API.post_edit(model.getTopic().id, post.id, content, post.revision_no, function(err, result) {
+    view.renderPost(topic, post);
+    API.post_edit(topic.id, post.id, content, post.revision_no, function(err, result) {
       if (!err) {
         post.revision_no = result.revision_no;
 
-        BUS.fire('topic.post.changed', model.getTopic().id);
+        BUS.fire('topic.post.changed', topic.id);
       }
       post.locked = false;
-      view.renderPost(model.getTopic(), post);
+
+      // check, if we are still the selected topic
+      if (model.getTopic() && topic.id === model.getTopic().id) {
+        view.renderPost(topic, post);
+      }
     });
   };
 
@@ -282,6 +287,9 @@ function TopicPresenter(view, model) {
   BUS.on('topic.selected', function(topicId) {
     if (model.getTopic() !== null && model.getTopic().id == topicId) {
       return;
+    }
+    if (view.isEditing()) {
+        view.closeEditor();
     }
     model.setTopic({id: topicId});
     view.setLoadingState();

@@ -182,13 +182,15 @@ JQueryTopicView.prototype = new TopicDisplay();
 JQueryTopicView.prototype.constructor = JQueryTopicView;
 
 // Methods --------------------------------------------------------
+JQueryTopicView.prototype.isEditing = function() {
+    return this.editingPostId != null;
+};
 JQueryTopicView.prototype.destroy = function destroy() {
   $('body').off('keydown', this.globalKeyHandler);
   this.e.remove();
   this.e = null;
 };
 JQueryTopicView.prototype.onResize = function() {
-
   var viewHeight = this.e.innerHeight();
   var offsetX = this.readerView.e.outerHeight() +
                 this.$actions.outerHeight() +
@@ -527,12 +529,12 @@ JQueryTopicView.prototype.closeEditor = function() {
     this._renderTopicActions(false);
     jediting.attr('contenteditable', 'false').removeClass('editing');
 
-    var post = jediting.parentsUntil('.post_wrapper').parent().data('post');
+    var post = jediting.parents('.post_wrapper').data('post');
     if (post) {
-      var jpost = $("#post-" + post.id + ">.post");
+      var jpost = jediting.parents('.post');
       this._addDefaultButtons($(".buttons", jpost).empty(), post);
 
-      var content = $("#post-" + post.id + " .content").html();
+      var content = jediting.html();
       this.onStopPostEdit(post, content);
     }
   }
