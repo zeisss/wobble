@@ -110,9 +110,18 @@ function TopicPresenter(view, model) {
   view.onReadAll = function() {
     var topic = that.model.getTopic();
     if (topic) {
-      async.forEach(topic.posts, function(post, done) {
-        API.post_change_read(topic.id, post.id, 1, done);
-      }, function(err, results) {
+      async.parallel([
+        function read_all_posts (callback) {
+          async.forEach(topic.posts, function(post, done) {
+            API.post_change_read(topic.id, post.id, 1, done);
+          }, callback);
+        },
+        function read_all_messages(callback) {
+          async.forEach(topic.messages, function(message, done) {
+            API.topic_remove_message(topic.id, message.message_id, done);
+          });
+        }
+      ], function(err, results) {
         that.refreshTopic();
         BUS.fire('topic.post.changed', model.getTopic().id);
       });
