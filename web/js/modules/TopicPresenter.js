@@ -5,7 +5,7 @@
 function TopicDisplay() {}
 TopicDisplay.prototype.onInviteUserAction = function() {};
 TopicDisplay.prototype.onStartPostEdit = function(post) {};
-TopicDisplay.prototype.onEndPostEdit = function(post, content) {};
+TopicDisplay.prototype.onStopPostEdit = function(post, content) {};
 TopicDisplay.prototype.onUserClicked = function(user) {};
 TopicDisplay.prototype.onDeletePost = function(post) {};
 TopicDisplay.prototype.onReplyPost = function(post) {};

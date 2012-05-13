@@ -347,8 +347,17 @@ JQueryTopicView.prototype.renderPost = function(topic, post) {
   jPostWrapper.data('post', post); // Refresh the bound post
 
   $(">.post", jPostWrapper).off('click').click(function() {
+    var activePosts = $('#topic_wrapper .active');
+    if (activePosts.size() > 0) {
+      if (post.id === activePosts.first().parent().data('post').id) {
+        return;
+      }
+      if (that.isEditing()) {
+        that.closeEditor();
+      }
+      $("#topic_wrapper .active").removeClass('active');
+    }
     // Add the nice green border to any clicked post
-    $("#topic_wrapper .active").removeClass('active');
     $(this).addClass('active');
 
     that.onPostFocused(post);
@@ -503,7 +512,7 @@ JQueryTopicView.prototype.openEditor = function(post) {
   this.onStartPostEdit(post); // Fire notifier event
 
   var jpost = $("#post-" + post.id + ">.post");
-  jpost.click(); // Mark active
+  jpost.click();
 
   var eContent = $(">.content", jpost).attr('contenteditable', 'true');
   eContent.addClass('editing')./* makes formatting buttons unusable: blur(submitPostEditing).*/focus();
@@ -525,6 +534,9 @@ JQueryTopicView.prototype.openEditor = function(post) {
 };
 
 JQueryTopicView.prototype.closeEditor = function() {
+  if (!this.isEditing()) {
+    return;
+  }
   var jediting = $(".editing");
   this.editingPostId = null;
 

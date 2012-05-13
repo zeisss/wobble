@@ -1,5 +1,5 @@
 // 37 left, 38 up, 39 right, 40 down
-var LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, ENTER = 13;
+var E = 69, LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40, ENTER = 13;
 function uiClickPost(post_id) {
   var $post = $('#post-' + post_id + '>.post').click();
   expect($post.size()).toBe(1);
@@ -250,6 +250,25 @@ describe("how the topicview works", function() {
       };
       view.renderTopic(topic);
       expect($("#testlink").attr('target')).toBe('_new', 'Target attribute was fixed.');
+    });
+
+    it('should close the editing when clicking another post', function () {
+      var topic = {
+        readers: [],
+        writers: [],
+        posts: [
+          {users:[], deleted:0, id:"1", content: "Content"},
+          {users:[], deleted:0, id:"2", content: "Content"}
+        ]
+      };
+
+      view.renderTopic(topic);
+      uiClickPost('1');
+      uiKeyDown(E);
+
+      spyOn(view, 'onStopPostEdit');
+      uiClickPost('2');
+      expect(view.onStopPostEdit).toHaveBeenCalled();
     });
   });
 });
