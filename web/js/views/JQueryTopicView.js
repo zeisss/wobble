@@ -104,35 +104,39 @@ function JQueryTopicView() {  // The UI handler for the single topic
     // 69 'e'
     if (e.altKey == false && e.shiftKey == false && e.ctrlKey == false && e.keyCode >= 37 && e.keyCode <= 40) {
       var $post = $('.active', that.$posts);
-      if ($post.size() > 0) {
+
+      if ($post.size() === 0 && e.keyCode === 40) {
+        $("#post-1>.post").click();
+      }
+      else if ($post.size() > 0) {
         var $post_wrapper = $post.parent();
         var $new_post_wrapper = undefined;
         var $new_post;
 
-        if (e.keyCode == 40 /* Down */) {
+        if (e.keyCode === 40 /* Down */) {
           $new_post_wrapper = $('>.post', $post_wrapper.nextAll('.post_wrapper')).parent().first();
 
-          if ($new_post_wrapper.size() == 0) { // No down element. Maybe there is another reply_thread?
+          if ($new_post_wrapper.size() === 0) { // No down element. Maybe there is another reply_thread?
             $new_post_wrapper = $post_wrapper.parents('.intended_reply_thread').next('.intended_reply_thread:has(.post_wrapper)').children().filter('.post_wrapper:has(.post)').first();
           }
-          if ($new_post_wrapper.size() == 0) {// No down element. Maybe we have a parent which has a next?
+          if ($new_post_wrapper.size() === 0) {// No down element. Maybe we have a parent which has a next?
             $new_post_wrapper = $post_wrapper.parents('.post_wrapper').next('.post_wrapper:has(.post)');
           }
         }
-        else if (e.keyCode == 38 /* Up */) {
+        else if (e.keyCode === 38 /* Up */) {
           // Check, if there is a previous post in the current reply_thread
           $new_post_wrapper = $('>.post', $post_wrapper.prevAll('.post_wrapper')).parent().last();
-          if ($new_post_wrapper.size() == 0) { // Maybe there is another thread?
+          if ($new_post_wrapper.size() === 0) { // Maybe there is another thread?
             $new_post_wrapper = $post_wrapper.parents('.intended_reply_thread').prev('.intended_reply_thread:has(.post_wrapper)').children().filter('.post_wrapper:has(.post)').first();
           }
-          if ($new_post_wrapper.size() == 0) { // Maybe we have a parent?
+          if ($new_post_wrapper.size() === 0) { // Maybe we have a parent?
             $new_post_wrapper = $post_wrapper.parents('.post_wrapper:has(.post)').first();;
           }
         }
-        else if (e.keyCode == 37 /* Left */) {
+        else if (e.keyCode === 37 /* Left */) {
           $new_post_wrapper = $('>.post', $post_wrapper.parents('.post_wrapper')).parents().first();
         }
-        else if (e.keyCode == 39 /* Right */) {
+        else if (e.keyCode === 39 /* Right */) {
           $new_post_wrapper = $('.post_wrapper:has(>.post)', $post_wrapper).first();
         }
 
@@ -144,7 +148,7 @@ function JQueryTopicView() {  // The UI handler for the single topic
         }
       }
     }
-    else if (e.keyCode == 69 /* E */) {
+    else if (e.keyCode === 69 /* E */) {
       var $post = $('.active', that.$posts);
       if ($post.size() > 0) {
         var post = $post.parent().data('post');
@@ -153,7 +157,7 @@ function JQueryTopicView() {  // The UI handler for the single topic
           handled = true;
         }
       }
-    } else if (e.keyCode == 13 /* Enter */ && e.altKey == false && e.shiftKey == false && e.ctrlKey == false) {
+    } else if (e.keyCode === 13 /* Enter */ && e.altKey === false && e.shiftKey === false && e.ctrlKey === false) {
       var $post = $('.active', that.$posts);
       if ($post.size() > 0) {
         that.createReply($post);
@@ -182,13 +186,15 @@ JQueryTopicView.prototype = new TopicDisplay();
 JQueryTopicView.prototype.constructor = JQueryTopicView;
 
 // Methods --------------------------------------------------------
+JQueryTopicView.prototype.isEditing = function() {
+    return this.editingPostId != null;
+};
 JQueryTopicView.prototype.destroy = function destroy() {
   $('body').off('keydown', this.globalKeyHandler);
   this.e.remove();
   this.e = null;
 };
 JQueryTopicView.prototype.onResize = function() {
-
   var viewHeight = this.e.innerHeight();
   var offsetX = this.readerView.e.outerHeight() +
                 this.$actions.outerHeight() +
@@ -262,9 +268,9 @@ JQueryTopicView.prototype.renderMessages = function(topic_id, messages) {
     var message_id = msgObj.message_id;
     var str;
 
-    if (msg.type == 'user_added') {
+    if (msg.type === 'user_added') {
       str = msg.user_name + ' was added.';
-    } else if (msg.type == 'user_removed') {
+    } else if (msg.type === 'user_removed') {
       str = msg.user_name + ' was removed';
     } else {
       console.log('Unknown message type: ' + msg.type);
@@ -341,7 +347,6 @@ JQueryTopicView.prototype.renderPost = function(topic, post) {
   jPostWrapper.data('post', post); // Refresh the bound post
 
   $(">.post", jPostWrapper).off('click').click(function() {
-    console.log('Clicked on', post);
     // Add the nice green border to any clicked post
     $("#topic_wrapper .active").removeClass('active');
     $(this).addClass('active');
@@ -356,12 +361,12 @@ JQueryTopicView.prototype.renderPost = function(topic, post) {
     this._renderPostUsers(post, ePostUsers);
 
     var ePostContent = $(">.post>.content", jPostWrapper);
-    if (post.id != this.editingPostId) { // Leave the content untouched, if the user is editing it
+    if (post.id !== this.editingPostId) { // Leave the content untouched, if the user is editing it
       ePostContent.html(post.content);
       // Security: Change all link in the post to open in a new browser window
       $("a", ePostContent).attr('target', '_new');
     }
-    if (post.unread == 1) {
+    if (post.unread === 1) {
       $("<div></div>").addClass('unread').appendTo($(">.post", jPostWrapper));
     } else {
       $('>.post>.unread', jPostWrapper).detach();
@@ -399,9 +404,9 @@ JQueryTopicView.prototype._renderTime = function(timestamp) {
     month = "0" + month;
   }
 
-  if (createdAt.getYear() == now.getYear() &&
-     createdAt.getMonth() == now.getMonth() &&
-     createdAt.getDate() == now.getDate()) { // This post is from today, only show the time
+  if (createdAt.getYear() === now.getYear() &&
+     createdAt.getMonth() === now.getMonth() &&
+     createdAt.getDate() === now.getDate()) { // This post is from today, only show the time
     return time;
   } else {
     return createdAt.getDate() + "." + month + "."+ (1900 + createdAt.getYear()) + " " + time;
@@ -419,7 +424,7 @@ JQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 
   var minHeight = 16;
   if (post.id !== ROOT_ID) { // No user icons for the root
-    var size = post.users.length == 1 ? 25 : 21;
+    var size = post.users.length === 1 ? 25 : 21;
     for (var i = 0; i < post.users.length; i++) {
       var postUserId = post.users[i];
       var template = "<img width='{{size}}' height='{{size}}' src='http://gravatar.com/avatar/{{img}}?s={{size}}' title='{{name}}'/>";
@@ -434,7 +439,7 @@ JQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 
   // Part 2: Render the author names
   function name(index) {
-    if (that.userCache[post.users[index]].id == apiUserId) {
+    if (that.userCache[post.users[index]].id === apiUserId) {
       return "Me";
     } else {
       return that.userCache[post.users[index]].name;
@@ -443,11 +448,11 @@ JQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
 
 
   var authorLine = null;
-  if (post.users.length == 1 && (post.id != ROOT_ID || post.users[0] != apiUserId) /* no authorline for ourself */) {
+  if (post.users.length === 1 && (post.id !== ROOT_ID || post.users[0] !== apiUserId) /* no authorline for ourself */) {
     authorLine = name(0);
-  } else if (post.users.length == 2) {
+  } else if (post.users.length === 2) {
     authorLine = name(0) + " and " + name(1);
-  } else if (post.users.length == 3) {
+  } else if (post.users.length === 3) {
     authorLine = name(0) + ", " + name(1) + " and " + name(2);
   } else if (post.users.length >= 4) {
     authorLine = name(0) + ", " + name(1) + " and " + (post.users.length-2) + " more";
@@ -527,12 +532,12 @@ JQueryTopicView.prototype.closeEditor = function() {
     this._renderTopicActions(false);
     jediting.attr('contenteditable', 'false').removeClass('editing');
 
-    var post = jediting.parentsUntil('.post_wrapper').parent().data('post');
+    var post = jediting.parents('.post_wrapper').data('post');
     if (post) {
-      var jpost = $("#post-" + post.id + ">.post");
+      var jpost = jediting.parents('.post');
       this._addDefaultButtons($(".buttons", jpost).empty(), post);
 
-      var content = $("#post-" + post.id + " .content").html();
+      var content = jediting.html();
       this.onStopPostEdit(post, content);
     }
   }

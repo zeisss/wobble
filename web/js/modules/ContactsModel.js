@@ -35,7 +35,7 @@ function ContactsModel(cache) {
   },this);
 
   BUS.on('api.notification', function(message) {
-    if (message.type == 'user_online' || message.type == 'user_signout') {
+    if (message.type == 'notifications_timeout' || message.type == 'user_online' || message.type == 'user_signout') {
       this.refreshContactList();
     }
   }, this);

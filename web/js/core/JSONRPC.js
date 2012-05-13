@@ -5,6 +5,7 @@
 function JSONRPC(url) {
   this.url = url;
   this.idSequence = 1;
+  this.retryTime = 500; // Wait 500mx before retrying after a connectionerror
   this.stateWaiting = [];
 }
 
@@ -20,7 +21,7 @@ JSONRPC.prototype.destroy = function(name) {
  * Notifications are calls, where no response is expected/wished.
  */
 JSONRPC.prototype.doNotification = function(name, args) {
-  RPC._call(null, name, args, null);
+  this._retry_call(null, name, args, null);
 };
 /**
  * Normal RPC call.
@@ -33,8 +34,38 @@ JSONRPC.prototype.doRPC = function(name, args, callback) {
   var requestId = this.idSequence;
   this.idSequence++;
 
-  this._call(requestId, name, args, callback);
+  this._retry_call(requestId, name, args, callback);
 };
+
+/**
+ * Executes the given RPC call and retries it at least three times,
+ * if a connectionerror occurs.
+ */
+JSONRPC.prototype._retry_call = function(requestId, name, args, callback) {
+  var retries = 3
+    , self = this;
+
+  var retry_callback = function(err, result) {
+    if (err && err.type && err.type === 'connectionerror') {
+      retries--;
+      if (retries === 0) {
+        // We give up, notify the callback
+        return callback(err, result);
+      }
+
+      // Retry in 500ms
+      setTimeout(function () {
+        console.log('Performing retry')
+        self._call(requestId, name, args, retry_callback);
+      }, self.retryTime);
+      return true; // We handled the error.
+    }
+    return callback(err, result);
+  };
+
+  self._call(requestId, name, args, retry_callback);
+};
+
 JSONRPC.prototype._call = function(requestId, name, args, callback) {
   var that = this;
 
@@ -87,16 +118,17 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
       }
     }
   };
-  if (callback) {
-    ajaxSettings.error = function(jqXHR, textStatus, errorThrown) {
-      if(that.aborted)
-        return;
 
-      var errorObj = {text: textStatus, error: errorThrown};
+  ajaxSettings.error = function(jqXHR, textStatus, errorThrown) {
+    if (that.aborted)
+      return;
+
+    var errorObj = {type: 'connectionerror', text: textStatus, error: errorThrown};
+    var errorHandled = callback ? callback(errorObj) : false;
+    if (!errorHandled) {
       BUS.fire('rpc.connectionerror', errorObj);
-      callback(errorObj);
-    };
-  }
+    }
+  };
 
   var req = $.ajax(this.url, ajaxSettings).always(function() {
     that.stateWaiting = jQuery.grep(that.stateWaiting, function(areq, i) {

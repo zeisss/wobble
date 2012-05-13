@@ -62,30 +62,22 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     Stats::incr('requests.time', floor($endRequest - $startRequest));
   }
 
-  protected function beforeCallStats($method, $params) {
-    Stats::incr('jsonrpc.api.' . $method . '.invokes');
-
-    $key = 'jsonrpc.api.detailed:';
-    $key .= $method;
-    if (isset($params['topic_id'])) $key .= ';t=' . $params['topic_id'];
-    if (isset($params['post_id'])) $key .= ';p=' . $params['post_id'];
-    $user_id = ctx_getuserid();
-    if (!is_null($user_id)) $key .= ';u=' . $user_id;
-    Stats::incr($key);
-  }
-
   /**
    * Performs a session validation.
    */
   public function beforeCall($method, $params) {
+    self::beforeCallInitSession($method, $params);
+    self::beforeCallStats($method, $params);
+  }
+
+  protected function beforeCallInitSession($method, $params) {
     session_name('WOBBLEID');
     if (empty($params['apikey'])) {
       return;
     }
-
     session_id($params['apikey']);
     session_set_cookie_params(60 * 60 * 24 * 31); # tell php to keep this session alive 1 month
-    session_start();
+    session_start(); # Try to find a PHP Session
 
     if (empty($_SESSION['userid'])) {
       # User was so long offline, that the server php-session was destroy
@@ -104,21 +96,38 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     if (empty($user)) {
       return;
     }
-    if (!$user['online']) {
-       SessionService::signon(session_id(), $userid);
-       NotificationRepository::deleteNotifications(session_id(), time());
 
-       // Ok, we were offline, so notify everybody that we are back
-       foreach(ContactsRepository::getContacts($userid) AS $contact) {
-         NotificationRepository::push($contact['id'], array (
-              'type' => 'user_online',
-              'user_id' => $userid
-         ));
+    if (!$user['online']) {
+      SessionService::signon(session_id(), $userid);
+      NotificationRepository::deleteNotifications(session_id(), time());
+
+      # Ok, we were offline, so notify everybody that we are back
+      foreach(ContactsRepository::getContacts($userid) AS $contact) {
+        NotificationRepository::push($contact['id'], array (
+          'type' => 'user_online',
+          'user_id' => $userid
+        ));
       }
+
+      # Notify the client, that he needs to reload his data, since we cleared the notifications
+      NotificationRepository::pushSession(
+        session_id(),
+        array('type' => 'notifications_timeout')
+      );
     }
     SessionService::touch(session_id(), $userid);
+  }
 
-    self::beforeCallStats($method, $params);
+  protected function beforeCallStats($method, $params) {
+    Stats::incr('jsonrpc.api.' . $method . '.invokes');
+
+    $key = 'jsonrpc.api.detailed:';
+    $key .= $method;
+    if (isset($params['topic_id'])) $key .= ';t=' . $params['topic_id'];
+    if (isset($params['post_id'])) $key .= ';p=' . $params['post_id'];
+    $user_id = ctx_getuserid();
+    if (!is_null($user_id)) $key .= ';u=' . $user_id;
+    Stats::incr($key);
   }
 
   public function afterCall($method, $params, $result, $error) {

@@ -28,15 +28,18 @@ class SessionService {
     $stmt->execute(array($session_id));
 
   }
-  public static function touch($session_id, $user_id, $timestamp = FALSE) {
-    if ($timestamp === FALSE) {
+  public static function touch($session_id, $user_id, $timestamp = false, $client_info = null) {
+    if ($timestamp === false) {
       $timestamp = time();
+    }
+    if (is_null($client_info)) {
+      $client_info = $_SERVER['HTTP_USER_AGENT'];
     }
     $pdo = ctx_getpdo();
     $stmt = $pdo->prepare('REPLACE sessions (user_id, session_id, user_agent, last_touch) VALUES(?,?,?,?)');
     $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
     $stmt->bindValue(2, $session_id, PDO::PARAM_STR);
-    $stmt->bindValue(3, $_SERVER['HTTP_USER_AGENT'], PDO::PARAM_STR);
+    $stmt->bindValue(3, $client_info, PDO::PARAM_STR);
     $stmt->bindValue(4, $timestamp, PDO::PARAM_INT);
     $stmt->execute();
   }
