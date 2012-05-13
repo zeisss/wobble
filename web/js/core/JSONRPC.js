@@ -55,7 +55,6 @@ JSONRPC.prototype._retry_call = function(requestId, name, args, callback) {
 
       // Retry in 500ms
       setTimeout(function () {
-        console.log('Performing retry')
         self._call(requestId, name, args, retry_callback);
       }, self.retryTime);
       return true; // We handled the error.
