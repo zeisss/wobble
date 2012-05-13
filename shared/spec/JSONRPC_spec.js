@@ -40,5 +40,4 @@ describe('the JSONRPC api', function () {
       });
     });
   });
-
 });

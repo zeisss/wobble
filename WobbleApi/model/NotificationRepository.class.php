@@ -9,7 +9,7 @@ class NotificationRepository {
     $pdo = ctx_getpdo();
     # This creates a notification only, if there is currently a session for that user. otherwise
     # we don't create any rows in the DB.
-    $stmt = $pdo->prepare('INSERT INTO notifications (session_id, user_id, data, time) 
+    $stmt = $pdo->prepare('INSERT INTO notifications (session_id, user_id, data, time)
       SELECT session_id, user_id, ?, UNIX_TIMESTAMP()
       FROM sessions
       WHERE user_id = ?
@@ -47,7 +47,7 @@ class NotificationRepository {
     }
   }
 
-  public static function getNotifications($session_id, $timestamp) {  
+  public static function getNotifications($session_id, $timestamp) {
     $pdo = ctx_getpdo();
         
     $stmt = $pdo->prepare('SELECT data FROM notifications WHERE session_id = ? AND time <= ?');
