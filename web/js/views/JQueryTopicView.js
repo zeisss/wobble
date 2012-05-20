@@ -515,12 +515,12 @@ JQueryTopicView.prototype.openEditor = function(post) {
   jpost.click();
 
   var eContent = $(">.content", jpost).attr('contenteditable', 'true');
-  eContent.addClass('editing')./* makes formatting buttons unusable: blur(submitPostEditing).*/focus();
+  eContent.addClass('editing').focus();
   eContent.keydown(function(event) {
     if (event.shiftKey && event.which == 13) {
       // Focus the button, otherwise there is a rendering bug in chrome when removing the
       // contenteditable from the div while it has focus (the editing border does not get removed, until you click somewhere)
-      $(">.buttons>button", jpost).focus();
+      $(">.buttons>button", jpost).first().focus();
       that.closeEditor();
 
       event.stopPropagation();
@@ -534,24 +534,20 @@ JQueryTopicView.prototype.openEditor = function(post) {
 };
 
 JQueryTopicView.prototype.closeEditor = function() {
-  if (!this.isEditing()) {
-    return;
-  }
-  var jediting = $(".editing");
-  this.editingPostId = null;
+  var $editing = $(".editing");
+  var $post = $editing.parents('.post');
+  var $postWrapper = $post.parents('.post_wrapper');
+  var post = $postWrapper.data('post');
 
-  if (jediting.length > 0) {
+  if ($editing.length > 0) {
     this._renderTopicActions(false);
-    jediting.attr('contenteditable', 'false').removeClass('editing');
+    $editing.attr('contenteditable', 'false').removeClass('editing');
+    this.editingPostId = null;
 
-    var post = jediting.parents('.post_wrapper').data('post');
-    if (post) {
-      var jpost = jediting.parents('.post');
-      this._addDefaultButtons($(".buttons", jpost).empty(), post);
+    this._addDefaultButtons($(".buttons", $post).empty(), post);
 
-      var content = jediting.html();
-      this.onStopPostEdit(post, content);
-    }
+    var newContent = $editing.html();
+    this.onStopPostEdit(post, newContent);
   }
 };
 
