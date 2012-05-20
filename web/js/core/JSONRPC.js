@@ -5,7 +5,9 @@
 function JSONRPC(url) {
   this.url = url;
   this.idSequence = 1;
-  this.retryTime = 500; // Wait 500mx before retrying after a connectionerror
+  this.initialSleepTime = 500; // Time to wait after first connection error before retrying
+  this.retryTimeFactor = 1.9; // Increase sleeping time between retries by this factor
+  this.maxRetries = 3;
   this.stateWaiting = [];
 }
 
@@ -42,12 +44,14 @@ JSONRPC.prototype.doRPC = function(name, args, callback) {
  * if a connectionerror occurs.
  */
 JSONRPC.prototype._retry_call = function(requestId, name, args, callback) {
-  var retries = 3
+  var retries = this.maxRetries
+    , sleepTime = this.initialSleepTime
     , self = this;
 
   var retry_callback = function(err, result) {
     if (err && err.type && err.type === 'connectionerror') {
       retries--;
+
       if (retries === 0) {
         // We give up, notify the callback
         return callback(err, result);
@@ -56,7 +60,8 @@ JSONRPC.prototype._retry_call = function(requestId, name, args, callback) {
       // Retry in 500ms
       setTimeout(function () {
         self._call(requestId, name, args, retry_callback);
-      }, self.retryTime);
+      }, sleepTime);
+      sleepTime *= self.retryTimeFactor;
       return true; // We handled the error.
     }
     return callback(err, result);
