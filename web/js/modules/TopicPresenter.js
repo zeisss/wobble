@@ -207,13 +207,18 @@ function TopicPresenter(view, model) {
     }
   };
   view.onStartPostEdit = function(post) {
+    var topic = model.getTopic();
+
     // Create the lock
-    API.post_change_lock(model.getTopic().id, post.id, 1, function(err, success) {
+    API.post_change_lock(topic.id, post.id, 1, function(err, success) {
       if (err || !success) {
         alert('Failed to create lock for post. Try again later or refresh your browser.');
       } else {
+        if (topic.id != model.getTopic().id) {
+          return;
+        }
         model.addUserToPost(post, API.user());
-        view.renderPost(model.getTopic(), post);
+        view.renderPost(topic, post);
       }
     });
   };
