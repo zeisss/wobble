@@ -16,4 +16,8 @@ function wobble_autoload($className) {
 }
 spl_autoload_register('wobble_autoload');
 
+# Include general context functions
 require_once WOBBLE_HOME . '/WobbleApi/context.php';
+
+# Load the configuration file
+require_once WOBBLE_HOME . '/etc/config.php';
