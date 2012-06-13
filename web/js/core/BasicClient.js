@@ -7,7 +7,11 @@ function BasicClient() {}
  * Called when all dependencies are loaded. Initializes the basic objects 
  * like API, RPC.
  */
-BasicClient.prototype.bootstrap = function() {
+BasicClient.prototype.bootstrap = function(config) {
+  this.config = _.defaults(config, {
+    api: './api/endpoint.php'
+  });
+
   $('<div></div>').attr('id', 'widgets').appendTo($('body'));
 
   // Show a reload dialog, when an RPC error occurs
@@ -33,7 +37,7 @@ BasicClient.prototype.bootstrap = function() {
   });
 
   // Initialize the API and app, when user data is loaded
-  window.RPC = new JSONRPC('./api/endpoint.php');
+  window.RPC = new JSONRPC(this.config.api);
   window.API = new WobbleAPI(
     window.RPC,
     function(user) {
