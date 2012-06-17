@@ -64,7 +64,9 @@ JSONRPC.prototype._retry_call = function(requestId, name, args, callback) {
       sleepTime *= self.retryTimeFactor;
       return true; // We handled the error.
     }
-    return callback(err, result);
+    if (callback) {
+      return callback(err, result);
+    }
   };
 
   self._call(requestId, name, args, retry_callback);
