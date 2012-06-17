@@ -15,7 +15,7 @@ requests.type DERIVE
 requests.
 success.label Successfull calls
 success.min 0
-success.type DERIVCE
+success.type DERIVE
 errors.label Failed calls
 errors.min 0
 errors.type DERIVE
