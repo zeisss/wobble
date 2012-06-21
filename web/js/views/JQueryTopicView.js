@@ -564,7 +564,7 @@ JQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
 
     });
   } else {
-    jbuttons.append($("<button>").text('Edit').attr('title', 'Click E').click(function(event) {
+    jbuttons.append($("<button>").addClass('lockable').text('Edit').attr('title', 'Click E').click(function(event) {
       that.openEditor(post);
     }));
     jbuttons.append($("<button>Reply</button>").click(function(event) {
@@ -574,7 +574,7 @@ JQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
       that.createReply($(this));
     }));
     if (post.id !== ROOT_ID) { // You cannot delete the root
-      $("<button>Delete</button>").appendTo(jbuttons).click(function() {
+      $("<button>Delete</button>").addClass('lockable').appendTo(jbuttons).click(function() {
         if (window.confirm('Are you sure to delete this post?')) {
           that.onDeletePost(post);
         }
@@ -583,7 +583,7 @@ JQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
   }
 
   if (post.locked) {
-    $("button", jbuttons).attr('disabled', 'disabled');
+    $(".lockable", jbuttons).attr('disabled', 'disabled');
   }
   return jbuttons;
 };
