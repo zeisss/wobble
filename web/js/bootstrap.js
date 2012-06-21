@@ -101,6 +101,6 @@
   // Wait until all scripts are loaded
   window.onload = function() {
     window.WobbleApp = new window[wobbleAppName]();
-    window.WobbleApp.bootstrap();
+    window.WobbleApp.bootstrap(window.wobble_config);
   };
 })();
