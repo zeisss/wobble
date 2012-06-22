@@ -36,13 +36,13 @@ BasicClient.prototype.bootstrap = function(config) {
     this.onRPCError(err);
   }, this);
 
-  var that = this;
+  var self = this;
   $(window).bind('beforeunload', function () {
     // We ignore 1 operation, because there is always a notification fetcher working
     if (rpcOperations > 1) {
       return 'There are operations pending. Are you sure you want to close now?';
     }
-    that.unload();
+    self.unload();
   });
 
   // Initialize the API and app, when user data is loaded
@@ -50,9 +50,11 @@ BasicClient.prototype.bootstrap = function(config) {
   window.API = new WobbleAPI(
     window.RPC,
     function(user) {
-      that.preinit(user);
+      self.preinit(user);
     }
   );
+
+  self.resizeObserver = new ResizeObserver();
 };
 
 BasicClient.prototype.preinit = function (user) {
