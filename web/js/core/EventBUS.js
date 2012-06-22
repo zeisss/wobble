@@ -41,15 +41,3 @@ EventBUS.prototype.fire = function(eventName, data) {
 EventBUS.prototype.clear = function() {
   this.listeners = {};
 };
-
-// Create the Global BUS
-if (!window.BUS) {
-  window.BUS = new EventBUS();
-  if (window.addEventListener) {
-    window.addEventListener('unload', function() {
-      if (window.BUS) {
-        BUS.clear();
-      }
-    }, false);
-  }
-}

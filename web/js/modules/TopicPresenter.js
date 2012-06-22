@@ -113,7 +113,7 @@ function TopicPresenter(view, model) {
       return;
     }
     async.parallel([
-      function read_all_posts (callback) {
+      function read_all_posts(callback) {
         async.forEach(topic.posts, function(post, done) {
           API.post_change_read(topic.id, post.id, 1, done);
         }, callback);

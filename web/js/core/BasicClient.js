@@ -12,6 +12,15 @@ BasicClient.prototype.bootstrap = function(config) {
     api: './api/endpoint.php'
   });
 
+  window.BUS = new EventBUS();
+  if (window.addEventListener) {
+    window.addEventListener('unload', function() {
+      if (window.BUS) {
+        BUS.clear();
+      }
+    }, false);
+  }
+
   $('<div></div>').attr('id', 'widgets').appendTo($('body'));
 
   // Show a reload dialog, when an RPC error occurs
@@ -51,6 +60,11 @@ BasicClient.prototype.preinit = function (user) {
 
   $('body').empty().append('<div id=widgets></div>');
 
+  this.initHashChangeTracker();
+  this.init(user);
+};
+
+BasicClient.prototype.initHashChangeTracker = function initHashChangeTracker() {
   var appStateSelectedTopicId = window.location.hash ? window.location.hash.substring(1) : null;
   // Fire a select event, when the hash changes, e.g. by the user clicking on something or
   // Using the back button ...
@@ -72,12 +86,12 @@ BasicClient.prototype.preinit = function (user) {
     }
   });
 
-  this.init(user);
-
-  // Ok, init is done. Now fire the initial topic.select, if given ;)
-  if (appStateSelectedTopicId !== null) {
-    BUS.fire('topic.selected', appStateSelectedTopicId);
-  }
+  setTimeout(function() {
+    // Ok, init is done. Now fire the initial topic.select, if given ;)
+    if (appStateSelectedTopicId !== null) {
+      BUS.fire('topic.selected', appStateSelectedTopicId);
+    }
+  }, 0);
 };
 
 BasicClient.prototype.init = function(user) {
