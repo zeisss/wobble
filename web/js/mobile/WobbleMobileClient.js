@@ -88,7 +88,7 @@ WobbleMobileClient.prototype.initApp = function() {
   this.userProfilePresenter = new UserProfilePresenter();
 
   // Now show the contacts list
-  this.onNavigation('navOverview');
+  this.onNavigation('navOverview', true);
 
   // Ok, all done. Lay it out
   this.doLayout();
