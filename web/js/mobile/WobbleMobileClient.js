@@ -5,11 +5,20 @@
          ContactsChooserPresenter ListContactsChooserDisplay WindowUpdater UserProfilePresenter */
 "use strict";
 
-function WobbleMobileClient() {
-  BUS.on('topic.selected', function(topicId) {
-    this.onNavigation('navTopic');
-  }, this);
+function WobbleMobileClient() {}
+WobbleMobileClient.prototype = new BasicClient();
 
+WobbleMobileClient.prototype.init = function(user) {
+  this.initHeaders();
+
+  if (user !== null) {
+    this.initApp();
+  } else {
+    this.initLogin();
+  }
+};
+
+WobbleMobileClient.prototype.initHeaders = function () {
   // Append the Mobile.css to the html tree
   $('<link />').appendTo('head').attr({
     'media': 'all',
@@ -23,17 +32,9 @@ function WobbleMobileClient() {
   });*/
 
   $('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />').appendTo('head');
-}
-WobbleMobileClient.prototype = new BasicClient();
-
-WobbleMobileClient.prototype.init = function(user) {
-  if (user !== null) {
-    this.initApp();
-  } else {
-    this.initLogin();
-  }
 };
-WobbleMobileClient.prototype.initLogin = function() {
+
+WobbleMobileClient.prototype.initLogin = function () {
   var that = this;
 
   this.loginView = new MobileLoginView();
@@ -87,13 +88,23 @@ WobbleMobileClient.prototype.initApp = function() {
   this.userProfilePresenter = new UserProfilePresenter();
 
   // Now show the contacts list
-  this.onNavigation('navOverview');
+  this.onNavigation('navOverview', true);
 
   // Ok, all done. Lay it out
   this.doLayout();
 
   BUS.on('topic.topic.created', function(topicId) {
     this.onNavigation('navTopic');
+  }, this);
+
+  BUS.on('topic.selected', function(topicId) {
+    if (topicId === 'contacts') {
+      this.onNavigation('navContacts', true);
+    } else if(topicId === 'overview') {
+      this.onNavigation('navOverview', true);
+    } else {
+      this.onNavigation('navTopic', true);
+    }
   }, this);
 };
 WobbleMobileClient.prototype.doLayout = function() {
@@ -103,17 +114,18 @@ WobbleMobileClient.prototype.doLayout = function() {
   this.topicView.e.css(map);
 };
 
-WobbleMobileClient.prototype.onNavigation = function(targetId) {
+WobbleMobileClient.prototype.onNavigation = function(targetId, noFireEvent) {
   $(">*", this.$widgets).detach(); // Detach() does not destroy the event handlers
 
-  window.location.hash = "";
+  // window.location.hash = "";
   if (targetId == 'navContacts') {
     // Show the ContactsList
     this.contactsView.e.appendTo(this.$widgets);
-
+    if (!noFireEvent) BUS.fire('topic.selected', 'contacts');
   } else if (targetId == 'navOverview') {
     // Show the TopicsList
     this.topicListView.e.appendTo(this.$widgets);
+    if (!noFireEvent) BUS.fire('topic.selected', 'overview');
   } else if (targetId == 'navTopic') {
     // Show the Topic itself
     this.topicView.e.appendTo(this.$widgets);

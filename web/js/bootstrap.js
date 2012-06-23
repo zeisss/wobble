@@ -99,8 +99,12 @@
   }
 
   // Wait until all scripts are loaded
+  var oldOnload = window.onload;
   window.onload = function() {
     window.WobbleApp = new window[wobbleAppName]();
     window.WobbleApp.bootstrap(window.wobble_config);
+    if (oldOnload) {
+      oldOnload.call(this);
+    }
   };
 })();
