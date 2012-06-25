@@ -65,6 +65,7 @@
     'js/modules/TopicListPresenter.js',
     'js/modules/UserProfilePresenter.js',
     'js/modules/WindowUpdater.js',
+    'js/modules/WhoAmIPresenter.js',
 
     // Views
     'js/views/JQueryTopicListView.js',
