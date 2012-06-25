@@ -1,15 +1,11 @@
 /* --------------------------------------------------------- */
 #headline {
+  height: 30px;
 }
 #headline .navigation {
-  text-align: right;
-  height:100%;
-  width:100%;
-
-  font-weight: bold;
-  font-size: 13px;
-
-  vertical-align: top;
+  position: absolute;
+  top: 0px;
+  right: 0px;
   padding-right: 20px;
 }
 #headline .reference {
@@ -29,12 +25,13 @@
   margin-top: 1px;
   float:left;
   padding-left:5px;
+  padding-right: 5px;
 }
 #headline .active {
   background:url(data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH+GkNyZWF0ZWQgd2l0aCBhamF4bG9hZC5pbmZvACH5BAAKAAAAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQACgABACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkEAAoAAgAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkEAAoAAwAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkEAAoABAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQACgAFACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQACgAGACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAAKAAcALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==) no-repeat;
-  display: inline-block;
   width:  16px;
   height: 16px;
+  padding-left: 16px;
 }
 
 #headline .navigation .userinfo {
@@ -42,6 +39,10 @@
 }
 
 #headline .navigation .action {
+  font-weight: bold;
+  text-align: right;
+  vertical-align: top;
+
   background:gray;
   display:inline-block;
   color:white;
