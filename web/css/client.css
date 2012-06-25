@@ -311,9 +311,6 @@ Notification Yellow: #FC0
   padding-left:2px;
   padding-right:2px;
 }
-#topics li.topic_header.active {
-  color:white;
-}
 
 #topics li.topic_header .time  {
   position:absolute;
@@ -341,6 +338,12 @@ Notification Yellow: #FC0
 }
 #topics li.active .users img {
   border:1px white solid;
+}
+#topics li.topic_header.active {
+  color:white;
+}
+#topics li.topic_header.active .time {
+    color:white;
 }
 
 /* ------------------------------------------------------------------------- */
