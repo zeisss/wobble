@@ -26,10 +26,11 @@ Notification Yellow: #FC0
   border:1px gray solid; 
   border-radius: 5px;
 
-  box-shadow: 5px 5px 0px 0px #888;
+  box-shadow: 0px 0px 5px #AAA;
 }
 .widget .header {
-  background-color: #C9E2FC;
+  background-color: #2C77E2;
+  background: -webkit-gradient(linear, left top, left bottom, from(#4EAFF9), to(#328EF8));
   color: white;
 }
 
