@@ -6,7 +6,7 @@
  */
 function JQueryContactsView() {
   var template =
-    '<div class="whoami"></div>' +
+    '<div class="whoami header"></div>' +
     '<div class="actions">' +
     ' <button id="contacts_add">Add</button>' +
     ' <button id="show_my_profile">Show my profile</button>' +

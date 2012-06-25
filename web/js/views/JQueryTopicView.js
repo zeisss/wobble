@@ -6,7 +6,7 @@
 var ROOT_ID = '1';
 
 function JQueryTopicReadersPartial(parent, click_handler) {
-  this.e = $('<div>').attr('id', 'topic_readers').appendTo(parent);
+  this.e = $('<div>').attr('id', 'topic_readers').addClass('header').appendTo(parent);
   this.readerList = $('<div>').addClass('readers').appendTo(this.e);
   this.moreBox = $('<div>').addClass('more_box').appendTo(this.e);
   this.showAllReaders = false;
