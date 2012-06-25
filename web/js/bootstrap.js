@@ -46,7 +46,7 @@
   // Wobble Core
   files.push(
     'js/core/localcache.js',
-    'js/core/resize_observer.js',
+    'js/core/ResizeObserver.js',
     'js/core/EventBUS.js',
     'js/core/JSONRPC.js',
     'js/core/WobbleAPI.js',
