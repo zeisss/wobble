@@ -20,13 +20,19 @@ Notification Yellow: #FC0
   -webkit-transition-duration: 300ms;
   transition-duration: 300ms;
 
-  background-color: #C9E2FC;
+  background-color: white;
+  color: black;
 
   border:1px gray solid; 
   border-radius: 5px;
 
   box-shadow: 5px 5px 0px 0px #888;
 }
+.widget .header {
+  background-color: #C9E2FC;
+  color: white;
+}
+
 .dialog {
   position:absolute;
 
@@ -145,8 +151,6 @@ Notification Yellow: #FC0
 #contacts {
   min-width:200px;
   min-height:400px;
-
-  background:white;
 }
 #contacts .actions {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAYCAYAAABKtPtEAAAAcElEQVR42u3YYQYAIBiD4d3/KN0pSSRJJImkdZB947nA+3NwzlEZKD4LYAEsgHiA9x6V4d5LZTjnUBn23lSGtRaVYc5JZRhjUBl671SG1hqVodZKZSilUBlyzlSGlBKVIcZIZQghUBm891RmAdRv8Q8+U3zLFCicDAAAAABJRU5ErkJggg==);
@@ -203,7 +207,6 @@ Notification Yellow: #FC0
 #contacts .whoami {
   padding-left:10px;
   padding-top:10px;
-  background:#C9E2FC;
   border-radius:5px 5px 0px 0px;
   height:44px;
   cursor:pointer;
@@ -354,7 +357,6 @@ Notification Yellow: #FC0
   background:white;
 }
 #topic_readers {
-  background:#C9E2FC;
   border-radius:5px 5px 0 0;
   right:10px;
   min-height:44px;
