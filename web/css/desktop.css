@@ -103,5 +103,21 @@
 #topic_wrapper #topic_posts {
   overflow:auto;
 }
-}
 /* --------------------------------------------------------- */
+.offline_bar {
+  position:absolute;
+  margin-left:auto;
+  margin-right: auto;
+  top:0;
+  left:0;
+  right:0;
+  height:20px;
+  background: yellow;
+
+  width: 400px;
+  border-left: 1px black solid;
+  border-right: 1px black solid;
+  border-bottom: 1px black solid;
+
+  border-shadow: 0px 0px 5px 5px #AAA;
+}

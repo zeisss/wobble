@@ -1,5 +1,34 @@
 /*global API BUS */
 
+function OfflineBarPartial($parent) {
+  this.e = $('<div></div>').addClass('offline_bar').appendTo($parent);
+  this.offline = false;
+  this.render();
+
+  BUS.on('rpc.connectionerror', function () {
+    var self = this;
+    self.offline = true;
+    self.intervalId = window.setInterval(function () {
+      self.render();
+    }, 1000);
+  }, this);
+  BUS.on('api.notification', function () {
+    this.offline = false;
+    window.clearInterval(this.intervalId);
+    this.render();
+  }, this);
+}
+
+OfflineBarPartial.prototype.render = function () {
+  if (this.offline) {
+    this.e.css('display', '');
+    this.e.text('Offline!');
+  }
+  else {
+    this.e.css('display', 'none');
+  }
+};
+
 function DesktopClientHeader() {
   this.e = $('<div></div>').attr('id', 'headline').prependTo('body');
 
@@ -10,8 +39,9 @@ function DesktopClientHeader() {
       '<a class="action" href="#" id="signout">Logout</a>' +
       '</div>'
       );
+  this.offlineBar = new OfflineBarPartial(this.e);
 
-    // 
+  // Button Handler
   $("#signout").click(function() {
     console.log("Signout => Bye bye!");
     API.signout(function(err, data) {
