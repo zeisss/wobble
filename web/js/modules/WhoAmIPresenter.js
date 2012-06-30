@@ -11,5 +11,5 @@ function WhoAmIPresenter(display) {
 }
 
 WhoAmIPresenter.prototype.render = function render() {
-	this.display.renderWhoAmI(user);
+  this.display.renderWhoAmI(this.model);
 };
