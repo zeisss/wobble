@@ -112,12 +112,18 @@
   left:0;
   right:0;
   height:20px;
-  background: yellow;
+  background: #E4E455;
 
   width: 400px;
   border-left: 1px black solid;
   border-right: 1px black solid;
   border-bottom: 1px black solid;
 
+  padding-left: 5px;
+  padding-top:5px;
   border-shadow: 0px 0px 5px 5px #AAA;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+
+  font-size: smaller;;
 }
