@@ -140,7 +140,6 @@ WobbleMobileClient.prototype.onNavigation = function(targetId, noFireEvent) {
 };
 
 WobbleMobileClient.prototype.onRPCError = function(err) {
-  var doReload = window.confirm('Whoooops! Something went wrong! We will reload now, ok?');
-  if (doReload)
-    window.location.reload();
+  var doReload = window.alert('Whoooops! Something went wrong! We will reload now, ok?');
+  window.location.reload();
 };

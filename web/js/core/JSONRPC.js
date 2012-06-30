@@ -36,7 +36,7 @@ JSONRPC.prototype.doRPC = function(name, args, callback) {
   var requestId = this.idSequence;
   this.idSequence++;
 
-  this._retry_call(requestId, name, args, callback);
+  return this._retry_call(requestId, name, args, callback);
 };
 
 /**
@@ -46,20 +46,30 @@ JSONRPC.prototype.doRPC = function(name, args, callback) {
 JSONRPC.prototype._retry_call = function(requestId, name, args, callback) {
   var retries = this.maxRetries
     , sleepTime = this.initialSleepTime
-    , self = this;
+    , self = this
+    , request = {
+      currentRequest: undefined,
+      aborted: false,
+      abort: function () {
+        this.aborted = true;
+        if (this.currentRequest) {
+          this.currentRequest.abort();
+        }
+      }
+    };
 
   var retry_callback = function(err, result) {
     if (err && err.type && err.type === 'connectionerror') {
       retries--;
 
-      if (retries === 0) {
+      if (retries === 0 || request.aborted) {
         // We give up, notify the callback
         return callback(err, result);
       }
 
       // Retry in 500ms
       setTimeout(function () {
-        self._call(requestId, name, args, retry_callback);
+        request.currentRequest = self._call(requestId, name, args, retry_callback);
       }, sleepTime);
       sleepTime *= self.retryTimeFactor;
       return true; // We handled the error.
@@ -69,7 +79,8 @@ JSONRPC.prototype._retry_call = function(requestId, name, args, callback) {
     }
   };
 
-  self._call(requestId, name, args, retry_callback);
+  request.currentRequest = self._call(requestId, name, args, retry_callback);
+  return request;
 };
 
 JSONRPC.prototype._call = function(requestId, name, args, callback) {
@@ -144,4 +155,5 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
   });
   this.stateWaiting.push(req);
   BUS.fire('rpc.queue.length', this.stateWaiting.length);
+  return req;
 };
