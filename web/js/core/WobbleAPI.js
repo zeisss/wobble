@@ -22,18 +22,25 @@ function WobbleAPI(rpc, callback) {
     }
   };
 
+  // If we have an initial APIKEY, try to load the user with it
   if (this.apikey.get()) {
     this.refreshUser(callback);
   } else {
+    // Just call the callback on next tick
     if(callback) {
       setTimeout(function() {
         callback(null);
       }, 0);
     }
   }
+
+  // Start the notification handler
+  this.notificationHandler = new NotificationHandler(this);
 }
 
-WobbleAPI.prototype.destroy = function() {};
+WobbleAPI.prototype.destroy = function() {
+  this.notificationHandler.destroy();
+};
 
 /**
  * Adds the apikey to the parameters and call the doRPC method of the rpc object.
@@ -55,7 +62,7 @@ WobbleAPI.prototype.doRPC = function(name, params, callback) {
       params.apikey = this.apikey.get();
     }
   }
-  this.rpc.doRPC(name, params, callback);
+  return this.rpc.doRPC(name, params, callback);
 };
 
 WobbleAPI.prototype.refreshUser = function(callback) {

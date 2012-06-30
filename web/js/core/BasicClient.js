@@ -58,8 +58,6 @@ BasicClient.prototype.bootstrap = function(config) {
 };
 
 BasicClient.prototype.preinit = function (user) {
-  this.notificationFetcher = new NotificationHandler();
-
   $('body').empty().append('<div id=widgets></div>');
 
   this.initHashChangeTracker();
@@ -103,7 +101,6 @@ BasicClient.prototype.init = function(user) {
 BasicClient.prototype.unload = function(user) {
   console.log('Unload detected. Marking backend object as destroyed.');
   // Overwrite in Implementation
-  if (this.notificationFetcher) this.notificationFetcher.destroy();
   if (window.RPC) window.RPC.destroy();
   if (window.API) window.API.destroy();
 };
