@@ -49,7 +49,7 @@ WobbleDesktopClient.prototype.initApp = function() {
   this.topicModel = new TopicModel();
 
   // Create the navigator
-  this.topHeader = new DesktopClientHeader();
+  this.topHeader = new DesktopClientHeader(this.notificationFetcher);
 
   // Create the Views
   this.contactsView = new JQueryContactsView();
@@ -81,6 +81,10 @@ WobbleDesktopClient.prototype.initApp = function() {
   }, this);
 };
 WobbleDesktopClient.prototype.onRPCError = function(err) {
+  // We ignore connection errors here, because our OfflineBar handles it
+  if (err.type === 'connectionerror')
+    return;
+
   var doReload = window.confirm('Whoooops! Something went wrong! We will reload now, ok?');
   if (doReload)
     window.location.reload();
