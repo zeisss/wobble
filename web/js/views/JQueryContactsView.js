@@ -62,8 +62,12 @@ JQueryContactsView.prototype.renderContacts = function (list) {
     }, this));
   }, this);
 };
-JQueryContactsView.prototype.renderWhoAmI = function(user) {
+
+JQueryContactsView.prototype.renderWhoAmI = function renderWhoAmI(user) {
   this.$whoami.empty();
+  if (!user) {
+    return;
+  }
   var template = "<img title='That is you!' src='http://gravatar.com/avatar/{{{img}}}?s=32' width=32 height=32> <span class=name>{{name}}</span>";
   this.$whoami.append(Mustache.to_html(template, user));
 };
