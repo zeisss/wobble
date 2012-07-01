@@ -120,6 +120,8 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
 
       NotificationRepository::deleteNotifications(session_id(), time());
 
+      Stats::incr('wobble.session.reconnect');
+
       # Notify the client, that he needs to reload his data, since we cleared the notifications
       NotificationRepository::pushSession(
         session_id(),
