@@ -168,13 +168,13 @@ WobbleAPI.prototype.list_topics = function (show_archived, callback) {
 
 /* CONTACTS Functions --------------- */
 WobbleAPI.prototype.add_contact = function(email, callback) {
-  this.doRPC('user_add_contact', {'contact_email': email}, callback);
+  this.doRPC('contacts.add', {'contact_email': email}, callback);
 };
 WobbleAPI.prototype.get_contacts = function (callback) {
-  this.doRPC('user_get_contacts', callback);
+  this.doRPC('contacts.list', callback);
 };
 WobbleAPI.prototype.contact_remove = function(contact_id, callback) {
-  this.doRPC('user_remove_contact', {contact_id: contact_id}, callback);
+  this.doRPC('contacts.remove', {contact_id: contact_id}, callback);
 };
 
 /* TOPIC Functions ------------------ */

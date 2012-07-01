@@ -24,7 +24,6 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
       array('file' => 'api_topic.php', 'method' => 'post_delete'),
       array('file' => 'api_topic.php', 'method' => 'post_change_read'),
       array('file' => 'api_topic.php', 'method' => 'post_change_lock'),
-      array('file' => 'api_topic.php', 'method' => 'post_change_read', 'name' => 'post_read'),
 
       // User / Session
       array('file' => 'api_user.php', 'method' => 'user_get'),
@@ -39,9 +38,15 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
       array('file' => 'api_notifications.php', 'method' => 'get_notifications'),
 
       // Contact list
-      array('file' => 'api_user.php', 'method' => 'user_get_contacts'),
-      array('file' => 'api_user.php', 'method' => 'user_add_contact'),
-      array('file' => 'api_user.php', 'method' => 'user_remove_contact')
+      array('file' => 'api_contacts.php', 'method' => 'user_get_contacts',  'name' => 'contacts.list'),
+      array('file' => 'api_contacts.php', 'method' => 'user_add_contact',   'name' => 'contacts.add'),
+      array('file' => 'api_contacts.php', 'method' => 'user_remove_contact','name' => 'contacts.remove'),
+
+      // Backward Compatibility
+      array('file' => 'api_topic.php', 'method' => 'post_change_read', 'name' => 'post_read'),
+      array('file' => 'api_contacts.php', 'method' => 'user_get_contacts'),
+      array('file' => 'api_contacts.php', 'method' => 'user_add_contact'),
+      array('file' => 'api_contacts.php', 'method' => 'user_remove_contact')
     ));
   }
 
