@@ -81,13 +81,16 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
 
     if (empty($_SESSION['userid'])) {
       # User was so long offline, that the server php-session was destroy
-      # We still have it in the DB
+      # We can rebuild it. We have the technology!
       $session = SessionService::getSession(session_id());
 
       if (empty($session)) {
+        # Ok, the given sessionkey is really bogus / outdated. Just ignore it.
         return;
       }
       $_SESSION['userid'] = $session['user_id'];
+    } else {
+      $session = SessionService::getSession(session_id());
     }
 
     // Load the current user and check if he was marked offline
@@ -98,9 +101,6 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     }
 
     if (!$user['online']) {
-      SessionService::signon(session_id(), $userid);
-      NotificationRepository::deleteNotifications(session_id(), time());
-
       # Ok, we were offline, so notify everybody that we are back
       foreach(ContactsRepository::getContacts($userid) AS $contact) {
         NotificationRepository::push($contact['id'], array (
@@ -108,6 +108,12 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
           'user_id' => $userid
         ));
       }
+    }
+
+    if ($session['timeout'] === '1') {
+      SessionService::signon(session_id(), $userid);
+
+      NotificationRepository::deleteNotifications(session_id(), time());
 
       # Notify the client, that he needs to reload his data, since we cleared the notifications
       NotificationRepository::pushSession(

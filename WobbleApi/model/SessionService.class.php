@@ -51,7 +51,10 @@ class SessionService {
   public static function getSession($session_id) {
     $pdo = ctx_getpdo();
 
-    $sql = 'SELECT session_id, user_id, user_agent, last_touch FROM sessions WHERE session_id = ?';
+    $sql = 'SELECT session_id, user_id,
+                   user_agent, last_touch,
+                   (last_touch <= (unix_timestamp() - 5 * 60)) timeout
+            FROM sessions WHERE session_id = ?';
     $stmt = $pdo->prepare($sql);
     $stmt->execute(array($session_id));
     return $stmt->fetch();
