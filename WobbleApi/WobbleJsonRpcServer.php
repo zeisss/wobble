@@ -89,6 +89,8 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
         return;
       }
       $_SESSION['userid'] = $session['user_id'];
+    } else {
+      $session = SessionService::getSession(session_id());
     }
 
     // Load the current user and check if he was marked offline
