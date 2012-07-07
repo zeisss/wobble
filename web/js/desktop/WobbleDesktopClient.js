@@ -49,7 +49,7 @@ WobbleDesktopClient.prototype.initApp = function() {
   this.topicModel = new TopicModel();
 
   // Create the navigator
-  this.topHeader = new DesktopClientHeader();
+  this.topHeader = new DesktopClientHeader(this.notificationFetcher);
 
   // Create the Views
   this.contactsView = new JQueryContactsView();
@@ -65,6 +65,7 @@ WobbleDesktopClient.prototype.initApp = function() {
   this.contactsPresenter = new ContactsPresenter(this.contactsView, this.contactsModel);
   this.contactsDetailPresenter = new ContactsDetailPresenter(new JQueryContactsDetailDisplay(100, 100), this.contactsModel, 'contact.clicked');
   this.topicListPresenter = new TopicListPresenter(this.topicListView, this.topicListModel);
+  this.whoAmIPresenter = new WhoAmIPresenter(this.contactsView);
   this.windowUpdater = new WindowUpdater(this.topicListModel);
 
   this.topicPresenter = new TopicPresenter(this.topicView, this.topicModel);
@@ -80,6 +81,10 @@ WobbleDesktopClient.prototype.initApp = function() {
   }, this);
 };
 WobbleDesktopClient.prototype.onRPCError = function(err) {
+  // We ignore connection errors here, because our OfflineBar handles it
+  if (err.type === 'connectionerror')
+    return;
+
   var doReload = window.confirm('Whoooops! Something went wrong! We will reload now, ok?');
   if (doReload)
     window.location.reload();

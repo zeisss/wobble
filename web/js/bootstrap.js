@@ -46,7 +46,7 @@
   // Wobble Core
   files.push(
     'js/core/localcache.js',
-    'js/core/resize_observer.js',
+    'js/core/ResizeObserver.js',
     'js/core/EventBUS.js',
     'js/core/JSONRPC.js',
     'js/core/WobbleAPI.js',
@@ -65,6 +65,7 @@
     'js/modules/TopicListPresenter.js',
     'js/modules/UserProfilePresenter.js',
     'js/modules/WindowUpdater.js',
+    'js/modules/WhoAmIPresenter.js',
 
     // Views
     'js/views/JQueryTopicListView.js',

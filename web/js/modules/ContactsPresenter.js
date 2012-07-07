@@ -9,11 +9,9 @@ function ContactsDisplay() {}
 // Event Callbacks (Will be set by presenter)
 ContactsDisplay.prototype.onAddContact = function(contactEmail) {};
 ContactsDisplay.prototype.onContactClick = function(contact) {};
-ContactsDisplay.prototype.onWhoamiClick = function() {};
 
 // Methods
 ContactsDisplay.prototype.renderContacts = function (list) {};
-ContactsDisplay.prototype.renderWhoAmI = function(user) {};
 ContactsDisplay.prototype.showMessage = function(message) { window.alert(message); };
 
 
@@ -52,9 +50,6 @@ function ContactsPresenter(display, model) {
   };
 
   // WhoAmI  ---------------------------------------------------
-  model.on('user', function(user) {
-    this.display.renderWhoAmI(user);
-  }, this);
   model.on('update', this.refreshContacts, this);
 
   // Initial rendering
