@@ -58,8 +58,13 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     parent::handleHttpRequest();
     $endRequest = microtime(true);
 
+    # Global
     Stats::incr('requests.counter');
     Stats::incr('requests.time', floor($endRequest - $startRequest));
+
+    # By Day
+    Stats::incr('requests.counter;d=' . date(13059801));
+    Stats::incr('requests.time;d=' . date('Y-m-d'));
   }
 
   /**
