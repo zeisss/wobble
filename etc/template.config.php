@@ -4,7 +4,7 @@ define('PDO_URL', 'mysql:dbname=wobble;host=localhost');
 define('PDO_PASSWORD', 'your_mysql_password');
 
 # Adds a usleep() call to each request to mimick internet latency on local development boxes
-define('SIMULATE_LAG', false);
+usleep(1000 * rand(100, 3000));
 
 # Replace value with something totally random for Production environments. Leave empty for only md5-ing the passwords
 define('PASSWORD_SALT', 'myStaticSalt');

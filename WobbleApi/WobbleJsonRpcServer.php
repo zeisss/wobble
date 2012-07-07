@@ -46,14 +46,9 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
   }
 
   /**
-   * If SIMULATE_LAGS is defined, this delays the current request by a random amount of time,
-   * before continuing normally.
+   *
    */
   public function handleHttpRequest() {
-    if (defined('SIMULATE_LAG') && SIMULATE_LAG) {
-      // Decrease the performance
-      usleep(1000 * rand(100, 3000));
-    }
     $startRequest = microtime(true);
     parent::handleHttpRequest();
     $endRequest = microtime(true);
