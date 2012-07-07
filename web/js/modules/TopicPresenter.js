@@ -341,7 +341,11 @@ TopicPresenter.prototype.refreshTopic = function(callback) {
   var that  = this;
 
   API.load_topic_details(this.model.getTopic().id, function(err, topicDetails) {
-    if (err) { // Just clear the view, when the data could not be loaded.
+    if (err) {
+      if (err.type === 'connectionerror') {
+        return false;
+      }
+      // Just clear the view, when the data could not be loaded.
       console.log('Failed to load topic. Clearing view.');
       that.view.clear();
       return true;
