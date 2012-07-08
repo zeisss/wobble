@@ -95,8 +95,13 @@ class JsonRpcServer {
         else 
           throw new Exception("Function {$export['method']} was exported, but cannot be found.");
       }
-    
+
       $this->beforeCall($request['method'], $request['params']);
+      if (!$this->isAuthorized($request['method'], $request['params'])) {
+        $e = new Exception('Authorization required!');
+        $this->afterCall($request['method'], $request['params'], null, $e);
+        return $this->createError(-32000, $e->getMessage(), $request['id']);
+      }
       $response = call_user_func($export['method'], $request['params'], $this);
       $this->afterCall($request['method'], $request['params'], $response, null);
     } catch(Exception $e) {
@@ -139,5 +144,8 @@ class JsonRpcServer {
   protected function beforeCall($method, $params) {
   }
   protected function afterCall($method, $params, $result, $error) {
+  }
+  protected function isAuthorized($method, $params) {
+    return true;
   }
 }
