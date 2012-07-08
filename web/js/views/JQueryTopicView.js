@@ -60,7 +60,7 @@ JQueryTopicReadersPartial.prototype.checkReaderOverflow = function() {
   } else {
     // Try to make the list smaller by hiding the last reader
     var readers = $('.reader', this.readerList);
-    for (var trie = 0; this.e.outerHeight() > 56 && trie < 1000; trie++) {
+    for (var trie = 1; this.e.outerHeight() > 56 && trie < 1000; trie++) {
       $(readers[readers.length - trie]).css('display', 'none');
       hiddenUsers++;
     }
