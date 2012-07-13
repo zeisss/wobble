@@ -2,37 +2,41 @@
 
 
 function LoginPresenter(display, model, callback) {
-  this.display = display;
-  this.model = model;
-  this.callback = callback;
+  var self = this;
 
-  this.display.onLogin(function(fields) {
+  self.display = display;
+  self.model = model;
+  self.callback = callback;
+
+  self.display.onLogin(function (fields) {
     display.setEnabled(false);
-    model.doLogin(fields.email, fields.password, function(err, result) {
+    model.doLogin(fields.email, fields.password, function (err, result) {
       display.setEnabled(true);
-
       if (err) {
-        alert(err.message);
-        return true;
-      } else {
-        callback();
+        return self.modelError(err);
       }
+      callback();
     });
   });
 
-  this.display.onRegister(function(fields) {
+  self.display.onRegister(function (fields) {
     display.setEnabled(false);
-    model.doRegister(fields.email, fields.password, function(err, result) {
+    model.doRegister(fields.email, fields.password, function (err, result) {
       display.setEnabled(true);
       if (err) {
-        alert(err.message);
-        return true;
-      } else {
-        callback();
+        return self.modelError(err);
       }
+      callback();
     });
   });
 
   display.show();
 }
+
+LoginPresenter.prototype.modelError = function modelError(e) {
+  if (e.type === 'connectionerror') {
+    return alert('Server error. Please try again later.');
+  }
+	alert(e.message);
+};
 
