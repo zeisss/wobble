@@ -1,4 +1,7 @@
 <?php
+
+require __DIR__ . '/api_contacts.php';
+
 /**
  * Input = {}
  * Result = true 
@@ -21,11 +24,41 @@ function user_signout($params) {
 }
 
 /**
+ * Input = {'email': Email, 'appkey': UserAppKey}
+ * Email = UserAppKey = string()
+ * Result = true
+ */
+function user_authenticate_app($params) {
+    $email = $params['email'];
+    $user_app_key = $params['user_app_key'];
+
+    ValidationService::validate_email($email);
+    ValidationService::validate_not_empty($user_app_key);
+
+    $email = InputSanitizer::sanitizeEmail($email);
+    $user = UserRepository::getUserByEmail($email);
+
+    if ($user != null && $user['user_app_key'] == $user_app_key) {
+        session_start();
+        $_SESSION['userid'] = $user['id'];
+        $_SESSION['role'] = 'app';
+
+        # We don't really sign on here. So no more actions.
+
+        return array(
+          'apikey' => session_id()
+        );
+    } else {
+      throw new Exception('Invalid credentials!');
+    }
+}
+
+/**
  * Input = {'email': Email, 'password': Password}
  * Email = Password = string()
  * Result = true
  */
-function user_login($params) {
+function user_authenticate_user($params) {
   $email = $params['email'];
   $password = $params['password'];
 
@@ -42,6 +75,7 @@ function user_login($params) {
     session_start();
 
     $_SESSION['userid'] = $user['id'];
+    $_SESSION['role'] = 'user';
 
     SessionService::signon(session_id(), $user['id']);
 
@@ -140,6 +174,20 @@ function user_change_password($params) {
 }
 
 /**
+ * Input = {}
+ * Result = true
+ */
+function user_rebuild_appkey($params) {
+  $self_user_id = ctx_getuserid();
+
+  ValidationService::validate_not_empty($self_user_id);
+
+  UserRepository::regenerateAppKey($self_user_id);
+
+  return true;
+}
+
+/**
  * Input = {'id': UserId, 'email': Email, 'img': GravatarEmailHash, 'name': Username, 'online': 1|0}
  * Username = Email = GravatarEmailHash = string()
  * Result = true
@@ -151,9 +199,12 @@ function user_get() {
   }
   $user = UserRepository::get($self_user_id);
   unset($user['password_hashed']);
+  if ('user' != ctx_getrole()) {
+      unset($user['user_app_key']);
+  }
   return $user;
-  
 }
+
 /**
  * Returns the id of the currently logged in user.
  *
