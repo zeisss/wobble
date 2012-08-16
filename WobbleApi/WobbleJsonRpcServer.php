@@ -1,6 +1,48 @@
 <?php
 
 class WobbleJsonRpcServer extends HttpJsonRpcServer {
+  private $security = array (
+    'all' => array (
+      'wobble.api_version',
+      'user_register',
+      'user.authenticate_user',   'user_login',
+      'user.authenticate_app',
+      'user_get',
+      'user_get_id',
+      'get_notifications',
+      'echo',
+      'system.listMethods'
+    ),
+    'app' => array (
+      'user_signout',
+
+      'contacts.list',        'user_get_contacts',
+
+      'topics_list',
+      'topics_search',
+      'topic_get_details',
+    ),
+    'user' => array (
+      'user_change_name',
+      'user_change_password',
+
+      'contacts.add',           'user_add_contact',
+      'contacts.remove',        'user_remove_contact',
+
+      'topics_create',
+
+      'topic_add_user',
+      'topic_remove_user',
+      'topic_set_archived',
+      'topic_remove_message',
+
+      'post_create',
+      'post_edit',
+      'post_delete',
+      'post_change_read',         'post_read',
+      'post_change_lock'
+    )
+  );
   public function __construct() {
     parent::__construct();
 
@@ -31,7 +73,8 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
       array('file' => 'api_user.php', 'method' => 'user_register'),
       array('file' => 'api_user.php', 'method' => 'user_change_name'),
       array('file' => 'api_user.php', 'method' => 'user_change_password'),
-      array('file' => 'api_user.php', 'method' => 'user_login'),
+      array('file' => 'api_user.php', 'method' => 'user_authenticate_user', 'name' => 'user.authenticate_user'),
+      array('file' => 'api_user.php', 'method' => 'user_authenticate_app',  'name' => 'user.authenticate_app'),
       array('file' => 'api_user.php', 'method' => 'user_signout'),
 
       // Notifications
@@ -43,7 +86,8 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
       array('file' => 'api_contacts.php', 'method' => 'user_remove_contact','name' => 'contacts.remove'),
 
       // Backward Compatibility
-      array('file' => 'api_topic.php', 'method' => 'post_change_read', 'name' => 'post_read'),
+      array('file' => 'api_user.php',  'method' => 'user_authenticate_user',  'name' => 'user_login'),
+      array('file' => 'api_topic.php', 'method' => 'post_change_read',        'name' => 'post_read'),
       array('file' => 'api_contacts.php', 'method' => 'user_get_contacts'),
       array('file' => 'api_contacts.php', 'method' => 'user_add_contact'),
       array('file' => 'api_contacts.php', 'method' => 'user_remove_contact')
@@ -71,8 +115,30 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
    * Performs a session validation.
    */
   public function beforeCall($method, $params) {
+    syslog(10, 'REQUEST ######################################');
+    syslog(10, $method . ' % ' . $params['apikey']);
     self::beforeCallInitSession($method, $params);
     self::beforeCallStats($method, $params);
+  }
+
+  public function isAuthorized($method, $params) {
+    $role = ctx_getrole();
+    $is_public = in_array($method, $this->security['all']) ? 1 : 0;
+    $is_app = in_array($method, $this->security['app']) ? 1 : 0;
+    $is_user = in_array($method, $this->security['user']) ? 1 : 0;
+    syslog(10, '## ' . $method . ' % ' . $role . ' ' . $is_public . ' ' . $is_app . ' ' . $is_user);
+
+    if ($is_public)
+      return true;
+
+    else if ($role == 'app') {
+      return $is_app;
+    } else if($role == 'user') {
+      return $is_app || $is_user;
+    }
+    else {
+      return false;
+    }
   }
 
   protected function beforeCallInitSession($method, $params) {
@@ -84,18 +150,20 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     session_set_cookie_params(60 * 60 * 24 * 31); # tell php to keep this session alive 1 month
     session_start(); # Try to find a PHP Session
 
-    if (empty($_SESSION['userid'])) {
+    $session = SessionService::getSession(session_id());
+    syslog(10, 'Session: '. $session);
+
+    if (empty($_SESSION['userid']) && !empty($session)) {
       # User was so long offline, that the server php-session was destroy
       # We can rebuild it. We have the technology!
-      $session = SessionService::getSession(session_id());
-
-      if (empty($session)) {
-        # Ok, the given sessionkey is really bogus / outdated. Just ignore it.
-        return;
-      }
+      # NOTE: Apps don't have a session in the session table, thus we can assume here, this is a user
       $_SESSION['userid'] = $session['user_id'];
-    } else {
-      $session = SessionService::getSession(session_id());
+      $_SESSION['role'] = 'user';
+    }
+
+    # User still not found
+    if (empty($_SESSION['userid'])) {
+      return;
     }
 
     // Load the current user and check if he was marked offline
@@ -115,7 +183,7 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
       }
     }
 
-    if ($session['timeout'] === '1') {
+    if (!empty($session) && $session['timeout'] === '1') {
       SessionService::signon(session_id(), $userid);
 
       NotificationRepository::deleteNotifications(session_id(), time());

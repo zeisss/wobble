@@ -23,5 +23,9 @@ function ctx_getpdo() {
 }
 
 function ctx_getuserid() {
-  return isset($_SESSION['userid']) ? intval($_SESSION['userid']) : NULL;
+  return isset($_SESSION['userid']) ? intval($_SESSION['userid']) : null;
+}
+
+function ctx_getrole() {
+  return isset($_SESSION['role']) ? $_SESSION['role'] : null;
 }

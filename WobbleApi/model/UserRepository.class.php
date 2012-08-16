@@ -23,6 +23,13 @@ class UserRepository {
     $stmt->execute(array($hashedPassword, $user_id));    
   }
 
+  function regenerateAppKey($user_id) {
+    $sql = 'UPDATE users SET appkey = ? WHERE id = ?';
+    $pdo = ctx_getpdo();
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(array('test', $user_id));
+  }
+
   /**
    * Returns the user with the given ID including the hashed password.
    */
@@ -31,6 +38,7 @@ class UserRepository {
 
     $stmt = $pdo->prepare('SELECT id, name, password_hashed, email, 
           md5(email) img,
+          appkey as user_app_key,
           COALESCE((select max(last_touch) from sessions us where us.user_id = id) > (UNIX_TIMESTAMP() - 300), false) online
         FROM users 
         WHERE id = ?');
@@ -56,6 +64,7 @@ class UserRepository {
 
     $stmt = $pdo->prepare('SELECT id, name, password_hashed, email, 
           md5(email) img,
+          appkey as user_app_key,
           COALESCE((select max(last_touch) from sessions us where us.user_id = id) > (UNIX_TIMESTAMP() - 300), false) online
          FROM users 
         WHERE email = ?');

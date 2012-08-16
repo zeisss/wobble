@@ -1,0 +1,8 @@
+{
+  "up": [
+    "ALTER TABLE  `users` ADD `appkey` VARCHAR(100) CHARACTER SET ascii NOT NULL"
+  ],
+  "down": [
+    "ALTER TABLE  `users` DROP `appkey`"
+  ]
+}

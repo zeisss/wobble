@@ -1,8 +1,10 @@
 describe('the JSONRPC api', function () {
-  var rpc;
+  var rpc
+    , emitter;
 
   beforeEach(function () {
-    rpc = new JSONRPC('//localhost');
+    emitter = new EventBUS();
+    rpc = new JSONRPC('//localhost', emitter);
   })
 
   describe('retries', function () {
