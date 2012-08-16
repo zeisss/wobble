@@ -46,7 +46,7 @@ BasicClient.prototype.bootstrap = function(config) {
   });
 
   // Initialize the API and app, when user data is loaded
-  window.RPC = new JSONRPC(this.config.api);
+  window.RPC = new JSONRPC(this.config.api, BUS);
   window.API = new WobbleAPI(
     window.RPC,
     function(user) {

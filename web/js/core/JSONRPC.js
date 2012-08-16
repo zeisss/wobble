@@ -1,14 +1,15 @@
-/*global RPC BUS */
+/*global BUS */
 "use strict";
 
 // RPC Wrapper (JSON-RPC 2.0 - http://json-this.RPC.org/wiki/specification)
-function JSONRPC(url) {
+function JSONRPC(url, emitter) {
   this.url = url;
   this.idSequence = 1;
   this.initialSleepTime = 500; // Time to wait after first connection error before retrying
   this.retryTimeFactor = 1.9; // Increase sleeping time between retries by this factor
   this.maxRetries = 3;
   this.stateWaiting = [];
+  this.emitter = emitter || BUS;
 }
 
 /**
@@ -49,13 +50,7 @@ JSONRPC.prototype._retry_call = function(requestId, name, args, callback) {
     , self = this
     , request = {
       currentRequest: undefined,
-      aborted: false,
-      abort: function () {
-        this.aborted = true;
-        if (this.currentRequest) {
-          this.currentRequest.abort();
-        }
-      }
+      aborted: false
     };
 
   var retry_callback = function(err, result) {
@@ -84,7 +79,7 @@ JSONRPC.prototype._retry_call = function(requestId, name, args, callback) {
 };
 
 JSONRPC.prototype._call = function(requestId, name, args, callback) {
-  var that = this;
+  var self = this;
 
   var body = {
     jsonrpc: "2.0",
@@ -107,14 +102,14 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
     success: function(data, textStatus, jqXHR) {
       var errorHandled, error;
 
-      if(that.aborted)
+      if(self.aborted)
         return;
 
       if (data === undefined) {
         error = {'message': 'Empty response'};
         errorHandled = callback ? callback(error) : false;
         if (!errorHandled) {
-          BUS.fire('rpc.error', {
+          self.emitter.fire('rpc.error', {
             request: body,
             error: error
           });
@@ -123,7 +118,7 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
       else if (data.error) {
         errorHandled = callback ? callback(data.error) : false;
         if (!errorHandled) {
-          BUS.fire('rpc.error', {
+          self.emitter.fire('rpc.error', {
             request: body,
             error: data.error
           });
@@ -137,23 +132,23 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
   };
 
   ajaxSettings.error = function(jqXHR, textStatus, errorThrown) {
-    if (that.aborted)
+    if (self.aborted)
       return;
 
     var errorObj = {type: 'connectionerror', text: textStatus, error: errorThrown};
     var errorHandled = callback ? callback(errorObj) : false;
     if (!errorHandled) {
-      BUS.fire('rpc.connectionerror', errorObj);
+      self.emitter.fire('rpc.connectionerror', errorObj);
     }
   };
 
   var req = $.ajax(this.url, ajaxSettings).always(function() {
-    that.stateWaiting = jQuery.grep(that.stateWaiting, function(areq, i) {
+    self.stateWaiting = jQuery.grep(self.stateWaiting, function(areq, i) {
       return areq !== req;
     });
-    BUS.fire('rpc.queue.length', that.stateWaiting.length);
+    self.emitter.fire('rpc.queue.length', self.stateWaiting.length);
   });
   this.stateWaiting.push(req);
-  BUS.fire('rpc.queue.length', this.stateWaiting.length);
+  self.emitter.fire('rpc.queue.length', this.stateWaiting.length);
   return req;
 };
