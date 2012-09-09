@@ -2,7 +2,7 @@
 "use strict";
 
 /**
- * This is the view containing the ConstactsRooster as well as the user info.
+ * This is the view containing the ConstactsRoster as well as the user info.
  */
 function JQueryContactsView() {
   var template =

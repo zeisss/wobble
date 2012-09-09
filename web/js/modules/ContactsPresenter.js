@@ -37,7 +37,7 @@ function ContactsPresenter(display, model) {
       'contact': contact,
       'actions': [
         {title: 'Remove Contact', callback: function() {
-          that.removeContactFromRooster(contact.id);
+          that.removeContactFromRoster(contact.id);
         }}
       ]
     });
@@ -47,9 +47,9 @@ function ContactsPresenter(display, model) {
   model.on('update', this.refreshContacts, this);
 }
 // Methods ---------------------------------------------------
-ContactsPresenter.prototype.removeContactFromRooster = function(userId) {
+ContactsPresenter.prototype.removeContactFromRoster = function(userId) {
   var that = this;
-  this.model.removeContactFromRooster(userId, function(err) {
+  this.model.removeContactFromRoster(userId, function(err) {
     that.refreshContacts();
   });
 };

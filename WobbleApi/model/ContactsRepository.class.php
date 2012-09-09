@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Manages the Rooster of a User.
+ * Manages the Roster of a User.
  */
 class ContactsRepository {
   function addUser($user_id, $contact_user_id) {

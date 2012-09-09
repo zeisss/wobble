@@ -79,7 +79,7 @@ ContactsModel.prototype.isContact = function(contactId) {
   });
 };
 
-ContactsModel.prototype.removeContactFromRooster = function(userId, callback) {
+ContactsModel.prototype.removeContactFromRoster = function(userId, callback) {
   var that = this;
   API.contact_remove(userId, function(err, data) {
     // Update the model
