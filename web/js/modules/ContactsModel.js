@@ -25,8 +25,6 @@ function ContactsModel(cache) {
   }
 
   BUS.on('api.user', function(user) {
-    this.contacts = [];
-
     this.refreshContactList();
   },this);
 
