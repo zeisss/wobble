@@ -47,6 +47,7 @@ WobbleDesktopClient.prototype.initApp = function() {
   this.contactsModel = new ContactsModel(this.cache);
   this.topicListModel = new TopicListModel(window.localcache.getCache());
   this.topicModel = new TopicModel();
+  this.whoAmIModel = new WhoAmIModel(API);
 
   // Create the navigator
   this.topHeader = new DesktopClientHeader(this.notificationFetcher);
@@ -65,7 +66,7 @@ WobbleDesktopClient.prototype.initApp = function() {
   this.contactsPresenter = new ContactsPresenter(this.contactsView, this.contactsModel);
   this.contactsDetailPresenter = new ContactsDetailPresenter(new JQueryContactsDetailDisplay(100, 100), this.contactsModel, 'contact.clicked');
   this.topicListPresenter = new TopicListPresenter(this.topicListView, this.topicListModel);
-  this.whoAmIPresenter = new WhoAmIPresenter(this.contactsView);
+  this.whoAmIPresenter = new WhoAmIPresenter(this.contactsView, this.whoAmIModel);
   this.windowUpdater = new WindowUpdater(this.topicListModel);
 
   this.topicPresenter = new TopicPresenter(this.topicView, this.topicModel);
