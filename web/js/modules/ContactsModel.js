@@ -6,7 +6,6 @@
  * user has.
  *
  * Events:
- *  - user - API.user() changed
  *  - update - List of contacts was reloaded
  *  - added - A contact was added
  *  - removed - A contact was removed
@@ -24,12 +23,9 @@ function ContactsModel(cache) {
       that.fire('update');
     }, 50);
   }
-  this.user = API.user();
 
   BUS.on('api.user', function(user) {
-    this.user = user;
     this.contacts = [];
-    this.fire('user', user);
 
     this.refreshContactList();
   },this);
@@ -62,10 +58,6 @@ ContactsModel.prototype.getContacts = function (callback) {
   _.defer(function() { // Fake the async behavior
     callback(undefined, result);
   });
-};
-
-ContactsModel.prototype.getUser = function() {
-  return this.user;
 };
 
 ContactsModel.prototype.addNewContact = function(contactEmail, callback) {

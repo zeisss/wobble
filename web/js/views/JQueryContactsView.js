@@ -36,6 +36,7 @@ JQueryContactsView.prototype.onResize = function() {
 
   this.$contactsList.css('height', viewHeight - offsetX);
 };
+
 JQueryContactsView.prototype.renderContacts = function (list) {
   this.$contactsList.empty();
 
@@ -63,18 +64,9 @@ JQueryContactsView.prototype.renderContacts = function (list) {
   }, this);
 };
 
-JQueryContactsView.prototype.renderWhoAmI = function renderWhoAmI(user) {
-  this.$whoami.empty();
-  if (!user) {
-    return;
-  }
-  var template = "<img title='That is you!' src='http://gravatar.com/avatar/{{{img}}}?s=32' width=32 height=32> <span class=name>{{name}}</span>";
-  this.$whoami.append(Mustache.to_html(template, user));
-};
-
 /*
-Private Stuff
-*/
+ * Private Stuff
+ */
 JQueryContactsView.prototype.bind = function bind() {
   this.$whoami.click($.proxy(function() {
      this.onWhoamiClick();
@@ -102,9 +94,13 @@ JQueryContactsView.prototype.bind = function bind() {
   on_window_resize(); // Fire it once initially (with a delay)
 };
 
-JQueryContactsView.prototype.onWhoamiClick = function onWhoamiClick() {
-  var pos = that.display.$whoami.offset();
-  pos.top += that.display.$whoami.outerHeight() + 5;
-  pos.left += 5;
-  BUS.fire('ui.profile.show', pos);
+
+JQueryContactsView.prototype.renderWhoAmI = function renderWhoAmI(user) {
+  this.$whoami.empty();
+  if (!user) {
+    return;
+  }
+  var template = "<img title='That is you!' src='http://gravatar.com/avatar/{{{img}}}?s=32' width=32 height=32> <span class=name>{{name}}</span>";
+  this.$whoami.append(Mustache.to_html(template, user));
 };
+JQueryContactsView.prototype.onWhoamiClick = function onWhoamiClick() {};

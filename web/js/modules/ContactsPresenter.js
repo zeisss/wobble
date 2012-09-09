@@ -42,21 +42,9 @@ function ContactsPresenter(display, model) {
       ]
     });
   };
-  display.onWhoamiClick = function() {
-    var pos = that.display.$whoami.offset();
-    pos.top += that.display.$whoami.outerHeight() + 5;
-    pos.left += 5;
-    BUS.fire('ui.profile.show', pos);
-  };
 
-  // WhoAmI  ---------------------------------------------------
+  // Model Binding  ---------------------------------------------------
   model.on('update', this.refreshContacts, this);
-
-  // Initial rendering
-  if (model.getUser()) {
-    this.display.renderWhoAmI(model.getUser());
-  }
-  return that;
 }
 // Methods ---------------------------------------------------
 ContactsPresenter.prototype.removeContactFromRooster = function(userId) {
