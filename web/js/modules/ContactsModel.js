@@ -74,11 +74,9 @@ ContactsModel.prototype.addNewContact = function(contactEmail, callback) {
 };
 
 ContactsModel.prototype.isContact = function(contactId) {
-  var list = _.filter(this.contacts, function(contact) {
+  return _.any(this.contacts, function(contact) {
     return contact.id == contactId;
   });
-
-  return (list.length > 0);
 };
 
 ContactsModel.prototype.removeContactFromRooster = function(userId, callback) {
