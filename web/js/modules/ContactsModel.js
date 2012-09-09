@@ -114,9 +114,11 @@ ContactsModel.prototype.refreshContactList = function() {
       for (var i = 0; i < data.length; i++) {
         that.contacts.push(data[i]);
       }
-      if (that.cache) 
-        that.cache.set('contactlist.contacts', that.contacts, that.cacheTimeout);
       that.fire('update');
+
+      if (that.cache) {
+        that.cache.set('contactlist.contacts', that.contacts, that.cacheTimeout);
+      }
     }
   });
 };
