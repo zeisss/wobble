@@ -18,7 +18,7 @@ function TopicListModel(cache) {
   this.reloadAgainAfterRequest = false;
   this.is_search_result = false;
 
-  BUS.on('api.notification', function(message) {
+  BUS.on('api.notification', function (message) {
     if (message.type == 'topic_changed' ||
        message.type == 'post_changed' || /* Unread message counter propably got changed */
        message.type == 'post_deleted' ||
