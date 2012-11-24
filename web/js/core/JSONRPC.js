@@ -110,7 +110,7 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
       if(that.aborted)
         return;
 
-      if (data === undefined) {
+      if (!data) {
         error = {'message': 'Empty response'};
         errorHandled = callback ? callback(error) : false;
         if (!errorHandled) {
