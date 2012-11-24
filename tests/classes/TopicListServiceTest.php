@@ -48,7 +48,7 @@ class TopicListServiceTest extends PHPUnit_Framework_TestCase {
   }
   
   function testHeadlineInHtml() {
-    $expected = array('headline' => 'London - Reise', 'text' => 'Di, 10.1. - 20.1. =&gt; 10 Üb');
+    $expected = array('headline' => 'London - Reise', 'text' => 'Di, 10.1. - 20.1. =&gt; 10 Übe');
     $html = '<b>London - Reise</b><div><br></div><div>Di, 10.1. - 20.1. =&gt; 10 Übernachtungen / 11 Tage</div>';
     $this->assertEquals($expected, TopicListService::createAbstract($html));
   }
