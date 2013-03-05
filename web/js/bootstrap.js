@@ -79,7 +79,9 @@
     'js/login/AbstractLoginView.js',
     'js/login/DesktopLoginView.js',
     'js/login/MobileLoginView.js',
-    'js/login/LoginPresenter.js'
+    'js/login/LoginPresenter.js',
+    
+    'ext/filepicker.io.js'
   );
 
   // Load classes based selected App

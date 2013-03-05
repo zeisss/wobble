@@ -654,12 +654,23 @@ JQueryTopicView.prototype._renderTopicActions = function(editing) {
     $('<button title="Make list" class="icon listicon borderright"></button>').appendTo(this.$actions).click(function() {
       document.execCommand('insertunorderedlist', false, null);
     });
-    $('<button title="Insert image from url" class="icon imgicon">img</button>').appendTo(this.$actions).click(function() {
-      var url = window.prompt("URL?");
-      if (url !== null) {
-        document.execCommand('insertimage', false, url);
-      }
-    });
+    
+    if (window.wobble_config.filepicker_apikey) {
+      // We assume, that the filepicker API is set up
+      $('<button title="Insert image from url" class="icon imgicon">img</button>').appendTo(this.$actions).click(function() {
+        var options = {mimetype: 'image/*'};
+        filepicker.pick(options, function(file) {
+          document.execCommand('insertimage', false, file.url);
+        });
+      });
+    } else {
+      $('<button title="Insert image from url" class="icon imgicon">img</button>').appendTo(this.$actions).click(function() {
+        var url = window.prompt("URL?");
+        if (url !== null) {
+          document.execCommand('insertimage', false, url);
+        }
+      });
+    }
     $('<button title="Make link" class="icon urlicon"></button>').appendTo(this.$actions).click(function() {
       var url = window.prompt("URL?");
       if (url !== null) {
