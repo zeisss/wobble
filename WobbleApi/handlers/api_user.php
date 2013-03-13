@@ -23,7 +23,7 @@ function user_signout($params) {
 /**
  * Input = {'email': Email, 'password': Password}
  * Email = Password = string()
- * Result = true
+ * Result = {'apikey': string()}
  */
 function user_login($params) {
   $email = $params['email'];
@@ -62,7 +62,7 @@ function user_login($params) {
 /**
  * Input = {'email': Email, 'password': Password}
  * Email = Password = string()
- * Result = true
+ * Result = {'apikey': string()}
  */
 function user_register($params) {
   $email = $params['email'];
@@ -140,9 +140,9 @@ function user_change_password($params) {
 }
 
 /**
- * Input = {'id': UserId, 'email': Email, 'img': GravatarEmailHash, 'name': Username, 'online': 1|0}
+ * Input = {}
+ * Result = {'id': UserId, 'email': Email, 'img': GravatarEmailHash, 'name': Username, 'online': 1|0}
  * Username = Email = GravatarEmailHash = string()
- * Result = true
  */
 function user_get() {
   $self_user_id = ctx_getuserid();
