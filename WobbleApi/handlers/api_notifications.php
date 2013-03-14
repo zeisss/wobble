@@ -13,6 +13,8 @@ function get_notifications($params) {
   $self_user_id = ctx_getuserid();
   $timestamp = @$params['next_timestamp'];
 
+  ValidationService::validate_not_empty($self_user_id);
+
   session_write_close(); # we dont need to modify the session after here
 
   if (is_null($timestamp))
