@@ -19,15 +19,15 @@ function topics_search($params) {
 }
 
 /**
- * Return a list of topics the user can see.
+ * Return a list of topics the user can see. Pass archive=1 to show the archive, archive=0 to show the inbox.
  *
  * The client must be authenticated.
  *
- * input = {}
+ * Input = {'archived': 1|0}
  *
  * result = [MetaTopic]
  * MetaTopic = {'id': TopicId, 'abstract': string(), 'users': [User], 'max_last_touch': int(), 
- *              'post_count_unread': int(), 'post_count_total': int(), 'archived': bool()}
+ *              'post_count_unread': int(), 'post_count_total': int(), 'archived': 1|0}
  */
 function topics_list($params) {
   $self_user_id = ctx_getuserid();

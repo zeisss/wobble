@@ -46,7 +46,7 @@ function topic_get_details($params) {
  * Adds a user to the specified topic. The user must be authenticated and a reader of the specified topic.
  * Raises an error if not a member
  *
- * input = {'topic_id': TopicId, 'contact_id': UserId}
+ * Input = {'topic_id': TopicId, 'contact_id': UserId}
  * result = true
  */
 function topic_add_user($params) {
@@ -116,7 +116,7 @@ function topic_add_user($params) {
  * The client must be authenticated and a reader of the topic.
  * An exception is raised, if the client is not a member.
  *
- * input = {'topic_id': TopicId, 'contact_id': UserId}
+ * Input = {'topic_id': TopicId, 'contact_id': UserId}
  * result = TRUE
  */
 function topic_remove_user($params) {
@@ -179,7 +179,7 @@ function topic_remove_user($params) {
  *
  * The client must be authenticated and a reader of the given topic.
  *
- * input = {'topic_id': TopicId, 'post_id': PostId, 'parent_post_id': PostId}
+ * Input = {'topic_id': TopicId, 'post_id': PostId, 'parent_post_id': PostId}
  * result = true
  */
 function post_create($params) {
@@ -231,7 +231,7 @@ function post_create($params) {
  *
  * The client must be authenticated and the user must be a reader of the topic.
  *
- * input = {'topic_id': TopicId, 'post_id': PostId, 'content': string(), 'revision_no': int()}
+ * Input = {'topic_id': TopicId, 'post_id': PostId, 'content': string(), 'revision_no': int()}
  * result = {'revision_no': int()}
  */
 function post_edit($params) {
@@ -321,7 +321,7 @@ function post_edit($params) {
  *
  * The client must be authenticated and the user must be a reader of the topic.
  *
- * input = {'topic_id': TopicId, 'post_id': PostId}
+ * Input = {'topic_id': TopicId, 'post_id': PostId}
  * result = true
  */
 function post_delete($params) {
@@ -362,8 +362,8 @@ function post_delete($params) {
  *
  * The client must be authenticated and the user must be a reader of the topic.
  *
- * input = {'topic_id': TopicId, 'post_id': PostId, 'read': 0|1}
- * result = true
+ * Input = {'topic_id': TopicId, 'post_id': PostId, 'read': 0|1}
+ * Result = true
  */
 function post_change_read($params) {
   $self_user_id = ctx_getuserid();
@@ -426,7 +426,7 @@ function post_change_lock($params) {
 /**
  * Removes the specified message from the given topic.
  *
- * input = {'topic_id': TopicId, 'message_id': MessageId}
+ * Input = {'topic_id': TopicId, 'message_id': MessageId}
  * output = true
  */
 function topic_remove_message($params) {
@@ -457,7 +457,7 @@ function topic_remove_message($params) {
 /**
  * Marks the given topic as archived or not.
  *
- * input = {'topic_id': TopicId, 'archived': Boolean}
+ * Input = {'topic_id': TopicId, 'archived': 1|0}
  */
 function topic_set_archived($params) {
   $user_id = ctx_getuserid();
@@ -475,4 +475,6 @@ function topic_set_archived($params) {
     'type' => 'topic_changed',
     'topic_id' => $topic_id
   ));
+
+  return TRUE;
 }
