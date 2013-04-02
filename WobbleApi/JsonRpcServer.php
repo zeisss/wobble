@@ -68,23 +68,32 @@ class JsonRpcServer {
       return $this->createError(-32600, "Invalid request");
     }
 
+    # no jsonrpc-version
+    if (!isset ($request['jsonrpc']))  {
+      if (isset($request['id']))
+        return $this->createError(-32600, 'Invalid Request: JSON-RPC-Version missing', $request['id']);
+      else
+        return $this->createError(-32600, 'Invalid Request: JSON-RPC-Version missing');
+    }
+
+    # no method given => invalid request
     if (!isset ($request['method']))  {
       if (isset($request['id']))
-        return $this->createError(-32602, 'No method given.', $request['id']);
+        return $this->createError(-32600, 'Invalid Request: Method missing', $request['id']);
       else
-        return $this->createError(-32602, 'No method given.');
+        return $this->createError(-32600, 'Invalid Request: Method missing');
     }
 
     if (!isset($request['params'])) {
       $request['params'] = array();
     }
-    
+
     if (!isset($this->functions[$request['method']])) {
-      return $this->createError(-32602, 'Unknown method: '. $request['method'], $request['id']);
+      return $this->createError(-32601, 'Method not found: '. $request['method'], $request['id']);
     }
-    
+
     $export = $this->functions[$request['method']];
-    
+
     try {
       if (isset($export['file'])) {
         require_once(WOBBLE_HOME . '/WobbleApi/handlers/' . $export['file']);
@@ -92,10 +101,10 @@ class JsonRpcServer {
       if (is_string($export['method']) && !function_exists($export['method'])) {
         if (isset($export['file']))
           throw new Exception("Expected that {$export['method']} gets defined in {$export['file']}. Function not found.");
-        else 
+        else
           throw new Exception("Function {$export['method']} was exported, but cannot be found.");
       }
-    
+
       $this->beforeCall($request['method'], $request['params']);
       $response = call_user_func($export['method'], $request['params'], $this);
       $this->afterCall($request['method'], $request['params'], $response, null);
@@ -135,7 +144,7 @@ class JsonRpcServer {
     }
     return $result;
   }
-  
+
   protected function beforeCall($method, $params) {
   }
   protected function afterCall($method, $params, $result, $error) {
