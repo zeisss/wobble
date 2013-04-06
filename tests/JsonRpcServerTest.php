@@ -17,7 +17,7 @@ class JsonRpcServerTest extends PHPUnit_Framework_TestCase {
     $server->expects($this->once())->method('afterCall');
 
     $server->handleRequest(array(
-      'method' => 'echo', 'params' => array('Hello World')
+      'jsonrpc' => '2.0', 'method' => 'echo', 'params' => array('Hello World')
     ));
   }
 
