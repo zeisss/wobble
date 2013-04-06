@@ -1,5 +1,5 @@
-# API v0.6.1
-This version is deprecated.
+# API v0.7.0
+The API is available via JSON-RPC 2.0 at the endpoint `http://wobble.moinz.de/api/endpoint.php`.
 
 ## Datastructures
 A few of the API functions use the same datastructures in their input- or return values. Thus here is a list of common datatypes:
@@ -21,8 +21,8 @@ Email = string()
 Message = {'message_id': MessageId, 'data': Object}
 
 Post = {'id': PostId, 'content':string(), 'revision_no': int(),
-        'parent': PostId, 'timestamp': int(), 'deleted': int(),
-        'unread': int()}
+        'parent': PostId, 'timestamp': int(), 'deleted': intbool(),
+        'unread': intbool(), 'read': intbool()}
         
 MetaTopic = {'id': TopicId, 'abstract': string(), 'users': [User],
              'max_last_touch': int(), 'post_count_unread': int(),
@@ -33,7 +33,7 @@ MetaTopic = {'id': TopicId, 'abstract': string(), 'users': [User],
 ## Public
 
  * `wobble.api_version() => string()`
-   Returns a string identifying the API version the server implements. This is currently `0.6.1`.
+   Returns a string identifying the API version the server implements. This is currently `0.7.0`.
 
  * `user_login(Input) => Result`
 
@@ -166,7 +166,18 @@ For all of these functions, the client must be authenticated and the user must b
    Removes the specified message from the given topic.
    
    A `topic_changed` notification is generated for the current user.
+
+ * `topic_change_read(Input) => true`
  
+   Similar to `post_change_read` this function changes the `read` status of all posts and messages of the given topic.
+   
+   ```
+   Input = {'topic_id': TopicId, 'read': intbool()}
+   Result = true
+   ```
+
+   If `read` is `1` any message for the current user is also deleted.
+
  * `post_create(Input) => true`
    
    ```
