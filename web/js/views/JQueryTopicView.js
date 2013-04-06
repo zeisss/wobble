@@ -326,7 +326,7 @@ JQueryTopicView.prototype.renderPost = function(topic, post) {
     if (post.parent) {
       var parentPostId = '#post-' + post.parent;
       if ($(parentPostId).size() === 0) {
-        console.warning('no post with id ' + post.parent + ' found.');
+        console.warn('no post with id ' + post.parent + ' found.');
       }
       if (post.intended_post === 1) {
         var parentPost = $(parentPostId + ">.post_replies");

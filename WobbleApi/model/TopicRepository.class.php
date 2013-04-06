@@ -59,7 +59,7 @@ class TopicRepository {
    */
   function getTopic($topic_id, $user_id) {
     $pdo = ctx_getpdo();
-    
+
     $stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no,
         p.parent_post_id parent, p.created_at created_at, p.last_touch timestamp, p.deleted deleted,
         p.intended_post intended_post,
@@ -78,7 +78,7 @@ class TopicRepository {
           $created_at = intval($post['created_at']);
       }
       unset($post['created_at']); # Currently not of interest for public api
-    
+
       # Integer formatting for JSON-RPC result
       $posts[$i]['timestamp'] = intval($posts[$i]['timestamp']);
       $posts[$i]['created_at'] = intval($posts[$i]['created_at']);
@@ -87,12 +87,12 @@ class TopicRepository {
       $posts[$i]['unread'] = intval($posts[$i]['unread']);
       $posts[$i]['read'] = intval($posts[$i]['unread']) == 0 ? 1 : 0;
       $posts[$i]['intended_post'] = intval($posts[$i]['intended_post']);
-    
+
       $posts[$i]['locked'] = self::getPostLockStatus($topic_id, $posts[$i]['id']);
       if ($posts[$i]['locked']['user_id'] == $user_id) {
         $posts[$i]['locked'] = NULL;
       }
-    
+
       # Subobject
       $posts[$i]['users'] = array();
       $stmt->execute(array($topic_id, $post['id']));
