@@ -40,13 +40,16 @@ class JsonRpcServerTest extends PHPUnit_Framework_TestCase {
     ));
   }
 
-  public function testInvalidCalls() {
+  public function testNonExistingMethodCall() {
     $server = new JsonRpcServer();
 
     $expected = array(
       'jsonrpc' => '2.0',
       'id' => '234',
-      'error' => array('code' => -32602, 'message' => 'Unknown method: non_existing'),
+      'error' => array(
+        'code' => -32601,
+        'message' => 'Method not found: non_existing'
+      ),
     );
     $result = $server->handleRequest(array(
       'jsonrpc' => '2.0',
@@ -54,6 +57,10 @@ class JsonRpcServerTest extends PHPUnit_Framework_TestCase {
       'method' => 'non_existing',
     ));
     $this->assertEquals($expected, $result);
+  }
+
+  public function testInvalidRequest_string() {
+    $server = new JsonRpcServer();
 
     $expected = array(
       'jsonrpc' => '2.0',
@@ -61,17 +68,23 @@ class JsonRpcServerTest extends PHPUnit_Framework_TestCase {
     );
     $result = $server->handleRequest('invalid stuff');
     $this->assertEquals($expected, $result);
+  }
 
+  public function testInvalidRequest_null() {
+    $server = new JsonRpcServer();
     $expected = array(
       'jsonrpc' => '2.0',
       'error' => array('code' => -32700, 'message' => 'Parse error'),
     );
     $result = $server->handleRequest(null);
     $this->assertEquals($expected, $result);
+  }
 
+  public function testInvalidRequest_array() {
+    $server = new JsonRpcServer();
     $expected = array(
       'jsonrpc' => '2.0',
-      'error' => array('code' => -32602, 'message' => 'No method given.'),
+      'error' => array('code' => -32600, 'message' => 'Invalid Request: JSON-RPC-Version missing'),
     );
     $result = $server->handleRequest(array());
     $this->assertEquals($expected, $result);
