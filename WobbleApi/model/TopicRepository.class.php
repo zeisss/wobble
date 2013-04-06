@@ -85,6 +85,7 @@ class TopicRepository {
       $posts[$i]['revision_no'] = intval($posts[$i]['revision_no']);
       $posts[$i]['deleted'] = intval($posts[$i]['deleted']);
       $posts[$i]['unread'] = intval($posts[$i]['unread']);
+      $posts[$i]['read'] = intval($posts[$i]['unread']) == 0 ? 1 : 0;
       $posts[$i]['intended_post'] = intval($posts[$i]['intended_post']);
     
       $posts[$i]['locked'] = self::getPostLockStatus($topic_id, $posts[$i]['id']);

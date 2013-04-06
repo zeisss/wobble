@@ -18,7 +18,9 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
       array('file' => 'api_topic.php', 'method' => 'topic_add_user'),
       array('file' => 'api_topic.php', 'method' => 'topic_remove_user'),
       array('file' => 'api_topic.php', 'method' => 'topic_set_archived'),
-      array('file' => 'api_topic.php', 'method' => 'topic_remove_message'),   
+      array('file' => 'api_topic.php', 'method' => 'topic_remove_message'),
+      array('file' => 'api_topic.php', 'method' => 'topic_change_read'),
+
       array('file' => 'api_topic.php', 'method' => 'post_create'),
       array('file' => 'api_topic.php', 'method' => 'post_edit'),
       array('file' => 'api_topic.php', 'method' => 'post_delete'),

@@ -478,3 +478,47 @@ function topic_set_archived($params) {
 
   return TRUE;
 }
+
+/**
+ * Sets the (un)read status for a whole topic.
+ * If <code>read</code> is 1, it will also mark all message as read. As it is impossible on unread
+ * a message, this is not possible for the unread case.
+ *
+ * Input = {'topic_id': TopicId, 'read': 0|1}
+ * Result = true
+ */
+function topic_change_read($params) {
+  $self_user_id = ctx_getuserid();
+  $topic_id = $params['topic_id'];
+  $read = $params['read'];
+
+  ValidationService::validate_not_empty($self_user_id);
+  ValidationService::validate_not_empty($topic_id);
+  ValidationService::validate_boolean($read);
+
+  if (!TopicRepository::isReader($topic_id, $self_user_id)) {
+    throw new Exception('Illegal Access!');
+  }
+
+  $topic = TopicRepository::getTopic($topic_id, $self_user_id);
+
+  if ($read == 1) {
+    foreach($topic['messages'] as $m) {
+      TopicMessagesRepository::deleteMessage($topic_id, $self_user_id, $message_id);
+    }
+  }
+
+  foreach ($topic['posts'] as $post) {
+    if ($post['read'] != $read) {
+      TopicRepository::setPostReadStatus($self_user_id, $topic_id, $post['id'], $read);
+    }
+  }
+
+  # Notify ourself (e.g. other sessions)
+  NotificationRepository::push($self_user_id, array(
+    'type' => 'topic_changed',
+    'topic_id' => $topic_id
+  ));
+
+  return TRUE;
+}

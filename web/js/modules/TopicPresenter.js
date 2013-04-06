@@ -112,20 +112,9 @@ function TopicPresenter(view, model) {
     if (!topic) {
       return;
     }
-    async.parallel([
-      function read_all_posts(callback) {
-        async.forEach(topic.posts, function(post, done) {
-          API.post_change_read(topic.id, post.id, 1, done);
-        }, callback);
-      },
-      function read_all_messages(callback) {
-        async.forEach(topic.messages, function(message, done) {
-          API.topic_remove_message(topic.id, message.message_id, done);
-        }, callback);
-      }
-    ], function(err, results) {
+    API.topic_change_read(topic.id, 1, function(err, result) {
       that.refreshTopic();
-      BUS.fire('topic.post.changed', model.getTopic().id);
+      BUS.fire('topic.post.changed', topic.id);
     });
   };
 
@@ -134,11 +123,9 @@ function TopicPresenter(view, model) {
     if (!topic) {
       return;
     }
-    async.forEach(topic.posts, function(post, done) {
-      API.post_change_read(topic.id, post.id, 0, done);
-    }, function(err, results) {
+    API.topic_change_read(topic.id, 0, function(err, result) {
       that.refreshTopic();
-      BUS.fire('topic.post.changed', model.getTopic().id);
+      BUS.fire('topic.post.changed', topic.id);
     });
   };
   view.onInviteUserAction = function() {
