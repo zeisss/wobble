@@ -6,5 +6,5 @@
  * result = string()
  */
 function wobble_api_version($params) {
-	return "0.6.1";
+	return "0.7.0";
 }
