@@ -1,7 +1,7 @@
 /*global RPC BUS */
 "use strict";
 
-// RPC Wrapper (JSON-RPC 2.0 - http://json-this.RPC.org/wiki/specification)
+// RPC Wrapper (JSON-RPC 2.0 - http://www.jsonrpc.org/specification)
 function JSONRPC(url) {
   this.url = url;
   this.idSequence = 1;
