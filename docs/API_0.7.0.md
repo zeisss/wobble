@@ -157,20 +157,21 @@ For all of these functions, the client must be authenticated and the user must b
    
    A `topic_changed` notification is generated for the current user.
    
- * `topic_remove_message`
- 
+ * `topic_remove_message(Input) => true`
+
    ```
    Input = {'topic_id': TopicId, 'message_id': MessageId}
    ```
-   
+
    Removes the specified message from the given topic.
-   
+
    A `topic_changed` notification is generated for the current user.
 
  * `topic_change_read(Input) => true`
  
-   Similar to `post_change_read` this function changes the `read` status of all posts and messages of the given topic.
-   
+   Similar to `post_change_read` this function changes the `read` status of all posts and
+   messages of the given topic.
+
    ```
    Input = {'topic_id': TopicId, 'read': intbool()}
    Result = true
@@ -179,52 +180,52 @@ For all of these functions, the client must be authenticated and the user must b
    If `read` is `1` any message for the current user is also deleted.
 
  * `post_create(Input) => true`
-   
+
    ```
    Input = {'topic_id': TopicId, 'post_id': PostId, 
             'parent_post_id': PostId}
    ```
-   
+
    Creates a new post as a child in the given topic. The post is created for the
    current user and has an empty content.
-   
+
    Upon a change, …
    * the topic will be brought back to the inbox, if archived
    * a `topic_changed` notification will be generated for all other readers.   
-   
+
  * `post_edit(Input) => Result`
- 
+
    ```
    Input = {'topic_id': TopicId, 'post_id': PostId, 
             'content': string(), 'revision_no': int()}
    Result = {'revision_no': int()}
    ```
-   
+
    Changes the content of a post. The revision_no must match the current revision
    number, otherwise an exception will be thrown. This prevents overwritting
    changes of other users. The new revision_no is returned.
-   
+
    Validation checks
    * Revision no must match
    * No lock must exist or it must be owned by the current user
-   
+
    Upon a change,
    * the read status of the post for all other users will resetted
    * the topic will be brought back to the inbox, if archived
    * a `post_changed` notification will be generated for all other readers.
-   
+
    The client must be authenticated and the user must be a reader of the topic.
-   
+
  * `post_delete(Input) => true`
- 
+
    ```
    Input = {'topic_id': TopicId, 'post_id': PostId}
    ```
- 
+
    Marks the post as deleted, if it has children. Otherwise delete the post
    completly. This is due the tree-like arrangement of the posts, so one can
    only delete a post storage, if it has no children which refer to it.
-   
+
    The client must be authenticated and the user must be a reader of the topic.
 
  * `post_change_read(Input) => true`
@@ -298,11 +299,12 @@ For all of these functions, the client must be authenticated and the user must b
    available, this wait up to 10secs. A notification is normally an object
    with a field `type` which describes the notification further.
 
-   `next_timestamp` It is the last time you requested the notifications and part of the response.
-   Don't pass it in on your first call. For subsequent calls pass in `$last_response.next_timestamp`.
-   
+   `next_timestamp` It is the last time you requested the notifications and part of the
+   response. Don't pass it in on your first call. For subsequent calls pass in
+   `$last_response.next_timestamp`.
 
-It is used to know which message the client already consumed by just deleting everything with that timestamp or older ;)
+   This is used to know which message the client already consumed by just deleting everything 
+   with that timestamp or older ;)
  
 ### Contacts
  * `user_get_contacts() => Contacts`
