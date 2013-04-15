@@ -1,0 +1,12 @@
+{
+  "browser": true,
+  "jquery": true,
+  "devel": true,
+
+  "predef": [
+    "_",
+    "Mustache",
+    "Tinycon",
+    "async"
+  ]
+}

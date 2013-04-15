@@ -1,23 +1,33 @@
 <?php
 require_once dirname(__FILE__) . '/handlers/jsonrpc_system.php'; # Exports the default system.listMethods and echo APICalls
 
+/**
+ * JsonRpcServer provides functionality to parse, validate and execute JSON-RPC 2.0 requests.
+ *
+ * Includes, by default, two methods: 'system.listMethods' and 'echo'.
+ */
 class JsonRpcServer {
   private $functions = array();
 
   public function __construct() {
     $this->addFunctions(array(
-      # No file, since it always gets included
       array('file' => 'jsonrpc_system.php', 'name' => 'system.listMethods', 'method' => 'jsonrpc_exported_system_list'),
       array('file' => 'jsonrpc_system.php', 'name' => 'echo', 'method' => 'jsonrpc_echo')
     ));
   }
 
+  /**
+   * See #addFunction()
+   */
   public function addFunctions($defs) {
     foreach($defs as $def) {
       $this->addFunction($def['method'], isset($def['file']) ? $def['file'] : null, isset($def['name']) ? $def['name'] : null);
     }
   }
 
+  /**
+   * 
+   */
   public function addFunction($method, $file = null, $name = null) {
     if (is_null($name)) {
       $name = $method;
@@ -145,8 +155,16 @@ class JsonRpcServer {
     return $result;
   }
 
+  /**
+   * Called before the actual jsonrpc method is invoked. Is intended to be overwritten.
+   */
   protected function beforeCall($method, $params) {
   }
+  /**
+   * Called after the actual jsonrpc method was invoked. Is inteded to be overwritten.
+   * $result is the return value of the invocation. $error the error that has been raised.
+   * One of these two must always be <code>is_null</code>.
+   */
   protected function afterCall($method, $params, $result, $error) {
   }
 }
