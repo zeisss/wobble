@@ -6,7 +6,3 @@ if [ ! -f etc/config.php ]; then
   set -e 's/your_mysql_password/lamproot/' >\
   etc/config.php
 fi
-
-echo "Booting Vagrant VM"
-vagrant up
-
