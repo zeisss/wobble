@@ -1,3 +1,4 @@
+/*global BUS EventBUS API */
 "use strict";
 
 /**
@@ -10,7 +11,7 @@ function WhoAmIModel(api) {
 
   BUS.on('api.user', function (user) {
     this.user = user;
-    this.fire('updated', this.user)
+    this.fire('updated', this.user);
   }, this);
 }
 _.extend(WhoAmIModel.prototype, EventBUS.prototype); // Make the model an eventbus

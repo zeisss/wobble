@@ -1,4 +1,4 @@
-(function(exports){
+(function(exports, globals) {
   // A cache object. Must support set(key, value, timeout) and get(key)
 
   /**
@@ -36,10 +36,10 @@
   };
 
   exports.getCache = function getCache() {
-    if (window.localStorage) {
+    if (globals.localStorage) {
       return new LocalStorageCache();
     } else {
       return new DevNullCache();
     }
   };
-})(window.localcache = {});
+})(window.localcache = {}, window);

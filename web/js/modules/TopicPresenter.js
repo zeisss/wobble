@@ -174,7 +174,7 @@ function TopicPresenter(view, model) {
   };
   view.onMessageDismissed = function (message_id) {
     API.topic_remove_message(that.model.getTopic().id, message_id);
-  }
+  };
   view.onPostFocused = function(post) {
     // remove unread class on click + mark read on server side
     if (post.unread == 1) {

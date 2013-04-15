@@ -99,18 +99,19 @@ function JQueryTopicView() {  // The UI handler for the single topic
       return;
     }
     var handled = false;
+    var $post;
     // 37 left, 38 up, 39 right, 40 down
     // 13 enter
     // 69 'e'
-    if (e.altKey == false && e.shiftKey == false && e.ctrlKey == false && e.keyCode >= 37 && e.keyCode <= 40) {
-      var $post = $('.active', that.$posts);
+    if (e.altKey === false && e.shiftKey === false && e.ctrlKey === false && e.keyCode >= 37 && e.keyCode <= 40) {
+      $post = $('.active', that.$posts);
 
       if ($post.size() === 0 && e.keyCode === 40) {
         $("#post-1>.post").click();
       }
       else if ($post.size() > 0) {
         var $post_wrapper = $post.parent();
-        var $new_post_wrapper = undefined;
+        var $new_post_wrapper;
         var $new_post;
 
         if (e.keyCode === 40 /* Down */) {
@@ -130,7 +131,7 @@ function JQueryTopicView() {  // The UI handler for the single topic
             $new_post_wrapper = $post_wrapper.parents('.intended_reply_thread').prev('.intended_reply_thread:has(.post_wrapper)').children().filter('.post_wrapper:has(.post)').first();
           }
           if ($new_post_wrapper.size() === 0) { // Maybe we have a parent?
-            $new_post_wrapper = $post_wrapper.parents('.post_wrapper:has(.post)').first();;
+            $new_post_wrapper = $post_wrapper.parents('.post_wrapper:has(.post)').first();
           }
         }
         else if (e.keyCode === 37 /* Left */) {
@@ -141,7 +142,7 @@ function JQueryTopicView() {  // The UI handler for the single topic
         }
 
         if ($new_post_wrapper && $new_post_wrapper.size() > 0) {
-          var $new_post = $('>.post', $new_post_wrapper);
+          $new_post = $('>.post', $new_post_wrapper);
           $new_post.click();
           $new_post[0].scrollIntoView(false);
           handled = true;
@@ -149,7 +150,7 @@ function JQueryTopicView() {  // The UI handler for the single topic
       }
     }
     else if (e.keyCode === 69 /* E */) {
-      var $post = $('.active', that.$posts);
+      $post = $('.active', that.$posts);
       if ($post.size() > 0) {
         var post = $post.parent().data('post');
         if (post) {
@@ -158,7 +159,7 @@ function JQueryTopicView() {  // The UI handler for the single topic
         }
       }
     } else if (e.keyCode === 13 /* Enter */ && e.altKey === false && e.shiftKey === false && e.ctrlKey === false) {
-      var $post = $('.active', that.$posts);
+      $post = $('.active', that.$posts);
       if ($post.size() > 0) {
         that.createReply($post);
         handled = true;
@@ -170,7 +171,7 @@ function JQueryTopicView() {  // The UI handler for the single topic
       e.preventDefault();
       e.stopImmediatePropagation();
     }
-  })
+  });
 
   this._renderTopicActions(false);
 
@@ -187,7 +188,7 @@ JQueryTopicView.prototype.constructor = JQueryTopicView;
 
 // Methods --------------------------------------------------------
 JQueryTopicView.prototype.isEditing = function() {
-    return this.editingPostId != null;
+    return this.editingPostId !== null;
 };
 JQueryTopicView.prototype.destroy = function destroy() {
   $('body').off('keydown', this.globalKeyHandler);
@@ -587,10 +588,11 @@ JQueryTopicView.prototype._addDefaultButtons = function(jbuttons, post) {
   }
   return jbuttons;
 };
+
 JQueryTopicView.prototype.createReply = function createReply($e) {
   var $post_wrapper = $e.closest('.post_wrapper');
   var post = $post_wrapper.data('post');
-  if ($post_wrapper.size() == 0 || !post) {
+  if ($post_wrapper.size() === 0 || !post) {
     return;
   }
 
@@ -600,7 +602,8 @@ JQueryTopicView.prototype.createReply = function createReply($e) {
   } else {
     this.onReplyPost(post);
   }
-}
+};
+
 JQueryTopicView.prototype._renderTopicActions = function(editing) {
   this.$actions.empty();
 
