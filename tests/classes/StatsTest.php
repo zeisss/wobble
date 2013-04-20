@@ -39,11 +39,11 @@ class StatsTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($value + 99, $new_value, 'Expected $value to be incremented by 99');
   }
 
-  public function testSet() {
+  public function testGauge() {
     $old_value = Stats::getValue(self::$test_stat);
     $old_value += 124;
 
-    Stats::update(self::$test_stat, $old_value);
+    Stats::gauge(self::$test_stat, $old_value);
     $new_value = Stats::getValue(self::$test_stat);
     $this->assertEquals($old_value, $new_value, 'Expected $value to be set to ' . $old_value);
   }

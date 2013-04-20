@@ -18,7 +18,7 @@ class Stats {
     $pdo = ctx_getpdo();
 
     $sql = 'INSERT DELAYED INTO `statistics` (`name`, `value`, `last_update`) VALUES (?,?, unix_timestamp()) ' . 
-		       'ON DUPLICATE KEY UPDATE `value` = `value` + ?, `last_update` = unix_timestamp()';
+           'ON DUPLICATE KEY UPDATE `value` = `value` + ?, `last_update` = unix_timestamp()';
     $pdo->prepare($sql)->execute(array($key, $amount, $amount));
   }
 
@@ -29,9 +29,11 @@ class Stats {
     $pdo->prepare($sql)->execute(array($key));
   }
 
-  public static function update($key, $value = 0) {
+  /**
+   * Provide a value for a gauge.
+   */
+  public static function gauge($key, $value = 0) {
     $pdo = ctx_getpdo();
-
     $sql = 'REPLACE DELAYED `statistics` SET value = ?, last_update = unix_timestamp(), name = ?';
     $pdo->prepare($sql)->execute(array($value, $key));
   }
