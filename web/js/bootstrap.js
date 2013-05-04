@@ -31,7 +31,8 @@
       'ext/underscore.js',
       'ext/jquery-1.7.1.js',
       'ext/mustache.js',
-      'ext/async.js'
+      'ext/async.js',
+      'ext/backbone.js'
     );
   } else {
     files.push(
@@ -39,7 +40,8 @@
       'ext/underscore-min.js',
       'ext/jquery.min.js',
       'ext/mustache.min.js',
-      'ext/async.min.js'
+      'ext/async.min.js',
+      'ext/backbone.js'
     );
   }
 
@@ -66,6 +68,7 @@
     'js/modules/UserProfilePresenter.js',
     'js/modules/WindowUpdater.js',
     'js/modules/WhoAmIPresenter.js',
+    'js/contactlist.js',
 
     // Views
     'js/views/JQueryTopicListView.js',
