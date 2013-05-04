@@ -7,7 +7,7 @@ function JQueryTopicListView (show_multiple_button, show_search_bar) {
 
   this.e = $('<div></div>').addClass('widget').attr('id', 'topics_wrapper').appendTo('#widgets');
 
-  this.$header = $('<div>').attr('id', 'topiclist_header').addClass('header').appendTo(this.e);
+  this.$header = $('<div></div>').attr('id', 'topiclist_header').addClass('header').appendTo(this.e);
   this.$actions = $('<div id="topics_actions"></div>').appendTo(this.e);
   this.$topics = $('<ul id="topics">' +
                    '  <li>Loading ...</li>' +
