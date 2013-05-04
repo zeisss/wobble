@@ -9,7 +9,15 @@
 
     options: {
       imgsize: 20,
-      imgprefix: 'http://gravatar.com/avatar/'
+      imgprefix: 'http://gravatar.com/avatar/',
+
+      template:  "<div title='{{email}}'>" +
+        "<div class='usericon usericon{{size}}'>" +
+        "<div><img src='{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
+        "<div class='status {{online}}'></div>" +
+        "</div>" +
+        "<span class=name>{{name}}</span>" +
+        "</div>"
     },
 
     initialize: function () {
@@ -17,15 +25,7 @@
     },
 
     render: function() {
-      var template = "<div title='{{email}}'>" +
-              "<div class='usericon usericon{{size}}'>" +
-              "<div><img src='{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
-              "<div class='status {{online}}'></div>" +
-              "</div>" +
-              "<span class=name>{{name}}</span>" +
-              "</div>";
-
-      this.$el.html(Mustache.to_html(template, {
+      this.$el.html(Mustache.to_html(this.options.template, {
           size: this.options.imgsize,
           email: this.model.email,
           name: this.model.name,
@@ -97,7 +97,6 @@
           $('<li></li>').html('Sorry, you have no contacts.').css('font-size', 'small').appendTo($ul);
         }
         contacts.forEach(function (contact) {
-
           var v = new ContactView({
             model: contact,
             imgsize: 20
