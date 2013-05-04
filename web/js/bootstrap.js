@@ -41,7 +41,7 @@
       'ext/jquery.min.js',
       'ext/mustache.min.js',
       'ext/async.min.js',
-      'ext/backbone.js'
+      'ext/backbone-min.js'
     );
   }
 
