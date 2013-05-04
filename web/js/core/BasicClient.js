@@ -1,8 +1,9 @@
-(function() {
+(function(exports) {
   /*global BUS EventBUS JSONRPC WobbleAPI NotificationHandler */
   "use strict";
 
   function BasicClient() {}
+  exports.BasicClient = BasicClient;
 
   /**
    * Called when all dependencies are loaded. Initializes the basic objects 
@@ -107,4 +108,4 @@
   };
 
   BasicClient.prototype.onRPCError = function(err) {};
-})();
+})(window);
