@@ -59,7 +59,6 @@
   // Wobble Modules
   files.push(
     'js/modules/ContactsModel.js',
-    'js/modules/ContactsPresenter.js',
     'js/modules/ContactsChooserPresenter.js',
     'js/modules/ContactsDetailPresenter.js',
     'js/modules/TopicPresenter.js',
@@ -67,13 +66,12 @@
     'js/modules/TopicListPresenter.js',
     'js/modules/UserProfilePresenter.js',
     'js/modules/WindowUpdater.js',
-    'js/modules/WhoAmIPresenter.js',
+    'js/whoami.js',
     'js/contactlist.js',
 
     // Views
     'js/views/JQueryTopicListView.js',
     'js/views/JQueryTopicView.js',
-    'js/views/JQueryContactsView.js',
     'js/views/JQueryContactsDetailDisplay.js',
     'js/views/ListContactsChooserDisplay.js',
 //    'js/views/SimpleContactsChooserDisplay.js',
