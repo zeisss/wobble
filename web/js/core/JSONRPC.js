@@ -157,3 +157,4 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
   BUS.fire('rpc.queue.length', this.stateWaiting.length);
   return req;
 };
+

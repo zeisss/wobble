@@ -117,11 +117,11 @@ TopicListModel.prototype.createTopic = function() {
 
   // Create a dummy TopicHeader, so we can render something immediately
   var topicDetails = {
-    id: topicId,
-    abstract: '-',
-    users: [API.user()],
-    post_count_total: 1,
-    post_count_unread: 0
+    'id': topicId,
+    'abstract': '-',
+    'users': [API.user()],
+    'post_count_total': 1,
+    'post_count_unread': 0
   };
 
   this.topics.splice(0, 0, topicDetails); // Prepend the item to the ViewList
