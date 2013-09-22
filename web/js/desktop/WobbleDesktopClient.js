@@ -53,7 +53,6 @@ WobbleDesktopClient.prototype.initApp = function() {
   this.topHeader = new DesktopClientHeader(this.notificationFetcher);
 
   // Create the Views
-  this.contactsView = new JQueryContactsView();
   this.topicListView = new JQueryTopicListView(true, true);
   this.topicView = new JQueryTopicView();
 
@@ -63,10 +62,9 @@ WobbleDesktopClient.prototype.initApp = function() {
       this.contactsModel
   );
 
-  this.contactsPresenter = new ContactsPresenter(this.contactsView, this.contactsModel);
+  this.contactsView = this.createContactRosterWidget();
   this.contactsDetailPresenter = new ContactsDetailPresenter(new JQueryContactsDetailDisplay(100, 100), this.contactsModel, 'contact.clicked');
   this.topicListPresenter = new TopicListPresenter(this.topicListView, this.topicListModel);
-  this.whoAmIPresenter = new WhoAmIPresenter(this.contactsView, this.whoAmIModel);
   this.windowUpdater = new WindowUpdater(this.topicListModel);
 
   this.topicPresenter = new TopicPresenter(this.topicView, this.topicModel);
@@ -128,3 +126,21 @@ WobbleDesktopClient.prototype.doLayout = function(data) {
   topic.height(data.to.h - headline.height() - borderBottom);
 };
 
+
+WobbleDesktopClient.prototype.createContactRosterWidget = function() {
+  var widget = $('<div></div>').addClass('widget').attr('id', 'contacts').appendTo('#widgets');
+
+  var template =
+    '<div class="whoami header"></div>' +
+    '<div class="actions"></div>' +
+    '<ul class="contactslist"></ul>';
+  $(template).appendTo(widget);
+
+  new window.WhoAmIView({
+    el: widget,
+    model: new WhoAmIModel(API)
+  });
+  new window.ContactRosterView({
+    el: widget
+  });
+};

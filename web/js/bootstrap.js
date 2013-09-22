@@ -31,7 +31,8 @@
       'ext/underscore.js',
       'ext/jquery-1.7.1.js',
       'ext/mustache.js',
-      'ext/async.js'
+      'ext/async.js',
+      'ext/backbone.js'
     );
   } else {
     files.push(
@@ -39,7 +40,8 @@
       'ext/underscore-min.js',
       'ext/jquery.min.js',
       'ext/mustache.min.js',
-      'ext/async.min.js'
+      'ext/async.min.js',
+      'ext/backbone-min.js'
     );
   }
 
@@ -57,7 +59,6 @@
   // Wobble Modules
   files.push(
     'js/modules/ContactsModel.js',
-    'js/modules/ContactsPresenter.js',
     'js/modules/ContactsChooserPresenter.js',
     'js/modules/ContactsDetailPresenter.js',
     'js/modules/TopicPresenter.js',
@@ -65,12 +66,12 @@
     'js/modules/TopicListPresenter.js',
     'js/modules/UserProfilePresenter.js',
     'js/modules/WindowUpdater.js',
-    'js/modules/WhoAmIPresenter.js',
+    'js/whoami.js',
+    'js/contactlist.js',
 
     // Views
     'js/views/JQueryTopicListView.js',
     'js/views/JQueryTopicView.js',
-    'js/views/JQueryContactsView.js',
     'js/views/JQueryContactsDetailDisplay.js',
     'js/views/ListContactsChooserDisplay.js',
 //    'js/views/SimpleContactsChooserDisplay.js',

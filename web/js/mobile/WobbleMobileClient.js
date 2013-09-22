@@ -1,6 +1,6 @@
 /*global BUS BasicClient MobileLoginView LoginModel LoginPresenter API ContactsModel TopicListModel TopicModel MobileNavigation 
-         ContactsDetailPresenter ContactsPresenter ContactsDetailPresenter
-         JQueryContactsView JQueryContactsDetailDisplay JQueryContactsDetailDisplay JQueryTopicView JQueryTopicListView
+         ContactsDetailPresenter ContactsDetailPresenter
+         JQueryContactsDetailDisplay JQueryContactsDetailDisplay JQueryTopicView JQueryTopicListView
          TopicListPresenter TopicPresenter
          ContactsChooserPresenter ListContactsChooserDisplay WindowUpdater UserProfilePresenter */
 "use strict";
@@ -68,15 +68,19 @@ WobbleMobileClient.prototype.initApp = function() {
   this.navigatorView = new MobileNavigation(this);
 
   // Create the views
-  this.contactsView = new JQueryContactsView();
   this.topicListView = new JQueryTopicListView(false, false);
   this.topicView = new JQueryTopicView();
 
   // Create the presenters
-  this.contactsPresenter = new ContactsPresenter(this.contactsView, this.contactsModel);
   this.contactsDetailPresenter = new ContactsDetailPresenter(new JQueryContactsDetailDisplay(20, 20), this.contactsModel, 'contact.clicked');
   this.topicListPresenter = new TopicListPresenter(this.topicListView, this.topicListModel);
   this.topicPresenter = new TopicPresenter(this.topicView, this.topicModel);
+  this.contactsView = new window.ContactRosterView({
+    el: $('<div><div class="header"></div>' +
+          '<div class="actions"></div>' +
+          '<ul class="contactslist"></ul></div>')
+        .addClass('widget').attr('id', 'contacts').appendTo('#widgets')
+  });
 
   this.contactsChooserPresenter = new ContactsChooserPresenter(
       new ListContactsChooserDisplay(),
@@ -109,7 +113,7 @@ WobbleMobileClient.prototype.initApp = function() {
 };
 WobbleMobileClient.prototype.doLayout = function() {
   var map = {'position':'absolute', 'width':'', 'left': '0px', 'right':'0px'};
-  this.contactsView.e.css(map);
+  this.contactsView.$el.css(map);
   this.topicListView.e.css(map);
   this.topicView.e.css(map);
 };
@@ -120,7 +124,7 @@ WobbleMobileClient.prototype.onNavigation = function(targetId, noFireEvent) {
   // window.location.hash = "";
   if (targetId == 'navContacts') {
     // Show the ContactsList
-    this.contactsView.e.appendTo(this.$widgets);
+    this.contactsView.$el.appendTo(this.$widgets);
     if (!noFireEvent) BUS.fire('topic.selected', 'contacts');
   } else if (targetId == 'navOverview') {
     // Show the TopicsList
