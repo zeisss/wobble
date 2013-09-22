@@ -383,7 +383,7 @@ function post_change_read($params) {
   }
 
   # Notify ourself (e.g. other sessions)
-  NotificationRepository::push($user['id'], array(
+  NotificationRepository::push($self_user_id, array(
     'type' => 'post_changed',
     'topic_id' => $topic_id,
     'post_id' => $post_id,
