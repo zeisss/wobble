@@ -3,6 +3,8 @@
 etc/config.php
 
 tmp/
+# PHP Composer libs
+vendor/
 
 # Textmate
 Wobble.tmproj

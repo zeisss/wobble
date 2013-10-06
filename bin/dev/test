@@ -1,0 +1,4 @@
+#!/bin/sh
+
+./vendor/bin/phpunit --coverage-html=shared/coverage-report/
+
