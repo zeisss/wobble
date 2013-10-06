@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../WobbleApi/Autoload.php';
+require_once dirname(__FILE__) . '/../../Autoload.php';
 
 class StatsTest extends PHPUnit_Framework_TestCase {
   private static $test_stat = 'test.stats';

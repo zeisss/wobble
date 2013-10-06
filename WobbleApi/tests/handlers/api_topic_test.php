@@ -1,6 +1,6 @@
 <?php
-require_once dirname(__FILE__) . '/../../WobbleApi/context.php';
-require_once dirname(__FILE__) . '/../../WobbleApi/handlers/api_topic.php';
+require_once dirname(__FILE__) . '/../../context.php';
+require_once dirname(__FILE__) . '/../../handlers/api_topic.php';
 
 class ApiTopicTest extends PHPUnit_Framework_TestCase {
   /*public function testAddUserToTopic() {

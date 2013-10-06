@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../WobbleApi/Autoload.php';
+require_once dirname(__FILE__) . '/../../Autoload.php';
 
 class SecurityServiceTest extends PHPUnit_Framework_TestCase {
   public function testHashPassword() {

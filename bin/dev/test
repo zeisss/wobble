@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 ./vendor/bin/phpunit --coverage-html=shared/coverage-report/
 

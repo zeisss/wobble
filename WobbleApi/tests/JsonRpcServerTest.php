@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . '/../WobbleApi/JsonRpcServer.php';
+require_once dirname(__FILE__) . '/../JsonRpcServer.php';
 
 class JsonRpcServerTest extends PHPUnit_Framework_TestCase {
   public function testRegisterFunctions() {
