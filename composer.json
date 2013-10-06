@@ -1,0 +1,11 @@
+{
+  "name": "wobble",
+  "description": "A google wave clone",
+  "version": "0.7.0",
+  "type": "project",
+  "homepage": "http://github.com/ZeissS/wobble",
+
+  "require-dev": {
+    "phpunit/phpunit": "*"
+  }
+}
