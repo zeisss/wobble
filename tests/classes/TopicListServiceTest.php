@@ -16,7 +16,7 @@ class TopicListServiceTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($expected, TopicListService::createAbstract($html));
   }
 
-  # Would be nice, but is to much work to implement :(
+  # Would be nice, but is too much work to implement :(
   #function testHeadlineWithParialFormatting() {
   #  $expected = array('headline' => 'Hallo Welt', 'text' => 'Text');
   #  $html = '<b>Hallo</b> Welt<div>Text</div>';
@@ -65,6 +65,18 @@ class TopicListServiceTest extends PHPUnit_Framework_TestCase {
             'auch fahren.<br><br><div>Beginn - 21 Uhr</div><div><br><div>Wer ist dabei?<br><br><ul><li>' . 
             'Diana<br></li><li>Dani<br></li><li>Maik</li><li>Dimi</li><li>Laura <br></li></ul><br></div></div>';
     $this->assertEquals($expected, TopicListService::createAbstract($html));
+  }
+
+  function testHeadlineGinger() {
+    $expected = array(
+      'headline' => 'Abschied aus Bonn - mal wieder ;)',
+      'text' => ''
+    );
+    $html = <<<EOL
+<span class="GingerNoCheckStart"></span>Abschied aus Bonn - mal wieder ;)<div><br><div>Da ich (Anna) Ende September nach Frankfurt
+EOL;
+    $this->assertEquals($expected, TopicListService::createAbstract($html));
+
   }
   
   function testHeadlineRealLiveAdcloud() {

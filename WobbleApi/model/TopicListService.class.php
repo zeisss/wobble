@@ -1,5 +1,8 @@
 <?php
 
+/**
+ *
+ */
 class TopicListService {
   public static function search($user_id, $searchFilter) {
     $pdo = ctx_getpdo();
@@ -43,6 +46,7 @@ class TopicListService {
     }
     return $result;
   }
+
   /**
    * Returns the number of topics with unread posts or messages for the given user.
    */
