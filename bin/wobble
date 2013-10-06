@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php
+##
+## This is a wrapper script intended as a CLI starting point
+## for running scripts.
+##
+
+function usage() {
+  echo "Usage: wobble COMMAND [options]" . PHP_EOL;
+  exit(1);
+}
+$wobble_base = dirname(__FILE__) . '/../WobbleApi';
+
+require_once $wobble_base . '/Autoload.php';
+
+if (sizeof($argv) < 2) { usage(); }
+
+$task_name = $argv[1];
+if (1 !== preg_match("/^[a-zA-Z0-9-_]+$/", $task_name)) {
+  usage();
+}
+
+$task_file = $wobble_base . '/tasks/' . $argv[1] . '.php';
+if (!file_exists($task_file)) {
+  usage();
+}
+
+require $task_file;

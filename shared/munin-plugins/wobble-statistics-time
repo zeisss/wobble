@@ -27,8 +27,8 @@ if [ -z "$WOBBLE_HOME" ]; then
 fi
 
 printf "requests.value "
-$WOBBLE_HOME/scripts/get-stats.php "requests.counter"
+$WOBBLE_HOME/bin/wobble get-stats "requests.counter"
 printf "requests_time.value "
-$WOBBLE_HOME/scripts/get-stats.php "requests.time"
+$WOBBLE_HOME/bin/wobble get-stats "requests.time"
 printf "avg_time.value 0\n"
 exit 0

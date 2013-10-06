@@ -25,6 +25,6 @@ if [ -z "$WOBBLE_HOME" ]; then
 fi
 
 printf "orphaned_topics.value "
-$WOBBLE_HOME/scripts/wobble-warning-sensors.php --orphaned-topics
+$WOBBLE_HOME/bin/wobble warning-sensors --orphaned-topics
 printf "orphaned_posts.value "
-$WOBBLE_HOME/scripts/wobble-warning-sensors.php --orphaned-posts
+$WOBBLE_HOME/bin/wobble warning-sensors --orphaned-posts

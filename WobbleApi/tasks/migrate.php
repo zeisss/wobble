@@ -1,23 +1,22 @@
-#!/usr/bin/env php
 <?php
-  require_once(dirname(__FILE__) . '/../WobbleApi/Autoload.php');
-
-  $upgrade = true;
+  $action = 'upgrade';
 
   foreach($argv as $arg) {
     if ($arg == '-h' || $arg == '--help') {
-        die('Usage: migrate.php [up|down]' . PHP_EOL);
+        die('Usage: wobble migrate.php [up|down]' . PHP_EOL);
     }
-    if ($arg == 'down') {
-      $upgrade = false;
+    else if ($arg == 'down') {
+      $action = 'down';
+    } else if ($arg == 'status') {
+      $action = 'status';
     }
   }
 
-  $service = new MigrationService(dirname(__FILE__) . '/../shared/database-migrations/');
+  $service = new MigrationService(dirname(__FILE__) . '/../../shared/database-migrations/');
   $availableMigrations = $service->getAvailableMigrations();
   $currentMigrations = $service->getActiveMigrations();
 
-  if ($upgrade) {
+  if ($action == 'upgrade') {
       # Which files are in $available, but not in $current
       $missing = array_diff($availableMigrations, $currentMigrations);
       # NOTE: we just try to apply them blindly here.
@@ -31,7 +30,7 @@
           $service->executeMigration($file, true);
           echo PHP_EOL;
       }
-  } else {
+  } else if ($action == 'down') {
       $currentMigrations = array_reverse($currentMigrations); # 0 is now the newest activated migration
       $number = 1;
 
@@ -42,4 +41,12 @@
         $service->executeMigration($currentMigrations[$i], false);
         echo PHP_EOL;
       }
+  } else {
+    $avail = sizeof($availableMigrations);
+    $curr = sizeof($currentMigrations);
+    echo "All migrations: " . $avail . PHP_EOL;
+    echo "Active migrations: " . $curr . PHP_EOL;
+    if ($curr < $avail) {
+      echo "=> " . ($avail - $curr) . " migrations available." . PHP_EOL;
+    }
   }

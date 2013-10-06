@@ -21,6 +21,6 @@ if [ -z "$WOBBLE_HOME" ]; then
 fi
 
 printf "users.value "
-$WOBBLE_HOME/scripts/get-online-users.php
+$WOBBLE_HOME/bin/wobble get-online-users
 printf "sessions.value "
-$WOBBLE_HOME/scripts/get-online-users.php --sessions
+$WOBBLE_HOME/bin/wobble get-online-users --sessions

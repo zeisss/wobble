@@ -30,8 +30,8 @@ if [ -z "$WOBBLE_HOME" ]; then
 fi
 
 printf "requests.value "
-$WOBBLE_HOME/scripts/get-stats.php "requests.counter"
+$WOBBLE_HOME/bin/wobble get-stats "requests.counter"
 printf "success.value "
-$WOBBLE_HOME/scripts/get-stats.php "jsonrpc.success"
+$WOBBLE_HOME/bin/wobble get-stats "jsonrpc.success"
 printf "errors.value "
-$WOBBLE_HOME/scripts/get-stats.php "jsonrpc.errors"
+$WOBBLE_HOME/bin/wobble get-stats "jsonrpc.errors"

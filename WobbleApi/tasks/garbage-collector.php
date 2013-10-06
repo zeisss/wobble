@@ -1,6 +1,4 @@
-#!/usr/bin/env php
 <?php
-require_once dirname(__FILE__) . '/../WobbleApi/Autoload.php';
 
 function cleanupPosts($argv) {
   if (count($argv) >= 1) {
@@ -40,21 +38,22 @@ function cleanupStats($args) {
   echo "Cleared $num stats." . PHP_EOL;
 }
 
-$requestedAction = isset($argv[1]) ? $argv[1] : 'default';
-unset($argv[0]);
-unset($argv[1]);
+$requestedAction = isset($argv[2]) ? $argv[2] : 'default';
+unset($argv[0]); # 'wobble'
+unset($argv[1]); # 'garbage-collector'
+unset($argv[2]); # $requestedAction
 $args = array_values($argv);
 
 
 $actions = array();
 
 if ($requestedAction == '-h' || $requestedAction == '--help') {
-  die('Usage: garbage-collector.php [default]' . PHP_EOL .
-      '       garbage-collector.php all' . PHP_EOL .
+  die('Usage: wobble garbage-collector.php [default]' . PHP_EOL .
+      '       wobble garbage-collector.php all' . PHP_EOL .
       PHP_EOL .
-      '       garbage-collector.php posts [topics]' . PHP_EOL .
-      '       garbage-collector.php stats' . PHP_EOL .
-      '       garbage-collector.php sessions' . PHP_EOL .
+      '       wobble garbage-collector.php posts [topics]' . PHP_EOL .
+      '       wobble garbage-collector.php stats' . PHP_EOL .
+      '       wobble garbage-collector.php sessions' . PHP_EOL .
       PHP_EOL);
 }
 else if ($requestedAction == "default") {
