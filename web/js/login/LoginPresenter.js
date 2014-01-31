@@ -35,8 +35,10 @@ function LoginPresenter(display, model, callback) {
 
 LoginPresenter.prototype.modelError = function modelError(e) {
   if (e.type === 'connectionerror') {
-    return alert('Server error. Please try again later.');
+    this.display.showError('Server error. Please try again later.');
+  } else {
+    this.display.showError(e.message);
   }
-	alert(e.message);
+  return true;
 };
 

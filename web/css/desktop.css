@@ -84,6 +84,10 @@
   float: left;
 
 }
+#desktoploginview .errors {
+  font-weight: bold;
+  color: rgb(170, 39, 39);
+}
 /* --------------------------------------------------------- */
 #contacts .contactslist {
   overflow:auto;

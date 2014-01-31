@@ -30,6 +30,10 @@ button {
 #mobileloginview button {
   height:40px;
 }
+#mobileloginview .errors {
+  font-weight: bold;
+  color: rgb(170, 39, 39);
+}
 /* --------------------------------------------------------- */
 #navigator {
   position:absolute;

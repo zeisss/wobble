@@ -22,6 +22,10 @@ AbstractLoginView.prototype.setEnabled = function(enabled) {
   }
 };
 
+AbstractLoginView.prototype.showError = function(message) {
+  $('.errors', this.e).text(message);
+}
+
 // Register Event Handlers
 AbstractLoginView.prototype.fireLogin = function(email, password) {
   this.fire('loginview.login', {'email': email, 'password': password});
