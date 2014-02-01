@@ -1,0 +1,34 @@
+<div id="topiclist_header">
+  <div class="input_search_box">
+    <input id="topiclist_search" type="text" ng-model="search.term" ng-keydown="$event.keyCode==13 ? search.search() : true">
+  </div>
+</div>
+
+<div id="topics_actions">
+	<button ng-click="actions.create()">New</button>
+	<span style="width:30px; display:inline-block"></span>
+	<button ng-click="actions.showInbox()" ng-disabled="!enableShowInbox">Show Inbox</button>
+	<button ng-click="actions.showArchive()" ng-disabled="!enableShowArchive">Show Archive</button>
+</div>
+
+<ul id="topics">
+  <span ng-show="topics.length == 0">No topics here. Try to create one :)</span>
+
+  <li ng-repeat="topic in topics" id="topic-{{topic.id}}" class="topic_header" ng-click="selectTopic(topic.id);">
+
+    <div class="abstract">
+      <i ng-show="topic.archived">[Archive] </i>
+      {{topic.abstract}}
+    </div>
+
+		<div ng-show="topic.unread == 0" class="messages">{{topic.total}} msgs</div>
+		<div ng-show="topic.unread != 0" class="messages">
+			<div class=unread>{{topic.unread}}</div> of {{topic.total}}
+		</div>
+
+    <div class="time">{{topic.time | niceTime}}</div>
+		<div class="users" ng-repeat="user in topic.users">
+      <img title="{{user.name}}" src="http://gravatar.com/avatar/{{user.img}}?s=32" width="32" height="32">
+		</div>
+  </li>
+</ul>

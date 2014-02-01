@@ -1,0 +1,85 @@
+<html ng-app="wobble">
+<head>
+	
+	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap-theme.css">
+	
+	<link rel="stylesheet" type="text/css" href="../css/desktop.css" />
+	<link rel="stylesheet" type="text/css" href="../css/wobble.css" />
+	<link rel="stylesheet" type="text/css" href="../css/client.css" />
+
+	<script src="../js/core/EventBUS.js"></script>
+	<script src="../js/core/JSONRPC.js"></script>	
+	<script src="../js/core/WobbleAPI.js"></script>
+	<script src="../js/core/NotificationHandler.js"></script>
+
+	<script>
+	var BUS = new EventBUS();
+	</script>
+
+	<style>
+	.row > div {
+		border:1px black solid;
+	}
+	</style>
+</head>
+
+<body>
+	<nav class="navbar navbar-default" role="navigation">
+	  <div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="#">Wobble</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+	      <ul class="nav navbar-nav navbar-right" ng-controller="CurrentUserCtrl">
+	        <li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.name}} <b class="caret"></b></a>
+	          <ul class="dropdown-menu">
+	            <li ng-show="user"><a href="#">Profile</a></li>
+	            <li><a href="#">GitHub</a></li>
+	            <li><a href="#">Create Support Ticket</a></li>
+	            <li class="divider"></li>
+	            <li><a href="#">Logout</a></li>
+	          </ul>
+	        </li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+	
+
+	 <div class="row">
+		 <div class="col-xs-1 col-md-2">
+			 <div class="whoami"></div>
+			 <div class="contacts" ng-controller="ContactsCtrl">
+		     <div ng-include="'./contacts.html'"></div>
+			 </div>
+		 </div>
+		 <div class="col-xs-5 col-md-5" ng-controller="TopicListCtrl" id="topics_wrapper">
+			 <div ng-include="'./topic_list.html'"> </div>
+		 </div>
+		 <div class="col-xs-6 col-md-5" ng-controller="TopicCtrl">
+			 <div ng-include="'./topic.html'"> </div>
+		 </div>
+     
+	 </div>
+   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+   <script src="https://code.jquery.com/jquery.js"></script>
+   <!-- Include all compiled plugins (below), or include individual files as needed -->
+ 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.js"></script>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+ </body>
+</html>

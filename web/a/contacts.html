@@ -1,0 +1,11 @@
+<ul>
+  <li ng-repeat="contact in contacts" class="contact" title="{{contact.email}}">
+    <div class="usericon usericon{{size}}">
+      <div>
+        <img src="{{contact.img}}" width="{{size}}" height="{{size}}>"
+      </div>
+      <div class="status {{online}}"></div>
+     </div>
+     <span class="name">{{contact.name}}</span>
+  </li>
+</ul>
