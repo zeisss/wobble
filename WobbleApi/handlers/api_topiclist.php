@@ -25,7 +25,7 @@ function topics_search($params) {
  *
  * Input = {'archived': 1|0}
  *
- * result = [MetaTopic]
+ * result = {'topics': [MetaTopic], 'inbox_unread_topics': int()}
  * MetaTopic = {'id': TopicId, 'abstract': string(), 'users': [User], 'max_last_touch': int(), 
  *              'post_count_unread': int(), 'post_count_total': int(), 'archived': 1|0}
  */
