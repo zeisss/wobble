@@ -1,4 +1,13 @@
 <?php
+
+###
+#
+# NOTE: This file assumes, we have the password_* functions from php5.5 available. If not, install [1] and load it in the config.
+# [1] https://github.com/ircmaxell/password_compat
+#
+###
+
+
 /**
  * Input = {}
  * Result = true 
@@ -32,13 +41,31 @@ function user_login($params) {
   ValidationService::validate_email($email);
   ValidationService::validate_not_empty($password);
 
-  $email = InputSanitizer::sanitizeEmail($email);
+  $email = InputSanitizer::sanitizeEmail($email); # TODO: Should be done by the client
 
-  $password_hashed = SecurityService::hashPassword($password);
   $user = UserRepository::getUserByEmail($email, true);
-  if ($user != NULL && $password_hashed === $user['password_hashed']) {
-    # Valid login given. We must start a session now (we dont want the cookie)
 
+  # NOTE: we need to support the old-style passwords for some time
+  $old_password_hash = md5(PASSWORD_SALT . $password);
+  $rehash = false;
+  $success = false;
+
+  if ($old_password_hash == $user['password_hashed']) {
+    $rehash = true;
+    $success = true;
+  }
+  else if (password_verify($password, $user['password_hashed'])) {
+    $rehash = password_needs_rehash($user['password_hashed'], PASSWORD_DEFAULT);
+    $success = true;
+  }
+
+  if ($user != NULL && $success) {
+    if ($rehash) {
+      $password_hashed = password_hash($password, PASSWORD_DEFAULT);
+      UserRepository::updatePassword($user['id'], $password_hashed);
+    }
+
+    # Valid login given. We must start a session now (we dont want the cookie)
     session_start();
 
     $_SESSION['userid'] = $user['id'];
@@ -67,8 +94,7 @@ function user_login($params) {
 function user_register($params) {
   $email = $params['email'];
   $password = $params['password'];
-  $password_hashed = SecurityService::hashPassword($password);
-
+  
   ValidationService::validate_email($email);
   ValidationService::validate_not_empty($password);
 
@@ -77,6 +103,7 @@ function user_register($params) {
     throw new Exception('You are already registered!');
   }
 
+  $password_hashed = password_hash($password, PASSWORD_DEFAULT);
   $user_id = UserRepository::create($email, $password_hashed, $email);
 
 
@@ -134,8 +161,8 @@ function user_change_password($params) {
     ValidationService::validate_not_empty($self_user_id);
     ValidationService::validate_not_empty($password);
 
-    $hashed = SecurityService::hashPassword($password);
-    UserRepository::updatePassword($self_user_id, $hashed);
+    $password_hashed = password_hash($password, PASSWORD_DEFAULT);
+    UserRepository::updatePassword($self_user_id, $password_hashed);
     return TRUE;
 }
 

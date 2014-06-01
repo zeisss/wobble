@@ -9,6 +9,10 @@
     "./bin/wobble"
   ],
 
+  "require": {
+    "ircmaxell/password-compat": "dev-master"
+  },
+
   "require-dev": {
     "phpunit/phpunit": "*"
   }
