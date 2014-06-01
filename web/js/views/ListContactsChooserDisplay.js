@@ -152,6 +152,13 @@ ListContactsChooserDisplay.prototype.navigateNextContact = function() {
 
   if (element && element.length > 0) {
     this.setSelectedContact(element.data('contact'));
+
+    // Ensure that the element is visible
+    var $list = $("#contactschooser_list", this.e);
+
+    for (var i = 0; i < 100 && element.position().top > $list.height(); i++) {
+      $list.scrollTop($list.scrollTop() + element.height());
+    }
   }
 };
 ListContactsChooserDisplay.prototype.navigatePreviousContact = function() {
@@ -164,6 +171,13 @@ ListContactsChooserDisplay.prototype.navigatePreviousContact = function() {
 
   if (element && element.length > 0) {
     this.setSelectedContact(element.data('contact'));
+
+    // Ensure that the element is visible
+    var $list = $("#contactschooser_list", this.e);
+
+    for (var i = 0; i < 100 && element.position().top < 0; i++) {
+      $list.scrollTop($list.scrollTop() - element.height());
+    }
   }
 };
 ListContactsChooserDisplay.prototype.refreshFilteredContactList = function(filterText) {
