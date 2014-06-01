@@ -41,8 +41,7 @@ class TopicRepository {
    * Creates a new topic with an initial empty post belongign to the given user.
    * This user is also the only reader in the created topic.
    */
-  function createTopic($topic_id, $user_id) 
-  {
+  public static function createTopic($topic_id, $user_id) {
     $pdo = ctx_getpdo();
     
     // Create topic
@@ -57,7 +56,7 @@ class TopicRepository {
   /**
    * Get topic.
    */
-  function getTopic($topic_id, $user_id) {
+  public static function getTopic($topic_id, $user_id) {
     $pdo = ctx_getpdo();
 
     $stmt = $pdo->prepare('SELECT p.post_id id, p.content, p.revision_no revision_no,
@@ -123,7 +122,7 @@ class TopicRepository {
    * Creates a new post with the given $post_id in the given topic.
    * The user $user_id is set as the owner and the post is a child of $parent_post_id.
    */
-  function createPost($topic_id, $post_id, $user_id, $parent_post_id = NULL, $intended_reply = 0) {
+  public static function createPost($topic_id, $post_id, $user_id, $parent_post_id = NULL, $intended_reply = 0) {
     $pdo = ctx_getpdo();
 
     // Create empty root post
@@ -139,14 +138,14 @@ class TopicRepository {
     $stmt->execute();
     self::touch($topic_id);
   }
-  function addReader($topic_id, $user_id) {
+  public static function addReader($topic_id, $user_id) {
     $pdo = ctx_getpdo();
 
     $pdo->prepare('REPLACE topic_readers (topic_id, user_id, created_at) VALUES (?,?, unix_timestamp())')->execute(array($topic_id, $user_id));
     self::touch($topic_id);
   }
 
-  function removeReader($topic_id, $user_id) {
+  public static function removeReader($topic_id, $user_id) {
     $pdo = ctx_getpdo();
     $pdo->prepare('DELETE FROM topic_readers WHERE topic_id = ? AND user_id = ?')->execute(array($topic_id, $user_id));
 
@@ -154,7 +153,7 @@ class TopicRepository {
 
     self::touch($topic_id);
   }
-  function setPostReadStatus($user_id, $topic_id, $post_id, $read_status) {
+  public static function setPostReadStatus($user_id, $topic_id, $post_id, $read_status) {
     $pdo = ctx_getpdo();
 
     if ($read_status == 1) { # if read, create entry
@@ -164,7 +163,7 @@ class TopicRepository {
     }
     $pdo->prepare($sql)->execute(array($topic_id, $post_id, $user_id));
   }
-  function setPostLockStatus($topic_id, $post_id, $lock_status, $user_id) {
+  public static function setPostLockStatus($topic_id, $post_id, $lock_status, $user_id) {
     $pdo = ctx_getpdo();
 
     if ($lock_status == 1) { # if read, create entry
@@ -175,7 +174,7 @@ class TopicRepository {
       $pdo->prepare($sql)->execute(array($topic_id, $post_id));
     }
   }
-  function getPostLockStatus($topic_id, $post_id) {
+  public static function getPostLockStatus($topic_id, $post_id) {
     $pdo = ctx_getpdo();
     $sql = 'SELECT user_id, created_at FROM post_locks WHERE topic_id = ? AND post_id = ? AND created_at > unix_timestamp() - (5 * 60)';
     $stmt = $pdo->prepare($sql);
@@ -253,7 +252,7 @@ class TopicRepository {
    * Returns the user objects for every reader of a topic. Readers are the user which are allowed 
    * to read and write to a topic.
    */
-  function getReaders($topic_id, $limit = FALSE) {
+  public static function getReaders($topic_id, $limit = FALSE) {
     assert('!empty($topic_id)');
     $pdo = ctx_getpdo();
     
@@ -279,7 +278,7 @@ class TopicRepository {
   /**
    * Returns the user objects for every user ever written or edited a post in that Topic. 
    */
-  function getWriters($topic_id, $limit = FALSE) {
+  public static function getWriters($topic_id, $limit = FALSE) {
     assert('!empty($topic_id)');
     $pdo = ctx_getpdo();
     

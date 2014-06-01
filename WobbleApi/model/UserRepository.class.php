@@ -3,7 +3,7 @@
  *
  */
 class UserRepository {
-  function create($name, $password_hashed, $email) {
+  public static function create($name, $password_hashed, $email) {
     $pdo = ctx_getpdo();
     $stmt = $pdo->prepare('INSERT INTO users (name, password_hashed, email) VALUES (?,?,?)');
     $stmt->execute(array($name, $password_hashed, strtolower(trim($email))));
@@ -11,13 +11,13 @@ class UserRepository {
     $userid = intval($pdo->lastInsertId());
     return $userid;
   }
-  function updateName($user_id, $name) {
+  public static function updateName($user_id, $name) {
     $pdo = ctx_getpdo();
     $stmt = $pdo->prepare('UPDATE users SET name = trim(?) WHERE id = ?');
     $stmt->execute(array($name, $user_id));
   }
 
-  function updatePassword($user_id, $hashedPassword) {
+  public static function updatePassword($user_id, $hashedPassword) {
     $pdo = ctx_getpdo();
     $stmt = $pdo->prepare('UPDATE users SET password_hashed = ? WHERE id = ?');
     $stmt->execute(array($hashedPassword, $user_id));    
@@ -26,7 +26,7 @@ class UserRepository {
   /**
    * Returns the user with the given ID including the hashed password.
    */
-  function get($user_id, $include_password_hash = false) {
+  public static function get($user_id, $include_password_hash = false) {
     $pdo = ctx_getpdo();
 
     $stmt = $pdo->prepare('SELECT id, name, password_hashed, email, 
@@ -51,7 +51,7 @@ class UserRepository {
     }
   }
 
-  function getUserByEmail($email, $include_password_hash = false) {
+  public static function getUserByEmail($email, $include_password_hash = false) {
     $pdo = ctx_getpdo();
 
     $stmt = $pdo->prepare('SELECT id, name, password_hashed, email, 
@@ -76,7 +76,7 @@ class UserRepository {
     }
   }
 
-  function delete($user_id) {
+  public static function delete($user_id) {
     $pdo = ctx_getpdo();
 
     $pdo->prepare('DELETE FROM users WHERE id = ?')->execute(array($user_id));
