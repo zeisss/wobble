@@ -69,7 +69,7 @@ TopicModel.prototype.addUserToPost = function(post, user) {
   }
 };
 TopicModel.prototype.addUser = function(user) {
-  if (_.contains(this.getTopic().readers, user)) {
+  if (!_.contains(this.getTopic().readers, user)) {
     this.getTopic().readers.push(user);
   }
 };
