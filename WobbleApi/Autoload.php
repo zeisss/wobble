@@ -23,4 +23,4 @@ require_once WOBBLE_HOME . '/WobbleApi/context.php';
 require_once WOBBLE_HOME . '/etc/config.php';
 
 # Load account management component
-require_once WOBBLE_HOME . '/AccountMgmt/autoload.php';
+#require_once WOBBLE_HOME . '/AccountMgmt/autoload.php';
