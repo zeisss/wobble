@@ -120,7 +120,7 @@ JQueryTopicListView.prototype.renderTopicList = function renderTopicList(topics,
 
         'users': topic.users.slice(0, 1).map(function (user) {
           user.avatar_title = user.name;
-          user.avatar_url = user.avatar_url || "http://gravatar.com/avatar/" + user.img + "?s=32";
+          user.avatar_url = user.avatar_url || "http://gravatar.com/avatar/" + user.img + "?s=32";
           return user;
         }),
       };

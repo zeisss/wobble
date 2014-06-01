@@ -65,7 +65,7 @@ ListContactsChooserDisplay.prototype.render = function(contacts) {
           // Avatar Partial
           avatar_size: 20,
           avatar_title: contact.name,
-          avatar_url: contact.avatar_url || "http://gravatar.com/avatar/" + contact.img + "?=20",
+          avatar_url: contact.avatar_url || "http://gravatar.com/avatar/" + contact.img + "?=20",
           avatar_online: contact.online == 1 ? 'online' : 'offline'
       };
       var partials = {

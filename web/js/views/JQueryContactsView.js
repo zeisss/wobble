@@ -55,7 +55,7 @@ JQueryContactsView.prototype.renderContacts = function (list) {
         'id': contact.id,
         'name': contact.name,
         'email': contact.email,
-        'avatar_url': contact.avatar_url || "http://gravatar.com/avatar/" + contact.img +  "?s=" + avatar_size,
+        'avatar_url': contact.avatar_url || "http://gravatar.com/avatar/" + contact.img +  "?s=" + avatar_size,
         'avatar_online': contact.online == 1 ? 'online' : 'offline'
       }
     }),

@@ -26,7 +26,7 @@ MustacheAvatarPartial.render = function (title, url, size, status) {
 MustacheAvatarPartial.renderMagic = function (user, size) {
 	return MustacheAvatarPartial.render(
 		user.name,
-		user.avatar_url || "http://gravatar.com/avatar/" + user.img,
+		user.avatar_url || "http://gravatar.com/avatar/" + user.img,
 		size, 
 		user.online == 1 ? "online":"offline"
 	);
