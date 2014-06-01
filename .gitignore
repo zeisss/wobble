@@ -2,6 +2,8 @@
 .DS_Store
 etc/config.php
 
+node_modules/
+
 tmp/
 # PHP Composer libs
 vendor/

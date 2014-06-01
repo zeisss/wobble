@@ -1,5 +1,14 @@
 #!/bin/sh
 set -e
 
+# PHPUnit
 ./vendor/bin/phpunit --coverage-html=shared/coverage-report/
+
+if [ command -v node >/dev/null 2>&1 ]; then
+	# Nightwatch (which also run)
+	npm install
+	node_modules/nightwatch/bin/nightwatch -g tests/nightwatch/
+else
+	echo "ERROR: Node.js not installed"
+fi
 
