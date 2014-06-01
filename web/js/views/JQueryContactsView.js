@@ -121,7 +121,7 @@ JQueryContactsView.prototype.renderWhoAmI = function renderWhoAmI(user) {
     'user': user,
 
     'avatar_size': 32,
-    'avatar_url': user.avatar_url || 'http://gravatar.com/avatar/' + user.img + "?s=32",
+    'avatar_url': user.avatar_url || 'http://gravatar.com/avatar/' + user.img + "?s=32",
     'avatar_title': 'That is you!'
   };
   this.$whoami.append(Mustache.render(template, view, {'user_avatar': MustacheAvatarPartial.template_img}));
