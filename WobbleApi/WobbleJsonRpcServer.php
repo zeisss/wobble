@@ -60,7 +60,7 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     Stats::incr('requests.time', floor($endRequest - $startRequest));
 
     # By Day
-    Stats::incr('requests.counter;d=' . date(13059801));
+    Stats::incr('requests.counter;d=' . date("Y-m-d"));
     Stats::incr('requests.time;d=' . date('Y-m-d'));
   }
 
