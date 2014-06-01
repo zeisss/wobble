@@ -19,8 +19,16 @@ function ListContactsChooserDisplay(relativeTo) {
   this.contacts = [];
   this.selectedContact = null;
 }
+
+
 ListContactsChooserDisplay.prototype = new ContactsChooserDisplay();
 ListContactsChooserDisplay.prototype.constructor = ListContactsChooserDisplay;
+
+ListContactsChooserDisplay.prototype.KEY_UP = 38;
+ListContactsChooserDisplay.prototype.KEY_DOWN = 40;
+ListContactsChooserDisplay.prototype.KEY_ENTER = 13;
+ListContactsChooserDisplay.prototype.KEY_ESCAPE = 27;
+
 ListContactsChooserDisplay.prototype.show = function(title) {
   this.title = title;
   this.render([]); // Render an empty list
@@ -84,21 +92,21 @@ ListContactsChooserDisplay.prototype.render = function(contacts) {
 
   $filterText = $("#contactschooser_filter_text");
   $filterText.keydown($.proxy(function(e) {
-    if (e.which == 27) {
+    if (e.which == ListContactsChooserDisplay.prototype.KEY_ESCAPE) {
       // Close dialog on escape
       this.close();
     }
-    else if (e.which == 38) {
+    else if (e.which == ListContactsChooserDisplay.prototype.KEY_UP) {
       // Naviagte up
       this.navigatePreviousContact();
       e.preventDefault();
     }
-    else if (e.which == 40) {
+    else if (e.which == ListContactsChooserDisplay.prototype.KEY_DOWN) {
       // Navigate down
       this.navigateNextContact();
       e.preventDefault();
     }
-    else if (e.which == 13) {
+    else if (e.which == ListContactsChooserDisplay.prototype.KEY_ENTER) {
       e.preventDefault();
       $('#contactchooser-contact-' + this.selectedContact.id).click(); // Simulate clicking on it
     }
