@@ -29,8 +29,7 @@ class UserRepository {
   public static function get($user_id, $include_password_hash = false) {
     $pdo = ctx_getpdo();
 
-    $stmt = $pdo->prepare('SELECT id, name, password_hashed, email, 
-          md5(email) img,
+    $stmt = $pdo->prepare('SELECT id, name, password_hashed, email,
           COALESCE((select max(last_touch) from sessions us where us.user_id = id) > (UNIX_TIMESTAMP() - 300), false) online
         FROM users 
         WHERE id = ?');
@@ -38,14 +37,7 @@ class UserRepository {
 
     $result = $stmt->fetchAll();
     if (count($result) == 1) {
-      $result[0]['id'] = intval($result[0]['id']);
-      $result[0]['online'] = intval($result[0]['online']);
-
-      if (!$include_password_hash) {
-        unset($result[0]['password_hashed']);
-      }
-
-      return $result[0];
+      return UserRepository::fromResult($result[0], $include_password_hash);
     } else {
       return NULL;
     }
@@ -54,8 +46,7 @@ class UserRepository {
   public static function getUserByEmail($email, $include_password_hash = false) {
     $pdo = ctx_getpdo();
 
-    $stmt = $pdo->prepare('SELECT id, name, password_hashed, email, 
-          md5(email) img,
+    $stmt = $pdo->prepare('SELECT id, name, password_hashed, email,
           COALESCE((select max(last_touch) from sessions us where us.user_id = id) > (UNIX_TIMESTAMP() - 300), false) online
          FROM users 
         WHERE email = ?');
@@ -63,14 +54,7 @@ class UserRepository {
 
     $result = $stmt->fetchAll();
     if (count($result) == 1) {
-      $result[0]['id'] = intval($result[0]['id']);
-      $result[0]['online'] = intval($result[0]['online']);
-
-      if (!$include_password_hash) {
-        unset($result[0]['password_hashed']);
-      }
-
-      return $result[0];
+      return UserRepository::fromResult($result[0], $include_password_hash);
     } else {
       return NULL;
     }
@@ -90,5 +74,17 @@ class UserRepository {
     $pdo->prepare('DELETE FROM post_users_read WHERE user_id = ?')->execute(array($user_id));
 
     return true;
+  }
+
+  private static function fromResult($result, $include_password_hash = false) {
+    $result['id'] = intval($result['id']);
+    $result['online'] = intval($result['online']);
+    $result['img'] = md5($result['email']);
+    $result['avatar_url'] = 'http://gravatar.com/avatar/' . md5($result['email']);
+
+    if (!$include_password_hash) {
+      unset($result['password_hashed']);
+    }
+    return $result;
   }
 }

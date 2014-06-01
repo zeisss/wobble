@@ -43,7 +43,7 @@ ListContactsChooserDisplay.prototype.render = function(contacts) {
           '<div id="contactschooser_filter"><input type=text id="contactschooser_filter_text"></div>' +
           '<ul id="contactschooser_list">' +
           '</ul>';
-  this.e.empty().append(Mustache.to_html(template, {
+  this.e.empty().append(Mustache.render(template, {
     'title': this.title
   }));
   $contactList = $('#contactschooser_list', this.e);
@@ -51,21 +51,30 @@ ListContactsChooserDisplay.prototype.render = function(contacts) {
     $contactList.append('<li>No contacts</li>');
   } else {
     _.each(this.contacts, function(contact, i) {
-      var template = "<li class=contact title='{{email}}'>" +
-              "<div class='usericon usericon{{size}}'>" +
-              "<div><img src='http://gravatar.com/avatar/{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
-              "<div class='status {{online}}'></div>" +
-              "</div>" +
-              "<span class=name>{{name}}</span>" +
-              "</li>";
-      var $li = $(Mustache.to_html(template, {
-          size: 20,
+      var template =
+        "<li class='contact' title='{{email}}' id='contactchooser-contact-{{contact_id}}'>" +
+        " {{> user_avatar }}" +
+        " <span class=\"name\">{{name}}</span>" +
+        "</li>";
+
+      var view = {
+          contact_id: contact.id,
           email: contact.email,
           name: contact.name,
-          img: contact.img,
-          online: contact.online == 1 ? 'online' : 'offline'
-      })).attr('id', 'contactchooser-contact-' + contact.id).appendTo($contactList);
-      $li.data('contact', contact);
+
+          // Avatar Partial
+          avatar_size: 20,
+          avatar_title: contact.name,
+          avatar_url: contact.avatar_url || "http://gravatar.com/avatar/" + contact.img + "?=20",
+          avatar_online: contact.online == 1 ? 'online' : 'offline'
+      };
+      var partials = {
+        'user_avatar': MustacheAvatarPartial.template
+      };
+
+      var $li = $(Mustache.render(template, view, partials))
+      $li.appendTo($contactList)
+        .data('contact', contact);
 
       $li.click($.proxy(function() {
         // Move cursor to clicked and then one down

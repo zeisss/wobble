@@ -20,21 +20,26 @@ JQueryContactsDetailDisplay.prototype.constructor = JQueryContactsDetailDisplay;
 JQueryContactsDetailDisplay.prototype.show = function(contact, relativeTo) {
   this.contact = contact;
 
-  var template =  ' <div class="usericon usericon{{size}}">' +
-          '   <div><img src="http://gravatar.com/avatar/{{img}}?s={{size}}" width="{{size}}" height="{{size}}"></div>' +
-          '   <div class="status {{status}}"></div>' +
-          ' </div>'+
-          ' <div class=name>{{name}}</div>' +
-          ' <div class=email>{{email}}</div>';
+  var template =
+    '{{> user_avatar}}' +
+    '<div class="name">{{name}}</div>' +
+    '<div class="email">{{email}}</div>';
 
-  var html = Mustache.to_html(template, {
-    'img': contact.img,
+  var avatar_size = 100;
+  var views = {
     'name': contact.name,
     'email': contact.email,
-    'status': contact.online == 1 ? 'online': 'offline',
-    'size': 100
-  });
-  this.e.html(html).css('display', '');
+
+    'avatar_size': avatar_size,
+    'avatar_url':  contact.avatar_url || "http://gravatar.com/avatar/" + contact.img + "?size=" + avatar_size,
+    'avatar_title': contact.email,
+    'avatar_online': contact.online == 1 ? 'online': 'offline',
+  };
+  var partials = {
+    'user_avatar': MustacheAvatarPartial.template
+  };
+
+  this.e.html(Mustache.render(template, views, partials)).css('display', '');
 
   if (relativeTo) {
     this.e.css('left', relativeTo.left);

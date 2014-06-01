@@ -37,19 +37,11 @@ JQueryTopicReadersPartial.prototype.renderReader = function(user) {
   } else {
     container.css('display', '');
   }
-  var template = "<div class='usericon usericon40'>" +
-           "<div><img width='40' height='40' src='http://gravatar.com/avatar/{{img}}?s=100' title='{{name}}'/></div>" +
-           "<div class='status {{status}}'></div>" +
-           "</div>";
 
-  var that = this;
-  container.html(Mustache.to_html(template, {
-    'img': user.img,
-    'name': user.name,
-    'status': user.online == 1 ? 'online':'offline'
-  })).off('click').click(function() {
-    that.onUserClicked(user);
-  });
+  container.html(MustacheAvatarPartial.renderMagic(user, 40))
+    .off('click').click(function() {
+      this.onUserClicked(user);
+    }.bind(this));
 };
 JQueryTopicReadersPartial.prototype.checkReaderOverflow = function() {
   var hiddenUsers = 0;
@@ -437,12 +429,7 @@ JQueryTopicView.prototype._renderPostUsers = function(post, postElement) {
     var size = post.users.length === 1 ? 25 : 21;
     for (var i = 0; i < post.users.length; i++) {
       var postUserId = post.users[i];
-      var template = "<img width='{{size}}' height='{{size}}' src='http://gravatar.com/avatar/{{img}}?s={{size}}' title='{{name}}'/>";
-      postElement.append(Mustache.to_html(template, {
-        'img': this.userCache[postUserId].img,
-        'name': this.userCache[postUserId].name,
-        'size': size
-      }));
+      postElement.append(MustacheAvatarPartial.renderMagic(this.userCache[postUserId], size));
     }
     minHeight = size;
   }

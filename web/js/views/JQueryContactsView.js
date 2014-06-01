@@ -38,30 +38,44 @@ JQueryContactsView.prototype.onResize = function() {
 };
 
 JQueryContactsView.prototype.renderContacts = function (list) {
-  this.$contactsList.empty();
+  var template = 
+    "{{#contacts}}" + 
+    "<li class=\"contact\" title='{{email}}' data-index=\"{{index}}\" data-contact-id=\"{{id}}\">" +
+    "  {{> user_avatar }}" +
+    "  <span class=name>{{name}}</span>" +
+    "</li>"+
+    "{{/contacts}}" + 
+    "{{^contacts}}<li style=\"font-size: small; padding-left: 20px;\">^ Click here to add a friend by their email adress.</li>{{/contacts}}";
 
-  if (list.length === 0) {
-    $('<li></li>').html('Sorry, you have no contacts.').css('font-size', 'small').appendTo(this.$contactsList);
-  }
+  var avatar_size = 20;
+  var views = {
+    'contacts': list.map(function (contact, index) {
+      return {
+        'index': index,
+        'id': contact.id,
+        'name': contact.name,
+        'email': contact.email,
+        'avatar_url': contact.avatar_url || "http://gravatar.com/avatar/" + contact.img +  "?s=" + avatar_size,
+        'avatar_online': contact.online == 1 ? 'online' : 'offline'
+      }
+    }),
 
-  _.each(list, function(contact) {
-    var template = "<li class=contact title='{{email}}'>" +
-            "<div class='usericon usericon{{size}}'>" +
-            "<div><img src='http://gravatar.com/avatar/{{{img}}}?s={{size}}' width={{size}} height={{size}}></div>" +
-            "<div class='status {{online}}'></div>" +
-            "</div>" +
-            "<span class=name>{{name}}</span>" +
-            "</li>";
-    $(Mustache.to_html(template, {
-        size: 20,
-        email: contact.email,
-        name: contact.name,
-        img: contact.img,
-        online: contact.online == 1 ? 'online' : 'offline'
-    })).appendTo(this.$contactsList).click($.proxy(function() {
-      this.onContactClick(contact);
-    }, this));
-  }, this);
+    'avatar_size': 20
+  };
+  var partials = {
+    'user_avatar': MustacheAvatarPartial.template
+  };
+
+  var html = Mustache.render(template, views, partials);
+
+  $(html).appendTo(this.$contactsList.empty());
+
+  var that = this;
+  $("li", this.$contactsList).click(function() {
+    var index = $(this).data('index');
+    var contact = list[index];
+    that.onContactClick(contact);
+  });
 };
 
 /*
@@ -100,7 +114,16 @@ JQueryContactsView.prototype.renderWhoAmI = function renderWhoAmI(user) {
   if (!user) {
     return;
   }
-  var template = "<img title='That is you!' src='http://gravatar.com/avatar/{{{img}}}?s=32' width=32 height=32> <span class=name>{{name}}</span>";
-  this.$whoami.append(Mustache.to_html(template, user));
+  var template =
+    "{{> user_avatar}}" +
+    "<span class=name>{{user.name}}</span>";
+  var view = {
+    'user': user,
+
+    'avatar_size': 32,
+    'avatar_url': user.avatar_url || 'http://gravatar.com/avatar/' + user.img + "?s=32",
+    'avatar_title': 'That is you!'
+  };
+  this.$whoami.append(Mustache.render(template, view, {'user_avatar': MustacheAvatarPartial.template_img}));
 };
 JQueryContactsView.prototype.onWhoamiClick = function onWhoamiClick() {};

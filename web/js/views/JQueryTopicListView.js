@@ -92,49 +92,57 @@ JQueryTopicListView.prototype.renderActionButtons = function(enableShowInbox, en
   }
 };
 JQueryTopicListView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
-  // Render to html list
-  if (topics.length === 0) {
-    this.renderText('No topics here. Try to create one :)');
-  }
-  for (var i = 0; i < topics.length; ++i) {
-    this.renderTopic(topics[i], prepend);
-  }
-};
-JQueryTopicListView.prototype.renderTopic = function renderTopic(topic, prepend) {
-  var template = '<li id="{{id}}" class="topic_header">' +
-           ' <div class="abstract">{{{abstract}}}</div>' +
-           (topic.post_count_unread === 0 ?
-              ' <div class="messages">{{total}} msgs</div>' :
-              ' <div class="messages"><div class=unread>{{unread}}</div> of {{total}}</div>') +
-           ' <div class="time">{{time}}</div>' +
-           ' <div class="users">{{#users}}<img title="{{name}}" src="http://gravatar.com/avatar/{{img}}?s=32" width="32" height="32">{{/users}}</div>' +
-           '</li>';
-  var that = this;
-  var $li = $(Mustache.to_html(template, {
-    'id': 'topic-' + topic.id,
-    'users': topic.users.slice(0,3) /* Make sure we only have 3 users */,
-    'unread': topic.post_count_unread,
-    'total': topic.post_count_total,
-    'time': this.renderTopicTimestamp(topic.max_last_touch),
-    'abstract': (topic.archived ? '<i>[Archive]</i> ' : '') + topic.abstract
-  })).data('topic', topic);
+  var template =
+    '{{#topics}}' +
+    '<li data-topic-id="{{id}}" class="topic_header">' +
+    ' <div class="abstract" {{#is_unread}}style="font-weight:bold"{{/is_unread}}>{{{abstract}}}</div>' +
+    '{{#is_unread}} <div class="messages"><div class=unread>{{unread}}</div> of {{total}}</div>{{/is_unread}}' +
+    '{{^is_unread}} <div class="messages">{{total}} msgs</div>{{/is_unread}}' +
+    ' <div class="time">{{time}}</div>' +
+    ' <div class="users">{{#users}}{{> avatar_img}}{{/users}}</div>' +
+    '</li>' +
+    '{{/topics}}' +
+    '{{^topics}}<li style="padding-left: 20px">^ Click here to create new topic.</li>{{/topics}}'
+    ;
 
-  $li.on('click', function() {
-    var topic = $(this).data('topic');
-    if (topic) {
-      that.onTopicClicked(topic.id);
+  var views = {
+    'topics': topics.map(function (topic) {
+      return {
+        'id': topic.id,
+        'is_unread': topic.post_count_unread > 0,
+        'unread': topic.post_count_unread,
+        'total': topic.post_count_total,
+        'time': this.renderTopicTimestamp(topic.max_last_touch),
+        'abstract': (topic.archived ? '<i>[Archive]</i> ' : '') + topic.abstract,
+
+        // Avatar Partial
+        'avatar_size': 32,
+
+        'users': topic.users.slice(0, 1).map(function (user) {
+          user.avatar_title = user.name;
+          user.avatar_url = user.avatar_url || "http://gravatar.com/avatar/" + user.img + "?s=32";
+          return user;
+        }),
+      };
+    }.bind(this))
+  };
+  var partials = {
+    'avatar_img': MustacheAvatarPartial.template_img
+  };
+
+  var $topicList = $(Mustache.render(template, views, partials));
+  var that = this;
+  $topicList.on('click', function () {
+    var topicId = $(this).data('topic-id');
+    if (topicId) {
+      that.onTopicClicked(topicId);
     }
   });
 
-  if (topic.post_count_unread > 0) {
-    var $abstract = $(".abstract", $li);
-    $abstract.css('font-weight', 'bold');
-  }
-
   if (prepend) {
-    $li.prependTo(this.$topics);
+    $topicList.prependTo(this.$topics);
   } else {
-    $li.appendTo(this.$topics);
+    $topicList.appendTo(this.$topics);
   }
 };
 JQueryTopicListView.prototype.renderTopicTimestamp = function renderTopicTimestamp(timestamp) {

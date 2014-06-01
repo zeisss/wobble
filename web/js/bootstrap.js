@@ -73,6 +73,7 @@
     'js/views/JQueryContactsView.js',
     'js/views/JQueryContactsDetailDisplay.js',
     'js/views/ListContactsChooserDisplay.js',
+    'js/views/MustacheAvatarPartial.js',
 //    'js/views/SimpleContactsChooserDisplay.js',
 
     'js/login/LoginModel.js',
