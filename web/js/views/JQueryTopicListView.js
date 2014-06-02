@@ -94,7 +94,7 @@ JQueryTopicListView.prototype.renderActionButtons = function(enableShowInbox, en
 JQueryTopicListView.prototype.renderTopicList = function renderTopicList(topics, prepend) {
   var template =
     '{{#topics}}' +
-    '<li data-topic-id="{{id}}" class="topic_header">' +
+    '<li id="topic-{{id}}" data-topic-id="{{id}}" class="topic_header">' +
     ' <div class="abstract" {{#is_unread}}style="font-weight:bold"{{/is_unread}}>{{{abstract}}}</div>' +
     '{{#is_unread}} <div class="messages"><div class=unread>{{unread}}</div> of {{total}}</div>{{/is_unread}}' +
     '{{^is_unread}} <div class="messages">{{total}} msgs</div>{{/is_unread}}' +
