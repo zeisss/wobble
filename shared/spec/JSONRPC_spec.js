@@ -20,7 +20,7 @@ describe('the JSONRPC api', function () {
     });
     it('should retry a call on a connection error three times', function () {
       var error, result, calls = 0, cbCalled = false;
-      spyOn(rpc, '_call').andCallFake(function(requestId, name, args, callback) {
+      spyOn(rpc, '_call').andCallFake(function(requestId, name, args, options, callback) {
         calls++;
         expect(typeof callback).toBe('function');
         callback({type:'connectionerror'});

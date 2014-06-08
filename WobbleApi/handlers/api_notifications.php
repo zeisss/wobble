@@ -25,7 +25,7 @@ function get_notifications($params) {
   }
 
   // Check 10 times, but sleep after each check, if no notifications where found
-  for ($i = 0; $i < 100; $i++) {
+  for ($i = 0; $i < 20 && !connection_aborted(); $i++) {
     $timestamp = time();
     $messages = NotificationRepository::getNotifications($session_id, $timestamp);
     if (count($messages) > 0) {

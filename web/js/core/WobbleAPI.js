@@ -47,10 +47,15 @@ WobbleAPI.prototype.destroy = function() {
  *
  * @see this.rpc
  */
-WobbleAPI.prototype.doRPC = function(name, params, callback) {
+WobbleAPI.prototype.doRPC = function(name, params, options, callback) {
   if (typeof(params) == "function") {
       callback = params;
       params = undefined;
+      options = {};
+  }
+  else if (typeof(options) == "function") {
+    callback = options;
+    options = {};
   }
 
   if (this.apikey.get()) {
@@ -62,7 +67,7 @@ WobbleAPI.prototype.doRPC = function(name, params, callback) {
       params.apikey = this.apikey.get();
     }
   }
-  return this.rpc.doRPC(name, params, callback);
+  return this.rpc.doRPC(name, params, options, callback);
 };
 
 WobbleAPI.prototype.refreshUser = function(callback) {
@@ -105,7 +110,7 @@ WobbleAPI.prototype.systemListMethods = function(callback) {
 
 /* Notifications */
 WobbleAPI.prototype.get_notifications = function(timestamp, callback) {
-  this.doRPC('get_notifications', {next_timestamp: timestamp}, callback);
+  this.doRPC('get_notifications', {next_timestamp: timestamp}, {ignoreState: true}, callback);
 };
 
 /* REGISTER / LOGIN ----------------- */
@@ -122,7 +127,7 @@ WobbleAPI.prototype.register = function(email, password, callback) {
 
 WobbleAPI.prototype.login = function(email, password, callback) {
   var that = this;
-  this.doRPC('user_login', {'email': email, 'password': password}, function(err, result) {
+  this.doRPC('user_login', {'email': email, 'password': password}, {}, function(err, result) {
     if(!err && result.apikey)
       that.apikey.set(result.apikey);
 
@@ -168,13 +173,13 @@ WobbleAPI.prototype.list_topics = function (show_archived, callback) {
 
 /* CONTACTS Functions --------------- */
 WobbleAPI.prototype.add_contact = function(email, callback) {
-  this.doRPC('user_add_contact', {'contact_email': email}, callback);
+  this.doRPC('contacts.add', {'contact_email': email}, callback);
 };
 WobbleAPI.prototype.get_contacts = function (callback) {
-  this.doRPC('user_get_contacts', callback);
+  this.doRPC('contacts.list', callback);
 };
 WobbleAPI.prototype.contact_remove = function(contact_id, callback) {
-  this.doRPC('user_remove_contact', {contact_id: contact_id}, callback);
+  this.doRPC('contacts.remove', {contact_id: contact_id}, callback);
 };
 
 /* TOPIC Functions ------------------ */

@@ -9,6 +9,7 @@ function JSONRPC(url) {
   this.retryTimeFactor = 1.9; // Increase sleeping time between retries by this factor
   this.maxRetries = 3;
   this.stateWaiting = [];
+  this.debug = true;
 }
 
 /**
@@ -28,22 +29,27 @@ JSONRPC.prototype.doNotification = function(name, args) {
 /**
  * Normal RPC call.
  */
-JSONRPC.prototype.doRPC = function(name, args, callback) {
-  if (arguments.length == 2) {
+JSONRPC.prototype.doRPC = function(name, args, options, callback) {
+  if (typeof(args) == "function") {
     callback = args;
-    args = null;
+    args = undefined;
+    options = {};
   }
+  else if (typeof(options) == "function") {
+    callback = options;
+    options = {};
+  }
+
   var requestId = this.idSequence;
   this.idSequence++;
-
-  return this._retry_call(requestId, name, args, callback);
+  return this._retry_call(requestId, name, args, options, callback);
 };
 
 /**
  * Executes the given RPC call and retries it at least three times,
  * if a connectionerror occurs.
  */
-JSONRPC.prototype._retry_call = function(requestId, name, args, callback) {
+JSONRPC.prototype._retry_call = function(requestId, name, args, options, callback) {
   var retries = this.maxRetries
     , sleepTime = this.initialSleepTime
     , self = this
@@ -69,7 +75,7 @@ JSONRPC.prototype._retry_call = function(requestId, name, args, callback) {
 
       // Retry in 500ms
       setTimeout(function () {
-        request.currentRequest = self._call(requestId, name, args, retry_callback);
+        request.currentRequest = self._call(requestId, name, args, options, retry_callback);
       }, sleepTime);
       sleepTime *= self.retryTimeFactor;
       return true; // We handled the error.
@@ -79,11 +85,11 @@ JSONRPC.prototype._retry_call = function(requestId, name, args, callback) {
     }
   };
 
-  request.currentRequest = self._call(requestId, name, args, retry_callback);
+  request.currentRequest = self._call(requestId, name, args, options, retry_callback);
   return request;
 };
 
-JSONRPC.prototype._call = function(requestId, name, args, callback) {
+JSONRPC.prototype._call = function(requestId, name, args, options, callback) {
   var that = this;
 
   var body = {
@@ -147,14 +153,19 @@ JSONRPC.prototype._call = function(requestId, name, args, callback) {
     }
   };
 
-  var req = $.ajax(this.url, ajaxSettings).always(function() {
-    that.stateWaiting = jQuery.grep(that.stateWaiting, function(areq, i) {
-      return areq !== req;
+  var req = $.ajax(this.url + (this.debug ? "?" + name : ""), ajaxSettings)
+  if (!options.ignoreState) {
+    req.always(function() {
+      that.stateWaiting = jQuery.grep(that.stateWaiting, function(areq, i) {
+        return areq !== req;
+      });
+      BUS.fire('rpc.queue.length', that.stateWaiting.length);
     });
-    BUS.fire('rpc.queue.length', that.stateWaiting.length);
-  });
-  this.stateWaiting.push(req);
-  BUS.fire('rpc.queue.length', this.stateWaiting.length);
+
+    this.stateWaiting.push(req);
+    BUS.fire('rpc.queue.length', this.stateWaiting.length);
+  }
+  
   return req;
 };
 

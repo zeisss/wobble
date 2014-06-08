@@ -6,7 +6,16 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
 
     $this->addFunctions(array (
       // Core
-      array('file' => 'api_core.php', 'method' => 'wobble_api_version', 'name'=>'wobble.api_version'),
+      array('file' => 'api_core.php', 'method' => 'wobble_api_version', 'name' => 'wobble.api_version'),
+
+      // User / Session
+      array('file' => 'api_user.php', 'method' => 'user_register'),
+      array('file' => 'api_user.php', 'method' => 'user_get'),
+      array('file' => 'api_user.php', 'method' => 'user_get_id'),
+      array('file' => 'api_user.php', 'method' => 'user_change_name'),
+      array('file' => 'api_user.php', 'method' => 'user_change_password'),
+      array('file' => 'api_user.php', 'method' => 'user_login'),
+      array('file' => 'api_user.php', 'method' => 'user_signout'),
 
       // Topics
       array('file' => 'api_topiclist.php', 'method' => 'topics_list'),
@@ -26,24 +35,22 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
       array('file' => 'api_topic.php', 'method' => 'post_delete'),
       array('file' => 'api_topic.php', 'method' => 'post_change_read'),
       array('file' => 'api_topic.php', 'method' => 'post_change_lock'),
-      array('file' => 'api_topic.php', 'method' => 'post_change_read', 'name' => 'post_read'),
 
-      // User / Session
-      array('file' => 'api_user.php', 'method' => 'user_get'),
-      array('file' => 'api_user.php', 'method' => 'user_get_id'),
-      array('file' => 'api_user.php', 'method' => 'user_register'),
-      array('file' => 'api_user.php', 'method' => 'user_change_name'),
-      array('file' => 'api_user.php', 'method' => 'user_change_password'),
-      array('file' => 'api_user.php', 'method' => 'user_login'),
-      array('file' => 'api_user.php', 'method' => 'user_signout'),
-
+      
       // Notifications
       array('file' => 'api_notifications.php', 'method' => 'get_notifications'),
 
-      // Contact list
-      array('file' => 'api_user.php', 'method' => 'user_get_contacts'),
-      array('file' => 'api_user.php', 'method' => 'user_add_contact'),
-      array('file' => 'api_user.php', 'method' => 'user_remove_contact')
+      // Contact list (api_contacts.php)
+      array('file' => 'api_contacts.php', 'method' => 'user_get_contacts', 'name' => 'contacts.list'),
+      array('file' => 'api_contacts.php', 'method' => 'user_add_contact', 'name' => 'contacts.add'),  
+      array('file' => 'api_contacts.php', 'method' => 'user_remove_contact', 'name' => 'contacts.remove'),
+
+
+      // DEPRECATED
+      array('file' => 'api_contacts.php', 'method' => 'user_get_contacts'),  // deprecated
+      array('file' => 'api_contacts.php', 'method' => 'user_add_contact'),   // deprecated
+      array('file' => 'api_contacts.php', 'method' => 'user_remove_contact'), // deprecated
+      array('file' => 'api_topic.php', 'method' => 'post_change_read', 'name' => 'post_read')
     ));
   }
 
