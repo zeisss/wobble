@@ -1,5 +1,7 @@
 <?php
 
+require __DIRNAME__ . '/api_contacts.php';
+
 ###
 #
 # NOTE: This file assumes, we have the password_* functions from php5.5 available. If not, install [1] and load it in the config.
