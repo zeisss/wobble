@@ -1,6 +1,6 @@
 <?php
 
-require __DIRNAME__ . '/api_contacts.php';
+require dirname(__FILE__) . '/api_contacts.php';
 
 ###
 #
