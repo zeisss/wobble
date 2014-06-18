@@ -40,6 +40,8 @@ JSONRPC.prototype.doRPC = function(name, args, options, callback) {
     options = {};
   }
 
+  options = options || {};
+
   var requestId = this.idSequence;
   this.idSequence++;
   return this._retry_call(requestId, name, args, options, callback);
