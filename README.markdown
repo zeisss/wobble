@@ -1,6 +1,8 @@
 Wobble
 ======
 
+[![Join the chat at https://gitter.im/ZeissS/wobble](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ZeissS/wobble?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Wobble is a replacement for Google Wave. It currently shares a basic feature set with google wave, but is much simpler.
 
 Getting Started
