@@ -63,7 +63,7 @@ deploy:
         - script:
             name: Deploy artifact
             code: |
-                site_name=${ARTIFACT_NAME}
+                site_name=${DEPLOY_SITE_NAME:-ARTIFACT_NAME}
                 desired_version="${WERCKER_GIT_BRANCH}-${WERCKER_GIT_COMMIT}"
 
                 test -z "$DEPLOY_TOKEN" && fail "Env DEPLOY_TOKEN missing."
