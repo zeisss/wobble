@@ -75,5 +75,5 @@ deploy:
                   fail "$(cat $WERCKER_REPORT_ARTIFACTS_DIR/deploy.json)"
                 fi
     after-steps:
-      - wercker/slack-notifier@1.2.1:
+      - wercker/slack-notifier:
           url: $DEPLOY_SLACK_URL
