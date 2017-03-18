@@ -10,7 +10,8 @@
   ],
 
   "require": {
-    "ircmaxell/password-compat": "dev-master"
+    "ircmaxell/password-compat": "dev-master",
+    "dbtlr/php-airbrake": "~1.1"
   },
 
   "require-dev": {
