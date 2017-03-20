@@ -62,13 +62,8 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     parent::handleHttpRequest();
     $endRequest = microtime(true);
 
-    # Global
-    Stats::incr('requests.counter');
-    Stats::incr('requests.time', floor($endRequest - $startRequest));
-
-    # By Day
-    Stats::incr('requests.counter;d=' . date("Y-m-d"));
-    Stats::incr('requests.time;d=' . date('Y-m-d'));
+    Stats::incr('http_request_duration_microseconds_count');
+    Stats::incr('http_request_duration_microseconds_sum', floor($endRequest - $startRequest));
   }
 
   /**
@@ -134,25 +129,12 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
   }
 
   protected function beforeCallStats($method, $params) {
-    Stats::incr('jsonrpc.api.' . $method . '.invokes');
-
-    $key = 'jsonrpc.api.detailed:';
-    $key .= $method;
-    if (isset($params['topic_id'])) $key .= ';t=' . $params['topic_id'];
-    if (isset($params['post_id'])) $key .= ';p=' . $params['post_id'];
-    $user_id = ctx_getuserid();
-    if (!is_null($user_id)) $key .= ';u=' . $user_id;
-    Stats::incr($key);
+    Stats::incr('jsonrpc_api_calls{handler="' . $method . '"}');
   }
 
   public function afterCall($method, $params, $result, $error) {
     if (!is_null($error)) {
-      Stats::incr('jsonrpc.errors');
-      Stats::incr('jsonrpc.api.' . $method . '.errors');
-    }
-    if (!is_null($result)) {
-      Stats::incr('jsonrpc.success');
-      Stats::incr('jsonrpc.api.' . $method . '.success');
+      Stats::incr('jsonrpc_api_errors{handler="' . $method . '"}');
     }
   }
 }

@@ -11,32 +11,23 @@
  * value = float64()
  */
 function wobble_metrics($params) {
-	$stats = [
-		'requests.counter' => [
-			'name' => 'http_requests', 
-			'help' => 'Number of requests handled',
-			'type' => 'counter'
+	$single_stats = [
+		[
+			'name' => 'http_request_duration_microseconds_count',
+			'type' => 'counter',
+			'help' => 'Number of HTTP requests measured.'
 		],
-		'requests.time' => [
-			'name' => 'http_request_duration_microseconds',
-			'help' => ' The HTTP request latencies in microseconds.',
-			'type' => 'counter'
-		],
-		'jsonrpc.errors' => [
-			'name' => 'jsonrpc_errors',
-			'help' => '',
-			'type' => 'counter'
-		],
-		'jsonrpc.success' => [
-			'name' => 'jsonrpc_success',
-			'help' => '',
-			'type' => 'counter'
-		],
+
+		[
+			'name' => 'http_request_duration_microseconds_sum',
+			'type' => 'counter',
+			'help' => 'Sum of all HTTP request durations observed.'
+		]
 	];
 
 	$result = [];
-	foreach($stats as $key => $m) {
-		$value = Stats::getValue($key);
+	foreach($single_stats as $m) {
+		$value = Stats::getValue($m['name']);
 		$result[] = array(
 			'type' => $m['type'],
 			'name' => $m['name'],
@@ -45,6 +36,35 @@ function wobble_metrics($params) {
 		);
 	}
 
+	$multi_stats = [
+		['name' => 'jsonrpc_api_calls', 'type' => 'counter'],
+		['name' => 'jsonrpc_api_errors', 'type' => 'counter'],
+	];
+	foreach($multi_stats as $m) {
+		$values = Stats::getValuesByPrefix($m['name']);
+		$mapped_values = [];
+		foreach($values as $v) {
+			$n = $v['name'];
+			$i = strpos($n, '{');
+			if ($i === FALSE) {
+				die('invalid multi metric: ' . $n);
+			}
+			$n = substr($n, $i + 1, -1);
+			$mapped_values[$n] = $v['value'];
+		}
+		if (empty($mapped_values)) {
+			# no need to expose empty metrics
+			continue;
+		}
+		$result[] = array(
+			'type' => $m['type'],
+			'name' => $m['name'],
+			'help' => $m['help'],
+			'values' => $mapped_values,
+		);
+	}
+
+	## Model Gauges
 	$result[] = array(
 		'type' => 'gauge',
 		'name' => 'users_online_count',

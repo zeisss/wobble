@@ -1,6 +1,17 @@
 <?php
 
-class Stats {
+class Stats { 
+  /**
+   * @return [{name: string(), value: int()}]
+   */
+  public static function getValuesByPrefix($prefix) {
+    $pdo = ctx_getpdo();
+
+    $sql = 'SELECT name, value FROM `statistics` WHERE name LIKE ?';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(array($prefix . '%'));
+    return $stmt->fetchAll();
+  }
   public static function getValue($key) {
     $pdo = ctx_getpdo();
     $sql = 'SELECT value FROM `statistics` WHERE name = ?';
