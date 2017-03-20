@@ -87,11 +87,24 @@ function wobble_metrics($params) {
 
 	$result[] = array(
 		'type' => 'gauge',
+		'name' => 'sessions_last_gc_seconds',
+		'help' => 'Time of the last GC since unix epoch in seconds.',
+		'values' => Stats::getValue('sessions_last_gc_seconds'),
+	);
+
+	$result[] = array(
+		'type' => 'gauge',
 		'name' => 'topic_count',
 		'help' => 'Number of topics',
 		'values' => sizeof(TopicRepository::listTopics()),
 	);
 
+	$result[] = array(
+		'type' => 'gauge',
+		'name' => 'posts_count',
+		'help' => 'Number of posts in all topics',
+		'values' => PostRepository::getPostCount(),
+	);
 
 	
 

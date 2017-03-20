@@ -8,6 +8,7 @@ class UserRepository {
     $result = $pdo->query('SELECT COUNT(*) cnt FROM `users`')->fetchAll();
     return $result[0]['cnt'];
   }
+
   public static function create($name, $password_hashed, $email) {
     $pdo = ctx_getpdo();
     $stmt = $pdo->prepare('INSERT INTO users (name, password_hashed, email) VALUES (?,?,?)');
@@ -16,6 +17,7 @@ class UserRepository {
     $userid = intval($pdo->lastInsertId());
     return $userid;
   }
+
   public static function updateName($user_id, $name) {
     $pdo = ctx_getpdo();
     $stmt = $pdo->prepare('UPDATE users SET name = trim(?) WHERE id = ?');

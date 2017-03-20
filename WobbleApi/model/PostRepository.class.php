@@ -7,4 +7,10 @@ class PostRepository {
     $stmt->execute(array($topic_id, $post_id));
     return $stmt->fetch();
   }
+
+  public static function getPostCount() {
+    $pdo = ctx_getpdo();
+    $result = $pdo->query('SELECT COUNT(*) cnt FROM `posts`')->fetchAll();
+    return $result[0]['cnt'];
+  }
 }

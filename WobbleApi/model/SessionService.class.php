@@ -11,6 +11,7 @@ class SessionService {
     foreach($result as $session) {
       static::signoff($session['session_id']);
     }
+    Stats::gauge('sessions_last_gc_seconds', time());
     return count($result);
   }
   /**

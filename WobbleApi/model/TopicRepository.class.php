@@ -138,6 +138,7 @@ class TopicRepository {
     $stmt->execute();
     self::touch($topic_id);
   }
+
   public static function addReader($topic_id, $user_id) {
     $pdo = ctx_getpdo();
 
