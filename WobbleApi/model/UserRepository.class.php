@@ -3,6 +3,11 @@
  *
  */
 class UserRepository {
+  public static function getUserCount() {
+    $pdo = ctx_getpdo();
+    $result = $pdo->query('SELECT COUNT(*) cnt FROM `users`')->fetchAll();
+    return $result[0]['cnt'];
+  }
   public static function create($name, $password_hashed, $email) {
     $pdo = ctx_getpdo();
     $stmt = $pdo->prepare('INSERT INTO users (name, password_hashed, email) VALUES (?,?,?)');

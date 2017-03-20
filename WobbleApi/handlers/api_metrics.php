@@ -71,6 +71,12 @@ function wobble_metrics($params) {
 		'help' => 'Users that have a living session active in the last 5 minutes.',
 		'values' => SessionService::getOnlineUserCount()
 	);
+	$result[] = array(
+		'type' => 'gauge',
+		'name' => 'users_count',
+		'help' => 'Users total',
+		'values' => UserRepository::getUserCount()
+	);
 
 	$result[] = array(
 		'type' => 'gauge',
@@ -85,6 +91,9 @@ function wobble_metrics($params) {
 		'help' => 'Number of topics',
 		'values' => sizeof(TopicRepository::listTopics()),
 	);
+
+
+	
 
 	return $result;
 }
