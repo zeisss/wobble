@@ -77,7 +77,7 @@ class SessionService {
 
   public static function getTotalSessionCount() {
     $pdo = ctx_getpdo();
-    $r = $pdo->query('SELECT count(*) total_session FROM sessions')->fetchAll();
+    $r = $pdo->query('SELECT count(*) total_sessions FROM sessions')->fetchAll();
     return $r[0]['total_sessions'];
   }
 
