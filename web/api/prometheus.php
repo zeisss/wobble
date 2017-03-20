@@ -10,6 +10,8 @@ require_once WOBBLE_HOME . '/WobbleApi/handlers/api_metrics.php';
 
 $metrics = wobble_metrics([]);
 
+
+header('Content-Type: text/plain; version=0.0.4');
 foreach($metrics as $key => $value) {
 	if (!empty($value['help'])) {
 		print "# HELP ${value['name']} ${value['help']}\n";
