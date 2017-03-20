@@ -11,10 +11,10 @@ require_once WOBBLE_HOME . '/WobbleApi/handlers/api_metrics.php';
 $metrics = wobble_metrics([]);
 
 foreach($metrics as $key => $value) {
-	if (isset($value['help'])) {
+	if (!empty($value['help'])) {
 		print "# HELP ${value['name']} ${value['help']}\n";
 	}
-	if (isset($value['type'])) {
+	if (!empty($value['type'])) {
 		print "# TYPE ${value['name']} ${value['type']}\n";
 	}
 
