@@ -65,6 +65,7 @@ function wobble_metrics($params) {
 	}
 
 	## Model Gauges
+	### Users
 	$result[] = array(
 		'type' => 'gauge',
 		'name' => 'users_online_count',
@@ -78,11 +79,18 @@ function wobble_metrics($params) {
 		'values' => UserRepository::getUserCount()
 	);
 
+	### Sessions
 	$result[] = array(
 		'type' => 'gauge',
 		'name' => 'session_online_count',
 		'help' => 'Living session active in the last 5 minutes.',
 		'values' => SessionService::getOnlineSessionCount()
+	);
+	$result[] = array(
+		'type' => 'gauge',
+		'name' => 'session_count',
+		'help' => 'Total number of session in the DB.',
+		'values' => SessionService::getTotalSessionCount()
 	);
 
 	$result[] = array(
@@ -92,6 +100,7 @@ function wobble_metrics($params) {
 		'values' => Stats::getValue('sessions_last_gc_seconds'),
 	);
 
+	### Topics
 	$result[] = array(
 		'type' => 'gauge',
 		'name' => 'topic_count',
@@ -99,14 +108,13 @@ function wobble_metrics($params) {
 		'values' => sizeof(TopicRepository::listTopics()),
 	);
 
+
+	### Posts
 	$result[] = array(
 		'type' => 'gauge',
 		'name' => 'posts_count',
 		'help' => 'Number of posts in all topics',
 		'values' => PostRepository::getPostCount(),
 	);
-
-	
-
 	return $result;
 }
