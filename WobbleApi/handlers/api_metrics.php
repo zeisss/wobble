@@ -11,7 +11,7 @@
  * value = float64()
  */
 function wobble_metrics($params) {
-	$metrics = [
+	$stats = [
 		'requests.counter' => [
 			'name' => 'http_requests', 
 			'help' => 'Number of requests handled',
@@ -35,7 +35,7 @@ function wobble_metrics($params) {
 	];
 
 	$result = [];
-	foreach($metrics as $key => $m) {
+	foreach($stats as $key => $m) {
 		$value = Stats::getValue($key);
 		$result[] = array(
 			'type' => $m['type'],
@@ -44,5 +44,27 @@ function wobble_metrics($params) {
 			'values' => $value,
 		);
 	}
+
+	$result[] = array(
+		'type' => 'gauge',
+		'name' => 'users_online_count',
+		'help' => 'Users that have a living session active in the last 5 minutes.',
+		'values' => SessionService::getOnlineUserCount()
+	);
+
+	$result[] = array(
+		'type' => 'gauge',
+		'name' => 'session_online_count',
+		'help' => 'Living session active in the last 5 minutes.',
+		'values' => SessionService::getOnlineSessionCount()
+	);
+
+	$result[] = array(
+		'type' => 'gauge',
+		'name' => 'topic_count',
+		'help' => 'Number of topics',
+		'values' => sizeof(TopicRepository::listTopics()),
+	);
+
 	return $result;
 }
