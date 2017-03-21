@@ -17,7 +17,7 @@ function wobble_metrics($params) {
 		['name' => 'notification_pushed_session', 'type' => 'counter'],
 		['name' => 'notification_fetch_count', 'type' => 'counter'],
 		['name' => 'notification_fetch_sum', 'type' => 'counter'],
-		
+
 		## HTTP API
 		[
 			'name' => 'http_request_duration_microseconds_count',
@@ -35,6 +35,9 @@ function wobble_metrics($params) {
 	$result = [];
 	foreach($single_stats as $m) {
 		$value = Stats::getValue($m['name']);
+		if (empty($value)) {
+			$value = 0.0;
+		}
 		$result[] = array(
 			'type' => $m['type'],
 			'name' => $m['name'],
