@@ -16,6 +16,8 @@ class NotificationRepository {
         AND last_touch > (UNIX_TIMESTAMP() - 300)
     ');
     $stmt->execute(array($json, $user_id));
+
+    Stats::incr('notification_pushed_user');
   }
 
   public static function pushSession($session_id, $message) {
@@ -27,6 +29,8 @@ class NotificationRepository {
     $stmt = $pdo->prepare('INSERT INTO notifications (session_id, user_id, data, time)
       SELECT session_id, user_id, ?, UNIX_TIMESTAMP() FROM sessions WHERE session_id = ?');
     $stmt->execute(array($json, $session_id));
+
+    Stats::incr('notification_pushed_session');
   }
 
   /**
@@ -57,6 +61,8 @@ class NotificationRepository {
     foreach ($data AS $i => $row) {
       $result[] = json_decode($row['data'], true);
     }
+    Stats::incr('notification_fetch_count');
+    Stats::incr('notification_fetch_sum', sizeof($result));
     return $result;
   }
 }
