@@ -1,6 +1,7 @@
 <?php
 /**
- * Returns the notifications for the current user. If no notifications are available, this wait up to 10secs.
+ * Returns the notifications for the current user. If no retries are available, it performs a busy
+ * polling with a max try count of 20.
  * A notification is normally an object with a field 'type' which describes the notification further.
  * 
  * input = {'next_timestamp': int()}
