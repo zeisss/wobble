@@ -310,7 +310,7 @@ class TopicRepository {
     $pdo = ctx_getpdo();
     $stmt = $pdo->query($sql);
     $result = $stmt->fetchAll();
-    $result[0]['cnt'];
+    return $result[0]['cnt'];
   }
 
 

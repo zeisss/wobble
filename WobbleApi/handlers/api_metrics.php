@@ -132,7 +132,7 @@ function wobble_metrics($params) {
 		'type' => 'gauge',
 		'name' => 'wobble_topics_orphaned_count',
 		'help' => 'Number of topics',
-		'values' => sizeof(TopicRepository::getOrphanedTopicCount()),
+		'values' => TopicRepository::getOrphanedTopicCount(),
 	);
 
 
