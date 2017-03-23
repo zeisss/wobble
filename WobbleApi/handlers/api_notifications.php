@@ -39,10 +39,10 @@ function get_notifications($params) {
   }
 
   if (connection_aborted()) {
-    Stats::incr('wobble_notification_connection_aborted');
+    Stats::incr('notification_connection_aborted');
   } else {
     # oot (out of time): reached the natural intended limit for this request
-    Stats::incr('wobble_notification_oot');
+    Stats::incr('notification_oot');
   }
 
   return array(
