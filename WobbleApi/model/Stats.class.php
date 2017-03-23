@@ -28,7 +28,8 @@ class Stats {
     $result = $stmt->fetch();
 
     if ($result !== false) {
-      return intval($result['value']);
+      # NOTE: We do not cast here to int, as the value might be above MAX_INT (db has BIGINT)
+      return $result['value'];
     }
     return null;
   }
