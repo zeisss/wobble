@@ -36,6 +36,14 @@ function get_notifications($params) {
     }
     usleep(250 * 1000); /* 250ms */
   }
+
+  if (connection_aborted()) {
+    Stats::incr('wobble_notification_connection_aborted');
+  } else {
+    # oot (out of time): reached the natural intended limit for this request
+    Stats::incr('wobble_notification_oot');
+  }
+
   return array(
     'next_timestamp' => time(),
     'messages' => array()

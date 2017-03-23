@@ -13,6 +13,10 @@
 function wobble_metrics($params) {
 	$single_stats = [
 		## Notifications
+		['name' => 'wobble_notification_connection_aborted', 'type' => 'counter',
+		 'help' => 'Number of time notification fetching has aborted due to an aborted connection.'],
+		['name' => 'wobble_notification_oot', 'type' => 'counter',
+		 'help' => 'Number of notification fetched that have reached the out-of-time limit.'],
 		['name' => 'notification_pushed_user', 'type' => 'counter'],
 		['name' => 'notification_pushed_session', 'type' => 'counter'],
 		['name' => 'notification_fetch_count', 'type' => 'counter'],
