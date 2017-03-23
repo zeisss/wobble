@@ -19,6 +19,8 @@ function cleanupPosts($argv) {
 
     }
   }
+
+  Stats::gauge('wobble_posts_last_gc_seconds', time());
   echo "Checked " . count($topicIds) . " for deleted posts." . PHP_EOL;
 }
 
@@ -35,6 +37,8 @@ function cleanupStats($args) {
   # delete all stats that were not updated in the last 7 days
   $sql = 'DELETE FROM `statistics` WHERE last_update < (unix_timestamp() - 60 * 60 * 24 * 7)';
   $num = $stat = $pdo->exec($sql);
+
+  Stats::gauge('wobble_stats_last_gc_seconds', time());
   echo "Cleared $num stats." . PHP_EOL;
 }
 

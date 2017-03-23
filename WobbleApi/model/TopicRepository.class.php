@@ -299,4 +299,19 @@ class TopicRepository {
     return $result;
   }
 
+
+  public static function getOrphanedTopicCount() {
+    $sql = 'SELECT count(*) cnt ' . 
+           'FROM topics t ' . 
+           'WHERE t.id NOT IN ( ' .
+           '  SELECT DISTINCT topic_id FROM topic_readers' . 
+           ')';
+
+    $pdo = ctx_getpdo();
+    $stmt = $pdo->query($sql);
+    $result = $stmt->fetchAll();
+    $result[0]['cnt'];
+  }
+
+
 }

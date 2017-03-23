@@ -11,7 +11,7 @@
  * value = float64()
  */
 function wobble_metrics($params) {
-	$single_stats = [
+	$counter_stats = [
 		## Notifications
 		['name' => 'wobble_notification_connection_aborted', 'type' => 'counter',
 		 'help' => 'Number of time notification fetching has aborted due to an aborted connection.'],
@@ -37,7 +37,7 @@ function wobble_metrics($params) {
 	];
 
 	$result = [];
-	foreach($single_stats as $m) {
+	foreach($counter_stats as $m) {
 		$value = Stats::getValue($m['name']);
 		if (empty($value)) {
 			$value = 0.0;
@@ -114,21 +114,46 @@ function wobble_metrics($params) {
 		'values' => Stats::getValue('sessions_last_gc_seconds'),
 	);
 
+	$result[] = array(
+		'type' => 'gauge',
+		'name' => 'wobble_stats_last_gc_seconds',
+		'help' => 'Time of the last GC since unix epoch in seconds.',
+		'values' => Stats::getValue('wobble_stats_last_gc_seconds'),
+	);
+
 	### Topics
 	$result[] = array(
 		'type' => 'gauge',
-		'name' => 'topic_count',
+		'name' => 'wobble_topics_count',
 		'help' => 'Number of topics',
 		'values' => sizeof(TopicRepository::listTopics()),
+	);
+	$result[] = array(
+		'type' => 'gauge',
+		'name' => 'wobble_topics_orphaned_count',
+		'help' => 'Number of topics',
+		'values' => sizeof(TopicRepository::getOrphanedTopicCount()),
 	);
 
 
 	### Posts
 	$result[] = array(
 		'type' => 'gauge',
-		'name' => 'posts_count',
+		'name' => 'wobble_posts_count',
 		'help' => 'Number of posts in all topics',
 		'values' => PostRepository::getPostCount(),
+	);
+	$result[] = array(
+		'type' => 'gauge',
+		'name' => 'wobble_posts_orphaned:count',
+		'help' => 'Number of posts in all topics',
+		'values' => PostRepository::getOrphanedPostCount(),
+	);
+	$result[] = array(
+		'type' => 'gauge',
+		'name' => 'wobble_posts_last_gc_seconds',
+		'help' => 'Time of the last GC since unix epoch in seconds.',
+		'values' => Stats::getValue('wobble_posts_last_gc_seconds'),
 	);
 	return $result;
 }

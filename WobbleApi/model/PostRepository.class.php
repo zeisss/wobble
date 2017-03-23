@@ -13,4 +13,14 @@ class PostRepository {
     $result = $pdo->query('SELECT COUNT(*) cnt FROM `posts`')->fetchAll();
     return $result[0]['cnt'];
   }
+
+  public static function getOrphanedPostCount() {
+    $sql = 'select count(*) cnt from posts ' . 
+         ' where parent_post_id not in (select post_id from posts)';
+
+    $pdo = ctx_getpdo();
+    $stmt = $pdo->query($sql);
+    $result = $stmt->fetchAll();
+    $result[0]['cnt'];
+  }
 }
