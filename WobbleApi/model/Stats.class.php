@@ -1,6 +1,66 @@
 <?php
 
+/**
+  $m = Stats::histogramWithLabels('http_request_duration_microseconds', [100, 500, 2500], ['handler']);
+  $m->observe(12345123, ['get_notifications']);
+*/
+
+class Histogram {
+
+  private static function renderLabels($labels, $labelValues) {
+    $key = "";
+    foreach ($labels as $index => $value) {
+      $key .= $value . '="' . $labelValues[$index] . '",';
+    }
+    if (strlen($key) > 0) {
+      $key = substr($key, 0, -1);
+    }
+    return $key;
+  }
+
+
+  private $key;
+  private $labels;
+  private $buckets;
+  public function __construct($key, $labels, $buckets) {
+    $this->key = $key;
+    $this->labels = $labels;
+    $this->buckets = $buckets;
+  }
+
+  public function _key($key, $labelA, $labelLe = "") {
+    if (empty($labelA) && empty($labelLe)) {
+      return $key;
+    } else if (empty($labelA)) {
+      return $key . '{' . $labelLe . '}';
+    } else {
+      return $key . '{' . $labelA . ',' . $labelLe . '}';
+    }
+  }
+
+  public function observe($value, $labelValues = []) {
+    $lab = Histogram::renderLabels($this->labels, $labelValues);
+
+    foreach($this->buckets as $bound) {
+      if ($value <= $bound) {
+        Stats::incr(
+          $this->_key($this->key . '_bucket', $lab, 'le="' . $bound . '"'),
+          $value
+        );
+        break;
+      }
+    }
+    Stats::incr($this->_key($this->key . '_sum' , $lab), $value);
+    Stats::incr($this->_key($this->key . '_count', $lab));
+  }
+}
+
 class Stats { 
+  public static function histogramWithLabels($name, $buckets, $labels = []) {
+    $s = new Histogram($name, $labels, array_merge($buckets, [PHP_INT_MAX]));
+    return $s;
+  }
+
   public static function gc() {
     $pdo = ctx_getpdo();
     # delete all stats that were not updated in the last 7 days
