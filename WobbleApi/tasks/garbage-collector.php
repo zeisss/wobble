@@ -33,12 +33,7 @@ function cleanupSessions($args) {
 }
 
 function cleanupStats($args) {
-  $pdo = ctx_getpdo();
-  # delete all stats that were not updated in the last 7 days
-  $sql = 'DELETE FROM `statistics` WHERE last_update < (unix_timestamp() - 60 * 60 * 24 * 7)';
-  $num = $stat = $pdo->exec($sql);
-
-  Stats::gauge('wobble_stats_last_gc_seconds', time());
+  Stats::gc();
   echo "Cleared $num stats." . PHP_EOL;
 }
 

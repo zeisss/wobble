@@ -63,7 +63,7 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     $endRequest = microtime(true);
 
     Stats::incr('http_request_duration_microseconds_count');
-    Stats::incr('http_request_duration_microseconds_sum', floor($endRequest - $startRequest));
+    Stats::incr('http_request_duration_microseconds_sum', floor(($endRequest - $startRequest) * 1000 * 1000));
   }
 
   /**
