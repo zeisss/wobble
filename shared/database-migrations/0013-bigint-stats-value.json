@@ -1,0 +1,8 @@
+{
+	"up": [
+		"ALTER TABLE `statistics` CHANGE `value` `value` BIGINT(13) NOT NULL"
+	],
+	"down": [
+		"ALTER TABLE `statistics` CHANGE `value` `value` INT(11) NOT NULL"
+	]
+}
