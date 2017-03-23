@@ -145,7 +145,7 @@ function wobble_metrics($params) {
 	);
 	$result[] = array(
 		'type' => 'gauge',
-		'name' => 'wobble_posts_orphaned:count',
+		'name' => 'wobble_posts_orphaned_count',
 		'help' => 'Number of posts in all topics',
 		'values' => PostRepository::getOrphanedPostCount(),
 	);
