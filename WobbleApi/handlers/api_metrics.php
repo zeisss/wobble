@@ -13,9 +13,9 @@
 function wobble_metrics($params) {
 	$counter_stats = [
 		## Notifications
-		['name' => 'wobble_notification_connection_aborted', 'type' => 'counter',
+		['name' => 'notification_connection_aborted', 'type' => 'counter',
 		 'help' => 'Number of time notification fetching has aborted due to an aborted connection.'],
-		['name' => 'wobble_notification_oot', 'type' => 'counter',
+		['name' => 'notification_oot', 'type' => 'counter',
 		 'help' => 'Number of notification fetched that have reached the out-of-time limit.'],
 		['name' => 'notification_pushed_user', 'type' => 'counter'],
 		['name' => 'notification_pushed_session', 'type' => 'counter'],
@@ -116,7 +116,7 @@ function wobble_metrics($params) {
 
 	$result[] = array(
 		'type' => 'gauge',
-		'name' => 'wobble_stats_last_gc_seconds',
+		'name' => 'stats_last_gc_seconds',
 		'help' => 'Time of the last GC since unix epoch in seconds.',
 		'values' => Stats::getValue('wobble_stats_last_gc_seconds'),
 	);
@@ -124,13 +124,13 @@ function wobble_metrics($params) {
 	### Topics
 	$result[] = array(
 		'type' => 'gauge',
-		'name' => 'wobble_topics_count',
+		'name' => 'topics_count',
 		'help' => 'Number of topics',
 		'values' => sizeof(TopicRepository::listTopics()),
 	);
 	$result[] = array(
 		'type' => 'gauge',
-		'name' => 'wobble_topics_orphaned_count',
+		'name' => 'topics_orphaned_count',
 		'help' => 'Number of topics',
 		'values' => TopicRepository::getOrphanedTopicCount(),
 	);
@@ -139,19 +139,19 @@ function wobble_metrics($params) {
 	### Posts
 	$result[] = array(
 		'type' => 'gauge',
-		'name' => 'wobble_posts_count',
+		'name' => 'posts_count',
 		'help' => 'Number of posts in all topics',
 		'values' => PostRepository::getPostCount(),
 	);
 	$result[] = array(
 		'type' => 'gauge',
-		'name' => 'wobble_posts_orphaned_count',
+		'name' => 'posts_orphaned_count',
 		'help' => 'Number of posts in all topics',
 		'values' => PostRepository::getOrphanedPostCount(),
 	);
 	$result[] = array(
 		'type' => 'gauge',
-		'name' => 'wobble_posts_last_gc_seconds',
+		'name' => 'posts_last_gc_seconds',
 		'help' => 'Time of the last GC since unix epoch in seconds.',
 		'values' => Stats::getValue('wobble_posts_last_gc_seconds'),
 	);
