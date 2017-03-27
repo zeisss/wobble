@@ -18,7 +18,7 @@ class JsonRpcServer {
 
     $this->functionTimeHistogram = Stats::histogramWithLabels(
       'jsonrpc_api_calls_duration_microseconds',
-      [25000, 50000, 100000, 250000, 500000, 1000000, 2500000, 5000000],
+      [25000, 50000, 100000, 250000, 500000, 1000000, 2500000, 5000000, 10000000, 25000000],
       ['method']
     );
   }
