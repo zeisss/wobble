@@ -21,10 +21,10 @@ foreach($metrics as $key => $value) {
 	}
 
 	if (is_array($value['values'])) {
-		foreach($value['values'] as $tag => $v) {
-			print $value['name'] . '{' . $tag . "} $v\n";
+		foreach($value['values'] as $item) {
+			print "${item['name']}\t${item['value']}\n";
 		}
-	} else {
+	} else if (!empty($value['values'])) {
 		print "${value['name']} ${value['values']}\n";
 	}
 	print "\n";

@@ -23,7 +23,7 @@ function wobble_metrics($params) {
 		['name' => 'notification_fetch_sum', 'type' => 'counter'],
 
 		## HTTP API
-		[
+		/*[
 			'name' => 'http_request_duration_microseconds_count',
 			'type' => 'counter',
 			'help' => 'Number of HTTP requests measured.'
@@ -33,7 +33,7 @@ function wobble_metrics($params) {
 			'name' => 'http_request_duration_microseconds_sum',
 			'type' => 'counter',
 			'help' => 'Sum of all HTTP request durations observed.'
-		]
+		]*/
 	];
 
 	$result = [];
@@ -50,33 +50,28 @@ function wobble_metrics($params) {
 		);
 	}
 
-	$multi_stats = [
-		['name' => 'jsonrpc_api_calls', 'type' => 'counter'],
-		['name' => 'jsonrpc_api_errors', 'type' => 'counter'],
+	$result[] = [
+		'name' => 'jsonrpc_api_calls', 'type' => 'counter',
+		'values' => Stats::getValuesByPrefix('jsonrpc_api_calls{')
 	];
-	foreach($multi_stats as $m) {
-		$values = Stats::getValuesByPrefix($m['name']);
-		$mapped_values = [];
-		foreach($values as $v) {
-			$n = $v['name'];
-			$i = strpos($n, '{');
-			if ($i === FALSE) {
-				die('invalid multi metric: ' . $n);
-			}
-			$n = substr($n, $i + 1, -1);
-			$mapped_values[$n] = $v['value'];
-		}
-		if (empty($mapped_values)) {
-			# no need to expose empty metrics
-			continue;
-		}
-		$result[] = array(
-			'type' => $m['type'],
-			'name' => $m['name'],
-			'help' => $m['help'],
-			'values' => $mapped_values,
-		);
-	}
+	$result[] = [
+		'name' => 'jsonrpc_api_errors', 'type' => 'counter',
+		'values' => Stats::getValuesByPrefix('jsonrpc_api_errors')
+	];
+
+	$result[] = array(
+		'type' => 'histogram',
+		'name' => 'http_request_duration_microseconds',
+		'help' => 'Request duration bucket',
+		'values' => Stats::getValuesByPrefix('http_request_duration_microseconds_')
+	);
+
+	$result[] = array(
+		'type' => 'histogram',
+		'name' => 'jsonrpc_api_calls_duration_microseconds',
+		'help' => 'jsonrpc api call request duration bucket',
+		'values' => Stats::getValuesByPrefix('jsonrpc_api_calls_duration_microseconds_')
+	);
 
 	## Model Gauges
 	### Users

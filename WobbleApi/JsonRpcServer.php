@@ -8,12 +8,18 @@ require_once dirname(__FILE__) . '/handlers/jsonrpc_system.php'; # Exports the d
  */
 class JsonRpcServer {
   private $functions = array();
+  private $functionTimeHistogram;
 
   public function __construct() {
     $this->addFunctions(array(
       array('file' => 'jsonrpc_system.php', 'name' => 'system.listMethods', 'method' => 'jsonrpc_exported_system_list'),
       array('file' => 'jsonrpc_system.php', 'name' => 'echo', 'method' => 'jsonrpc_echo')
     ));
+
+    $this->functionTimeHistogram = Stats::histogramWithLabels(
+      'jsonrpc_api_calls_duration_microseconds',
+      [25000, 50000, 100000, 250000, 500000, 1000000, 2500000, 5000000]
+    );
   }
 
   /**
@@ -116,7 +122,11 @@ class JsonRpcServer {
       }
 
       $this->beforeCall($request['method'], $request['params']);
+      $startTime = microtime(true);
       $response = call_user_func($export['method'], $request['params'], $this);
+      $endTime = microtime(true);
+
+      $this->functionTimeHistogram->observe(floor(($endTime - $startTime) * 1000 * 1000));
       $this->afterCall($request['method'], $request['params'], $response, null);
     } catch(Exception $e) {
       $this->afterCall($request['method'], $request['params'], null, $e);
