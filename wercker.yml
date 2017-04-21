@@ -1,4 +1,4 @@
-box: php
+box: php@5.6
 
 build:
     steps:
