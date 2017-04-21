@@ -8,6 +8,8 @@
 if (!defined('WOBBLE_HOME')) {
   define('WOBBLE_HOME', dirname(__FILE__) . '/../..');
 }
+
+require_once WOBBLE_HOME . '/vendor/autoload.php';
 require_once WOBBLE_HOME . '/WobbleApi/Autoload.php';
 
 # Handle the request
