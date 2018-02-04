@@ -29,13 +29,15 @@ class Histogram {
     $this->buckets = $buckets;
   }
 
-  public function _key($key, $labelA, $labelLe = "") {
-    if (empty($labelA) && empty($labelLe)) {
+  public function _key($key, $labels, $labelLE = "") {
+    if (empty($labels) && empty($labelLE)) {
       return $key;
-    } else if (empty($labelA)) {
-      return $key . '{le="' . $labelLe . '"}';
+    } else if (empty($labels)) {
+      return $key . '{le="' . $labelLE . '"}';
+    } else if (empty($labelLE)) {
+      return $key . '{' . $labels . '}';
     } else {
-      return $key . '{' . $labelA . ',le="' . $labelLe . '"}';
+      return $key . '{' . $labels . ',le="' . $labelLE . '"}';
     }
   }
 
