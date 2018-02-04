@@ -15,6 +15,11 @@ $metrics = wobble_metrics([]);
 
 header('Content-Type: text/plain; version=0.0.4');
 foreach($metrics as $key => $value) {
+	# skip empty metrics
+	if (empty($value['values'])) {
+		continue;
+	}
+
 	if (!empty($value['help'])) {
 		print "# HELP ${value['name']} ${value['help']}\n";
 	}
