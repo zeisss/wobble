@@ -33,7 +33,7 @@ class Histogram {
     if (empty($labelA) && empty($labelLe)) {
       return $key;
     } else if (empty($labelA)) {
-      return $key . '{' . $labelLe . '}';
+      return $key . '{le="' . $labelLe . '"}';
     } else {
       return $key . '{' . $labelA . ',le="' . $labelLe . '"}';
     }
