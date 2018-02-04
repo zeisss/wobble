@@ -50,7 +50,6 @@ class Histogram {
           $this->_key($this->key . '_bucket', $lab, $bound),
           $value
         );
-        break;
       }
     }
 
