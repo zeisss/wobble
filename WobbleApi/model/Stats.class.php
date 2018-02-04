@@ -45,7 +45,7 @@ class Histogram {
     $lab = Histogram::renderLabels($this->labels, $labelValues);
 
     foreach($this->buckets as $bound) {
-      if ($bound <= $value) {
+      if ($bound >= $value) {
         Stats::incr(
           $this->_key($this->key . '_bucket', $lab, $bound),
           $value
