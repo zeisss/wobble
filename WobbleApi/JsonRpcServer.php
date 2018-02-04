@@ -17,8 +17,8 @@ class JsonRpcServer {
     ));
 
     $this->functionTimeHistogram = Stats::histogramWithLabels(
-      'jsonrpc_api_calls_duration_microseconds',
-      [25000, 50000, 100000, 250000, 500000, 1000000, 2500000, 5000000, 10000000, 25000000],
+      'jsonrpc_api_call_duration_seconds',
+      [.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10, 25, 50, 100],
       ['method']
     );
   }
@@ -128,7 +128,7 @@ class JsonRpcServer {
       $endTime = microtime(true);
 
       $this->functionTimeHistogram->observe(
-        floor(($endTime - $startTime) * 1000 * 1000),
+        $endTime - $startTime,
         [$request['method']]
       );
       $this->afterCall($request['method'], $request['params'], $response, null);
