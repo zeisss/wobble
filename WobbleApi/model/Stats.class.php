@@ -1,12 +1,14 @@
 <?php
 
 /**
-  $m = Stats::histogramWithLabels('http_request_duration_microseconds', [100, 500, 2500], ['handler']);
+  $m = Stats::histogramWithLabels(
+    'http_request_duration_microseconds', 
+    [100, 500, 2500], ['handler']
+  );
   $m->observe(12345123, ['get_notifications']);
 */
 
 class Histogram {
-
   private static function renderLabels($labels, $labelValues) {
     $key = "";
     foreach ($labels as $index => $value) {
@@ -17,7 +19,6 @@ class Histogram {
     }
     return $key;
   }
-
 
   private $key;
   private $labels;
@@ -34,7 +35,7 @@ class Histogram {
     } else if (empty($labelA)) {
       return $key . '{' . $labelLe . '}';
     } else {
-      return $key . '{' . $labelA . ',' . $labelLe . '}';
+      return $key . '{' . $labelA . ',le="' . $labelLe . '"}';
     }
   }
 
@@ -42,14 +43,16 @@ class Histogram {
     $lab = Histogram::renderLabels($this->labels, $labelValues);
 
     foreach($this->buckets as $bound) {
-      if ($value <= $bound) {
+      if ($bound <= $value) {
         Stats::incr(
-          $this->_key($this->key . '_bucket', $lab, 'le="' . $bound . '"'),
+          $this->_key($this->key . '_bucket', $lab, $bound),
           $value
         );
         break;
       }
     }
+
+    Stats::incr($this->_key($this->key . '_bucket', $lab, '+Inf'), $value);
     Stats::incr($this->_key($this->key . '_sum' , $lab), $value);
     Stats::incr($this->_key($this->key . '_count', $lab));
   }
@@ -57,7 +60,7 @@ class Histogram {
 
 class Stats { 
   public static function histogramWithLabels($name, $buckets, $labels = []) {
-    $s = new Histogram($name, $labels, array_merge($buckets, [PHP_INT_MAX]));
+    $s = new Histogram($name, $labels, $buckets);
     return $s;
   }
 

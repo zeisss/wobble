@@ -1,5 +1,5 @@
-box: php@5.6
-
+box:
+  id: php
 build:
     steps:
         - script:
