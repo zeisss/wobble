@@ -6,8 +6,8 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     parent::__construct();
 
     $this->httpRequestDurationHistogram = Stats::histogramWithLabels(
-      'http_request_duration_seconds',
-      [.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10, 25, 50, 100]
+      'http_request_duration_milliseconds',
+      [5, 10, 25, 50, 100, 250, 500, 1000, 2500, 500, 1000, 2500, 5000, 100000]
     );
 
     $this->addFunctions(array (
@@ -68,7 +68,7 @@ class WobbleJsonRpcServer extends HttpJsonRpcServer {
     parent::handleHttpRequest();
     $endTime = microtime(true);
 
-    $this->httpRequestDurationHistogram->observe($endTime - $startTime);
+    $this->httpRequestDurationHistogram->observe(($endTime - $startTime) / 1000);
   }
 
   /**

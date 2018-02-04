@@ -61,16 +61,16 @@ function wobble_metrics($params) {
 
 	$result[] = array(
 		'type' => 'histogram',
-		'name' => 'http_request_duration_seconds',
+		'name' => 'http_request_duration_milliseconds',
 		'help' => 'Request duration bucket',
-		'values' => Stats::getValuesByPrefix('http_request_duration_seconds_')
+		'values' => Stats::getValuesByPrefix('http_request_duration_milliseconds_')
 	);
 
 	$result[] = array(
 		'type' => 'histogram',
-		'name' => 'jsonrpc_api_call_duration_seconds',
+		'name' => 'jsonrpc_api_call_duration_milliseconds',
 		'help' => 'jsonrpc api call request duration bucket',
-		'values' => Stats::getValuesByPrefix('jsonrpc_api_call_duration_seconds_')
+		'values' => Stats::getValuesByPrefix('jsonrpc_api_call_duration_milliseconds_')
 	);
 
 	## Model Gauges
