@@ -45,7 +45,7 @@ function wobble_metrics($params) {
 		$result[] = array(
 			'type' => $m['type'],
 			'name' => $m['name'],
-			'help' => $m['help'],
+			'help' => @$m['help'],
 			'values' => $value,
 		);
 	}
